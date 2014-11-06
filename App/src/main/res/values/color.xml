@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="actionbar_text">#fff</color>
+    <color name="actionbar_background">#1b75ba</color>
+    <color name="drawer_selector">#33b5e5</color>
+    <color name="drawer_item_selected">#8BC7EB</color>
+    <color name="drawer_text">#000</color>
+    <color name="drawer_background">#f7f7f7</color>
+    <color name="drawer_divider">#c7c7c7</color>
+
+</resources>
+

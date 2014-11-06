@@ -1,0 +1,44 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:layout_gravity="center" >
+
+    <RelativeLayout
+        android:id="@+id/headers"
+        android:visibility="gone"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+
+        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/canseeme"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:text="@string/can_see_me"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="13dp"
+            android:gravity="right"
+            android:layout_marginRight="15dp" />
+
+        <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/icansee"
+            android:layout_width="50dp"
+            android:layout_marginLeft="10dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="13dp"
+            android:layout_marginRight="80dp"
+            android:gravity="right"
+            android:text="@string/i_can_see" />
+
+    </RelativeLayout>
+
+    <ListView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/headers"
+        android:id="@+id/listView" >
+    </ListView>
+
+</RelativeLayout>

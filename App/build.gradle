@@ -1,0 +1,28 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 21
+    buildToolsVersion '21.1'
+    lintOptions {
+        abortOnError false
+    }
+    defaultConfig {
+        minSdkVersion 10
+        targetSdkVersion 21
+        versionCode 325
+        versionName "3.2.5"
+    }
+    buildTypes {
+        release {
+            runProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+}
+
+dependencies {
+    compile 'com.android.support:appcompat-v7:21.0.+'
+    compile 'com.google.android.gms:play-services:6.1.11'
+    compile 'com.makeramen:roundedimageview:1.2.+'
+    compile files('libs/android-query.0.26.7.jar')
+}

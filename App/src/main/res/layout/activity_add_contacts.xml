@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:layout_gravity="center" >
+
+
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/header_text"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/add_contact_dialog_message"
+        android:gravity="center_horizontal"
+        android:padding="10dp" />
+
+    <EditText
+        android:id="@+id/inputText"
+        android:hint="@string/search_contacts"
+        android:textColor="@android:color/black"
+        android:layout_below="@id/header_text"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
+    <ListView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/inputText"
+        android:id="@+id/listView" >
+    </ListView>
+
+</RelativeLayout>

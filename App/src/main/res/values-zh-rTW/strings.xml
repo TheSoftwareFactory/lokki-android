@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="menuOptions">
+        <item>Lokki</item>
+        <item>聯絡人</item>
+        <item>設定</item>
+        <item>關於</item>
+    </string-array>
+
+    <string name="app_name">Lokki</string>
+    <string name="action_example">示例操作</string>
+    <string name="action_settings">設定</string>
+    <string name="visibility">可見性</string>
+    <string name="feedback_title">傳送反饋</string>
+    <string name="error_send_email_title">無法傳送電子郵件</string>
+    <string name="error_send_email_message">我們找不到您的電子郵件應用程式。\n請聯絡我們：lokki-feedback@f-secure.com</string>
+    <string name="share">向您的朋友介紹這款應用程式</string>
+    <string name="share_subject">跟我一起用 F-Secure Lokki！</string>
+    <string name="share_text">嗨！我正在使用 F-Secure Lokki，這是一款便捷、安全、免費的私人位置共用應用程式。前往 f-secure.com/lokki 安裝。</string>
+    <string name="add_contact">新增聯絡人</string>
+    <string name="allow_people">允許人員</string>
+    <string name="add_contact_dialog_message">Select the people who can see where you are when you allow it. Choose the email addresses that your contacts use in Lokki. If you don\&apos;t find a person or email in this list, please add him or her first via the People or Contacts app.</string>
+    <string name="add_contact_dialog_save">現在可以看到您在哪，如果他們允許，您也可以在 Lokki 中看到他們。</string>
+    <string name="i_can_see">在地圖上顯示</string>
+    <string name="can_see_me">可以看到我</string>
+    <string name="send">傳送</string>
+    <string name="loading">正在載入...</string>
+    <string name="your_lokki_id">您的 Lokki ID 是：</string>
+    <string name="your_friends">告訴朋友在 Lokki 使用這個電子郵件。</string>
+    <string name="fsecure_link"><a href="http://www.f-secure.com">www.f-secure.com</a></string>
+    <string name="privacy_policy_link"><a href="http://www.f-secure.com">隱私權原則</a></string>
+    <string name="privacy_policy_title">隱私權原則</string>
+    <string name="my_visibility">我的聯絡人可以看到我</string>
+    <string name="map_mode">地圖模式</string>
+
+    <string-array name="visibility_modes">
+        <item>是</item>
+        <item>否</item>
+    </string-array>
+    <string-array name="visibility_modes_icons">
+        <item>@drawable/ic_visible</item>
+        <item>@drawable/ic_invisible</item>
+    </string-array>
+    <string-array name="map_modes">
+        <item>預設</item>
+        <item>衛星</item>
+        <item>混合</item>
+    </string-array>
+
+    <string-array name="about_links">
+        <item>說明</item>
+        <item>傳送反饋</item>
+        <item>隱私權原則</item>
+        <item>Other F-Secure products</item>
+        <item>Tell a friend about Lokki</item>
+    </string-array>
+
+    <string-array name="about_links_url">
+        <item>http://bit.ly/KTIpGJ</item>
+        <item>傳送反饋</item>
+        <item>http://www.f-secure.com/en/web/home_global/privacy/privacy-summary</item>
+        <item>Other F-Secure products</item>
+        <item>Tell a friend about Lokki</item>
+    </string-array>
+
+    <string name="privacy_policy_text">預留位置</string>
+
+    <string name="license_link"><![CDATA[<a href=\"\">授權條款</a>]]></string>
+    <string name="version_and_copyright">\nCopyright © F-Secure Corporation. \nAll rights reserved.</string>
+    <string name="title_activity_first_time">FirstTimeActivity</string>
+    <string name="hello_world">你好世界！</string>
+    <string name="i_agree">我已閱讀並同意</string>
+    <string name="continue_with_terms">繼續</string>
+    <string name="welcome_title">歡迎使用 Lokki</string>
+    <string name="welcome_text"><![CDATA[ <b>歡迎使用 Lokki 3.0!</b><br/>現在，您可以在地圖上看到您的好友和家庭成員的位置了。您可以選擇哪些人能看到您的位置，也可以隨時隱藏自己的位置。<br/><br/>F-Secure<br/>保護重要內容]]></string>
+    <string name="terms_text">
+<![CDATA[我們非常重視您的隱私權。開始使用前，您需要同意以下條款：<br/><br/><br/>
+                              1. 我已閱讀並接受服務條款。<br/><br/>
+                              2. 我同意服務收集和處理我的個人資料。<br/><br/>
+                              3. 我同意服務可處理並顯示我的位置。<br/><br/>
+                              4. 如果我年齡未滿 15 歲，我已取得家長同意，可依照這些條款使用 Lokki。<br/><br/>
+                              5. 如果我年齡未滿 13 歲且生活在美國，我不得使用 Lokki。<br/><br/><br/>
+                              <a href=\"http://www.f-secure.com/en/web/home_global/privacy/privacy-summary\">瀏覽我們的網站以閱讀更多</a>]]>
+    </string>
+    <string name="terms_title">使用條款</string>
+    <string name="security_signup">註冊前，我們需要授權您的帳戶。請依照我們傳送至以下位址的說明操作。</string>
+    <string name="title_activity_signup">註冊</string>
+    <string name="app_long_name">F-Secure Lokki</string>
+    <string name="signup_explanation">輸入您的電子郵件位址 - 其他 Lokki 使用者將以此位址找到您。</string>
+    <string name="type_your_email_address">您的電子郵件位址</string>
+    <string name="signing_up">正在註冊...</string>
+    <string name="general_error">There was an error. Please try again later.</string>
+    <string name="create_place">要在這裡建立一個地點嗎？</string>
+    <string name="write_place_name">為此地點輸入名稱</string>
+    <string name="delete_place">要移除此地點嗎？</string>
+    <string name="will_be_deleted_from_places">將從您的地點中移除</string>
+    <string name="place_created">已建立地點</string>
+    <string name="place_removed">已移除地點</string>
+    <string name="place_limit_reached">You cannot create more places. Maximum limit reached.</string>
+    <string name="dashboard_view">map/places</string>
+    <string name="map">地圖</string>
+    <string name="places">地點</string>
+    <string name="you_are_visible">You are now VISIBLE</string>
+    <string name="you_are_invisible">You are now INVISIBLE</string>
+    <string name="places_how_to_create">To create a new place go to the map and long press the location where to place is located. Then type a name and click OK.</string>
+    <string name="search_contacts">Search contacts...</string>
+
+</resources>

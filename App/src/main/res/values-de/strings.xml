@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="menuOptions">
+        <item>Lokki</item>
+        <item>Kontakte</item>
+        <item>Einstellungen</item>
+        <item>Info</item>
+    </string-array>
+
+    <string name="app_name">Lokki</string>
+    <string name="action_example">Beispiel</string>
+    <string name="action_settings">Einstellungen</string>
+    <string name="visibility">Sichtbarkeit</string>
+    <string name="feedback_title">Feedback senden</string>
+    <string name="error_send_email_title">E-Mail kann nicht gesendet werden.</string>
+    <string name="error_send_email_message">Wir konnten deine E-Mail-App nicht finden.\nSchreibe uns an: lokki-feedback@f-secure.com.</string>
+    <string name="share">Informiere deine Freunde über diese App.</string>
+    <string name="share_subject">Füge mich auf F-Secure Lokki hinzu!</string>
+    <string name="share_text">Hi! Ich verwende F-Secure Lokki – die private App zur Standortübermittlung – einfach, sicher, kostenlos. Installiere sie unter f-secure.com/lokki.</string>
+    <string name="add_contact">Kontakte hinzufügen</string>
+    <string name="allow_people">Personen zulassen</string>
+    <string name="add_contact_dialog_message">Wähle die Personen aus, die deinen Standort anzeigen können, wenn du es zulässt. Wähle die E-Mail-Adressen aus, die deine Kontakte bei Lokki verwenden. Falls in dieser Liste eine Person oder E-Mail-Adresse fehlt, füge sie einfach über die Personen- oder Kontakte-App hinzu.</string>
+    <string name="add_contact_dialog_save">sieht/sehen jetzt deinen Standort in Lokki, wenn sie es zulassen.</string>
+    <string name="i_can_see">Auf Karte anzeigen</string>
+    <string name="can_see_me">Kann mich sehen</string>
+    <string name="send">Senden</string>
+    <string name="loading">Wird geladen...</string>
+    <string name="your_lokki_id">Deine Lokki-ID lautet:</string>
+    <string name="your_friends">Teile deinen Freunden mit, dass sie diese E-Mail-Adresse für Lokki verwenden sollen.</string>
+    <string name="fsecure_link"><a href="http://www.f-secure.com">www.f-secure.com</a></string>
+    <string name="privacy_policy_link"><a href="http://www.f-secure.com">Datenschutzrichtlinie</a></string>
+    <string name="privacy_policy_title">Datenschutzrichtlinie</string>
+    <string name="my_visibility">Meine Kontakte können mich sehen.</string>
+    <string name="map_mode">Kartenmodus</string>
+
+    <string-array name="visibility_modes">
+        <item>Ja</item>
+        <item>Nein</item>
+    </string-array>
+    <string-array name="visibility_modes_icons">
+        <item>@drawable/ic_visible</item>
+        <item>@drawable/ic_invisible</item>
+    </string-array>
+    <string-array name="map_modes">
+        <item>Standard</item>
+        <item>Satellit</item>
+        <item>Hybrid</item>
+    </string-array>
+
+    <string-array name="about_links">
+        <item>Hilfe</item>
+        <item>Feedback senden</item>
+        <item>Datenschutzrichtlinie</item>
+        <item>Weitere F-Secure-Produkte</item>
+        <item>Informiere einen Freund über Lokki.</item>
+    </string-array>
+
+    <string-array name="about_links_url">
+        <item>http://bit.ly/KTIpGJ</item>
+        <item>Feedback senden</item>
+        <item>http://www.f-secure.com/en/web/home_global/privacy/privacy-summary</item>
+        <item>Weitere F-Secure-Produkte</item>
+        <item>Informiere einen Freund über Lokki.</item>
+    </string-array>
+
+    <string name="privacy_policy_text">Platzhalter</string>
+
+    <string name="license_link"><![CDATA[<a href=\"\">Lizenzbedingungen</a>]]></string>
+    <string name="version_and_copyright">\nCopyright © F-Secure Corporation. Alle Rechte vorbehalten.</string>
+    <string name="title_activity_first_time">FirstTimeActivity</string>
+    <string name="hello_world">Hallo Welt!</string>
+    <string name="i_agree">Ich habe gelesen und stimme zu.</string>
+    <string name="continue_with_terms">Fortfahren</string>
+    <string name="welcome_title">Willkommen bei Lokki</string>
+    <string name="welcome_text"><![CDATA[ <b>Willkommen bei Lokki 3.0!</b><br/>Ab sofort siehst du auf der Karte, wo deine Freunde und deine Familie sind. Du entscheidest, wer deinen Standort sehen kann, und du kannst deinen Standort jederzeit verbergen.<br/><br/>F-Secure<br/>Schutz des Unersetzlichen ]]></string>
+    <string name="terms_text">
+<![CDATA[ Der Schutz deiner Daten hat für uns oberste Priorität. Bevor du loslegst, musst du den folgenden Bedingungen zustimmen:<br/><br/><br/>
+                              1. Ich habe die Servicebedingungen gelesen und stimme diesen zu.<br/><br/>
+                              2. Ich bin mit der Erfassung und der Verarbeitung persönlicher Daten einverstanden.<br/><br/>
+                              3. Ich bin damit einverstanden, dass der Service meinen Standort verarbeiten und anzeigen kann.<br/><br/>
+                              4. Falls ich unter 15 Jahre alt bin, habe ich die Erlaubnis meiner Eltern, Lokki gemäß diesen Bedingungen zu nutzen.<br/><br/>
+                              5. Wenn ich unter 13 Jahre alt bin und in den USA lebe, darf ich Lokki nicht verwenden.<br/><br/><br/>
+                              <a href="http://www.f-secure.com/en/web/home_global/privacy/privacy-summary">Weitere Informationen auf unserer Website</a>]]>
+    </string>
+    <string name="terms_title">Nutzungsbedingungen</string>
+    <string name="security_signup">Bevor du dich anmeldest, müssen wir dein Konto autorisieren. Befolge hierzu die Anweisungen, die wir an folgende Adresse geschickt haben:</string>
+    <string name="title_activity_signup">Anmelden</string>
+    <string name="app_long_name">F-Secure Lokki</string>
+    <string name="signup_explanation">Gib deine E-Mail-Adresse ein – andere Lokki-Benutzer finden dich mit dieser Adresse.</string>
+    <string name="type_your_email_address">Deine E-Mail-Adresse</string>
+    <string name="signing_up">Anmelden...</string>
+    <string name="general_error">Es ist ein Fehler aufgetreten. Bitte versuche es später erneut.</string>
+    <string name="create_place">Möchtest du hier einen Ort erstellen?</string>
+    <string name="write_place_name">Namen für diesen Ort eingeben</string>
+    <string name="delete_place">Möchtest du diesen Ort entfernen?</string>
+    <string name="will_be_deleted_from_places">wird aus deinen Orten entfernt.</string>
+    <string name="place_created">Ort erstellt</string>
+    <string name="place_removed">Ort entfernt</string>
+    <string name="place_limit_reached">Du kannst keine weiteren Orte mehr erstellen. Du hast die maximal mögliche Anzahl schon erreicht.</string>
+    <string name="dashboard_view">Karte/Ort</string>
+    <string name="map">Karte</string>
+    <string name="places">Ort</string>
+    <string name="you_are_visible">Du bist jetzt SICHTBAR</string>
+    <string name="you_are_invisible">Du bist jetzt UNSICHTBAR</string>
+    <string name="places_how_to_create">Um einen neuen Ort zu erstellen, drücke lange auf den Punkt, an dem sich der Ort auf der Karte befindet.. Wähle anschließend einen Namen für den Ort und klicke auf OK.</string>
+    <string name="search_contacts">Kontakte durchsuchen...</string>
+
+</resources>

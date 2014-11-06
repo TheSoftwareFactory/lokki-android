@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="menuOptions">
+        <item>Lokki</item>
+        <item>Контакты</item>
+        <item>Настройки</item>
+        <item>О программе</item>
+    </string-array>
+
+    <string name="app_name">Lokki</string>
+    <string name="action_example">Образец действия</string>
+    <string name="action_settings">Настройки</string>
+    <string name="visibility">Видимость</string>
+    <string name="feedback_title">Отправить отзыв</string>
+    <string name="error_send_email_title">Не удалось отправить сообщение эл. почты</string>
+    <string name="error_send_email_message">Не удалось обнаружить программу электронной почты.\nОбратитесь по адресу: lokki-feedback@f-secure.com</string>
+    <string name="share">Рассказать друзьям об этой программе</string>
+    <string name="share_subject">Приглашение в F-Secure Lokki</string>
+    <string name="share_text">Привет! Я пользуюсь F-Secure Lokki — простой, безопасной и бесплатной программой для обмена местоположениями. Ее можно установить со страницы f-secure.com/lokki.</string>
+    <string name="add_contact">Добавить контакты</string>
+    <string name="allow_people">Добавить людей</string>
+    <string name="add_contact_dialog_message">Выберите тех, кто сможет видеть, где вы находитесь (после вашего разрешения). Нужно выбрать те адреса эл. почты, под которыми ваши контакты зарегистрированы в Lokki. Если в списке нет нужного человека или адреса электронной почты, проверьте, есть ли он в программе &quot;Люди&quot; или &quot;Контакты&quot;.</string>
+    <string name="add_contact_dialog_save">теперь может видеть, где вы находитесь. Чтобы видеть друзей в Lokki, нужно дождаться их разрешения.</string>
+    <string name="i_can_see">Показать на карте</string>
+    <string name="can_see_me">Может меня видеть</string>
+    <string name="send">Отправить</string>
+    <string name="loading">Загрузка...</string>
+    <string name="your_lokki_id">Ваш идентификатор Lokki:</string>
+    <string name="your_friends">Друзья должны указать в Lokki этот адрес.</string>
+    <string name="fsecure_link"><a href="http://www.f-secure.com">www.f-secure.com</a></string>
+    <string name="privacy_policy_link"><a href="http://www.f-secure.com">Политика конфиденциальности</a></string>
+    <string name="privacy_policy_title">Политика конфиденциальности</string>
+    <string name="my_visibility">Меня видят мои контакты</string>
+    <string name="map_mode">Режим карты</string>
+
+    <string-array name="visibility_modes">
+        <item>Да</item>
+        <item>Нет</item>
+    </string-array>
+    <string-array name="visibility_modes_icons">
+        <item>@drawable/ic_visible</item>
+        <item>@drawable/ic_invisible</item>
+    </string-array>
+    <string-array name="map_modes">
+        <item>По умолчанию</item>
+        <item>Спутник</item>
+        <item>Гибрид</item>
+    </string-array>
+
+    <string-array name="about_links">
+        <item>Справка</item>
+        <item>Отправить отзыв</item>
+        <item>Политика конфиденциальности</item>
+        <item>Другие продукты F-Secure</item>
+        <item>Рассказать другу о Lokki</item>
+    </string-array>
+
+    <string-array name="about_links_url">
+        <item>http://bit.ly/KTIpGJ</item>
+        <item>Отправить отзыв</item>
+        <item>http://www.f-secure.com/en/web/home_global/privacy/privacy-summary</item>
+        <item>Другие продукты F-Secure</item>
+        <item>Рассказать другу о Lokki</item>
+    </string-array>
+
+    <string name="privacy_policy_text">заменитель</string>
+
+    <string name="license_link"><![CDATA[<a href=\"\">Условия лицензии</a>]]></string>
+    <string name="version_and_copyright">\n© F-Secure Corporation. \nВсе права защищены.</string>
+    <string name="title_activity_first_time">ПервыеДействия</string>
+    <string name="hello_world">Привет всем!</string>
+    <string name="i_agree">Я прочел(-ла) и согласен(-на)</string>
+    <string name="continue_with_terms">Продолжить</string>
+    <string name="welcome_title">Lokki приветствует вас</string>
+    <string name="welcome_text"><![CDATA[ <b>Встречайте Lokki 3.0!</b><br/>Теперь друзья и родственники видны на карте. Только вы выбираете, кто может видеть вас, при этом свое местоположение можно скрыть в любой момент.<br/><br/>F-Secure<br/>Защищаем невосполнимое]]></string>
+    <string name="terms_text">
+<![CDATA[ Ваша безопасность для нас стоит на первом месте. Поэтому вначале вам нужно принять следующие условия:<br/><br/><br/>
+                              1. Я прочел(-ла) условия обслуживания и принимаю их.<br/><br/>
+                              2. Я даю согласие на сбор и обработку моих личных данных.<br/><br/>
+                              3. Я даю согласие на обработку и отображение моего местоположения.<br/><br/>
+                              4. Если мне еще нет 15 лет, мои родители разрешают мне пользоваться Lokki согласно данным условиям.<br/><br/>
+                              5. Если мне еще нет 13 лет и я живу в США, я не могу пользоваться Lokki.<br/><br/><br/>
+                              <a href="http://www.f-secure.com/en/web/home_global/privacy/privacy-summary">Подробности приведены на нашем веб-сайте</a>]]>
+    </string>
+    <string name="terms_title">Условия использования</string>
+    <string name="security_signup">Перед регистрацией нужно проверить подлинность вашей учетной записи. Инструкции отправлены на адрес:</string>
+    <string name="title_activity_signup">Регистрация</string>
+    <string name="app_long_name">F-Secure Lokki</string>
+    <string name="signup_explanation">Введите свой адрес эл. почты — пользователи Lokki смогут найти вас по нему.</string>
+    <string name="type_your_email_address">Ваш email адрес</string>
+    <string name="signing_up">Идет регистрация...</string>
+    <string name="general_error">Произошла ошибка. Повторите попытку позже.</string>
+    <string name="create_place">Хотите создать здесь место?</string>
+    <string name="write_place_name">Введите название места</string>
+    <string name="delete_place">Хотите удалить это место?</string>
+    <string name="will_be_deleted_from_places">будет удалено из списка мест</string>
+    <string name="place_created">Место создано</string>
+    <string name="place_removed">Место удалено</string>
+    <string name="place_limit_reached">Нельзя создать новые места. Достигнут максимальный предел.</string>
+    <string name="dashboard_view">карта/места</string>
+    <string name="map">Карта</string>
+    <string name="places">Места</string>
+    <string name="you_are_visible">Теперь вас БУДУТ видеть</string>
+    <string name="you_are_invisible">Теперь вас НЕ будут видеть</string>
+    <string name="places_how_to_create">Чтобы создать новое место, перейдите на карту, на ней нажмите и удерживайте точку, где находится нужное место. После этого введите название и нажмите кнопку &quot;OK&quot;.</string>
+    <string name="search_contacts">Поиск контактов...</string>
+
+</resources>

@@ -1,0 +1,104 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:layout_gravity="center"
+    tools:context=".AboutActivity">
+
+    <com.makeramen.RoundedImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/avatar"
+        android:src="@drawable/default_avatar"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="10dp"
+        android:layout_centerHorizontal="true"
+        android:scaleType="centerCrop"
+        app:corner_radius="100dip"
+        app:border_width="0dip"
+        app:border_color="#215fcc"
+        app:round_background="true" />
+    <!--
+    <ImageView
+        android:id="@+id/avatar"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/default_avatar" />-->
+
+    <TextView
+        android:id="@+id/user_name"
+        android:textColor="@android:color/black"
+        android:layout_centerHorizontal="true"
+        android:text="Name Surname"
+        android:padding="10dip"
+        android:textSize="18sp"
+        android:layout_below="@id/avatar"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content" />
+
+    <TextView
+        android:id="@+id/lokki_id_text"
+        android:textColor="@android:color/black"
+        android:textSize="12sp"
+        android:layout_centerHorizontal="true"
+        android:text="Your Lokki ID is user@email.com"
+        android:padding="0dip"
+        android:layout_below="@id/user_name"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content" />
+
+    <TextView
+        android:id="@+id/your_friends"
+        android:textColor="@android:color/darker_gray"
+        android:layout_centerHorizontal="true"
+        android:text="@string/your_friends"
+        android:padding="0dip"
+        android:textSize="12sp"
+        android:textAlignment="center"
+        android:layout_below="@id/lokki_id_text"
+        android:layout_height="wrap_content"
+        android:layout_width="240dp" />
+
+    <TextView
+        android:id="@+id/visibility"
+        android:textColor="@android:color/black"
+        android:text="@string/my_visibility"
+        android:textStyle="italic"
+        android:padding="5dip"
+        android:textSize="18sp"
+        android:textAlignment="center"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/your_friends" />
+
+    <Spinner
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinner_visibility"
+        android:layout_below="@+id/visibility"
+        android:layout_alignParentLeft="true" />
+
+    <TextView
+        android:id="@+id/map_type"
+        android:textColor="@android:color/black"
+        android:textStyle="italic"
+        android:text="@string/map_mode"
+        android:padding="5dip"
+        android:textSize="18sp"
+        android:layout_marginTop="10dp"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_below="@+id/spinner_visibility" />
+
+    <Spinner
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinner_map"
+        android:layout_below="@+id/map_type"
+        android:layout_alignParentLeft="true" />
+
+</RelativeLayout>

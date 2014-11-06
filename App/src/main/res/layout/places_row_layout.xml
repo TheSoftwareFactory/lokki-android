@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="#fff"
+    android:padding="0dip" >
+
+    <ImageView
+            android:id="@+id/background"
+            android:src="@drawable/bg_gradient_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    <HorizontalScrollView
+        android:id="@+id/scrollView1"
+        android:padding="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <LinearLayout
+            android:id="@+id/avatar_row"
+            android:layout_width="wrap_content"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:scrollHorizontally="true"
+            android:layout_height="wrap_content" >
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <TextView
+        android:id="@+id/place_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/background"
+        android:text="Place Name"
+        android:textColor="#fff"
+        android:typeface="sans"
+        android:layout_marginLeft="5dp"
+        android:textSize="15sp"
+        android:ellipsize="end"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
+        android:textStyle="bold"/>
+
+</RelativeLayout>
