@@ -30,7 +30,7 @@ public class ServerAPI {
 
     private static final String TAG = "ServerAPI";
     //private static String ApiUrl = "http://ringo-test-environment.herokuapp.com/api/locmap/v1/";
-    private static String ApiUrl = "https://FILLME";
+    private static String ApiUrl = "FILLME";
 
     public static void signup(Context context, String signupCallback) {
 
