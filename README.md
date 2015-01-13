@@ -3,7 +3,7 @@ lokki-android
 
 Development
 -----------
-To develop this application, you will the [Android SDK](http://developer.android.com/sdk/index.html).
+To develop this application, you will need the [Android SDK](http://developer.android.com/sdk/index.html).
 
 
 Build instructions
