@@ -1,4 +1,4 @@
-lokki-android
+lokki-android [![Build Status](https://travis-ci.org/TheSoftwareFactory/lokki-android.svg)](https://travis-ci.org/TheSoftwareFactory/lokki-android)
 =======================
 
 Development
