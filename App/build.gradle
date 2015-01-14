@@ -6,16 +6,37 @@ android {
     lintOptions {
         abortOnError false
     }
+
     defaultConfig {
         minSdkVersion 10
         targetSdkVersion 21
         versionCode 325
         versionName "3.2.5"
     }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            def apk = output.outputFile;
+            def newName;
+
+            newName = apk.name.replace(project.name, "lokki");
+            newName = newName.replace("-" + variant.buildType.name, "")
+            newName = newName.replace(".apk", "-v" + defaultConfig.versionName + "-" + variant.buildType.name + ".apk");
+
+            if (output.zipAlign) {
+                output.outputFile = new File(apk.parentFile, newName.replace("-unaligned", ""));
+            } else {
+                output.outputFile = new File(apk.parentFile, newName);
+            }
+
+            logger.info('INFO: Set outputFile to ' + output.outputFile + " for [" + output.name + "]");
         }
     }
 }
