@@ -3,9 +3,16 @@ android:
   components:
     - platform-tools
     - tools
-
     - build-tools-21.1.0
-
     - android-21
-
     - extra-google-google_play_services
+
+deploy:
+  provider: releases
+  api_key:
+    secure: Si6dy+ETFBwsbbjMOd9WI8ho0TMDnL46/vhKxLc5Rlvh75UUZH/ThEht/eRhZBP4IgEyg1oeR/8NOL8Lg70aA/cnv0c1+3u050MrUgDIMbbVwgo/l1v7CXfHvRYmicwcn5l9+qhcVaS3Lp7rftfeEvUgXLwwPS0kRxHZuINIYw8=
+  file: App/build/outputs/apk/App-debug.apk
+  skip_cleanup: true
+  on:
+    all_branches: true
+    repo: TheSoftwareFactory/lokki-android
