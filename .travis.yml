@@ -14,7 +14,4 @@ deploy:
   file: App/build/outputs/apk/App-debug.apk
   skip_cleanup: true
   on:
-    tags: false
-    all_branches: true
     repo: TheSoftwareFactory/lokki-android
-    
