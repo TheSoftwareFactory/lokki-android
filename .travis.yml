@@ -1,4 +1,8 @@
 language: android
+
+# To use Travis Container-Based Infrastructure
+sudo: false
+
 android:
   components:
     - platform-tools
