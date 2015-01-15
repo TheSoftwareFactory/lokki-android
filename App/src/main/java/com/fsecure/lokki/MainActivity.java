@@ -293,9 +293,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         supportInvalidateOptionsMenu();
     }
 
-
     @Override
-    public boolean onKeyDown(int keycode, KeyEvent e) {
+    public boolean onKeyUp(int keycode, KeyEvent e) {
         switch(keycode) {
             case KeyEvent.KEYCODE_MENU:
                 mNavigationDrawerFragment.toggleDrawer();
