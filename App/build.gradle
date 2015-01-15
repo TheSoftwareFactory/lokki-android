@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'robolectric'
 
 android {
     compileSdkVersion 21
@@ -12,12 +13,19 @@ android {
         targetSdkVersion 21
         versionCode 325
         versionName "3.2.5"
+        testInstrumentationRunner "com.google.android.apps.common.testing.testrunner.GoogleInstrumentationTestRunner"
     }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+
+    sourceSets {
+        androidTest {
+            setRoot('src/test')
         }
     }
 
@@ -41,9 +49,48 @@ android {
     }
 }
 
+robolectric {
+    include '**/*Test.class'
+    exclude '**/espresso/**/*.class'
+}
+
 dependencies {
+
     compile 'com.android.support:appcompat-v7:21.0.+'
     compile 'com.google.android.gms:play-services:6.1.11'
     compile 'com.makeramen:roundedimageview:1.2.+'
     compile files('libs/android-query.0.26.7.jar')
+
+    // Espresso
+    androidTestCompile files('libs/espresso-1.1.jar', 'libs/testrunner-1.1.jar', 'libs/testrunner-runtime-1.1.jar')
+    androidTestCompile 'com.google.guava:guava:14.0.1'
+    androidTestCompile 'com.squareup.dagger:dagger:1.1.0'
+    androidTestCompile 'org.hamcrest:hamcrest-integration:1.1'
+    androidTestCompile 'org.hamcrest:hamcrest-core:1.1'
+    androidTestCompile 'org.hamcrest:hamcrest-library:1.1'
+
+    androidTestCompile('junit:junit:4.+') {
+        exclude module: 'hamcrest-core'
+    }
+
+    androidTestCompile files('libs/robolectric-3.0-20150113.000047-99-jar-with-dependencies.jar')
+
+//    androidTestCompile('org.robolectric:robolectric:3.0-SNAPSHOT') {
+//        exclude module: 'classworlds'
+//        exclude module: 'commons-logging'
+//        exclude module: 'httpclient'
+//        exclude module: 'maven-artifact'
+//        exclude module: 'maven-artifact-manager'
+//        exclude module: 'maven-error-diagnostics'
+//        exclude module: 'maven-model'
+//        exclude module: 'maven-project'
+//        exclude module: 'maven-settings'
+//        exclude module: 'plexus-container-default'
+//        exclude module: 'plexus-interpolation'
+//        exclude module: 'plexus-utils'
+//        exclude module: 'wagon-file'
+//        exclude module: 'wagon-http-lightweight'
+//        exclude module: 'wagon-provider-api'
+//    }
+
 }
