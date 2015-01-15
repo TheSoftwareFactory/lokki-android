@@ -294,8 +294,11 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     }
 
 
+
+
+    // TODO: implement back button logic in onBackPressed()
     @Override
-    public boolean onKeyDown(int keycode, KeyEvent e) {
+    public boolean onKeyUp(int keycode, KeyEvent e) {
         switch(keycode) {
             case KeyEvent.KEYCODE_MENU:
                 mNavigationDrawerFragment.toggleDrawer();
@@ -309,7 +312,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
                 mNavigationDrawerFragment.selectItem(0);
                 return true;
         }
-        return super.onKeyDown(keycode, e);
+        return super.onKeyUp(keycode, e);
     }
 
     @Override
