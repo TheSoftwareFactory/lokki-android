@@ -14,10 +14,10 @@
     <string name="visibility">Visibilità</string>
     <string name="feedback_title">Invia feedback</string>
     <string name="error_send_email_title">Impossibile inviare e-mail</string>
-    <string name="error_send_email_message">Non abbiamo trovato la tua app di posta elettronica.\nContattaci all\'indirizzo: lokki-feedback@f-secure.com</string>
+    <string name="error_send_email_message">Non abbiamo trovato la tua app di posta elettronica.\nContattaci all\'indirizzo: lokki-feedback@example.com</string>
     <string name="share">Parla ai tuoi amici di questa app</string>
-    <string name="share_subject">Raggiungimi su F-Secure Lokki!</string>
-    <string name="share_text">Ciao! Sto usando F-Secure Lokki, l\'app di condivisione della posizione privata  facile, sicura e gratuita. Per installarla, accedi a f-secure.com/lokki.</string>
+    <string name="share_subject">Raggiungimi su Lokki!</string>
+    <string name="share_text">Ciao! Sto usando Lokki, l\'app di condivisione della posizione privata  facile, sicura e gratuita. Per installarla, accedi a f-secure.com/lokki.</string>
     <string name="add_contact">Aggiungi contatti</string>
     <string name="allow_people">Autorizza persone</string>
     <string name="add_contact_dialog_message">Seleziona le persone che possono vedere dove ti trovi se glielo permetti. Scegli gli indirizzi e-mail che i tuoi contatti usano in Lokki.\nSe un utente o un indirizzo e-mail non è incluso nell\'elenco, come prima cosa aggiungilo con l\'app Contatti o l\'app Persone.</string>
@@ -67,7 +67,7 @@
     <string name="privacy_policy_text">segnaposto</string>
 
     <string name="license_link"><![CDATA[<a href=\"\">Termini di licenza</a>]]></string>
-    <string name="version_and_copyright">\nCopyright © F-Secure Corporation. \nTutti i diritti riservati.</string>
+    <string name="version_and_copyright"></string>
     <string name="title_activity_first_time">FirstTimeActivity</string>
     <string name="hello_world">Ciao a tutti!</string>
     <string name="i_agree">Ho letto e acconsento</string>
@@ -86,7 +86,7 @@
     <string name="terms_title">Condizioni per l\'utilizzo</string>
     <string name="security_signup">Prima di poterti registrare, dobbiamo autorizzare il tuo account. Segui le istruzioni che ti abbiamo inviato all\'indirizzo:</string>
     <string name="title_activity_signup">Registrazione</string>
-    <string name="app_long_name">F-Secure Lokki</string>
+    <string name="app_long_name">Lokki</string>
     <string name="signup_explanation">Inserisci il tuo indirizzo e-mail - gli altri utenti di Lokki ti troveranno con questo indirizzo.</string>
     <string name="type_your_email_address">Il tuo indirizzo email</string>
     <string name="signing_up">Registrazione in corso...</string>

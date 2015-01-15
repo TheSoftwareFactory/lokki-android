@@ -14,10 +14,10 @@
     <string name="visibility">Visibility</string>
     <string name="feedback_title">Send feedback</string>
     <string name="error_send_email_title">Cannot send email</string>
-    <string name="error_send_email_message">We could not find your email app.\nContact us at: lokki-feedback@f-secure.com</string>
+    <string name="error_send_email_message">We could not find your email app.\nContact us at: lokki-feedback@example.com</string>
     <string name="share">Tell your friends about this app</string>
-    <string name="share_subject">Join me on F-Secure Lokki!</string>
-    <string name="share_text">Hi! I\'m using F-Secure Lokki, the private location sharing app that\'s easy, secure, and free. Go to f-secure.com/lokki to install it.</string>
+    <string name="share_subject">Join me on Lokki!</string>
+    <string name="share_text">Hi! I\'m using Lokki, the private location sharing app that\'s easy, secure, and free. Go to f-secure.com/lokki to install it.</string>
     <string name="add_contact">Add contacts</string>
     <string name="allow_people">Allow people</string>
     <string name="add_contact_dialog_message">Select the people who can see where you are when you allow it. Choose the email addresses that your contacts use in Lokki. If you don\'t find a person or email in this list, please add him or her first via the People or Contacts app.</string>
@@ -67,7 +67,7 @@
     <string name="privacy_policy_text">placeholder</string>
 
     <string name="license_link"><![CDATA[<a href=\"\">License terms</a>]]></string>
-    <string name="version_and_copyright">\nCopyright © F-Secure Corporation. \nAll rights reserved.</string>
+    <string name="version_and_copyright"></string>
     <string name="title_activity_first_time">FirstTimeActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="i_agree">I have read and I agree</string>
@@ -86,7 +86,7 @@
     <string name="terms_title">Terms of use</string>
     <string name="security_signup">We need to authorize your account before you sign up. Follow the instructions that we have sent to:</string>
     <string name="title_activity_signup">Signup</string>
-    <string name="app_long_name">F-Secure Lokki</string>
+    <string name="app_long_name">Lokki</string>
     <string name="signup_explanation">Enter your email address - other Lokki users will find you with this address.</string>
     <string name="type_your_email_address">Your email address</string>
     <string name="signing_up">Signing up...</string>

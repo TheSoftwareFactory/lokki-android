@@ -1,7 +1,3 @@
-/*
-Copyright (c) 2014-2015 F-Secure
-See LICENSE for details
-*/
 package com.fsecure.lokki;
 
 import android.app.AlertDialog;
@@ -70,7 +66,7 @@ public class AboutFragment extends Fragment {
                     appVersion = Utils.getAppVersion(getActivity().getApplicationContext());
 
                 } catch(Exception ex) {}
-                Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", "lokki-feedback@f-secure.com", null));
+                Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", "lokki-feedback@example.com", null));
                 emailIntent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.feedback_title) + " [" + osType + "-" + appVersion + "]");
                 try {
                     startActivity(emailIntent);
@@ -93,6 +89,7 @@ public class AboutFragment extends Fragment {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
                 break;
 
+            // todo get rid of this (also from gui)...
             case 3: // Other products
                 try {
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://developer?id=F-Secure%20Corporation")));

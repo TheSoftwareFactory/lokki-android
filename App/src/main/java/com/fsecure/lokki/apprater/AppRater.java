@@ -1,7 +1,3 @@
-/*
-Copyright (c) 2014-2015 F-Secure
-See LICENSE for details
-*/
 package com.fsecure.lokki.apprater;
 
 import android.app.AlertDialog;
@@ -118,7 +114,7 @@ public class AppRater {
 
         } catch(Exception ex) {}
 
-        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", "lokki-feedback@f-secure.com", null));
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", "lokki-feedback@example.com", null));
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, AppRater.translate("feedback_title") + " [" + osType + "-" + appVersion + "]");
 
         try {

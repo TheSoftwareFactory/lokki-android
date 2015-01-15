@@ -14,10 +14,10 @@
     <string name="visibility">可見性</string>
     <string name="feedback_title">傳送反饋</string>
     <string name="error_send_email_title">無法傳送電郵</string>
-    <string name="error_send_email_message">我們找不到您的電郵應用程式。\n請聯絡我們：lokki-feedback@f-secure.com</string>
+    <string name="error_send_email_message">我們找不到您的電郵應用程式。\n請聯絡我們：lokki-feedback@example.com</string>
     <string name="share">向您的朋友介紹這款應用程式</string>
-    <string name="share_subject">跟我一起用 F-Secure Lokki！</string>
-    <string name="share_text">嗨！我正在使用 F-Secure Lokki，這是一款便捷、安全、免費的私人位置共用應用程式。前往 f-secure.com/lokki 安裝。</string>
+    <string name="share_subject">跟我一起用 Lokki！</string>
+    <string name="share_text">嗨！我正在使用 Lokki，這是一款便捷、安全、免費的私人位置共用應用程式。前往 f-secure.com/lokki 安裝。</string>
     <string name="add_contact">新增聯絡人</string>
     <string name="allow_people">允許人員</string>
     <string name="add_contact_dialog_message">Select the people who can see where you are when you allow it. Choose the email addresses that your contacts use in Lokki. If you don\&apos;t find a person or email in this list, please add him or her first via the People or Contacts app.</string>
@@ -67,7 +67,7 @@
     <string name="privacy_policy_text">預留位置</string>
 
     <string name="license_link"><![CDATA[<a href=\"\">授權條款</a>]]></string>
-    <string name="version_and_copyright">\nCopyright © F-Secure Corporation. \nAll rights reserved.</string>
+    <string name="version_and_copyright"></string>
     <string name="title_activity_first_time">FirstTimeActivity</string>
     <string name="hello_world">你好世界！</string>
     <string name="i_agree">我已閱讀並同意</string>
@@ -86,7 +86,7 @@
     <string name="terms_title">使用條款</string>
     <string name="security_signup">註冊前，我們需要授權您的賬戶。請依照我們傳送至以下地址的說明操作。</string>
     <string name="title_activity_signup">註冊</string>
-    <string name="app_long_name">F-Secure Lokki</string>
+    <string name="app_long_name">Lokki</string>
     <string name="signup_explanation">輸入您的電郵地址 - 其他 Lokki 用戶將以此地址找到您。</string>
     <string name="type_your_email_address">您的電郵地址</string>
     <string name="signing_up">正在註冊...</string>

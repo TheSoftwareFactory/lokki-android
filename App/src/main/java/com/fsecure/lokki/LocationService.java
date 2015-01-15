@@ -1,7 +1,3 @@
-/*
-Copyright (c) 2014-2015 F-Secure
-See LICENSE for details
-*/
 package com.fsecure.lokki;
 
 import android.app.AlarmManager;
@@ -167,7 +163,7 @@ public class LocationService extends Service implements GooglePlayServicesClient
 
         notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationBuilder = new NotificationCompat.Builder(this);
-        notificationBuilder.setContentTitle("F-Secure Lokki");
+        notificationBuilder.setContentTitle("Lokki");
         notificationBuilder.setContentText("Running...");
         notificationBuilder.setSmallIcon(R.drawable.ic_launcher);
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
@@ -288,7 +284,7 @@ public class LocationService extends Service implements GooglePlayServicesClient
         String notificationText = String.format("Status: Active. Accuracy: %s", accuracy);
 
         notificationBuilder = new NotificationCompat.Builder(this);
-        notificationBuilder.setContentTitle("F-Secure Lokki");
+        notificationBuilder.setContentTitle("Lokki");
         notificationBuilder.setSmallIcon(R.drawable.ic_launcher);
         notificationBuilder.setWhen(lastLocation.getTime());
         notificationBuilder.setContentText(notificationText);
