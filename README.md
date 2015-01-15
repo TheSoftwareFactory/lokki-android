@@ -19,16 +19,16 @@ $ ./gradlew build
 
 ### Debug build
 
-To install the debug build on an emulator run the following command in the project root:
+To install the debug build on an emulator run the following command in the project root ( version number is determined by `versionName` in [App/build.gradle](App/build.gradle)):
 
 ```
-$ adb install -r App/build/outputs/apk/lokki-v3.2.5-debug.apk
+$ adb install -r App/build/outputs/apk/lokki-v[VERSION_NUMBER]-debug.apk
 ```
 
 To install it on a device, connect a device via USB (make sure USB debugging is enabled on the device) and run the command:
 
 ```
-$ adb install -rd App/build/outputs/apk/lokki-v3.2.5-debug.apk
+$ adb install -rd App/build/outputs/apk/lokki-v[VERSION_NUMBER]-debug.apk
 ```
 
 
