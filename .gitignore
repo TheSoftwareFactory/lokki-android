@@ -6,3 +6,4 @@ App/build
 *.iml
 .gradle
 build
+*.pyc

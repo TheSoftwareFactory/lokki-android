@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!--TODO: Set arrays to separate values file and reference strings from the strings.xml file -->
     <string-array name="menuOptions">
         <item>Lokki</item>
         <item>Contacts</item>
