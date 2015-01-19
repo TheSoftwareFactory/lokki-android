@@ -17,7 +17,7 @@
     <string name="error_send_email_message">Vi kunde hitta din e-postapp.\nKontakta oss på lokki-feedback@example.com</string>
     <string name="share">Tipsa dina vänner om den här appen</string>
     <string name="share_subject">Gör mig sällskap i Lokki!</string>
-    <string name="share_text">Hej! Jag använder Lokki, den privata platsdelningsappen som är enkel att använda, säker och kostnadsfri. Gå till f-secure.com/lokki för att installera den.</string>
+    <string name="share_text">Hej! Jag använder Lokki, den privata platsdelningsappen som är enkel att använda, säker och kostnadsfri. Gå till www.example.com för att installera den.</string>
     <string name="add_contact">Lägg till kontakter</string>
     <string name="allow_people">Tillåt personer</string>
     <string name="add_contact_dialog_message">Välj de personer som ska kunna se dig när du tillåter det. Välj e-postadresserna som dina kontakter använder med Lokki.\nOm du saknar någon i listan bör du kontrollera att du har lagt till personen i Kontakter.</string>
@@ -28,8 +28,7 @@
     <string name="loading">Laddar …</string>
     <string name="your_lokki_id">Ditt Lokki-ID är:</string>
     <string name="your_friends">Säg till dina vänner att använda den här e-postadressen med Lokki.</string>
-    <string name="fsecure_link"><a href="http://www.f-secure.com">www.f-secure.com</a></string>
-    <string name="privacy_policy_link"><a href="http://www.f-secure.com">Sekretesspolicy</a></string>
+    <string name="privacy_policy_link"><a href="http://www.example.com">Sekretesspolicy</a></string>
     <string name="privacy_policy_title">Sekretesspolicy</string>
     <string name="my_visibility">Mina kontakter kan se mig</string>
     <string name="map_mode">Kartläge</string>
@@ -51,16 +50,12 @@
     <string-array name="about_links">
         <item>Hjälp</item>
         <item>Skicka feedback</item>
-        <item>Sekretesspolicy</item>
-        <item>Annat från F-Secure</item>
         <item>Tipsa en vän om Lokki</item>
     </string-array>
 
     <string-array name="about_links_url">
         <item>http://bit.ly/KTIpGJ</item>
         <item>Skicka feedback</item>
-        <item>http://www.f-secure.com/sv/web/home_se/privacy-summary</item>
-        <item>Annat från F-Secure</item>
         <item>Tipsa en vän om Lokki</item>
     </string-array>
 
@@ -73,15 +68,14 @@
     <string name="i_agree">Jag har läst och godkänner</string>
     <string name="continue_with_terms">Fortsätt</string>
     <string name="welcome_title">Välkommen till Lokki</string>
-    <string name="welcome_text"><![CDATA[ <b>Välkommen till Lokki 3.0!</b><br/>Nu kan du se var dina vänner och familjemedlemmar är på en karta. Du väljer vilka som kan se var du är, och du kan dölja din position när du vill.<br/><br/>F-Secure<br/>Skyddar det oersättliga ]]></string>
+    <string name="welcome_text"><![CDATA[ <b>Välkommen till Lokki 3.0!</b><br/>Nu kan du se var dina vänner och familjemedlemmar är på en karta. Du väljer vilka som kan se var du är, och du kan dölja din position när du vill. ]]></string>
     <string name="terms_text">
 <![CDATA[ Din integritet är oerhört viktig för oss. Innan du börjar måste du samtycka till följande villkor:<br/><br/><br/>
                               1. Jag har läst och förstått användarvillkoren och godkänner dem.<br/><br/>
                               2. Jag samtycker till insamlingen och bearbetningen av personliga uppgifter.<br/><br/>
                               3. Jag samtycker till att tjänsten kan bearbeta och visa min position.<br/><br/>
                               4. Om jag är under 15 år har jag mina föräldrars godkännande att använda Lokki enligt dessa villkor.<br/><br/>
-                              5. Om jag är under 13 och bor i USA får jag inte använda Lokki.<br/><br/><br/>
-                              <a href="http://www.f-secure.com/sv/web/home_se/privacy-summary">Läs mer på vår webbplats</a>]]>
+                              5. Om jag är under 13 och bor i USA får jag inte använda Lokki.]]>
     </string>
     <string name="terms_title">Användarvillkor</string>
     <string name="security_signup">Vi måste godkänna ditt konto innan du kan registrera dig. Följ instruktionerna som vi har skickat till:</string>

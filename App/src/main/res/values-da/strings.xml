@@ -17,7 +17,7 @@
     <string name="error_send_email_message">Vi kunne ikke finde dit e-mailprogram.\nKontakt os på: lokki-feedback@example.com</string>
     <string name="share">Fortæl dine venner om denne app</string>
     <string name="share_subject">Mød mig på Lokki!</string>
-    <string name="share_text">Hej! Jeg bruger Lokki, den private app til deling af lokatitet, som er nem, sikker og gratis. Gå til f-secure.com/lokki for at installere den.</string>
+    <string name="share_text">Hej! Jeg bruger Lokki, den private app til deling af lokatitet, som er nem, sikker og gratis. Gå til www.example.com for at installere den.</string>
     <string name="add_contact">Tilføj kontakter</string>
     <string name="allow_people">Tillad personer</string>
     <string name="add_contact_dialog_message">Vælg de personer, som kan se, hvor du er, når du tillader det. Vælg de e-mailadresser, som dine kontakter bruger i Lokki. Hvis du ikke kan finde en person eller e-mail på denne liste, skal du først tilføje ham eller hende via appen Personer eller Kontakter.</string>
@@ -28,8 +28,7 @@
     <string name="loading">Indlæser...</string>
     <string name="your_lokki_id">Dit Lokki-id er:</string>
     <string name="your_friends">Fortæl dine venner, at de skal bruge denne e-mail sammen med Lokki.</string>
-    <string name="fsecure_link"><a href="http://www.f-secure.com">www.f-secure.com</a></string>
-    <string name="privacy_policy_link"><a href="http://www.f-secure.com">Erklæring om beskyttelse af personlige oplysninger</a></string>
+    <string name="privacy_policy_link"><a href="http://www.example.com">Erklæring om beskyttelse af personlige oplysninger</a></string>
     <string name="privacy_policy_title">Erklæring om beskyttelse af personlige oplysninger</string>
     <string name="my_visibility">Mine kontakter kan se mig</string>
     <string name="map_mode">Korttilstand</string>
@@ -51,16 +50,12 @@
     <string-array name="about_links">
         <item>Hjælp</item>
         <item>Send feedback</item>
-        <item>Erklæring om beskyttelse af personlige oplysninger</item>
-        <item>Andre F-Secure-produkter</item>
         <item>Fortæl en ven om Lokki</item>
     </string-array>
 
     <string-array name="about_links_url">
         <item>http://bit.ly/KTIpGJ</item>
         <item>Send feedback</item>
-        <item>http://www.f-secure.com/en/web/home_global/privacy/privacy-summary</item>
-        <item>Andre F-Secure-produkter</item>
         <item>Fortæl en ven om Lokki</item>
     </string-array>
 
@@ -73,15 +68,14 @@
     <string name="i_agree">Jeg har læst, og jeg accepterer</string>
     <string name="continue_with_terms">Fortsæt</string>
     <string name="welcome_title">Velkommen til Lokki</string>
-    <string name="welcome_text"><![CDATA[ <b>Velkommen til Lokki 3.0!</b><br/>Nu kan du se, hvor dine venner og familiemedlemmer er på et kort. Du vælger, hvem der kan se, hvor du er, og du kan altid skjule din placering.<br/><br/>F-Secure<br/>Beskytter det uerstattelige ]]></string>
+    <string name="welcome_text"><![CDATA[ <b>Velkommen til Lokki 3.0!</b><br/>Nu kan du se, hvor dine venner og familiemedlemmer er på et kort. Du vælger, hvem der kan se, hvor du er, og du kan altid skjule din placering. ]]></string>
     <string name="terms_text">
 <![CDATA[ Dine personlige oplysninger er af største vigtighed for os. Før du begynder, skal du acceptere følgende vilkår:<br/><br/><br/>
                               1. Jeg har læst vilkårene for tjenesten og accepterer dem.<br/><br/>
                               2. Jeg accepterer, at der indsamles og behandles personlige data.<br/><br/>
                               3. Jeg accepterer, at tjenesten kan behandle og vise min placering.<br/><br/>
                               4. Hvis jeg er under 15, har jeg mine forældres tilladelse til at bruge Lokki i henhold til disse vilkår.<br/><br/>
-                              5. Hvis jeg er under 13 og bor i USA, må jeg ikke bruge Lokki.<br/><br/><br/>
-                              <a href="http://www.f-secure.com/en/web/home_global/privacy/privacy-summary">Læs mere på vores websted</a>]]>
+                              5. Hvis jeg er under 13 og bor i USA, må jeg ikke bruge Lokki.<br/><br/><br/>]]>
     </string>
     <string name="terms_title">Vilkår for brug</string>
     <string name="security_signup">Vi har brug for at godkende din konto, inden du tilmelder dig. Følg anvisningerne, som vi har sendt til:</string>

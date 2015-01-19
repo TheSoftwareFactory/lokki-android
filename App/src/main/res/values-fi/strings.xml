@@ -17,7 +17,7 @@
     <string name="error_send_email_message">Sähköpostisovellusta ei löytynyt.\nOta yhteyttä kirjoittamalla osoitteeseen lokki-feedback@example.com.com</string>
     <string name="share">Kerro ystävillesi tästä sovelluksesta</string>
     <string name="share_subject">Liity seuraani Lokkiin!</string>
-    <string name="share_text">Hei! Käytän Lokkia. Sen avulla voin kertoa yksityisesti, helposti, turvallisesti ja ilmaiseksi, missä olen menossa. Voit asentaa sovelluksen osoitteesta f-secure.com/lokki.</string>
+    <string name="share_text">Hei! Käytän Lokkia. Sen avulla voin kertoa yksityisesti, helposti, turvallisesti ja ilmaiseksi, missä olen menossa. Voit asentaa sovelluksen osoitteesta www.example.com.</string>
     <string name="add_contact">Lisää henkilö</string>
     <string name="allow_people">Salli henkilöitä</string>
     <string name="add_contact_dialog_message">Valitse henkilöt, joiden haluat näkevän sijaintisi silloin, kun haluat paljastaa sen. Valitse sähköpostiosoitteet, joita nämä henkilöt käyttävät Lokissa.\nJos joku puuttuu tästä listasta, tarkista, että hänen tietonsa ovat yhteystiedoissasi.</string>
@@ -28,8 +28,7 @@
     <string name="loading">Ladataan...</string>
     <string name="your_lokki_id">Lokki-tunnuksesi:</string>
     <string name="your_friends">Pyydä ystäviäsi käyttämään tätä sähköpostiosoitetta Lokissa.</string>
-    <string name="fsecure_link"><a href="http://www.f-secure.com">www.f-secure.com</a></string>
-    <string name="privacy_policy_link"><a href="http://www.f-secure.com">Tietosuojakäytäntö</a></string>
+    <string name="privacy_policy_link"><a href="http://www.example.com.com">Tietosuojakäytäntö</a></string>
     <string name="privacy_policy_title">Tietosuojakäytäntö</string>
     <string name="my_visibility">Näkyykö sijaintini muille</string>
     <string name="map_mode">Karttanäkymä</string>
@@ -51,16 +50,12 @@
     <string-array name="about_links">
         <item>Ohjeet</item>
         <item>Lähetä palautetta</item>
-        <item>Tietosuojakäytäntö</item>
-        <item>Muita F-Securen tuotteita</item>
         <item>Kerro ystävillesi Lokista</item>
     </string-array>
 
     <string-array name="about_links_url">
         <item>http://bit.ly/KTIpGJ</item>
         <item>Lähetä palautetta</item>
-        <item>http://www.f-secure.com/fi/web/home_fi/privacy-summary</item>
-        <item>Muita F-Securen tuotteita</item>
         <item>Kerro ystävillesi Lokista</item>
     </string-array>
 
@@ -73,15 +68,14 @@
     <string name="i_agree">Olen lukenut ja hyväksyn</string>
     <string name="continue_with_terms">Jatka</string>
     <string name="welcome_title">Tervetuloa Lokkiin</string>
-    <string name="welcome_text"><![CDATA[ <b>Tervetuloa Lokki 3.0 -sovellukseen!</b><br/>Nyt näet kartalta, missä ystäväsi ja perheenjäsenesi ovat menossa. Voit valita, ketkä näkevät sijaintisi, ja voit piilottaa sijaintisi aina, kun haluat.<br/><br/>F-Secure<br/>Suojaa korvaamattoman]]></string>
+    <string name="welcome_text"><![CDATA[ <b>Tervetuloa Lokki 3.0 -sovellukseen!</b><br/>Nyt näet kartalta, missä ystäväsi ja perheenjäsenesi ovat menossa. Voit valita, ketkä näkevät sijaintisi, ja voit piilottaa sijaintisi aina, kun haluat. ]]></string>
     <string name="terms_text">
 <![CDATA[Yksityisyytesi on meille tärkeää. Ennen kuin aloitat, sinun pitää hyväksyä seuraavat käyttöehdot:<br/><br/><br/>
                               1. Olen lukenut palveluehdot ja hyväksyn ne.<br/><br/>
                               2. Annan luvan henkilötietojeni keräämiseen ja käsittelemiseen.<br/><br/>
                               3. Annan palvelulle luvan käsitellä ja näyttää tietoja sijainnistani.<br/><br/>
                               4. Jos olen alle 15-vuotias, olen hankkinut vanhempieni luvan käyttää Lokkia näiden ehtojen mukaisesti.<br/><br/>
-                              5. Jos olen alle 13-vuotias ja asun Yhdysvalloissa, en saa käyttää Lokkia.<br/><br/><br/>
-                              <a href="http://www.f-secure.com/fi/web/home_fi/privacy-summary">Lue lisää sivustoltamme</a>]]>
+                              5. Jos olen alle 13-vuotias ja asun Yhdysvalloissa, en saa käyttää Lokkia.]]>
     </string>
     <string name="terms_title">Käyttöehdot</string>
     <string name="security_signup">Meidän on valtuutettava tilisi, ennen kuin voit rekisteröityä. Lue toimintaohjeet, jotka olemme lähettäneet osoitteeseen</string>

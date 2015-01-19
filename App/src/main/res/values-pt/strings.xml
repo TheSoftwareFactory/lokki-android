@@ -17,7 +17,7 @@
     <string name="error_send_email_message">Não foi possível verificar a tua aplicação de correio electrónico.\nContacta-nos através de: lokki-feedback@example.com</string>
     <string name="share">Diz aos teus amigos sobre esta aplicação</string>
     <string name="share_subject">Junta-te a mim em Lokki!</string>
-    <string name="share_text">Olá! Estou a utilizar Lokki, a aplicação de partilha de localização privada fácil, segura e gratuita. Vai até f-secure.com/lokki para instalares a aplicação.</string>
+    <string name="share_text">Olá! Estou a utilizar Lokki, a aplicação de partilha de localização privada fácil, segura e gratuita. Vai até www.example.com para instalares a aplicação.</string>
     <string name="add_contact">Adicionar contactos</string>
     <string name="allow_people">Permitir pessoas</string>
     <string name="add_contact_dialog_message">Selecciona as pessoas que podem ver onde estás quando assim o permitires. Selecciona os endereços de correio electrónico que os teus contactos utilizam com a aplicação Lokki. Se não encontrares uma pessoa ou um correio electrónico, adiciona essa pessoa primeiro através da aplicação Pessoas ou Contactos.</string>
@@ -28,8 +28,7 @@
     <string name="loading">A carregar...</string>
     <string name="your_lokki_id">A tua ID no Lokki é:</string>
     <string name="your_friends">Diz aos teus amigos para utilizarem este endereço de correio electrónico com a aplicação Lokki.</string>
-    <string name="fsecure_link"><a href="http://www.f-secure.com">www.f-secure.com</a></string>
-    <string name="privacy_policy_link"><a href="http://www.f-secure.com">Política de privacidade</a></string>
+    <string name="privacy_policy_link"><a href="http://www.example.com">Política de privacidade</a></string>
     <string name="privacy_policy_title">Política de privacidade</string>
     <string name="my_visibility">Os meus contactos podem ver-me</string>
     <string name="map_mode">Modo Mapa</string>
@@ -51,16 +50,12 @@
     <string-array name="about_links">
         <item>Ajuda</item>
         <item>Envia-nos feedback</item>
-        <item>Política de privacidade</item>
-        <item>Outros produtos da F-Secure</item>
         <item>Diz a um amigo sobre a aplicação Lokki</item>
     </string-array>
 
     <string-array name="about_links_url">
         <item>http://bit.ly/KTIpGJ</item>
         <item>Envia-nos feedback</item>
-        <item>http://www.f-secure.com/en/web/home_global/privacy/privacy-summary</item>
-        <item>Outros produtos da F-Secure</item>
         <item>Diz a um amigo sobre a aplicação Lokki</item>
     </string-array>
 
@@ -73,15 +68,14 @@
     <string name="i_agree">Li e aceito</string>
     <string name="continue_with_terms">Continuar</string>
     <string name="welcome_title">Bem-vindo a Lokki</string>
-    <string name="welcome_text"><![CDATA[ <b>Bem-vindo a Lokki 3.0!</b><br/>Agora podes ver onde os teus amigos e familiares estão num mapa. Escolhes quem pode ver onde estás e podes ocultar a tua localização sempre que quiseres.<br/><br/>F-Secure<br/>A proteger o insubstituível ]]></string>
+    <string name="welcome_text"><![CDATA[ <b>Bem-vindo a Lokki 3.0!</b><br/>Agora podes ver onde os teus amigos e familiares estão num mapa. Escolhes quem pode ver onde estás e podes ocultar a tua localização sempre que quiseres. ]]></string>
     <string name="terms_text">
 <![CDATA[ A tua privacidade é o mais importante para nós. Antes de começares, deves aceitar os seguintes termos:<br/><br/><br/>
                               1. Li e aceito os termos do serviço.<br/><br/>
                               2. Autorizo a recolha e processamento de dados pessoais.<br/><br/>
                               3. Autorizo que o serviço possa processar e apresentar a minha localização.<br/><br/>
                               4. Se tiver menos de 15 anos, os meus pais deram-me autorização para utilizar a aplicação Lokki de acordo com estes termos.<br/><br/>
-                              5. Se tiver menos de 13 anos e viver nos Estados Unidos, não posso utilizar a aplicação Lokki.<br/><br/><br/>
-                              <a href="http://www.f-secure.com/en/web/home_global/privacy/privacy-summary">Lê mais na nossa página da Internet</a>]]>
+                              5. Se tiver menos de 13 anos e viver nos Estados Unidos, não posso utilizar a aplicação Lokki.]]>
     </string>
     <string name="terms_title">Termos de utilização</string>
     <string name="security_signup">Temos que autorizar a tua conta antes de iniciares sessão. Segue as instruções que enviamos para:</string>

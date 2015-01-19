@@ -28,8 +28,7 @@
     <string name="loading">Chargement...</string>
     <string name="your_lokki_id">Votre ID Lokki est :</string>
     <string name="your_friends">Dites à tes amis d\'utiliser ce courriel avec Lokki.</string>
-    <string name="fsecure_link"><a href="http://www.f-secure.com">www.f-secure.com</a></string>
-    <string name="privacy_policy_link"><a href="http://www.f-secure.com">Politique de confidentialité</a></string>
+    <string name="privacy_policy_link"><a href="http://www.example.com">Politique de confidentialité</a></string>
     <string name="privacy_policy_title">Politique de confidentialité</string>
     <string name="my_visibility">Mes contacts peuvent me voir</string>
     <string name="map_mode">Mode carte</string>
@@ -51,16 +50,12 @@
     <string-array name="about_links">
         <item>Aide</item>
         <item>Envoyer des commentaires</item>
-        <item>Politique de confidentialité</item>
-        <item>Other F-Secure products</item>
         <item>Tell a friend about Lokki</item>
     </string-array>
 
     <string-array name="about_links_url">
         <item>http://bit.ly/KTIpGJ</item>
         <item>Envoyer des commentaires</item>
-        <item>http://www.f-secure.com/en/web/home_global/privacy/privacy-summary</item>
-        <item>Other F-Secure products</item>
         <item>Tell a friend about Lokki</item>
     </string-array>
 
@@ -73,15 +68,14 @@
     <string name="i_agree">J\'ai lu et accepté</string>
     <string name="continue_with_terms">Continuer</string>
     <string name="welcome_title">Bienvenue chez Lokki</string>
-    <string name="welcome_text"><![CDATA[ <b>Welcome to Lokki 3.0!</b><br/>Now you can see where your friends and family members are on a map. You choose who can see where you are, and you can hide your location whenever you want.<br/><br/>F-Secure<br/>Protecting the irreplaceable ]]></string>
+    <string name="welcome_text"><![CDATA[ <b>Welcome to Lokki 3.0!</b><br/>Now you can see where your friends and family members are on a map. You choose who can see where you are, and you can hide your location whenever you want. ]]></string>
     <string name="terms_text">
 <![CDATA[ Your privacy is of the utmost importance to us. Before you get started, you need to agree to the following terms:<br/><br/><br/>
                               1. I have read the terms of service and accept them.<br/><br/>
                               2. I consent to the collection and processing of personal data.<br/><br/>
                               3. I consent that the service can process and display my location.<br/><br/>
                               4. If I am under 15, I have my parents’ permission to use Lokki according to these terms.<br/><br/>
-                              5. If I am under 13 and living in the United States, I may not use Lokki.<br/><br/><br/>
-                              <a href=\"http://www.f-secure.com/en/web/home_global/privacy/privacy-summary\">Read more on our web site</a>]]>
+                              5. If I am under 13 and living in the United States, I may not use Lokki.]]>
     </string>
     <string name="terms_title">Conditions d\'utilisation</string>
     <string name="security_signup">Nous devons autoriser votre compte avant de vous inscrire. Suivez les instructions que nous avons envoyées à :</string>

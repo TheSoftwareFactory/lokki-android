@@ -85,21 +85,7 @@ public class AboutFragment extends Fragment {
                 }
                 break;
 
-            case 2: //Privacy policy
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-                break;
-
-            // todo get rid of this (also from gui)...
-            case 3: // Other products
-                try {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://developer?id=F-Secure%20Corporation")));
-
-                } catch (ActivityNotFoundException anfe) {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/developer?id=F-Secure%20Corporation")));
-                }
-                break;
-
-            case 4: // Tell a friend about Lokki
+            case 2: // Tell a friend about Lokki
                 try {
                     Intent intent = new Intent(Intent.ACTION_SEND);
                     intent.setType("text/plain");
@@ -109,8 +95,6 @@ public class AboutFragment extends Fragment {
 
                 } catch (ActivityNotFoundException anfe) { }
                 break;
-
         }
     }
-
 }
