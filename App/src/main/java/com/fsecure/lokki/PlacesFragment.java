@@ -110,7 +110,12 @@ public class PlacesFragment extends Fragment {
                 AQuery aq = new AQuery(getActivity(), convertView);
 
                 final String placeName = getItem(position);
-                aq.id(R.id.place_name).text(placeName).longClicked(new View.OnLongClickListener() {
+                aq.id(R.id.place_name).text(placeName);
+
+                String bgImage = "place_0" + (position + 1);
+                //Log.e(TAG, "bgImage: " + bgImage);
+                int resourceId = getResources().getIdentifier(bgImage, "drawable", "com.fsecure.lokki");
+                aq.id(R.id.background).background(resourceId).longClicked(new View.OnLongClickListener(){
                     @Override
                     public boolean onLongClick(View v) {
                         Log.e(TAG, "Place long clicked: " + placeName);
@@ -118,11 +123,6 @@ public class PlacesFragment extends Fragment {
                         return false;
                     }
                 });
-
-                String bgImage = "place_0" + (position + 1);
-                //Log.e(TAG, "bgImage: " + bgImage);
-                int resourceId = getResources().getIdentifier(bgImage, "drawable", "com.fsecure.lokki");
-                aq.id(R.id.background).background(resourceId);
                 //Log.e(TAG, "Resource id: " + resourceId);
 
                 Log.e(TAG, "Plane name: " + placeName);
