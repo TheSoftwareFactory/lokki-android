@@ -6,3 +6,6 @@ App/build
 *.iml
 .gradle
 build
+*.pyc
+*.py~
+venv*
