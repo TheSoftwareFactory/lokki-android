@@ -2,8 +2,8 @@ import sys
 import unittest
 
 from subprocess import Popen, PIPE, STDOUT
-from state_machine_crawler import State, Transition, StateMachineCrawler
 from uiautomator import device as d
+from state_machine_crawler import State, Transition, StateMachineCrawler
 
 
 class CommandExecutionError(Exception):
@@ -21,9 +21,8 @@ def call(*command):
         if nextline == '' and process.poll() is not None:
             break
         sys.stdout.write(nextline)
-
-    outputs.append(nextline)
-    sys.stdout.flush()
+        outputs.append(nextline)
+        sys.stdout.flush()
 
     output = "\n".join(outputs)
     exitCode = process.returncode
@@ -49,12 +48,10 @@ class InitialTransition(Transition):
         call(cmd)
 
 
-class LokkiMainActivityState(State):
+class LokkiLaunchedState(State):
 
     def verify(self):
-        abc = d(text='Lokki', packageName='com.fsecure.lokki').wait.exists(timeout=10000)
-        print "LOLOLOLOLOL: " + str(abc)
-        return abc
+        return d(packageName='com.fsecure.lokki').wait.exists(timeout=10000)
 
     class LaunchLokkiTransition(Transition):
         source_state = InstalledState
@@ -69,10 +66,10 @@ class BaseTest(unittest.TestCase):
     def setUp(self):
         self.cr = StateMachineCrawler(d, InitialTransition)
 
-    def test_lokki_install(self):
+    def test_lokki_is_installed(self):
         self.cr.move(InstalledState)
         self.assertIs(self.cr.state, InstalledState)
 
     def test_lokki_is_launched(self):
-        self.cr.move(LokkiMainActivityState)
-        self.assertIs(self.cr.state, LokkiMainActivityState)
+        self.cr.move(LokkiLaunchedState)
+        self.assertIs(self.cr.state, LokkiLaunchedState)

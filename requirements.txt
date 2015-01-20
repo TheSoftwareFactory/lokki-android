@@ -1,0 +1,4 @@
+mock
+nose
+uiautomator
+-e git+https://github.com/gurunars/state_machine_crawler.git#egg=state-machine-crawler
