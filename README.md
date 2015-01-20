@@ -3,7 +3,61 @@ lokki-android [![Build Status](https://travis-ci.org/TheSoftwareFactory/lokki-an
 
 Development
 -----------
-To develop this application, you will need the [Android SDK](http://developer.android.com/sdk/index.html).
+To develop this application you will need the [Android SDK](http://developer.android.com/sdk/index.html).
+
+### Build instructions
+
+First replace `ApiUrl` in `ServerAPI.java` with a valid URL leading to the server-side component.
+Then run the following command in the project root to build the project:
+
+```
+$ ./gradlew build
+```
+
+To install the debug build on an emulator run the following command in the project root (version number is determined by `versionName` in [App/build.gradle](App/build.gradle)):
+
+```
+$ adb install -r App/build/outputs/apk/lokki-v[versionName]-debug.apk
+```
+
+To install it on a device, connect a device via USB (make sure USB debugging is enabled on the device) and run the command:
+
+```
+$ adb install -rd App/build/outputs/apk/lokki-v[versionName]-debug.apk
+```
+
+For further information see the [Android documentation](http://developer.android.com/tools/building/building-cmdline.html).
+
+### Tests
+
+The functional tests of the application are written in Python using [state-machine-crawler](https://github.com/gurunars/state_machine_crawler). To set up the test enviroment you need to have [virtualenv](https://virtualenv.pypa.io/) installed.
+
+1. Create and activate a virtual enviroment for the test suite using Python version 2.7. Run the following commands in the project root:
+
+    ```
+    $ virtualenv venv
+    $ source venv/bin/activate
+    ```
+
+2. Install the required modules for the tests in the virtual enviroment:
+
+    ```
+    (venv)$ pip install -r requirements.txt
+    ```
+
+3. Start your Android emulator or connect an Android device in USB debugging mode.
+
+4. Build the application .apk file:
+
+    ```
+    (venv)$ ./gradlew clean build
+    ```
+
+5. Run all the functional tests with the command (make sure the emulator/device screen is **not** locked):
+
+    ```
+    (venv)$ nosetests -v .
+    ```
 
 ### Contributing
 
@@ -38,31 +92,7 @@ For design follow the [Material design](http://www.google.com/design/spec/materi
 
 See the [Lokki Wiki](https://github.com/TheSoftwareFactory/lokki/wiki) for more information on development.
 
-Build instructions
-------------------
 
-First, replace ApiUrl in ServerAPI.java with a valid URL leading to the server-side component.
-Then run the following command in the project root to build the project:
-
-```
-$ ./gradlew build
-```
-
-### Debug build
-
-To install the debug build on an emulator run the following command in the project root (version number is determined by `versionName` in [App/build.gradle](App/build.gradle)):
-
-```
-$ adb install -r App/build/outputs/apk/lokki-v[versionName]-debug.apk
-```
-
-To install it on a device, connect a device via USB (make sure USB debugging is enabled on the device) and run the command:
-
-```
-$ adb install -rd App/build/outputs/apk/lokki-v[versionName]-debug.apk
-```
-
-For further information see the [Android documentation](http://developer.android.com/tools/building/building-cmdline.html).
 
 Note
 ----
