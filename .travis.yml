@@ -10,6 +10,24 @@ android:
     - build-tools-21.1.0
     - android-21
     - extra-google-google_play_services
+    - sys-img-armeabi-v7a-android-21
+
+
+before_script:
+  - curl -O https://pypi.python.org/packages/source/v/virtualenv/virtualenv-12.0.5.tar.gz
+  - tar xvfz virtualenv-12.0.5.tar.gz
+  - python virtualenv-12.0.5/virtualenv.py venv
+  - ./venv/bin/pip install -r requirements.txt
+  - echo no | android create avd --force -n testAvd -t android-21 --abi armeabi-v7a
+  - emulator -avd testAvd -no-skin -no-audio -no-window &
+  - android-wait-for-emulator
+  - adb shell input keyevent 82 &
+
+
+script:
+  - ./gradlew clean build
+  - ./venv/bin/nosetests . -v
+
 
 deploy:
   provider: releases
