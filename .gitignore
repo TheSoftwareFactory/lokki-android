@@ -7,4 +7,5 @@ App/build
 .gradle
 build
 *.pyc
+*.py~
 venv*
