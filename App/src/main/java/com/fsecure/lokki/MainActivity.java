@@ -28,6 +28,9 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.fsecure.lokki.apprater.AppRater;
+import com.fsecure.lokki.utils.ContactUtils;
+import com.fsecure.lokki.utils.DefaultContactUtils;
+import com.fsecure.lokki.utils.Utils;
 
 import org.json.JSONException;
 
@@ -46,6 +49,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     private NavigationDrawerFragment mNavigationDrawerFragment;
     private CharSequence mTitle;
     private int selectedOption = 0;
+
+    // TODO: make non static, put in shared prefs
     public static Boolean firstTimeLaunch;
 
     @Override

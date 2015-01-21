@@ -20,11 +20,13 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.androidquery.AQuery;
 import com.fsecure.lokki.avatar.AvatarLoader;
+import com.fsecure.lokki.utils.ContactUtils;
+import com.fsecure.lokki.utils.DefaultContactUtils;
+import com.fsecure.lokki.utils.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,11 +37,14 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 
 public class AddContactsFragment extends Fragment {
 
     private static final String TAG = "AddContacts";
     public static Set<String> emailsSelected;
+    @Inject ContactUtils contactUtils;
     private ArrayList<String> contactList;
     private AQuery aq;
     private static Boolean cancelAsynTasks = false;
@@ -48,9 +53,7 @@ public class AddContactsFragment extends Fragment {
     private EditText inputSearch;
     private ArrayAdapter<String> adapter;
 
-
     public AddContactsFragment() {
-
         emailsSelected = new HashSet<String>();
         contactList = new ArrayList<String>();
     }
@@ -146,7 +149,7 @@ public class AddContactsFragment extends Fragment {
         protected JSONObject doInBackground(Void... params) {
 
             try {
-                return listContacts();
+                return contactUtils.listContacts(context);
 
             } catch(Exception ex) {
                 ex.printStackTrace();
@@ -254,53 +257,7 @@ public class AddContactsFragment extends Fragment {
         int position;
     }
 
-    private JSONObject listContacts() {
 
-        JSONObject contactsObj = new JSONObject();
-        JSONObject mapping = new JSONObject();
-
-        Cursor emailsCursor = context.getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null, null, null, null);
-        if (emailsCursor == null) return null;
-
-        while (emailsCursor.moveToNext())
-        {
-            String name = emailsCursor.getString(emailsCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DISPLAY_NAME_PRIMARY));
-            String email = emailsCursor.getString(emailsCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
-            long contactId = emailsCursor.getLong(emailsCursor.getColumnIndex(ContactsContract.CommonDataKinds.Identity.CONTACT_ID));
-
-
-            if (email != null && !email.equals("") && !email.equals(name) && !contactsObj.has(email))
-                try {
-                    int i = 2;
-                    String newName = name = name.substring(0,1).toUpperCase() + name.substring(1);
-                    while (mapping.has(newName)) {
-                        newName = name + " " + i;
-                        i = i + 1;
-                    }
-
-                    JSONObject contact = new JSONObject();
-                    contact.put("id", contactId);
-                    contact.put("name", newName);
-                    //Log.e(TAG, "Contact: " + newName + ", data: " + contact);
-
-                    contactsObj.put(email, contact);
-                    //Log.e(TAG, email + ": " + contact);
-                    mapping.put(newName, email);
-
-                } catch(Exception ex) {}
-        }
-        try {
-            contactsObj.put("mapping", mapping);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        emailsCursor.close();
-        Log.e(TAG, "Mapping: " + mapping);
-        Log.e(TAG, "Contacts: " + contactsObj);
-
-        return contactsObj;
-    }
 
 
 }

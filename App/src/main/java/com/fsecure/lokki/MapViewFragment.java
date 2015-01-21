@@ -26,6 +26,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 
 import com.androidquery.AQuery;
+import com.fsecure.lokki.utils.Utils;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;

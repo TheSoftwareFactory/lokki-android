@@ -14,6 +14,7 @@ import android.view.View;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxStatus;
+import com.fsecure.lokki.utils.Utils;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.AccountPicker;
 

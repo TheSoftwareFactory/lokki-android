@@ -17,6 +17,7 @@ import android.util.Log;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxStatus;
+import com.fsecure.lokki.utils.Utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;

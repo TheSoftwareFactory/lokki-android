@@ -17,6 +17,7 @@ import android.widget.ImageView;
 
 import com.androidquery.AQuery;
 import com.fsecure.lokki.avatar.AvatarLoader;
+import com.fsecure.lokki.utils.Utils;
 
 
 public class SettingsFragment extends Fragment implements AdapterView.OnItemSelectedListener{

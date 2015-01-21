@@ -1,4 +1,0 @@
-mock
-nose
-uiautomator
-state-machine-crawler==3.1.0

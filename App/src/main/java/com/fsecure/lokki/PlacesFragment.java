@@ -20,12 +20,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.androidquery.AQuery;
 import com.fsecure.lokki.avatar.AvatarLoader;
+import com.fsecure.lokki.utils.Utils;
 import com.makeramen.RoundedImageView;
 
 import org.json.JSONArray;

@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.androidquery.AQuery;
 import com.fsecure.lokki.avatar.AvatarLoader;
+import com.fsecure.lokki.utils.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;

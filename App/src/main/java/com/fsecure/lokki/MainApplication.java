@@ -12,10 +12,12 @@ import android.support.v4.util.LruCache;
 import android.util.Log;
 
 
+import com.fsecure.lokki.utils.Utils;
 import com.google.android.gms.maps.GoogleMap;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
+
+import dagger.ObjectGraph;
 
 public class MainApplication extends Application {
 
@@ -36,6 +38,8 @@ public class MainApplication extends Application {
     public static LruCache<String, Bitmap> avatarCache;
     public static JSONObject places;
     public Boolean exitApp = false;
+
+    private ObjectGraph objectGraph;
 
     @Override
     public void onCreate() {
@@ -84,6 +88,9 @@ public class MainApplication extends Application {
         }
 
         super.onCreate();
+
+        objectGraph = ObjectGraph.create(new MainModules());
+        objectGraph.inject(this);
     }
 
     private void loadSetting() {

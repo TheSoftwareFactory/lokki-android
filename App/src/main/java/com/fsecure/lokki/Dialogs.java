@@ -9,10 +9,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.text.Editable;
 import android.util.Log;
-import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
+import com.fsecure.lokki.utils.Utils;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONException;
