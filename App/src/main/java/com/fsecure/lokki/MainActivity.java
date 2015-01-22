@@ -50,11 +50,16 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     private CharSequence mTitle;
     private int selectedOption = 0;
 
+    private ContactUtils mContactUtils;
+
     // TODO: make non static, put in shared prefs
     public static Boolean firstTimeLaunch;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        mContactUtils = new DefaultContactUtils();
 
         Log.e(TAG, "onCreate");
         super.onCreate(savedInstanceState);
@@ -250,7 +255,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
             case R.id.add_people: // In Contacts (to add new ones)
                 FragmentManager fragmentManager = getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.container, new AddContactsFragment()).commit();
+                fragmentManager.beginTransaction().replace(R.id.container, new AddContactsFragment(mContactUtils)).commit();
                 selectedOption = -10;
                 supportInvalidateOptionsMenu();
                 break;
@@ -459,5 +464,10 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         }
     };
 
+
+    // For dependency injection
+    public void setContactUtils(ContactUtils contactUtils) {
+        this.mContactUtils = contactUtils;
+    }
 
 }

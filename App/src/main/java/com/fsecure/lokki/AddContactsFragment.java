@@ -37,14 +37,13 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.inject.Inject;
 
 
 public class AddContactsFragment extends Fragment {
 
     private static final String TAG = "AddContacts";
     public static Set<String> emailsSelected;
-    @Inject ContactUtils contactUtils;
+    private ContactUtils mContactUtils;
     private ArrayList<String> contactList;
     private AQuery aq;
     private static Boolean cancelAsynTasks = false;
@@ -53,7 +52,8 @@ public class AddContactsFragment extends Fragment {
     private EditText inputSearch;
     private ArrayAdapter<String> adapter;
 
-    public AddContactsFragment() {
+    public AddContactsFragment(ContactUtils contactUtils) {
+        mContactUtils = contactUtils;
         emailsSelected = new HashSet<String>();
         contactList = new ArrayList<String>();
     }
@@ -149,7 +149,7 @@ public class AddContactsFragment extends Fragment {
         protected JSONObject doInBackground(Void... params) {
 
             try {
-                return contactUtils.listContacts(context);
+                return mContactUtils.listContacts(context);
 
             } catch(Exception ex) {
                 ex.printStackTrace();

@@ -69,8 +69,4 @@ dependencies {
     androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.1'
     androidTestCompile 'com.google.dexmaker:dexmaker:1.1'
 
-    // Dagger
-    compile 'com.squareup.dagger:dagger:1.2.2'
-    provided 'com.squareup.dagger:dagger-compiler:1.2.2'
-
 }

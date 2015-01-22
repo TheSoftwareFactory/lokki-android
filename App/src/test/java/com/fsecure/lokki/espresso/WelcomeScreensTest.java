@@ -14,23 +14,26 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
-@LargeTest
+
 public class WelcomeScreensTest extends ActivityInstrumentationTestCase2<MainActivity> {
+
+
+    private TestUtils mTestUtils;
 
     public WelcomeScreensTest() {
         super(MainActivity.class);
+        mTestUtils = new TestUtils();
     }
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        clearAppData();
-        getActivity();
+        mTestUtils.clearAppData(getInstrumentation().getTargetContext());
+        getActivity().firstTimeLaunch = null;
     }
 
     @Override
     public void tearDown() throws Exception {
-        getActivity().firstTimeLaunch = null;
         super.tearDown();
     }
 
@@ -49,11 +52,6 @@ public class WelcomeScreensTest extends ActivityInstrumentationTestCase2<MainAct
         onView(withText(R.string.signup_explanation)).check(matches(isDisplayed()));
     }
 
-    private void clearAppData() {
-        Context context = getInstrumentation().getTargetContext();
-        SharedPreferences.Editor editor = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE).edit();
-        editor.clear();
-        editor.commit();
-    }
+
 
 }
