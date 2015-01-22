@@ -14,10 +14,10 @@
     <string name="visibility">Visibilidade</string>
     <string name="feedback_title">Envia-nos feedback</string>
     <string name="error_send_email_title">Não é possível enviar mensagem de correio electrónico</string>
-    <string name="error_send_email_message">Não foi possível verificar a tua aplicação de correio electrónico.\nContacta-nos através de: lokki-feedback@f-secure.com</string>
+    <string name="error_send_email_message">Não foi possível verificar a tua aplicação de correio electrónico.\nContacta-nos através de: https://github.com/TheSoftwareFactory/lokki-android/</string>
     <string name="share">Diz aos teus amigos sobre esta aplicação</string>
-    <string name="share_subject">Junta-te a mim em F-Secure Lokki!</string>
-    <string name="share_text">Olá! Estou a utilizar F-Secure Lokki, a aplicação de partilha de localização privada fácil, segura e gratuita. Vai até f-secure.com/lokki para instalares a aplicação.</string>
+    <string name="share_subject">Junta-te a mim em Lokki!</string>
+    <string name="share_text">Olá! Estou a utilizar Lokki, a aplicação de partilha de localização privada fácil, segura e gratuita. Vai até https://github.com/TheSoftwareFactory/lokki-android/ para instalares a aplicação.</string>
     <string name="add_contact">Adicionar contactos</string>
     <string name="allow_people">Permitir pessoas</string>
     <string name="add_contact_dialog_message">Selecciona as pessoas que podem ver onde estás quando assim o permitires. Selecciona os endereços de correio electrónico que os teus contactos utilizam com a aplicação Lokki. Se não encontrares uma pessoa ou um correio electrónico, adiciona essa pessoa primeiro através da aplicação Pessoas ou Contactos.</string>
@@ -28,7 +28,6 @@
     <string name="loading">A carregar...</string>
     <string name="your_lokki_id">A tua ID no Lokki é:</string>
     <string name="your_friends">Diz aos teus amigos para utilizarem este endereço de correio electrónico com a aplicação Lokki.</string>
-    <string name="fsecure_link"><a href="http://www.f-secure.com">www.f-secure.com</a></string>
     <string name="privacy_policy_link"><a href="http://www.f-secure.com">Política de privacidade</a></string>
     <string name="privacy_policy_title">Política de privacidade</string>
     <string name="my_visibility">Os meus contactos podem ver-me</string>
@@ -51,16 +50,12 @@
     <string-array name="about_links">
         <item>Ajuda</item>
         <item>Envia-nos feedback</item>
-        <item>Política de privacidade</item>
-        <item>Outros produtos da F-Secure</item>
         <item>Diz a um amigo sobre a aplicação Lokki</item>
     </string-array>
 
     <string-array name="about_links_url">
-        <item>http://bit.ly/KTIpGJ</item>
-        <item>Envia-nos feedback</item>
-        <item>http://www.f-secure.com/en/web/home_global/privacy/privacy-summary</item>
-        <item>Outros produtos da F-Secure</item>
+        <item>https://github.com/TheSoftwareFactory/lokki-android/</item>
+        <item>https://github.com/TheSoftwareFactory/lokki-android/</item>
         <item>Diz a um amigo sobre a aplicação Lokki</item>
     </string-array>
 
@@ -73,7 +68,7 @@
     <string name="i_agree">Li e aceito</string>
     <string name="continue_with_terms">Continuar</string>
     <string name="welcome_title">Bem-vindo a Lokki</string>
-    <string name="welcome_text"><![CDATA[ <b>Bem-vindo a Lokki 3.0!</b><br/>Agora podes ver onde os teus amigos e familiares estão num mapa. Escolhes quem pode ver onde estás e podes ocultar a tua localização sempre que quiseres.<br/><br/>F-Secure<br/>A proteger o insubstituível ]]></string>
+    <string name="welcome_text"><![CDATA[ <b>Bem-vindo a Lokki 3.0!</b><br/>Agora podes ver onde os teus amigos e familiares estão num mapa. Escolhes quem pode ver onde estás e podes ocultar a tua localização sempre que quiseres.]]></string>
     <string name="terms_text">
 <![CDATA[ A tua privacidade é o mais importante para nós. Antes de começares, deves aceitar os seguintes termos:<br/><br/><br/>
                               1. Li e aceito os termos do serviço.<br/><br/>
@@ -86,7 +81,7 @@
     <string name="terms_title">Termos de utilização</string>
     <string name="security_signup">Temos que autorizar a tua conta antes de iniciares sessão. Segue as instruções que enviamos para:</string>
     <string name="title_activity_signup">Iniciar sessão</string>
-    <string name="app_long_name">F-Secure Lokki</string>
+    <string name="app_long_name">Lokki</string>
     <string name="signup_explanation">Introduz o teu endereço de correio electrónico - outros utilizadores Lokki poderão encontrar-te com este endereço.</string>
     <string name="type_your_email_address">O teu endereço de correio electrónico</string>
     <string name="signing_up">A iniciar sessão...</string>

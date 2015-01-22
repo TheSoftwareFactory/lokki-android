@@ -14,10 +14,10 @@
     <string name="visibility">Synlighed</string>
     <string name="feedback_title">Send feedback</string>
     <string name="error_send_email_title">Kan ikke sende e-mail</string>
-    <string name="error_send_email_message">Vi kunne ikke finde dit e-mailprogram.\nKontakt os på: lokki-feedback@f-secure.com</string>
+    <string name="error_send_email_message">Vi kunne ikke finde dit e-mailprogram.\nKontakt os på: https://github.com/TheSoftwareFactory/lokki-android/</string>
     <string name="share">Fortæl dine venner om denne app</string>
-    <string name="share_subject">Mød mig på F-Secure Lokki!</string>
-    <string name="share_text">Hej! Jeg bruger F-Secure Lokki, den private app til deling af lokatitet, som er nem, sikker og gratis. Gå til f-secure.com/lokki for at installere den.</string>
+    <string name="share_subject">Mød mig på Lokki!</string>
+    <string name="share_text">Hej! Jeg bruger Lokki, den private app til deling af lokatitet, som er nem, sikker og gratis. Gå til https://github.com/TheSoftwareFactory/lokki-android/ for at installere den.</string>
     <string name="add_contact">Tilføj kontakter</string>
     <string name="allow_people">Tillad personer</string>
     <string name="add_contact_dialog_message">Vælg de personer, som kan se, hvor du er, når du tillader det. Vælg de e-mailadresser, som dine kontakter bruger i Lokki. Hvis du ikke kan finde en person eller e-mail på denne liste, skal du først tilføje ham eller hende via appen Personer eller Kontakter.</string>
@@ -28,7 +28,6 @@
     <string name="loading">Indlæser...</string>
     <string name="your_lokki_id">Dit Lokki-id er:</string>
     <string name="your_friends">Fortæl dine venner, at de skal bruge denne e-mail sammen med Lokki.</string>
-    <string name="fsecure_link"><a href="http://www.f-secure.com">www.f-secure.com</a></string>
     <string name="privacy_policy_link"><a href="http://www.f-secure.com">Erklæring om beskyttelse af personlige oplysninger</a></string>
     <string name="privacy_policy_title">Erklæring om beskyttelse af personlige oplysninger</string>
     <string name="my_visibility">Mine kontakter kan se mig</string>
@@ -51,16 +50,12 @@
     <string-array name="about_links">
         <item>Hjælp</item>
         <item>Send feedback</item>
-        <item>Erklæring om beskyttelse af personlige oplysninger</item>
-        <item>Andre F-Secure-produkter</item>
         <item>Fortæl en ven om Lokki</item>
     </string-array>
 
     <string-array name="about_links_url">
-        <item>http://bit.ly/KTIpGJ</item>
-        <item>Send feedback</item>
-        <item>http://www.f-secure.com/en/web/home_global/privacy/privacy-summary</item>
-        <item>Andre F-Secure-produkter</item>
+        <item>https://github.com/TheSoftwareFactory/lokki-android/</item>
+        <item>https://github.com/TheSoftwareFactory/lokki-android/</item>
         <item>Fortæl en ven om Lokki</item>
     </string-array>
 
@@ -73,7 +68,7 @@
     <string name="i_agree">Jeg har læst, og jeg accepterer</string>
     <string name="continue_with_terms">Fortsæt</string>
     <string name="welcome_title">Velkommen til Lokki</string>
-    <string name="welcome_text"><![CDATA[ <b>Velkommen til Lokki 3.0!</b><br/>Nu kan du se, hvor dine venner og familiemedlemmer er på et kort. Du vælger, hvem der kan se, hvor du er, og du kan altid skjule din placering.<br/><br/>F-Secure<br/>Beskytter det uerstattelige ]]></string>
+    <string name="welcome_text"><![CDATA[ <b>Velkommen til Lokki 3.0!</b><br/>Nu kan du se, hvor dine venner og familiemedlemmer er på et kort. Du vælger, hvem der kan se, hvor du er, og du kan altid skjule din placering.]]></string>
     <string name="terms_text">
 <![CDATA[ Dine personlige oplysninger er af største vigtighed for os. Før du begynder, skal du acceptere følgende vilkår:<br/><br/><br/>
                               1. Jeg har læst vilkårene for tjenesten og accepterer dem.<br/><br/>
@@ -86,7 +81,7 @@
     <string name="terms_title">Vilkår for brug</string>
     <string name="security_signup">Vi har brug for at godkende din konto, inden du tilmelder dig. Følg anvisningerne, som vi har sendt til:</string>
     <string name="title_activity_signup">Tilmeld</string>
-    <string name="app_long_name">F-Secure Lokki</string>
+    <string name="app_long_name">Lokki</string>
     <string name="signup_explanation">Skriv din e-mailadresse - andre Lokki-brugere finder dig med denne adresse.</string>
     <string name="type_your_email_address">Din e-mailadresse</string>
     <string name="signing_up">Tilmelder...</string>

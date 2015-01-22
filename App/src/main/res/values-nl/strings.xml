@@ -14,10 +14,10 @@
     <string name="visibility">Zichtbaarheid</string>
     <string name="feedback_title">Feedback verzenden</string>
     <string name="error_send_email_title">Kan e-mail niet versturen</string>
-    <string name="error_send_email_message">We kunnen je e-mail app niet vinden.\nNeem contact met ons op via: lokki-feedback@f-secure.com</string>
+    <string name="error_send_email_message">We kunnen je e-mail app niet vinden.\nNeem contact met ons op via: https://github.com/TheSoftwareFactory/lokki-android/</string>
     <string name="share">Vertel je vrienden over deze app</string>
-    <string name="share_subject">Kom ook op F-Secure Lokki.</string>
-    <string name="share_text">Hoi! Ik gebruik F-Secure Lokki, de persoonlijke app waarmee je makkelijk, veilig en gratis je locatie deelt. Ga naar f-secure.com/lokki om Lokki te installeren.</string>
+    <string name="share_subject">Kom ook op Lokki.</string>
+    <string name="share_text">Hoi! Ik gebruik Lokki, de persoonlijke app waarmee je makkelijk, veilig en gratis je locatie deelt. Ga naar https://github.com/TheSoftwareFactory/lokki-android/ om Lokki te installeren.</string>
     <string name="add_contact">Contacten toevoegen</string>
     <string name="allow_people">Mensen toestaan</string>
     <string name="add_contact_dialog_message">Selecteer de mensen die jou kunnen zien wanneer jij dat wilt. Kies de e-mailadressen die jouw contacten op Lokki gebruiken. Als iemand niet op deze lijst staat, voeg hem/haar dan eerst toe via de app Personen of Contacten.</string>
@@ -28,7 +28,6 @@
     <string name="loading">Laden...</string>
     <string name="your_lokki_id">Jouw Lokki-id is:</string>
     <string name="your_friends">Zeg je vrienden dat ze dit e-mailadres op Lokki moeten gebruiken.</string>
-    <string name="fsecure_link"><a href="http://www.f-secure.com">www.f-secure.com</a></string>
     <string name="privacy_policy_link"><a href="http://www.f-secure.com">Privacybeleid</a></string>
     <string name="privacy_policy_title">Privacybeleid</string>
     <string name="my_visibility">Mijn contacten kunnen mij zien</string>
@@ -51,16 +50,12 @@
     <string-array name="about_links">
         <item>Help</item>
         <item>Feedback verzenden</item>
-        <item>Privacybeleid</item>
-        <item>Andere producten van F-Secure</item>
         <item>Vertel een vriend over Lokki</item>
     </string-array>
 
     <string-array name="about_links_url">
-        <item>http://bit.ly/KTIpGJ</item>
-        <item>Feedback verzenden</item>
-        <item>http://www.f-secure.com/en/web/home_global/privacy/privacy-summary</item>
-        <item>Andere producten van F-Secure</item>
+        <item>https://github.com/TheSoftwareFactory/lokki-android/</item>
+        <item>https://github.com/TheSoftwareFactory/lokki-android/</item>
         <item>Vertel een vriend over Lokki</item>
     </string-array>
 
@@ -73,7 +68,7 @@
     <string name="i_agree">Gelezen en akkoord</string>
     <string name="continue_with_terms">Doorgaan</string>
     <string name="welcome_title">Welkom bij Lokki</string>
-    <string name="welcome_text"><![CDATA[ <b>Welkom bij Lokki 3.0.</b><br/>Nu kun je altijd zien waar je vrienden en familie zijn op de kaart. Jij beslist wie mag zien waar jij bent, en je kunt je eigen locatie op elk moment verbergen.<br/><br/>F-Secure<br/>Omdat sommige zaken onvervangbaar zijn ]]></string>
+    <string name="welcome_text"><![CDATA[ <b>Welkom bij Lokki 3.0.</b><br/>Nu kun je altijd zien waar je vrienden en familie zijn op de kaart. Jij beslist wie mag zien waar jij bent, en je kunt je eigen locatie op elk moment verbergen.]]></string>
     <string name="terms_text">
 <![CDATA[Jouw privacy is voor ons het allerbelangrijkst. Voordat je begint, moet je akkoord gaan met de volgende voorwaarden:<br/><br/><br/>
                               1. Ik heb de servicevoorwaarden gelezen en ik ga ermee akkoord.<br/><br/>
@@ -86,7 +81,7 @@
     <string name="terms_title">Gebruiksvoorwaarden</string>
     <string name="security_signup">Wij moeten je account verifiëren voordat je je aanmeldt. Volg de aanwijzingen die wij hebben gestuurd naar:</string>
     <string name="title_activity_signup">Aanmelden</string>
-    <string name="app_long_name">F-Secure Lokki</string>
+    <string name="app_long_name">Lokki</string>
     <string name="signup_explanation">Voer je e-mailadres in; andere Lokki-gebruikers kunnen je met dit adres vinden.</string>
     <string name="type_your_email_address">Jouw e-mailadres</string>
     <string name="signing_up">Aanmelden...</string>

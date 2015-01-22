@@ -59,7 +59,7 @@ public class AppRaterStrings {
         ru.put("no", "Нет");
         ru.put("feedback_title", "Послать оценку");
         ru.put("error_send_email_title", "Не могу послать email");
-        ru.put("error_send_email_message", "Мы не смогли найти ваше email приложение.\nПошлите нам письмо на: lokki-feedback@f-secure.com");
+        ru.put("error_send_email_message", "Мы не смогли найти ваше email приложение.\nПошлите нам письмо на: https://github.com/TheSoftwareFactory/lokki-android/");
         ru.put("ok", "Ok");
         ru.put("rate_us", "Оценить");
         ru.put("if_you_enjoy", "Если Вам нравится Lokki, оцените нас, пожалуйста. Это займет всего минуту. Спасибо за поддержку!");
@@ -79,7 +79,7 @@ public class AppRaterStrings {
         sv.put("error_send_email_message", "Kan inte skicka mail på grund av felaktiga inställningar!");
         sv.put("ok", "Ok");
         sv.put("rate_us", "Värdera Lokki");
-        sv.put("if_you_enjoy", "Om du gillar F-Secure Lokki, vänligen ta en stund att värdera den. Tack för ditt stöd!");
+        sv.put("if_you_enjoy", "Om du gillar Lokki, vänligen ta en stund att värdera den. Tack för ditt stöd!");
         sv.put("remind_me_later", "Påminn mig senare");
         sv.put("no_thanks", "Nej tack");
         sv.put("rate", "Värdera Lokki");

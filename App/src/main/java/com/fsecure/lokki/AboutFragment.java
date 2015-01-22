@@ -64,45 +64,10 @@ public class AboutFragment extends Fragment {
                 break;
 
             case 1: // Send feedback
-                String osType = "Android " + Build.VERSION.SDK_INT;
-                String appVersion = "N/A";
-                try {
-                    appVersion = Utils.getAppVersion(getActivity().getApplicationContext());
-
-                } catch(Exception ex) {}
-                Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", "lokki-feedback@f-secure.com", null));
-                emailIntent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.feedback_title) + " [" + osType + "-" + appVersion + "]");
-                try {
-                    startActivity(emailIntent);
-
-                } catch (ActivityNotFoundException anfe) {
-                    AlertDialog.Builder emailAlert = new AlertDialog.Builder(getActivity());
-                    emailAlert.setTitle(getResources().getString(R.string.error_send_email_title));
-                    emailAlert.setMessage(getResources().getString(R.string.error_send_email_message));
-                    emailAlert.setNegativeButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-                    emailAlert.show();
-                }
-                break;
-
-            case 2: //Privacy policy
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
                 break;
 
-            case 3: // Other products
-                try {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://developer?id=F-Secure%20Corporation")));
-
-                } catch (ActivityNotFoundException anfe) {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/developer?id=F-Secure%20Corporation")));
-                }
-                break;
-
-            case 4: // Tell a friend about Lokki
+            case 2: // Tell a friend about Lokki
                 try {
                     Intent intent = new Intent(Intent.ACTION_SEND);
                     intent.setType("text/plain");
@@ -115,5 +80,4 @@ public class AboutFragment extends Fragment {
 
         }
     }
-
 }

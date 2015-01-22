@@ -14,10 +14,10 @@
     <string name="visibility">Видимость</string>
     <string name="feedback_title">Отправить отзыв</string>
     <string name="error_send_email_title">Не удалось отправить сообщение эл. почты</string>
-    <string name="error_send_email_message">Не удалось обнаружить программу электронной почты.\nОбратитесь по адресу: lokki-feedback@f-secure.com</string>
+    <string name="error_send_email_message">Не удалось обнаружить программу электронной почты.\nОбратитесь по адресу: https://github.com/TheSoftwareFactory/lokki-android/</string>
     <string name="share">Рассказать друзьям об этой программе</string>
-    <string name="share_subject">Приглашение в F-Secure Lokki</string>
-    <string name="share_text">Привет! Я пользуюсь F-Secure Lokki — простой, безопасной и бесплатной программой для обмена местоположениями. Ее можно установить со страницы f-secure.com/lokki.</string>
+    <string name="share_subject">Приглашение в Lokki</string>
+    <string name="share_text">Привет! Я пользуюсь Lokki — простой, безопасной и бесплатной программой для обмена местоположениями. Ее можно установить со страницы https://github.com/TheSoftwareFactory/lokki-android/.</string>
     <string name="add_contact">Добавить контакты</string>
     <string name="allow_people">Добавить людей</string>
     <string name="add_contact_dialog_message">Выберите тех, кто сможет видеть, где вы находитесь (после вашего разрешения). Нужно выбрать те адреса эл. почты, под которыми ваши контакты зарегистрированы в Lokki. Если в списке нет нужного человека или адреса электронной почты, проверьте, есть ли он в программе &quot;Люди&quot; или &quot;Контакты&quot;.</string>
@@ -28,7 +28,6 @@
     <string name="loading">Загрузка...</string>
     <string name="your_lokki_id">Ваш идентификатор Lokki:</string>
     <string name="your_friends">Друзья должны указать в Lokki этот адрес.</string>
-    <string name="fsecure_link"><a href="http://www.f-secure.com">www.f-secure.com</a></string>
     <string name="privacy_policy_link"><a href="http://www.f-secure.com">Политика конфиденциальности</a></string>
     <string name="privacy_policy_title">Политика конфиденциальности</string>
     <string name="my_visibility">Меня видят мои контакты</string>
@@ -51,16 +50,12 @@
     <string-array name="about_links">
         <item>Справка</item>
         <item>Отправить отзыв</item>
-        <item>Политика конфиденциальности</item>
-        <item>Другие продукты F-Secure</item>
         <item>Рассказать другу о Lokki</item>
     </string-array>
 
     <string-array name="about_links_url">
-        <item>http://bit.ly/KTIpGJ</item>
-        <item>Отправить отзыв</item>
-        <item>http://www.f-secure.com/en/web/home_global/privacy/privacy-summary</item>
-        <item>Другие продукты F-Secure</item>
+        <item>https://github.com/TheSoftwareFactory/lokki-android/</item>
+        <item>https://github.com/TheSoftwareFactory/lokki-android/</item>
         <item>Рассказать другу о Lokki</item>
     </string-array>
 
@@ -73,7 +68,7 @@
     <string name="i_agree">Я прочел(-ла) и согласен(-на)</string>
     <string name="continue_with_terms">Продолжить</string>
     <string name="welcome_title">Lokki приветствует вас</string>
-    <string name="welcome_text"><![CDATA[ <b>Встречайте Lokki 3.0!</b><br/>Теперь друзья и родственники видны на карте. Только вы выбираете, кто может видеть вас, при этом свое местоположение можно скрыть в любой момент.<br/><br/>F-Secure<br/>Защищаем невосполнимое]]></string>
+    <string name="welcome_text"><![CDATA[ <b>Встречайте Lokki 3.0!</b><br/>Теперь друзья и родственники видны на карте. Только вы выбираете, кто может видеть вас, при этом свое местоположение можно скрыть в любой момент.]]></string>
     <string name="terms_text">
 <![CDATA[ Ваша безопасность для нас стоит на первом месте. Поэтому вначале вам нужно принять следующие условия:<br/><br/><br/>
                               1. Я прочел(-ла) условия обслуживания и принимаю их.<br/><br/>
@@ -86,7 +81,7 @@
     <string name="terms_title">Условия использования</string>
     <string name="security_signup">Перед регистрацией нужно проверить подлинность вашей учетной записи. Инструкции отправлены на адрес:</string>
     <string name="title_activity_signup">Регистрация</string>
-    <string name="app_long_name">F-Secure Lokki</string>
+    <string name="app_long_name">Lokki</string>
     <string name="signup_explanation">Введите свой адрес эл. почты — пользователи Lokki смогут найти вас по нему.</string>
     <string name="type_your_email_address">Ваш email адрес</string>
     <string name="signing_up">Идет регистрация...</string>

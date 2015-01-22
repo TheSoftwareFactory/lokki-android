@@ -15,10 +15,10 @@
     <string name="visibility">Visibility</string>
     <string name="feedback_title">Send feedback</string>
     <string name="error_send_email_title">Cannot send email</string>
-    <string name="error_send_email_message">We could not find your email app.\nContact us at: lokki-feedback@f-secure.com</string>
+    <string name="error_send_email_message">We could not find your email app.\nContact us at: https://github.com/TheSoftwareFactory/lokki-android/</string>
     <string name="share">Tell your friends about this app</string>
-    <string name="share_subject">Join me on F-Secure Lokki!</string>
-    <string name="share_text">Hi! I\'m using F-Secure Lokki, the private location sharing app that\'s easy, secure, and free. Go to f-secure.com/lokki to install it.</string>
+    <string name="share_subject">Join me on Lokki!</string>
+    <string name="share_text">Hi! I\'m using Lokki, the private location sharing app that\'s easy, secure, and free. Go to https://github.com/TheSoftwareFactory/lokki-android/ to install it.</string>
     <string name="add_contact">Add contacts</string>
     <string name="allow_people">Allow people</string>
     <string name="add_contact_dialog_message">Select the people who can see where you are when you allow it. Choose the email addresses that your contacts use in Lokki. If you don\'t find a person or email in this list, please add him or her first via the People or Contacts app.</string>
@@ -29,7 +29,6 @@
     <string name="loading">Loading...</string>
     <string name="your_lokki_id">Your Lokki ID is:</string>
     <string name="your_friends">Tell your friends to use this email with Lokki.</string>
-    <string name="fsecure_link"><a href="http://www.f-secure.com">www.f-secure.com</a></string>
     <string name="privacy_policy_link"><a href="http://www.f-secure.com">Privacy policy</a></string>
     <string name="privacy_policy_title">Privacy policy</string>
     <string name="my_visibility">My contacts can see me</string>
@@ -52,16 +51,12 @@
     <string-array name="about_links">
         <item>Help</item>
         <item>Send feedback</item>
-        <item>Privacy policy</item>
-        <item>Other F-Secure products</item>
         <item>Tell a friend about Lokki</item>
     </string-array>
 
     <string-array name="about_links_url">
-        <item>http://bit.ly/KTIpGJ</item>
-        <item>Send feedback</item>
-        <item>http://www.f-secure.com/en/web/home_global/privacy/privacy-summary</item>
-        <item>Other F-Secure products</item>
+        <item>https://github.com/TheSoftwareFactory/lokki-android/</item>
+        <item>https://github.com/TheSoftwareFactory/lokki-android/</item>
         <item>Tell a friend about Lokki</item>
     </string-array>
 
@@ -74,7 +69,7 @@
     <string name="i_agree">I have read and I agree</string>
     <string name="continue_with_terms">Continue</string>
     <string name="welcome_title">Welcome to Lokki</string>
-    <string name="welcome_text"><![CDATA[ <b>Welcome to Lokki 3.0!</b><br/>Now you can see where your friends and family members are on a map. You choose who can see where you are, and you can hide your location whenever you want.<br/><br/>F-Secure<br/>Protecting the irreplaceable ]]></string>
+    <string name="welcome_text"><![CDATA[ <b>Welcome to Lokki 3.0!</b><br/>Now you can see where your friends and family members are on a map. You choose who can see where you are, and you can hide your location whenever you want.]]></string>
     <string name="terms_text">
 <![CDATA[ Your privacy is of the utmost importance to us. Before you get started, you need to agree to the following terms:<br/><br/><br/>
                               1. I have read the terms of service and accept them.<br/><br/>
@@ -87,7 +82,7 @@
     <string name="terms_title">Terms of use</string>
     <string name="security_signup">We need to authorize your account before you sign up. Follow the instructions that we have sent to:</string>
     <string name="title_activity_signup">Signup</string>
-    <string name="app_long_name">F-Secure Lokki</string>
+    <string name="app_long_name">Lokki</string>
     <string name="signup_explanation">Enter your email address - other Lokki users will find you with this address.</string>
     <string name="type_your_email_address">Your email address</string>
     <string name="signing_up">Signing up...</string>

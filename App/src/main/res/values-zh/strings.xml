@@ -14,10 +14,10 @@
     <string name="visibility">可见性</string>
     <string name="feedback_title">发送反馈</string>
     <string name="error_send_email_title">无法发送电子邮件</string>
-    <string name="error_send_email_message">我们找不到您的电子邮件应用程序。\n请联系我们：lokki-feedback@f-secure.com</string>
+    <string name="error_send_email_message">我们找不到您的电子邮件应用程序。\n请联系我们：https://github.com/TheSoftwareFactory/lokki-android/</string>
     <string name="share">向您的朋友介绍这款应用程序</string>
-    <string name="share_subject">跟我一起用 F-Secure Lokki!</string>
-    <string name="share_text">嗨！我正在使用 F-Secure Lokki，这是一款便捷、安全、免费的私人位置共享应用程序。前往 f-secure.com/lokki 安装。</string>
+    <string name="share_subject">跟我一起用 Lokki!</string>
+    <string name="share_text">嗨！我正在使用 Lokki，这是一款便捷、安全、免费的私人位置共享应用程序。前往 https://github.com/TheSoftwareFactory/lokki-android/ 安装。</string>
     <string name="add_contact">添加联系人</string>
     <string name="allow_people">允许人员</string>
     <string name="add_contact_dialog_message">Select the people who can see where you are when you allow it. Choose the email addresses that your contacts use in Lokki. If you don\&apos;t find a person or email in this list, please add him or her first via the People or Contacts app.</string>
@@ -28,7 +28,6 @@
     <string name="loading">正在加载...</string>
     <string name="your_lokki_id">您的 Lokki ID 是：</string>
     <string name="your_friends">告诉朋友在 Lokki 中使用这个电子邮件。</string>
-    <string name="fsecure_link"><a href="http://www.f-secure.com">www.f-secure.com</a></string>
     <string name="privacy_policy_link"><a href="http://www.f-secure.com">隐私策略</a></string>
     <string name="privacy_policy_title">隐私策略</string>
     <string name="my_visibility">我的联系人可以看到我</string>
@@ -51,16 +50,12 @@
     <string-array name="about_links">
         <item>帮助</item>
         <item>发送反馈</item>
-        <item>隐私策略</item>
-        <item>Other F-Secure products</item>
         <item>Tell a friend about Lokki</item>
     </string-array>
 
     <string-array name="about_links_url">
-        <item>http://bit.ly/KTIpGJ</item>
-        <item>发送反馈</item>
-        <item>http://www.f-secure.com/en/web/home_global/privacy/privacy-summary</item>
-        <item>Other F-Secure products</item>
+        <item>https://github.com/TheSoftwareFactory/lokki-android/</item>
+        <item>https://github.com/TheSoftwareFactory/lokki-android/</item>
         <item>Tell a friend about Lokki</item>
     </string-array>
 
@@ -73,7 +68,7 @@
     <string name="i_agree">我已阅读并同意</string>
     <string name="continue_with_terms">继续</string>
     <string name="welcome_title">欢迎使用 Lokki</string>
-    <string name="welcome_text"><![CDATA[ <b>欢迎使用 Lokki 3.0!</b><br/>现在，您可以在地图上看到您的朋友和家庭成员的位置了。您可以选择哪些人能看到您的位置，也可以随时隐藏自己的位置。<br/><br/>F-Secure<br/>保护重要内容]]></string>
+    <string name="welcome_text"><![CDATA[ <b>欢迎使用 Lokki 3.0!</b><br/>现在，您可以在地图上看到您的朋友和家庭成员的位置了。您可以选择哪些人能看到您的位置，也可以随时隐藏自己的位置。]]></string>
     <string name="terms_text">
 <![CDATA[ 我们非常重视您的隐私。开始使用前，您需要同意以下条款：<br/><br/><br/>
                               1. 我已阅读并接受服务条款。<br/><br/>
@@ -86,7 +81,7 @@
     <string name="terms_title">使用条款</string>
     <string name="security_signup">注册前，我们需要授权您的帐户。请依照我们发送至以下地址的说明操作：</string>
     <string name="title_activity_signup">注册</string>
-    <string name="app_long_name">F-Secure Lokki</string>
+    <string name="app_long_name">Lokki</string>
     <string name="signup_explanation">输入您的电子邮件地址 - 其他 Lokki 用户将以此地址找到您。</string>
     <string name="type_your_email_address">您的电子邮件地址</string>
     <string name="signing_up">正在注册...</string>
