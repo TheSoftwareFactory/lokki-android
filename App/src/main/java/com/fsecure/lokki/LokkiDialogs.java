@@ -23,7 +23,7 @@ import java.util.ArrayList;
 public class LokkiDialogs {
 
 
-    private static final String APP_TITLE = "F-Secure Lokki";
+    private static final String APP_TITLE = "Lokki";
     private static final String IMPROVE_YOUR_LOCATION = "Improve your location";
     private static final String ACTIVATE_WIFI = "Activate the following settings to improve your location accuracy: \n\n- Wifi";
     private static final String ACTIVATE_LOCATION_SERVICES = "Activate the following settings to improve your location accuracy: \n\n- Location Services";

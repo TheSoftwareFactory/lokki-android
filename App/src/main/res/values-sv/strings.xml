@@ -14,10 +14,10 @@
     <string name="visibility">Synlighet</string>
     <string name="feedback_title">Skicka feedback</string>
     <string name="error_send_email_title">Kunde inte skicka e-post</string>
-    <string name="error_send_email_message">Vi kunde hitta din e-postapp.\nKontakta oss på lokki-feedback@f-secure.com</string>
+    <string name="error_send_email_message">Vi kunde hitta din e-postapp.\nKontakta oss på https://github.com/TheSoftwareFactory/lokki-android/</string>
     <string name="share">Tipsa dina vänner om den här appen</string>
-    <string name="share_subject">Gör mig sällskap i F-Secure Lokki!</string>
-    <string name="share_text">Hej! Jag använder F-Secure Lokki, den privata platsdelningsappen som är enkel att använda, säker och kostnadsfri. Gå till f-secure.com/lokki för att installera den.</string>
+    <string name="share_subject">Gör mig sällskap i Lokki!</string>
+    <string name="share_text">Hej! Jag använder Lokki, den privata platsdelningsappen som är enkel att använda, säker och kostnadsfri. Gå till https://github.com/TheSoftwareFactory/lokki-android/ för att installera den.</string>
     <string name="add_contact">Lägg till kontakter</string>
     <string name="allow_people">Tillåt personer</string>
     <string name="add_contact_dialog_message">Välj de personer som ska kunna se dig när du tillåter det. Välj e-postadresserna som dina kontakter använder med Lokki.\nOm du saknar någon i listan bör du kontrollera att du har lagt till personen i Kontakter.</string>
@@ -28,7 +28,6 @@
     <string name="loading">Laddar …</string>
     <string name="your_lokki_id">Ditt Lokki-ID är:</string>
     <string name="your_friends">Säg till dina vänner att använda den här e-postadressen med Lokki.</string>
-    <string name="fsecure_link"><a href="http://www.f-secure.com">www.f-secure.com</a></string>
     <string name="privacy_policy_link"><a href="http://www.f-secure.com">Sekretesspolicy</a></string>
     <string name="privacy_policy_title">Sekretesspolicy</string>
     <string name="my_visibility">Mina kontakter kan se mig</string>
@@ -51,16 +50,12 @@
     <string-array name="about_links">
         <item>Hjälp</item>
         <item>Skicka feedback</item>
-        <item>Sekretesspolicy</item>
-        <item>Annat från F-Secure</item>
         <item>Tipsa en vän om Lokki</item>
     </string-array>
 
     <string-array name="about_links_url">
-        <item>http://bit.ly/KTIpGJ</item>
-        <item>Skicka feedback</item>
-        <item>http://www.f-secure.com/sv/web/home_se/privacy-summary</item>
-        <item>Annat från F-Secure</item>
+        <item>https://github.com/TheSoftwareFactory/lokki-android/</item>
+        <item>https://github.com/TheSoftwareFactory/lokki-android/</item>
         <item>Tipsa en vän om Lokki</item>
     </string-array>
 
@@ -73,7 +68,7 @@
     <string name="i_agree">Jag har läst och godkänner</string>
     <string name="continue_with_terms">Fortsätt</string>
     <string name="welcome_title">Välkommen till Lokki</string>
-    <string name="welcome_text"><![CDATA[ <b>Välkommen till Lokki 3.0!</b><br/>Nu kan du se var dina vänner och familjemedlemmar är på en karta. Du väljer vilka som kan se var du är, och du kan dölja din position när du vill.<br/><br/>F-Secure<br/>Skyddar det oersättliga ]]></string>
+    <string name="welcome_text"><![CDATA[ <b>Välkommen till Lokki 3.0!</b><br/>Nu kan du se var dina vänner och familjemedlemmar är på en karta. Du väljer vilka som kan se var du är, och du kan dölja din position när du vill.]]></string>
     <string name="terms_text">
 <![CDATA[ Din integritet är oerhört viktig för oss. Innan du börjar måste du samtycka till följande villkor:<br/><br/><br/>
                               1. Jag har läst och förstått användarvillkoren och godkänner dem.<br/><br/>
@@ -86,7 +81,7 @@
     <string name="terms_title">Användarvillkor</string>
     <string name="security_signup">Vi måste godkänna ditt konto innan du kan registrera dig. Följ instruktionerna som vi har skickat till:</string>
     <string name="title_activity_signup">Registrering</string>
-    <string name="app_long_name">F-Secure Lokki</string>
+    <string name="app_long_name">Lokki</string>
     <string name="signup_explanation">Ange din e-postadress – andra Lokki-användare hittar dig genom adressen.</string>
     <string name="type_your_email_address">Din e-postadress</string>
     <string name="signing_up">Registrerar …</string>
