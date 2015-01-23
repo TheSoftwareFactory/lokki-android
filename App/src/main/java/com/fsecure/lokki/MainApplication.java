@@ -23,6 +23,9 @@ public class MainApplication extends Application {
     private static final boolean DEVELOPER_MODE = true;
 
     private static final String TAG = "MainApplication";
+
+
+    // TODO: gtfo static globals :(
     static int[] mapTypes = {GoogleMap.MAP_TYPE_NORMAL, GoogleMap.MAP_TYPE_SATELLITE, GoogleMap.MAP_TYPE_HYBRID};
     static int mapType = 0;
     static Boolean showPlaces = false;

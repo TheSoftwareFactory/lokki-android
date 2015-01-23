@@ -2,6 +2,7 @@ package com.fsecure.lokki.espresso;
 
 import android.content.Context;
 import android.test.ActivityInstrumentationTestCase2;
+import android.test.InstrumentationTestCase;
 
 import com.fsecure.lokki.MainActivity;
 import com.fsecure.lokki.R;
@@ -22,10 +23,8 @@ import static org.hamcrest.core.AnyOf.anyOf;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
-public class AddContactsScreenTest extends ActivityInstrumentationTestCase2<MainActivity> {
+public class AddContactsScreenTest extends MainActivityBaseTest {
 
-
-    private TestUtils mTestUtils;
     private String testContactJson = "{\"test.friend@email.com\": {\"id\": 1,\"name\": \"Test Friend\"}," +
                                      "\"family.member@mail.com\": {\"id\": 2, \"name\": \"Family Member\"}," +
                                      "\"work.buddy@work.com\": {\"id\": 3,\"name\": \"Work Buddy\"}," +
@@ -34,16 +33,9 @@ public class AddContactsScreenTest extends ActivityInstrumentationTestCase2<Main
                                                    "\"Work Buddy\": \"work.buddy@work.com\"}}";
 
 
-
-    public AddContactsScreenTest() {
-        super(MainActivity.class);
-        mTestUtils = new TestUtils();
-    }
-
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        getActivity().firstTimeLaunch = false;
         setMockContacts();
         enterContactsScreen();
     }
@@ -57,7 +49,7 @@ public class AddContactsScreenTest extends ActivityInstrumentationTestCase2<Main
 
     private void enterContactsScreen() {
         // TODO: hardcoded click position and menu text
-        onView(isRoot()).perform(mTestUtils.clickScreenPosition(0, 0));
+        onView(isRoot()).perform(TestUtils.clickScreenPosition(0, 0));
         onView(withText("Contacts")).perform(click());
     }
 

@@ -17,23 +17,20 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 public class WelcomeScreensTest extends ActivityInstrumentationTestCase2<MainActivity> {
 
-
-    private TestUtils mTestUtils;
-
     public WelcomeScreensTest() {
         super(MainActivity.class);
-        mTestUtils = new TestUtils();
     }
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        mTestUtils.clearAppData(getInstrumentation().getTargetContext());
-        getActivity().firstTimeLaunch = null;
+        TestUtils.clearAppData(getInstrumentation().getTargetContext());
+        getActivity();
     }
 
     @Override
     public void tearDown() throws Exception {
+        TestUtils.clearAppData(getInstrumentation().getTargetContext());
         super.tearDown();
     }
 
