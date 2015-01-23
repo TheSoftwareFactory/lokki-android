@@ -49,7 +49,7 @@ public class AddContactsScreenTest extends MainActivityBaseTest {
 
     private void enterContactsScreen() {
         // TODO: hardcoded click position and menu text
-        onView(isRoot()).perform(TestUtils.clickScreenPosition(0, 0));
+        onView(withId(R.id.decor_content_parent)).perform(TestUtils.clickScreenPosition(0, 0));
         onView(withText("Contacts")).perform(click());
     }
 
@@ -71,7 +71,8 @@ public class AddContactsScreenTest extends MainActivityBaseTest {
 
     public void testSeeAnyContact() {
         onView(withId(R.id.add_people)).perform(click());
-        onView(withText("Test Friend")).check(matches(isDisplayed()));
+        // TODO: hardcoded text
+        onView(withText("Family Member")).check(matches(isDisplayed()));
     }
 
 

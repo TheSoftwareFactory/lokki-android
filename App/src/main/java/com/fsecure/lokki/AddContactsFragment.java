@@ -77,7 +77,7 @@ public class AddContactsFragment extends Fragment {
 
         super.onActivityCreated(savedInstanceState);
         String[] loadingList = {"Loading..."};
-        aq.id(R.id.listView).adapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, loadingList));
+        aq.id(R.id.add_contacts_list_view).adapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, loadingList));
         new getAllEmailAddressesAsync().execute();
 
         /**
@@ -246,7 +246,7 @@ public class AddContactsFragment extends Fragment {
             }
         };
 
-        aq.id(R.id.listView).adapter(adapter);
+        aq.id(R.id.add_contacts_list_view).adapter(adapter);
         //listView.setAdapter(adapter);
     }
 

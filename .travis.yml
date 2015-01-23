@@ -15,9 +15,12 @@ android:
 
 before_script:
   - echo no | android create avd --force -n testAvd -t android-21 --abi armeabi-v7a
-  - emulator -avd testAvd -no-skin -no-audio -no-window &
+  - emulator -avd testAvd -no-audio -no-window &
   - android-wait-for-emulator
   - adb shell input keyevent 82 &
+
+script:
+  - ./gradlew connectedCheck
 
 deploy:
   provider: releases
