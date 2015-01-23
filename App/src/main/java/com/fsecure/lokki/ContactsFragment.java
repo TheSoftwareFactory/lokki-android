@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.androidquery.AQuery;
 import com.fsecure.lokki.avatar.AvatarLoader;
+import com.fsecure.lokki.utils.PreferenceUtils;
 import com.fsecure.lokki.utils.Utils;
 
 import org.json.JSONArray;
@@ -73,7 +74,7 @@ public class ContactsFragment extends Fragment {
 
         try {
             if (MainApplication.dashboard == null)
-                MainApplication.dashboard = new JSONObject(Utils.getValue(context, "dashboard"));
+                MainApplication.dashboard = new JSONObject(PreferenceUtils.getValue(context, PreferenceUtils.KEY_DASHBOARD));
 
             JSONObject iCanSeeObj = MainApplication.dashboard.getJSONObject("icansee");
             JSONArray canSeeMeObj = MainApplication.dashboard.getJSONArray("canseeme");

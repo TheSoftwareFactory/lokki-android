@@ -89,21 +89,7 @@ public class Utils {
         return (networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected()); // Returns true if connected to Wifi
     }
 
-    public static String getValue(Context context, String key){
 
-        if (context == null) return null;
-
-        SharedPreferences prefs = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
-        return prefs.getString(key, "");
-    }
-
-    public static void setValue(Context context, String key, String value){
-
-        if (context == null) return;
-
-        SharedPreferences prefs = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
-        prefs.edit().putString(key, value).commit();
-    }
 
     public static String getDeviceId() {
 
@@ -122,7 +108,7 @@ public class Utils {
         if (context == null) return false;
         if (MainApplication.contacts != null) return true;
 
-        String jsonData = Utils.getValue(context, "contacts");
+        String jsonData = PreferenceUtils.getValue(context, PreferenceUtils.KEY_CONTACTS);
         if (!jsonData.equals(""))
             try {
                 MainApplication.contacts = new JSONObject(jsonData);

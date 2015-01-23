@@ -12,6 +12,7 @@ import android.support.v4.util.LruCache;
 import android.util.Log;
 
 
+import com.fsecure.lokki.utils.PreferenceUtils;
 import com.fsecure.lokki.utils.Utils;
 import com.google.android.gms.maps.GoogleMap;
 
@@ -58,7 +59,7 @@ public class MainApplication extends Application {
             }
         };
 
-        String iDontWantToSeeString = Utils.getValue(this, "iDontWantToSee");
+        String iDontWantToSeeString = PreferenceUtils.getValue(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE);
         if (!iDontWantToSeeString.equals("")) {
             try {
                 MainApplication.iDontWantToSee = new JSONObject(iDontWantToSeeString);
@@ -88,7 +89,7 @@ public class MainApplication extends Application {
 
     private void loadSetting() {
 
-        visible = !Utils.getValue(this, "setting-visibility").equals("1"); // If 1 it is disabled, otherwise ON.
+        visible = !PreferenceUtils.getValue(this, PreferenceUtils.KEY_SETTING_VISIBILITY).equals("1"); // If 1 it is disabled, otherwise ON.
         Log.e(TAG, "Visible: " + visible);
     }
 

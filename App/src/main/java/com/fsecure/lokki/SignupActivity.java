@@ -14,6 +14,7 @@ import android.view.View;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxStatus;
+import com.fsecure.lokki.utils.PreferenceUtils;
 import com.fsecure.lokki.utils.Utils;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.AccountPicker;
@@ -65,8 +66,8 @@ public class SignupActivity extends ActionBarActivity {
             String accountName = aq.id(R.id.email).getText().toString();
             Log.e(TAG, "Email: " + accountName);
             if (!accountName.equals("")) {
-                Utils.setValue(this, "userAccount", accountName);
-                Utils.setValue(this, "deviceId", Utils.getDeviceId());
+                PreferenceUtils.setValue(this, PreferenceUtils.KEY_USER_ACCOUNT, accountName);
+                PreferenceUtils.setValue(this, PreferenceUtils.KEY_DEVICE_ID, Utils.getDeviceId());
                 MainApplication.userAccount = accountName;
 
                 ServerAPI.signup(this, "signupCallback");
@@ -90,8 +91,8 @@ public class SignupActivity extends ActionBarActivity {
 
             if (!id.equals("") && !authorizationtoken.equals("")) {
 
-                Utils.setValue(this, "userId", id);
-                Utils.setValue(this, "authorizationToken", authorizationtoken);
+                PreferenceUtils.setValue(this, PreferenceUtils.KEY_USER_ID, id);
+                PreferenceUtils.setValue(this, PreferenceUtils.KEY_AUTH_TOKEN, authorizationtoken);
                 /*
                 startServices();
                 GCMHelper.start(getApplicationContext()); // Register to GCM

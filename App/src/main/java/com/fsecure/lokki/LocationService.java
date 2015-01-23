@@ -20,6 +20,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.fsecure.lokki.utils.PreferenceUtils;
 import com.fsecure.lokki.utils.Utils;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
@@ -107,7 +108,7 @@ public class LocationService extends Service implements GooglePlayServicesClient
         Log.e(TAG, "onCreate");
         super.onCreate();
 
-        if (Utils.getValue(this, "authorizationToken").equals("")) {
+        if (PreferenceUtils.getValue(this, PreferenceUtils.KEY_AUTH_TOKEN).equals("")) {
 
             Log.e(TAG, "User disabled reporting in App. Service not started.");
             stopSelf();

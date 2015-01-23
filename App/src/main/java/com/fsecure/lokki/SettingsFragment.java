@@ -17,6 +17,7 @@ import android.widget.ImageView;
 
 import com.androidquery.AQuery;
 import com.fsecure.lokki.avatar.AvatarLoader;
+import com.fsecure.lokki.utils.PreferenceUtils;
 import com.fsecure.lokki.utils.Utils;
 
 
@@ -37,19 +38,19 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemSele
         ImageView avatarImage = (ImageView) rootView.findViewById(R.id.avatar);
         AvatarLoader avatarLoader = new AvatarLoader(context);
 
-        String email = Utils.getValue(context, "userAccount");
+        String email = PreferenceUtils.getValue(context, PreferenceUtils.KEY_USER_ACCOUNT);
         avatarLoader.load(email, avatarImage);
 
         ArrayAdapter<CharSequence> adapter_visibility = ArrayAdapter.createFromResource(context, R.array.visibility_modes, R.layout.spinner_item);
         adapter_visibility.setDropDownViewResource(R.layout.spinner_dropdown_item);
 
-        int visibility_mode = Utils.getValue(context, "setting-visibility").equals("1") ? 1 : 0;
+        int visibility_mode = PreferenceUtils.getValue(context, PreferenceUtils.KEY_SETTING_VISIBILITY).equals("1") ? 1 : 0;
         MainApplication.visible = visibility_mode == 0;
 
         ArrayAdapter<CharSequence> adapter_map = ArrayAdapter.createFromResource(context, R.array.map_modes, R.layout.spinner_item);
         adapter_map.setDropDownViewResource(R.layout.spinner_dropdown_item);
 
-        String map_mode = Utils.getValue(context, "setting-map-mode");
+        String map_mode = PreferenceUtils.getValue(context, PreferenceUtils.KEY_SETTING_MAP_MODE);
         int map_mode_int = (map_mode.equals("0") || map_mode.equals("1") || map_mode.equals("2")) ? Integer.valueOf(map_mode) : 0;
 
         aq.id(R.id.lokki_id_text).text(getResources().getString(R.string.your_lokki_id) + " " + email);
@@ -68,7 +69,7 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemSele
         Log.e(TAG, "onItemSelected: " + position + ", tag:" + parent.getTag());
         String tag = (String) parent.getTag();
         if (tag.equals("visibility")) {
-            Utils.setValue(context, "setting-visibility", String.valueOf(position));
+            PreferenceUtils.setValue(context, PreferenceUtils.KEY_SETTING_VISIBILITY, String.valueOf(position));
             try {
                 if (position == 1) {
                     MainApplication.visible = false;
@@ -83,7 +84,7 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemSele
             } catch(Exception ex) {ex.printStackTrace();}
 
         } else if (tag.equals("map")) {
-            Utils.setValue(context, "setting-map-mode", String.valueOf(position));
+            PreferenceUtils.setValue(context, PreferenceUtils.KEY_SETTING_MAP_MODE, String.valueOf(position));
             MainApplication.mapType = position;
         }
     }

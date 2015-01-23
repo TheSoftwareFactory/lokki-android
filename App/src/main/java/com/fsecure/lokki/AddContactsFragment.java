@@ -26,12 +26,14 @@ import com.androidquery.AQuery;
 import com.fsecure.lokki.avatar.AvatarLoader;
 import com.fsecure.lokki.utils.ContactUtils;
 import com.fsecure.lokki.utils.DefaultContactUtils;
+import com.fsecure.lokki.utils.PreferenceUtils;
 import com.fsecure.lokki.utils.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -107,7 +109,7 @@ public class AddContactsFragment extends Fragment {
     public Boolean loadContacts(Context context) {
 
         if (MainApplication.contacts != null) return true;
-        String jsonData = Utils.getValue(context, "contacts");
+        String jsonData = PreferenceUtils.getValue(context, PreferenceUtils.KEY_CONTACTS);
         if (!jsonData.equals(""))
             try {
                 MainApplication.contacts = new JSONObject(jsonData);
@@ -165,7 +167,7 @@ public class AddContactsFragment extends Fragment {
                 try {
                     MainApplication.contacts = contactsResult;
                     MainApplication.mapping = MainApplication.contacts.getJSONObject("mapping");
-                    Utils.setValue(context, "contacts", MainApplication.contacts.toString());
+                    PreferenceUtils.setValue(context, PreferenceUtils.KEY_CONTACTS, MainApplication.contacts.toString());
 
                 } catch (JSONException e) {
                     e.printStackTrace();
