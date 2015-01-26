@@ -177,7 +177,7 @@ public class ContactsFragment extends Fragment {
         };
 
         aq.id(R.id.headers).visibility(View.VISIBLE);
-        aq.id(R.id.add_contacts_list_view).adapter(adapter);
+        aq.id(R.id.contacts_list_view).adapter(adapter);
     }
 
     static class ViewHolder {
