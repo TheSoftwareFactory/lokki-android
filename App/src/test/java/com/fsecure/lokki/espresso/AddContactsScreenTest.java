@@ -3,7 +3,9 @@ package com.fsecure.lokki.espresso;
 import android.content.Context;
 
 import com.fsecure.lokki.R;
+import com.fsecure.lokki.ServerAPI;
 import com.fsecure.lokki.utils.ContactUtils;
+import com.squareup.okhttp.mockwebserver.MockWebServer;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,13 +34,28 @@ public class AddContactsScreenTest extends MainActivityBaseTest {
                                      "\"mapping\": {\"Test Friend\": \"test.friend@email.com\"," +
                                                    "\"Family Member\": \"family.member@mail.com\"," +
                                                    "\"Work Buddy\": \"work.buddy@work.com\"}}";
+    private MockWebServer mockWebServer;
 
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
+        mockWebServer = new MockWebServer();
+        mockWebServer.play();
+
+        String mockUrl = mockWebServer.getUrl("/").toString();
+        System.out.println("MOCK SERVER URL: " + mockUrl);
+        ServerAPI.setApiUrl(mockUrl);
+
         setMockContacts();
+        System.out.println("SERVER API URL AFTER getActivity(): " + ServerAPI.getApiUrl());
         enterContactsScreen();
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        mockWebServer.shutdown();
+        super.tearDown();
     }
 
     private void setMockContacts() throws JSONException {

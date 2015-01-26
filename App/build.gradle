@@ -69,4 +69,7 @@ dependencies {
     androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.1'
     androidTestCompile 'com.google.dexmaker:dexmaker:1.1'
 
+    // MockWebServer
+    androidTestCompile 'com.squareup.okhttp:mockwebserver:2.1.0'
+
 }
