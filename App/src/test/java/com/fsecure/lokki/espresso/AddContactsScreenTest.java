@@ -19,6 +19,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.isRoot;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.core.AnyOf.anyOf;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
@@ -53,6 +54,12 @@ public class AddContactsScreenTest extends MainActivityBaseTest {
         onView(withText("Contacts")).perform(click());
     }
 
+    private void addSingleContactFromContactListScreen(String contactName) {
+        onView(withId(R.id.add_people)).perform(click());
+        onView(allOf(withId(R.id.contact_selected), withText(contactName))).perform(click());
+        onView(withId(R.id.allow_people)).perform(click());
+    }
+
 
 
 
@@ -69,13 +76,24 @@ public class AddContactsScreenTest extends MainActivityBaseTest {
         onView(withText(R.string.add_contact_dialog_message)).check(matches(isDisplayed()));
     }
 
-    public void testSeeAnyContact() {
+    public void testSeeAnyContactOnAddScreen() {
         onView(withId(R.id.add_people)).perform(click());
-        // TODO: hardcoded text
         onView(withText("Family Member")).check(matches(isDisplayed()));
     }
 
+    public void testAddingSingleContactShowsDialog() {
+        String contactName = "Family Member";
+        addSingleContactFromContactListScreen(contactName);
+        onView(allOf(withText(contactName), withText(R.string.add_contact_dialog_save))).check(matches(isDisplayed()));
+    }
 
+    public void testAddingSingleContactAddsContactToList() {
+        String contactName = "Family Member";
+        addSingleContactFromContactListScreen(contactName);
+        onView(withText("Ok")).perform(click());
+        enterContactsScreen();
+        onView(withText(contactName)).check(matches(isDisplayed()));
+    }
 
 
 }
