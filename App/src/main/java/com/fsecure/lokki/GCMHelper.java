@@ -26,7 +26,7 @@ public class GCMHelper {
     private static final String PROPERTY_APP_VERSION = "appVersion";
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
-    private static String SENDER_ID = "414686205954";
+    private static String SENDER_ID = "229584256615";
     private static final String TAG = "GCMHelper";
     private static GoogleCloudMessaging gcm;
     private static AtomicInteger msgId = new AtomicInteger();
