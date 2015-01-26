@@ -178,10 +178,10 @@ public class MapViewFragment extends Fragment {
             Log.e(TAG, "BroadcastReceiver onReceive");
             Bundle extras = intent.getExtras();
             if (extras != null && extras.containsKey("current-location")) {
-            //    new UpdateMap().execute(0); // Only user
+                //    new UpdateMap().execute(0); // Only user
 
             } else {
-            //    new UpdateMap().execute(1); // Only others (not user)
+                //    new UpdateMap().execute(1); // Only others (not user)
                 new UpdateMap().execute(2); // All users
             }
         }
@@ -258,8 +258,13 @@ public class MapViewFragment extends Fragment {
                         if (MainApplication.iDontWantToSee != null && MainApplication.iDontWantToSee.has(email)) {
                             Log.e(TAG, "I dont want to see: " + email);
 
-                        } else
-                            markerData.put(email, convertToLocation(location));
+                        } else {
+                            Location loc = convertToLocation(location);
+                            if (loc == null) {
+                                Log.e(TAG, "No location could be parsed for: " + email);
+                            }
+                            markerData.put(email, loc);
+                        }
                     }
                 }
                 return markerData;
@@ -289,6 +294,9 @@ public class MapViewFragment extends Fragment {
 
         Location myLocation = new Location("fused");
         try {
+            if (locationObj.length() == 0){
+                return null;
+            }
             double lat = locationObj.getDouble("lat");
             double lon = locationObj.getDouble("lon");
             float acc = (float) locationObj.getDouble("acc");
