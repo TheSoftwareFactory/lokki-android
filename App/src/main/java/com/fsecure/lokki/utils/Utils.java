@@ -2,10 +2,9 @@
 Copyright (c) 2014-2015 F-Secure
 See LICENSE for details
 */
-package com.fsecure.lokki;
+package com.fsecure.lokki.utils;
 
 import android.app.NotificationManager;
-import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -27,13 +26,13 @@ import android.net.Uri;
 import android.net.wifi.WifiManager;
 
 import android.os.Build;
-import android.provider.Contacts;
 import android.provider.ContactsContract;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.fsecure.lokki.MainApplication;
+import com.fsecure.lokki.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
@@ -41,10 +40,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.Locale;
 
@@ -94,21 +89,7 @@ public class Utils {
         return (networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected()); // Returns true if connected to Wifi
     }
 
-    public static String getValue(Context context, String key){
 
-        if (context == null) return null;
-
-        SharedPreferences prefs = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
-        return prefs.getString(key, "");
-    }
-
-    public static void setValue(Context context, String key, String value){
-
-        if (context == null) return;
-
-        SharedPreferences prefs = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
-        prefs.edit().putString(key, value).commit();
-    }
 
     public static String getDeviceId() {
 
@@ -127,7 +108,7 @@ public class Utils {
         if (context == null) return false;
         if (MainApplication.contacts != null) return true;
 
-        String jsonData = Utils.getValue(context, "contacts");
+        String jsonData = PreferenceUtils.getValue(context, PreferenceUtils.KEY_CONTACTS);
         if (!jsonData.equals(""))
             try {
                 MainApplication.contacts = new JSONObject(jsonData);

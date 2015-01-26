@@ -28,6 +28,10 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.fsecure.lokki.apprater.AppRater;
+import com.fsecure.lokki.utils.ContactUtils;
+import com.fsecure.lokki.utils.DefaultContactUtils;
+import com.fsecure.lokki.utils.PreferenceUtils;
+import com.fsecure.lokki.utils.Utils;
 
 import org.json.JSONException;
 
@@ -46,10 +50,17 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     private NavigationDrawerFragment mNavigationDrawerFragment;
     private CharSequence mTitle;
     private int selectedOption = 0;
+
+    private ContactUtils mContactUtils;
+
+    // TODO: make non static, put in shared prefs
     public static Boolean firstTimeLaunch;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        mContactUtils = new DefaultContactUtils();
 
         Log.e(TAG, "onCreate");
         super.onCreate(savedInstanceState);
@@ -83,7 +94,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
     private boolean firstTimeLaunch() {
 
-        String authorizationToken = Utils.getValue(this, "authorizationToken");
+        String authorizationToken = PreferenceUtils.getValue(this, PreferenceUtils.KEY_AUTH_TOKEN);
         if (authorizationToken.equals(""))
             return true;
         return false;
@@ -132,9 +143,9 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
     private void checkIfUserisLoggedIn() {
 
-        String userAccount = Utils.getValue(this, "userAccount");
-        String userId = Utils.getValue(this, "userId");
-        String authorizationToken = Utils.getValue(this, "authorizationToken");
+        String userAccount = PreferenceUtils.getValue(this, PreferenceUtils.KEY_USER_ACCOUNT);
+        String userId = PreferenceUtils.getValue(this, PreferenceUtils.KEY_USER_ID);
+        String authorizationToken = PreferenceUtils.getValue(this, PreferenceUtils.KEY_AUTH_TOKEN);
         boolean debug = false;
 
         if (debug || userId.equals("") || userAccount.equals("") || authorizationToken.equals(""))
@@ -245,7 +256,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
             case R.id.add_people: // In Contacts (to add new ones)
                 FragmentManager fragmentManager = getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.container, new AddContactsFragment()).commit();
+                fragmentManager.beginTransaction().replace(R.id.container, new AddContactsFragment(mContactUtils)).commit();
                 selectedOption = -10;
                 supportInvalidateOptionsMenu();
                 break;
@@ -273,7 +284,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
         MainApplication.visible = !MainApplication.visible;
         int visibility_mode = MainApplication.visible ? 0 : 1;
-        Utils.setValue(this, "setting-visibility", String.valueOf(visibility_mode));
+        PreferenceUtils.setValue(this, PreferenceUtils.KEY_SETTING_VISIBILITY, String.valueOf(visibility_mode));
 
         try {
             if (MainApplication.visible) {
@@ -388,13 +399,13 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
             if (!allow)
                 try {
                     MainApplication.iDontWantToSee.put(email, 1);
-                    Utils.setValue(this, "iDontWantToSee", MainApplication.iDontWantToSee.toString());
+                    PreferenceUtils.setValue(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, MainApplication.iDontWantToSee.toString());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             else if (MainApplication.iDontWantToSee.has(email)) {
                  MainApplication.iDontWantToSee.remove(email);
-                 Utils.setValue(this, "iDontWantToSee", MainApplication.iDontWantToSee.toString());
+                 PreferenceUtils.setValue(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, MainApplication.iDontWantToSee.toString());
             }
         }
     }
@@ -454,5 +465,10 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         }
     };
 
+
+    // For dependency injection
+    public void setContactUtils(ContactUtils contactUtils) {
+        this.mContactUtils = contactUtils;
+    }
 
 }

@@ -17,6 +17,8 @@ import android.util.Log;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxStatus;
+import com.fsecure.lokki.utils.PreferenceUtils;
+import com.fsecure.lokki.utils.Utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -98,7 +100,7 @@ public class DataService extends Service {
         setTimer();
         serviceRunning = true;
         try {
-            MainApplication.dashboard = new JSONObject(Utils.getValue(this.getApplicationContext(), "dashboard"));
+            MainApplication.dashboard = new JSONObject(PreferenceUtils.getValue(this.getApplicationContext(), PreferenceUtils.KEY_DASHBOARD));
         } catch (JSONException e) {
             MainApplication.dashboard = null;
         }
@@ -154,7 +156,7 @@ public class DataService extends Service {
         if (json != null){
             Log.e(TAG, "json returned: " + json);
             MainApplication.places = json;
-            Utils.setValue(this, "places", json.toString());
+            PreferenceUtils.setValue(this, PreferenceUtils.KEY_PLACES, json.toString());
             Intent intent = new Intent("PLACES-UPDATE");
             LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 
@@ -169,14 +171,14 @@ public class DataService extends Service {
 
         if (status.getCode() == 401) {
             Log.e(TAG, "Status login failed. App should exit.");
-            Utils.setValue(this, "authorizationToken", "");
+            PreferenceUtils.setValue(this, PreferenceUtils.KEY_AUTH_TOKEN, "");
             Intent intent = new Intent("EXIT");
             LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 
         } else if (json != null){
             Log.e(TAG, "json returned: " + json);
             MainApplication.dashboard = json;
-            Utils.setValue(this, "dashboard", json.toString());
+            PreferenceUtils.setValue(this, PreferenceUtils.KEY_DASHBOARD, json.toString());
             Intent intent = new Intent("LOCATION-UPDATE");
             LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
 

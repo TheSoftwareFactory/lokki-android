@@ -20,12 +20,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.androidquery.AQuery;
 import com.fsecure.lokki.avatar.AvatarLoader;
+import com.fsecure.lokki.utils.PreferenceUtils;
+import com.fsecure.lokki.utils.Utils;
 import com.makeramen.RoundedImageView;
 
 import org.json.JSONArray;
@@ -246,8 +247,8 @@ public class PlacesFragment extends Fragment {
 
         try {
             if (MainApplication.places == null) { // Read them from cache
-                if (!Utils.getValue(context, "places").equals(""))
-                    MainApplication.places = new JSONObject(Utils.getValue(context, "places"));
+                if (!PreferenceUtils.getValue(context, PreferenceUtils.KEY_PLACES).equals(""))
+                    MainApplication.places = new JSONObject(PreferenceUtils.getValue(context, PreferenceUtils.KEY_PLACES));
                 else return;
             }
 

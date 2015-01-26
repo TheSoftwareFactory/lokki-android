@@ -30,34 +30,13 @@ For further information see the [Android documentation](http://developer.android
 
 ### Tests
 
-The functional tests of the application are written in Python using [state-machine-crawler](https://github.com/gurunars/state_machine_crawler). To set up the test enviroment you need to have [virtualenv](https://virtualenv.pypa.io/) installed.
+To run the tests run the following command in the project root:
 
-1. Create and activate a virtual enviroment for the test suite using Python version 2.7. Run the following commands in the project root:
+```
+$ ./gradlew connectedCheck
+```
 
-    ```
-    $ virtualenv venv
-    $ source venv/bin/activate
-    ```
-
-2. Install the required modules for the tests in the virtual enviroment:
-
-    ```
-    (venv)$ pip install -r requirements.txt
-    ```
-
-3. Start your Android emulator or connect an Android device in USB debugging mode.
-
-4. Build the application .apk file:
-
-    ```
-    (venv)$ ./gradlew clean build
-    ```
-
-5. Run all the functional tests with the command (make sure the emulator/device screen is **not** locked):
-
-    ```
-    (venv)$ nosetests -v .
-    ```
+Make sure an emulator or device is connected, running and the screen is unlocked.
 
 ### Contributing
 

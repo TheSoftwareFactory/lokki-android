@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.fsecure.lokki.utils.Utils;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import org.json.JSONException;

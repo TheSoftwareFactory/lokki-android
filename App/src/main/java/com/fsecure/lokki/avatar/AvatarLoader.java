@@ -7,13 +7,11 @@ package com.fsecure.lokki.avatar;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ImageView;
 
-import com.fsecure.lokki.R;
-import com.fsecure.lokki.Utils;
+import com.fsecure.lokki.utils.Utils;
 
 import java.lang.ref.WeakReference;
 

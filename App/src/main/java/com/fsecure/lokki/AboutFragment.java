@@ -20,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
 import com.androidquery.AQuery;
+import com.fsecure.lokki.utils.Utils;
 
 
 public class AboutFragment extends Fragment {

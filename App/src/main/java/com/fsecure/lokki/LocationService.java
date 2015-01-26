@@ -10,12 +10,8 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.SystemClock;
@@ -24,6 +20,8 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.fsecure.lokki.utils.PreferenceUtils;
+import com.fsecure.lokki.utils.Utils;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -31,20 +29,7 @@ import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.StatusLine;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
-
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 
 
 public class LocationService extends Service implements GooglePlayServicesClient.ConnectionCallbacks,
@@ -123,7 +108,7 @@ public class LocationService extends Service implements GooglePlayServicesClient
         Log.e(TAG, "onCreate");
         super.onCreate();
 
-        if (Utils.getValue(this, "authorizationToken").equals("")) {
+        if (PreferenceUtils.getValue(this, PreferenceUtils.KEY_AUTH_TOKEN).equals("")) {
 
             Log.e(TAG, "User disabled reporting in App. Service not started.");
             stopSelf();
