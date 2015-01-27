@@ -230,7 +230,7 @@ public class LocationService extends Service implements LocationListener, Google
         Log.e(TAG, "onDestroy called");
         stopForeground(true);
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-            // locationClient.removeLocationUpdates(this);  // todo check if this is needed? cleanup?
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
             mGoogleApiClient.disconnect();
             Log.e(TAG, "Location Updates removed.");
 
