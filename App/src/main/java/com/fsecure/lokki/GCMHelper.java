@@ -90,20 +90,18 @@ public class GCMHelper {
             @Override
             protected String doInBackground(Void... params) {
 
-                String msg = "";
                 try {
                     if (gcm == null) {
                         gcm = GoogleCloudMessaging.getInstance(context);
                     }
                     regid = gcm.register(SENDER_ID);
-                    msg = "Device registered, registration ID = " + regid;
                     sendRegistrationIdToBackend(context);
                     storeRegistrationId(context, regid);
+                    return "Device registered, registration ID = " + regid;
 
                 } catch (IOException ex) {
-                    msg = "Error :" + ex.getMessage();
+                    return "Error :" + ex.getMessage();
                 }
-                return msg;
             }
 
             @Override

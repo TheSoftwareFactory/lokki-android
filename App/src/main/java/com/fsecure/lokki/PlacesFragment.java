@@ -105,9 +105,9 @@ public class PlacesFragment extends Fragment {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, R.layout.places_row_layout, placesList) {
 
             @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
+            public View getView(int position, View unusedView, ViewGroup parent) {
 
-                convertView = getActivity().getLayoutInflater().inflate(R.layout.places_row_layout, null);
+                View convertView = getActivity().getLayoutInflater().inflate(R.layout.places_row_layout, null);
                 AQuery aq = new AQuery(getActivity(), convertView);
 
                 final String placeName = getItem(position);
@@ -147,8 +147,7 @@ public class PlacesFragment extends Fragment {
 
                                 if (MainApplication.avatarCache.get(email) != null) {
                                     image.setImageBitmap(MainApplication.avatarCache.get(email));
-                                }
-                                else {
+                                } else {
                                     Log.e(TAG, "Avatar not in cache, email: " + email);
                                     image.setImageResource(R.drawable.default_avatar);
                                 }
@@ -247,7 +246,7 @@ public class PlacesFragment extends Fragment {
 
         try {
             if (MainApplication.places == null) { // Read them from cache
-                if (!PreferenceUtils.getValue(context, PreferenceUtils.KEY_PLACES).equals(""))
+                if (!PreferenceUtils.getValue(context, PreferenceUtils.KEY_PLACES).isEmpty())
                     MainApplication.places = new JSONObject(PreferenceUtils.getValue(context, PreferenceUtils.KEY_PLACES));
                 else return;
             }

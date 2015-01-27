@@ -18,8 +18,7 @@ public class PreferenceUtils {
     public static final String KEY_SETTING_MAP_MODE = "settingMapMode";
 
 
-
-    public static String getValue(Context context, String key){
+    public static String getValue(Context context, String key) {
 
         if (context == null) return null;
 
@@ -27,7 +26,7 @@ public class PreferenceUtils {
         return prefs.getString(key, "");
     }
 
-    public static void setValue(Context context, String key, String value){
+    public static void setValue(Context context, String key, String value) {
 
         if (context == null) return;
 

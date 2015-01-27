@@ -94,10 +94,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
     private boolean firstTimeLaunch() {
 
-        String authorizationToken = PreferenceUtils.getValue(this, PreferenceUtils.KEY_AUTH_TOKEN);
-        if (authorizationToken.equals(""))
-            return true;
-        return false;
+        return PreferenceUtils.getValue(this, PreferenceUtils.KEY_AUTH_TOKEN).isEmpty();
     }
 
     @Override
@@ -148,7 +145,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         String authorizationToken = PreferenceUtils.getValue(this, PreferenceUtils.KEY_AUTH_TOKEN);
         boolean debug = false;
 
-        if (debug || userId.equals("") || userAccount.equals("") || authorizationToken.equals(""))
+        if (debug || userId.isEmpty() || userAccount.isEmpty() || authorizationToken.isEmpty())
             try {
                 startActivityForResult(new Intent(this, SignupActivity.class), REQUEST_CODE_EMAIL);
                 /*
@@ -181,7 +178,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         selectedOption = position;
         getSupportActionBar().setTitle(mTitle);
 
-        switch(position) {
+        switch (position) {
             case 0: // Map
                 fragmentManager.beginTransaction().replace(R.id.container, new FragmentTabsFragmentSupport()).commit();
                 break;
@@ -291,13 +288,12 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
                 LocationService.start(MainActivity.this);
                 ServerAPI.setVisibility(MainActivity.this, true);
                 Toast.makeText(this, getResources().getString(R.string.you_are_visible), Toast.LENGTH_LONG).show();
-            }
-            else {
+            } else {
                 LocationService.stop(MainActivity.this);
                 ServerAPI.setVisibility(MainActivity.this, false);
                 Toast.makeText(this, getResources().getString(R.string.you_are_invisible), Toast.LENGTH_LONG).show();
             }
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 
@@ -305,12 +301,10 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     }
 
 
-
-
     // TODO: implement back button logic in onBackPressed()
     @Override
     public boolean onKeyUp(int keycode, KeyEvent e) {
-        switch(keycode) {
+        switch (keycode) {
             case KeyEvent.KEYCODE_MENU:
                 mNavigationDrawerFragment.toggleDrawer();
                 return true;
@@ -404,8 +398,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
                     e.printStackTrace();
                 }
             else if (MainApplication.iDontWantToSee.has(email)) {
-                 MainApplication.iDontWantToSee.remove(email);
-                 PreferenceUtils.setValue(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, MainApplication.iDontWantToSee.toString());
+                MainApplication.iDontWantToSee.remove(email);
+                PreferenceUtils.setValue(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, MainApplication.iDontWantToSee.toString());
             }
         }
     }

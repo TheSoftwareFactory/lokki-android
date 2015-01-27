@@ -94,7 +94,7 @@ public class ContactsFragment extends Fragment {
                 Log.e(TAG, "I can see: " + email);
             }
 
-            for (int i=0; i < canSeeMeObj.length(); i++) {
+            for (int i = 0; i < canSeeMeObj.length(); i++) {
                 String key = canSeeMeObj.getString(i);
                 String email = (String) idMappingObj.get(key);
                 String name = Utils.getNameFromEmail(context, email);

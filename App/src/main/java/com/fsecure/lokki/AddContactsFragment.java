@@ -40,7 +40,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 
-
 public class AddContactsFragment extends Fragment {
 
     private static final String TAG = "AddContacts";
@@ -110,7 +109,7 @@ public class AddContactsFragment extends Fragment {
 
         if (MainApplication.contacts != null) return true;
         String jsonData = PreferenceUtils.getValue(context, PreferenceUtils.KEY_CONTACTS);
-        if (!jsonData.equals(""))
+        if (!jsonData.isEmpty())
             try {
                 MainApplication.contacts = new JSONObject(jsonData);
                 MainApplication.mapping = MainApplication.contacts.getJSONObject("mapping");
@@ -153,7 +152,7 @@ public class AddContactsFragment extends Fragment {
             try {
                 return mContactUtils.listContacts(context);
 
-            } catch(Exception ex) {
+            } catch (Exception ex) {
                 ex.printStackTrace();
                 return null;
             }
@@ -174,7 +173,7 @@ public class AddContactsFragment extends Fragment {
                 }
                 //Log.e(TAG, "existing contacts? " + existingContacts);
                 //if (!existingContacts)
-                    new prepareAdapterAsync().execute();
+                new prepareAdapterAsync().execute();
             }
             super.onPostExecute(MainApplication.contacts);
         }
@@ -184,15 +183,14 @@ public class AddContactsFragment extends Fragment {
 
         contactList = new ArrayList<String>();
 
-        JSONArray keys = null;
-        keys = MainApplication.mapping.names();
+        JSONArray keys = MainApplication.mapping.names();
 
         if (keys == null) return;
         for (int i = 0; i < keys.length(); i++) {
             try {
                 contactList.add(keys.get(i).toString());
 
-            } catch(Exception ex) {
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
@@ -238,8 +236,7 @@ public class AddContactsFragment extends Fragment {
                     //holder.imageLoader = new LoadPhotoAsync(position, holder);
                     //holder.imageLoader.execute(contactName);
 
-                }
-                catch(Exception ex) {
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
                 return convertView;
@@ -258,8 +255,6 @@ public class AddContactsFragment extends Fragment {
         //LoadPhotoAsync imageLoader;
         int position;
     }
-
-
 
 
 }

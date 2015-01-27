@@ -57,8 +57,7 @@ public class FirstTimeActivity extends ActionBarActivity {
         if (!next) {
             getMenuInflater().inflate(R.menu.first_time_welcome, menu);
             actionBar.setTitle(R.string.welcome_title);
-        }
-        else {
+        } else {
             getMenuInflater().inflate(R.menu.first_time_terms, menu);
             actionBar.setTitle(R.string.terms_title);
         }

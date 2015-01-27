@@ -63,14 +63,16 @@ public class LokkiDialogs {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mContext.startActivity(new Intent(WifiManager.ACTION_PICK_WIFI_NETWORK));
-                        if (dontRemindMe.size() > 0) editor.putBoolean(DONT_SHOW_AGAIN_WIFI_DIALOG, true).commit();
+                        if (dontRemindMe.size() > 0)
+                            editor.putBoolean(DONT_SHOW_AGAIN_WIFI_DIALOG, true).commit();
                         dialog.dismiss();
                     }
                 })
                 .setNegativeButton("Not now", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (dontRemindMe.size() > 0) editor.putBoolean(DONT_SHOW_AGAIN_WIFI_DIALOG, true).commit();
+                        if (dontRemindMe.size() > 0)
+                            editor.putBoolean(DONT_SHOW_AGAIN_WIFI_DIALOG, true).commit();
                         dialog.dismiss();
                     }
                 })
@@ -112,14 +114,16 @@ public class LokkiDialogs {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         mContext.startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                        if (dontRemindMe.size() > 0) editor.putBoolean(DONT_SHOW_AGAIN_LOCATION_SERVICES_DIALOG, true).commit();
+                        if (dontRemindMe.size() > 0)
+                            editor.putBoolean(DONT_SHOW_AGAIN_LOCATION_SERVICES_DIALOG, true).commit();
                         dialog.dismiss();
                     }
                 })
                 .setNegativeButton("Not now", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (dontRemindMe.size() > 0) editor.putBoolean(DONT_SHOW_AGAIN_LOCATION_SERVICES_DIALOG, true).commit();
+                        if (dontRemindMe.size() > 0)
+                            editor.putBoolean(DONT_SHOW_AGAIN_LOCATION_SERVICES_DIALOG, true).commit();
                         dialog.dismiss();
                     }
                 })

@@ -37,19 +37,17 @@
     </style>
 
     <!-- action bar title text -->
-    <style name="TitleTextStyle"
-        parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
+    <style name="TitleTextStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
         <item name="android:textColor">@color/actionbar_text</item>
     </style>
 
     <!-- action bar subtitle text -->
-    <style name="SubtitleTextStyle" >
+    <style name="SubtitleTextStyle">
         <item name="android:textColor">@color/actionbar_text</item>
     </style>
 
     <!-- action bar tab text -->
-    <style name="TabTextStyle"
-        parent="@style/Widget.AppCompat.ActionBar.TabText">
+    <style name="TabTextStyle" parent="@style/Widget.AppCompat.ActionBar.TabText">
         <item name="android:textColor">@color/actionbar_text</item>
     </style>
 
