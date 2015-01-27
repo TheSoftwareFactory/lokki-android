@@ -5,13 +5,11 @@ See LICENSE for details
 package com.fsecure.lokki;
 
 import android.app.AlarmManager;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.SystemClock;
@@ -21,60 +19,37 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.fsecure.lokki.utils.PreferenceUtils;
-import com.fsecure.lokki.utils.Utils;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 
 import org.json.JSONException;
 
 
-public class LocationService extends Service implements GooglePlayServicesClient.ConnectionCallbacks,
-                                                        GooglePlayServicesClient.OnConnectionFailedListener,
-                                                        LocationListener {
+public class LocationService extends Service implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     // INTERVALS
     private static final long INTERVAL_10_MS = 10;
     private static final long INTERVAL_30_SECS = 30 * 1000;
     private static final long INTERVAL_1_MIN = 60 * 1000;
 
-    // NOTIFICATIONS
-    // - ERRORS
-    public static final int ERROR_LOW_BATTERY_NOTIFICATION = 2001;
-    public static final int ERROR_LOCATION_SERVICES_OFF_NOTIFICATION = 2002;
-    public static final int ERROR_WIFI_OFF_NOTIFICATION = 2003;
-    public static final int ERROR_NOTIFICATION = 2004;
-
-    // - MESSAGES
-    public static final int NOTIFICATION_NORMAL = 1001;
-    public static final int NOTIFICATION_CHAT = 1002;
-    public static final int NOTIFICATION_ALERT = 1003;
-
     // - SERVICE
-    public static final int NOTIFICATION_SERVICE = 100;
+    private static final int NOTIFICATION_SERVICE = 100;
 
     // OTHER
-    private static String TAG = "LocationService";
+    private static final String TAG = "LocationService";
     private static final String RUN_1_MIN = "RUN_1_MIN";
     private static final String ALARM_TIMER = "ALARM_TIMER";
 
-    private LocationClient locationClient;
-    private LocationRequest highAccuracyLocationRequest;
-    private NotificationCompat.Builder notificationBuilder;
-    NotificationManager notificationManager;
-    public static Boolean serviceRunning = false;
-    private Boolean locationClientConnected = false;
-    public static Location lastLocation = null;
-    private AlarmManager alarm;
-    private PendingIntent alarmCallback;
+    private GoogleApiClient mGoogleApiClient;
+    private LocationRequest locationRequest;
+    private static Boolean serviceRunning = false;
+    private static Location lastLocation = null;
 
-    //LocationAjaxCallback lcb;
-    // ---------------------------------------------------
-
-    public static void start(Context context){
+    public static void start(Context context) {
 
         Log.e(TAG, "start Service called");
 
@@ -85,14 +60,14 @@ public class LocationService extends Service implements GooglePlayServicesClient
         context.startService(new Intent(context, LocationService.class));
     }
 
-    public static void stop(Context context){
+    public static void stop(Context context) {
 
         Log.e(TAG, "stop Service called");
         context.stopService(new Intent(context, LocationService.class));
     }
 
 
-    public static void run1min(Context context){
+    public static void run1min(Context context) {
 
 
         if (serviceRunning || !MainApplication.visible) return; // If service is running, stop
@@ -128,30 +103,32 @@ public class LocationService extends Service implements GooglePlayServicesClient
     }
 
     private void setTemporalTimer() {
-        alarm = (AlarmManager) getSystemService(ALARM_SERVICE);
+        AlarmManager alarm = (AlarmManager) getSystemService(ALARM_SERVICE);
         Intent alarmIntent = new Intent(this, LocationService.class);
         alarmIntent.putExtra(ALARM_TIMER, 1);
-        alarmCallback = PendingIntent.getService(this, 0, alarmIntent, 0);
+        PendingIntent alarmCallback = PendingIntent.getService(this, 0, alarmIntent, 0);
         alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + INTERVAL_1_MIN, alarmCallback);
-        //alarm.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, INTERVAL_1_MIN, INTERVAL_30_MINS, alarmCallback);
         Log.e(TAG, "Time created.");
     }
 
     private void setLocationClient() {
 
-        highAccuracyLocationRequest = LocationRequest.create();
-        highAccuracyLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        highAccuracyLocationRequest.setInterval(INTERVAL_10_MS);
+        locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(INTERVAL_10_MS);
 
-        locationClient = new LocationClient(this, this, this);
-        locationClient.connect();
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
+        mGoogleApiClient.connect();
         Log.e(TAG, "Location Client created.");
     }
 
     private void setNotificationAndForeground() {
 
-        notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationBuilder = new NotificationCompat.Builder(this);
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this);
         notificationBuilder.setContentTitle("Lokki");
         notificationBuilder.setContentText("Running...");
         notificationBuilder.setSmallIcon(R.drawable.ic_launcher);
@@ -165,7 +142,7 @@ public class LocationService extends Service implements GooglePlayServicesClient
 
         Log.e(TAG, "onStartCommand invoked");
 
-        if (intent != null ) { // Check that intent isnt null, and service is connected to Google Play Services
+        if (intent != null) {
             Bundle extras = intent.getExtras();
 
             if (extras != null && extras.containsKey(RUN_1_MIN)) {
@@ -187,102 +164,79 @@ public class LocationService extends Service implements GooglePlayServicesClient
 
     @Override
     public void onConnected(Bundle bundle) {
-
         Log.e(TAG, "locationClient connected");
-        locationClientConnected = true;
-        locationClient.requestLocationUpdates(highAccuracyLocationRequest, this);
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest, this);
+
+        Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        Log.e(TAG, "last location: " + mLastLocation.getLatitude() + " " + mLastLocation.getLongitude());
+
+        updateLokkiLocation(mLastLocation);
     }
 
     @Override
-    public void onDisconnected() {
+    public void onConnectionSuspended(int i) {
 
-        Log.e(TAG, "locationClient disconnected");
-        locationClientConnected = false;
     }
 
     @Override
     public void onLocationChanged(Location location) {
-
-        Boolean highAccuracy = true;
-        Log.e(TAG, String.format("onLocationChanged - Accuracy: %s, Location: %s", highAccuracy, location));
-        if (serviceRunning && locationClientConnected && location != null) {
-
-            if (useNewLocation(location)) {
-                Log.e(TAG, "New location taken into use.");
-                //sendData(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()), String.valueOf(location.getAccuracy()));
-                lastLocation = location;
-                //updateNotification();
-                DataService.updateDashboard(this, location);
-                Intent intent = new Intent("LOCATION-UPDATE");
-                intent.putExtra("current-location", 1);
-                LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-                try {
-                    if (MainApplication.visible)
-                        ServerAPI.sendLocation(this, location);
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-            else
-                Log.e(TAG, "New location discarded.");
-
-            //updateNotification();
-
+        Log.e(TAG, String.format("onLocationChanged - Location: %s", location));
+        if (serviceRunning && mGoogleApiClient.isConnected() && location != null) {
+            updateLokkiLocation(location);
         } else {
             this.stopSelf();
             onDestroy();
         }
     }
 
-    private boolean useNewLocation(Location location) {
+    private void updateLokkiLocation(Location location) {
+        if (useNewLocation(location)) {
+            Log.e(TAG, "New location taken into use.");
+            lastLocation = location;
+            DataService.updateDashboard(this, location);
+            Intent intent = new Intent("LOCATION-UPDATE");
+            intent.putExtra("current-location", 1);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+            try {
+                if (MainApplication.visible)
+                    ServerAPI.sendLocation(this, location);
 
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Log.e(TAG, "New location discarded.");
+        }
+    }
+
+    /**
+     * Determines if the location should be used or discarded depending on the current accuracy and
+     * the distance to the last location
+     * @param location New location to be checked
+     * @return true if the new location should be used
+     */
+    private boolean useNewLocation(Location location) {
         return (lastLocation == null || (location.getTime() - lastLocation.getTime() > INTERVAL_30_SECS) ||
                 lastLocation.distanceTo(location) > 5 || lastLocation.getAccuracy() - location.getAccuracy() > 5);
     }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-
         Log.e(TAG, "locationClient onConnectionFailed");
-        locationClientConnected = false;
     }
 
     @Override
     public void onDestroy() {
-
         Log.e(TAG, "onDestroy called");
         stopForeground(true);
-        if (locationClient != null && locationClient.isConnected()) {
-            locationClient.removeLocationUpdates(this);
-            locationClient.disconnect();
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            // locationClient.removeLocationUpdates(this);  // todo check if this is needed? cleanup?
+            mGoogleApiClient.disconnect();
             Log.e(TAG, "Location Updates removed.");
 
-        } else Log.e(TAG, "locationClient didnt exist.");
+        } else Log.e(TAG, "locationClient didn't exist.");
         serviceRunning = false;
         super.onDestroy();
-    }
-
-    private void updateNotification() {
-
-        if (lastLocation == null) return;
-
-        String accuracy = "Bad.";
-        if (lastLocation.getAccuracy() < 100) accuracy = "OK.";
-        if (lastLocation.getAccuracy() < 50) accuracy = "Good.";
-        String notificationText = String.format("Status: Active. Accuracy: %s", accuracy);
-
-        notificationBuilder = new NotificationCompat.Builder(this);
-        notificationBuilder.setContentTitle("Lokki");
-        notificationBuilder.setSmallIcon(R.drawable.ic_launcher);
-        notificationBuilder.setWhen(lastLocation.getTime());
-        notificationBuilder.setContentText(notificationText);
-
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
-        notificationBuilder.setContentIntent(contentIntent);
-
-        notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(NOTIFICATION_SERVICE, notificationBuilder.build());
     }
 
     private boolean checkGooglePlayServices() {
@@ -300,174 +254,4 @@ public class LocationService extends Service implements GooglePlayServicesClient
         Log.e(TAG, "Google Play Services is OK.");
         return true;
     }
-
-    // Check if GPS provider or Network provider are not enabled and prompts user to enable them
-    // Dialogs need to be called with a ACTIVITY context, otherwise they will throw an exception
-    public static Boolean checkLocationServices(Context context) { // Activity Context!!!
-
-        Log.i("LokkiLocationLibrary", "checkLocationServices called");
-        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-
-        if( !locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)  ||
-                !locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER) ) {
-
-            Log.e("LokkiLocationLibrary", "Location services not enabled");
-            LokkiDialogs.showLocationServicesOFF(context);
-            return false;
-        }
-        // Separate wifi to a different notification
-        else if (!Utils.isWifiEnabled(context)) {
-
-            Log.e("LokkiLocationLibrary", "WIFI is OFF");
-            LokkiDialogs.showWifiOFF(context);
-            return false;
-        }
-        return true;
-    }
-
 }
-
-
-    /*
-    public static void notification(Context context, int type, String title, String text) {
-
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        NotificationCompat.Builder notification = new NotificationCompat.Builder(context);
-        notification.setContentTitle(title);
-        notification.setContentText(text);
-        notification.setAutoCancel(true);
-        notification.setSmallIcon(R.drawable.ic_launcher);
-        notification.setVibrate(new long[]{500, 500});
-        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        notification.setSound(alarmSound);
-        PendingIntent contentIntent = PendingIntent.getActivity(context, 0, new Intent(context, MainActivity.class), 0);
-
-        if (type == LocationService.ERROR_NOTIFICATION ) {
-
-            notification.setSmallIcon(R.drawable.ic_launcher);
-            notification.setLights(Color.RED, 500, 500);
-        }
-        else if (type == LocationService.ERROR_LOW_BATTERY_NOTIFICATION) {
-
-            notification.setSmallIcon(R.drawable.ic_launcher);
-            notification.setLights(Color.RED, 500, 500);
-            contentIntent = null;
-        }
-        else if (type == LocationService.NOTIFICATION_CHAT) {
-
-            Intent chatIntent = new Intent(context, MainActivity.class);
-            chatIntent.putExtra("type", "CHAT");
-            notification.setLights(Color.WHITE, 500, 500);
-            contentIntent = PendingIntent.getActivity(context, 0, chatIntent, 0);
-        }
-        else if (type == LocationService.NOTIFICATION_ALERT) {
-
-            notification.setLights(Color.BLUE, 500, 500);
-            Intent alertIntent = new Intent(context, MainActivity.class);
-            alertIntent.putExtra("type", "ALERT");
-            contentIntent = PendingIntent.getActivity(context, 0, alertIntent, 0);
-
-            NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
-            inboxStyle.setBigContentTitle("LokkiActivity Alerts"); // Sets a title for the Inbox style big view
-
-            // Get stored notifications and adds the new one
-            String unreadAlertsString = Utils.getValue(context, "unreadAlerts");
-            String[] unreadAlerts = unreadAlertsString.split("\\|\\|");
-
-            // Add new text to unreadAlerts
-            if (unreadAlertsString.isEmpty()) {
-                unreadAlertsString = text;
-            } else {
-                unreadAlertsString = text + "||" + unreadAlertsString;
-            }
-            Utils.setValue(context, "unreadAlerts", unreadAlertsString);
-
-            //Log.e("notification", "unreadAlertsString: " + unreadAlertsString);
-
-            // Moves events into the big view
-            inboxStyle.addLine(text);
-            for (String event: unreadAlerts) {
-                Log.e("notification", "added: " + event);
-                inboxStyle.addLine(event);
-            }
-
-            // Moves the big view style object into the notification object.
-            notification.setStyle(inboxStyle);
-        }
-
-        notification.setContentIntent(contentIntent);
-        notificationManager.notify(type, notification.build());
-    }
-    */
-/*
-    // DATA COMMUNICATION TO SERVER
-    private void sendData(String lat, String lon, String acc) {
-
-        HashMap<String, String> data = new HashMap<String, String>();
-        data.put("lat", lat);
-        data.put("lon", lon);
-        data.put("acc", acc);
-        SendLocationUpstream asyncHttpPost = new SendLocationUpstream(data) {
-
-            @Override
-            protected void onPostExecute(String result) {
-                Log.e(TAG, "Sending data to server result: " + result);
-            }
-        };
-        String apiURL = Utils.getValue(this, "apiURL");
-        String authToken = Utils.getValue(this, "authToken");
-
-        asyncHttpPost.execute(apiURL, authToken); // Executes the sendData
-    }
-
-    // Asyn http post Class
-    private class SendLocationUpstream extends AsyncTask<String, String, String> {
-
-        private HashMap<String, String> mData = null;// post data
-
-        public SendLocationUpstream(HashMap<String, String> data) {
-            mData = data;
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            //byte[] result = null;
-            String result = "";
-            HttpClient client = new DefaultHttpClient();
-            HttpPost post = new HttpPost(params[0]);// in this case, params[0] is URL
-            String authToken = params[1]; // auth token
-            try {
-                // set up post data
-                ArrayList<NameValuePair> nameValuePair = new ArrayList<NameValuePair>();
-                Iterator<String> it = mData.keySet().iterator();
-                while (it.hasNext()) {
-                    String key = it.next();
-                    nameValuePair.add(new BasicNameValuePair(key, mData.get(key)));
-                }
-
-                post.setEntity(new UrlEncodedFormEntity(nameValuePair, "UTF-8"));
-                // Set authentication header
-                post.setHeader("authorizationtoken", authToken);
-
-                HttpResponse response = client.execute(post);
-                StatusLine statusLine = response.getStatusLine();
-
-                result = Integer.toString(statusLine.getStatusCode());
-            }
-            catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-            catch (Exception e) {
-                result = e.getLocalizedMessage();
-            }
-            return result;
-        }
-
-
-        // on getting result
-        @Override
-        protected void onPostExecute(String result) {
-            // something...
-        }
-    }
-    */
