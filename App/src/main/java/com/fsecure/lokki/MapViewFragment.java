@@ -177,12 +177,8 @@ public class MapViewFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             Log.e(TAG, "BroadcastReceiver onReceive");
             Bundle extras = intent.getExtras();
-            if (extras != null && extras.containsKey("current-location")) {
-            //    new UpdateMap().execute(0); // Only user
-
-            } else {
-            //    new UpdateMap().execute(1); // Only others (not user)
-                new UpdateMap().execute(2); // All users
+            if (extras == null || !extras.containsKey("current-location")) {
+                new UpdateMap().execute(); // All users
             }
         }
     };
@@ -233,34 +229,27 @@ public class MapViewFragment extends Fragment {
         protected HashMap<String, Location> doInBackground(Integer... params) {
 
             if (MainApplication.dashboard == null) return null;
-
-            int who = params[0]; // 0 = user, 1 = others, 3 = all.
-            Log.e(TAG, "UpdateMap update for all users: " + who);
+            Log.e(TAG, "UpdateMap update for all users");
 
             try {
                 JSONObject iCanSee = MainApplication.dashboard.getJSONObject("icansee");
                 JSONObject idMapping = MainApplication.dashboard.getJSONObject("idmapping");
                 HashMap<String, Location> markerData = new HashMap<String, Location>();
 
-                if (who == 0 || who == 2) {
-                    markerData.put(MainApplication.userAccount, convertToLocation(MainApplication.dashboard.getJSONObject("location"))); // User himself
+                markerData.put(MainApplication.userAccount, convertToLocation(MainApplication.dashboard.getJSONObject("location"))); // User himself
+                Iterator keys = iCanSee.keys();
+                while (keys.hasNext()) {
+                    String key = (String) keys.next();
+                    JSONObject data = iCanSee.getJSONObject(key);
+                    JSONObject location = data.getJSONObject("location");
+                    String email = (String) idMapping.get(key);
+                    Log.e(TAG, "I can see: " + email + " => " + data);
 
-                }
-                if (who == 1 || who == 2) {
-                    Iterator keys = iCanSee.keys();
-                    while (keys.hasNext()) {
-                        String key = (String) keys.next();
-                        JSONObject data = iCanSee.getJSONObject(key);
-                        JSONObject location = data.getJSONObject("location");
-                        String email = (String) idMapping.get(key);
-                        Log.e(TAG, "I can see: " + email + " => " + data);
+                    if (MainApplication.iDontWantToSee != null && MainApplication.iDontWantToSee.has(email)) {
+                        Log.e(TAG, "I dont want to see: " + email);
 
-                        if (MainApplication.iDontWantToSee != null && MainApplication.iDontWantToSee.has(email)) {
-                            Log.e(TAG, "I dont want to see: " + email);
-
-                        } else
-                            markerData.put(email, convertToLocation(location));
-                    }
+                    } else
+                        markerData.put(email, convertToLocation(location));
                 }
                 return markerData;
 

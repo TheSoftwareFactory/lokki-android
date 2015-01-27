@@ -159,9 +159,7 @@ public class Utils {
 
         Log.e(TAG, "getNameFromEmail - Name queried: " + email);
         Cursor emailCursor = context.getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null, ContactsContract.CommonDataKinds.Email.DATA + "='" + email + "'" , null, null);
-        if (emailCursor == null) return "???";
-        while (emailCursor.moveToNext())
-        {
+        if (emailCursor != null && emailCursor.moveToNext()) {
             String name = emailCursor.getString(emailCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DISPLAY_NAME_PRIMARY));
             Log.e(TAG, "getNameFromEmail - Email: " + email + ", Name: " + name);
             return name;

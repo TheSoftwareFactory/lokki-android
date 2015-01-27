@@ -95,9 +95,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     private boolean firstTimeLaunch() {
 
         String authorizationToken = PreferenceUtils.getValue(this, PreferenceUtils.KEY_AUTH_TOKEN);
-        if (authorizationToken.equals(""))
-            return true;
-        return false;
+        return authorizationToken.equals("");
     }
 
     @Override
