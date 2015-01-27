@@ -73,6 +73,7 @@ public class DataService extends Service {
         Log.e(TAG, "updateDashboard");
         if (MainApplication.dashboard != null)
             try {
+                // TODO: hardcoded keys
                 JSONObject dashboardLocation = MainApplication.dashboard.getJSONObject("location");
                 dashboardLocation.put("lat", location.getLatitude());
                 dashboardLocation.put("lon", location.getLongitude());

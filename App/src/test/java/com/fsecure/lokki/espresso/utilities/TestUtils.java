@@ -1,4 +1,4 @@
-package com.fsecure.lokki.espresso;
+package com.fsecure.lokki.espresso.utilities;
 
 import android.app.Instrumentation;
 import android.content.Context;
