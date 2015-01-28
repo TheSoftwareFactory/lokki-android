@@ -12,11 +12,8 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import com.androidquery.AQuery;
-import com.androidquery.callback.AjaxStatus;
 import cc.softwarefactory.lokki.android.utils.PreferenceUtils;
 
 import org.json.JSONException;
@@ -29,7 +26,6 @@ public class DataService extends Service {
     private static final String TAG = "DataService";
     private static final String GET_PLACES = "GET_PLACES";
 
-    private AQuery aq;
     private AlarmManager alarm;
     private PendingIntent alarmCallback;
     private static Boolean serviceRunning = false;
@@ -96,7 +92,6 @@ public class DataService extends Service {
 
         Log.e(TAG, "onCreate");
         super.onCreate();
-        aq = new AQuery(this);
         setTimer();
         serviceRunning = true;
         try {
@@ -140,52 +135,16 @@ public class DataService extends Service {
     private void getPlaces() {
 
         Log.e(TAG, "getPlaces");
-        ServerAPI.getPlaces(this, "placesCallback");
+        ServerAPI.getPlaces(this);
     }
 
     private void fetchDashboard() {
 
         Log.e(TAG, "alarmCallback");
-        ServerAPI.getDashboard(this, "dashboardCallback");
+        ServerAPI.getDashboard(this);
     }
 
-    public void placesCallback(String url, JSONObject json, AjaxStatus status) {
 
-        Log.e(TAG, "placesCallback");
-
-        if (json != null) {
-            Log.e(TAG, "json returned: " + json);
-            MainApplication.places = json;
-            PreferenceUtils.setValue(this, PreferenceUtils.KEY_PLACES, json.toString());
-            Intent intent = new Intent("PLACES-UPDATE");
-            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-
-        } else {
-            Log.e(TAG, "Error: " + status.getCode() + " - " + status.getMessage());
-        }
-    }
-
-    public void dashboardCallback(String url, JSONObject json, AjaxStatus status) {
-
-        Log.e(TAG, "dashboardCallback");
-
-        if (status.getCode() == 401) {
-            Log.e(TAG, "Status login failed. App should exit.");
-            PreferenceUtils.setValue(this, PreferenceUtils.KEY_AUTH_TOKEN, "");
-            Intent intent = new Intent("EXIT");
-            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-
-        } else if (json != null) {
-            Log.e(TAG, "json returned: " + json);
-            MainApplication.dashboard = json;
-            PreferenceUtils.setValue(this, PreferenceUtils.KEY_DASHBOARD, json.toString());
-            Intent intent = new Intent("LOCATION-UPDATE");
-            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-
-        } else {
-            Log.e(TAG, "Error: " + status.getCode() + " - " + status.getMessage());
-        }
-    }
 
     @Override
     public void onDestroy() {
