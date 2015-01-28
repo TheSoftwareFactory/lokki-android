@@ -51,7 +51,7 @@ public class Dialogs {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
         alertDialog.setTitle(context.getResources().getString(R.string.add_contact));
         String message = "";
-        for (String email: emails) {
+        for (String email : emails) {
             message += Utils.getNameFromEmail(context, email);
             if (emails.size() > 1)
                 message += ", ";
@@ -59,12 +59,12 @@ public class Dialogs {
         }
         message += context.getResources().getString(R.string.add_contact_dialog_save);
         alertDialog.setMessage(message)
-                   .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
         alertDialog.show();
     }
 
@@ -116,7 +116,7 @@ public class Dialogs {
         addPlaceDialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 Editable value = input.getText();
-                if (value != null && !value.toString().equals("")) {
+                if (value != null && !value.toString().isEmpty()) {
                     try {
                         ServerAPI.addPlace(context, value.toString(), latLng);
 

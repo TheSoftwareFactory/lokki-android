@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    android:layout_gravity="center" >
+    android:layout_gravity="center">
 
 
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -28,7 +28,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/inputText"
-        android:id="@+id/add_contacts_list_view" >
-    </ListView>
+        android:id="@+id/add_contacts_list_view"></ListView>
 
 </RelativeLayout>

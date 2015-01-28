@@ -76,10 +76,10 @@ public class MapViewFragment extends Fragment {
     public void onDestroyView() {
         // Trying to clean up properties (not to hold anything coming from the map (and avoid mem leaks).
         super.onDestroyView();
-        SupportMapFragment fragment = null;
-        GoogleMap map = null;
-        HashMap<String, Marker> markerMap  = null;
-        AQuery aq = null;
+        fragment = null;
+        map = null;
+        markerMap = null;
+        aq = null;
     }
 
     @Override
@@ -108,8 +108,7 @@ public class MapViewFragment extends Fragment {
         if (map == null) {
             Log.e(TAG, "Map null. creating it.");
             setUpMap();
-        }
-        else Log.e(TAG, "Map already exists. Nothing to do.");
+        } else Log.e(TAG, "Map already exists. Nothing to do.");
 
         LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver, new IntentFilter("LOCATION-UPDATE"));
         LocalBroadcastManager.getInstance(context).registerReceiver(placesUpdateReceiver, new IntentFilter("PLACES-UPDATE"));
@@ -222,7 +221,7 @@ public class MapViewFragment extends Fragment {
     private void removePlaces() {
 
         Log.e(TAG, "removePlaces");
-        for (Circle circle: placesOverlay) {
+        for (Circle circle : placesOverlay) {
             circle.remove();
         }
     }
@@ -281,7 +280,7 @@ public class MapViewFragment extends Fragment {
             Log.e(TAG, "cancelAsynTasks: " + cancelAsynTasks);
             super.onPostExecute(markerDataResult);
             if (markerDataResult != null && !cancelAsynTasks && isAdded()) {
-                for (String email: markerDataResult.keySet()) {
+                for (String email : markerDataResult.keySet()) {
                     Log.e(TAG, "marker to update: " + email);
                     if (markerDataResult.get(email) != null)
                         new LoadMarkerAsync(markerDataResult.get(email), email).execute();
@@ -350,7 +349,7 @@ public class MapViewFragment extends Fragment {
 
     public Bitmap getMarkerBitmap(String email, Boolean accurate, Boolean recent) {
 
-        Log.e(TAG,"getMarkerBitmap");
+        Log.e(TAG, "getMarkerBitmap");
 
         // Add cache checking logic
         Bitmap markerImage = MainApplication.avatarCache.get(email + ":" + accurate + ":" + recent);
@@ -366,7 +365,8 @@ public class MapViewFragment extends Fragment {
             Log.e(TAG, "AvatarLoader not in cache. Fetching it. Email: " + email);
             // Get avatars
             userImage = Utils.getPhotoFromEmail(context, email);
-            if (userImage == null) userImage = BitmapFactory.decodeResource(getResources(), R.drawable.default_avatar);
+            if (userImage == null)
+                userImage = BitmapFactory.decodeResource(getResources(), R.drawable.default_avatar);
             else userImage = Utils.getRoundedCornerBitmap(userImage, 50);
             // Store in cache
             //MainApplication.avatarCache.put(email, userImage);
@@ -400,7 +400,7 @@ public class MapViewFragment extends Fragment {
     // Convert a view to bitmap
     public Bitmap createDrawableFromView(View view) {
 
-        Log.e(TAG,"createDrawableFromView");
+        Log.e(TAG, "createDrawableFromView");
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         view.setLayoutParams(new WindowManager.LayoutParams(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT));
@@ -481,7 +481,7 @@ public class MapViewFragment extends Fragment {
                     else
                         map.moveCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
 
-                } else if(firstTimeZoom && MainApplication.emailBeingTracked == null && MainApplication.userAccount != null && marker.getTitle().equals(MainApplication.userAccount)) {
+                } else if (firstTimeZoom && MainApplication.emailBeingTracked == null && MainApplication.userAccount != null && marker.getTitle().equals(MainApplication.userAccount)) {
                     firstTimeZoom = false;
                     map.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 16));
                 }

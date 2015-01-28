@@ -4,7 +4,7 @@ See LICENSE for details
 */
 package com.fsecure.lokki;
 
-import android.support.v7.app.ActionBarActivity;;
+import android.support.v7.app.ActionBarActivity;
 import android.app.Activity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -89,7 +89,7 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated (Bundle savedInstanceState) {
+    public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         // Indicate that this fragment would like to influence the set of actions in the action bar.
         setHasOptionsMenu(true);
@@ -226,11 +226,11 @@ public class NavigationDrawerFragment extends Fragment {
         mCallbacks = null;
     }
 
-    @Override
+    /*@Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         //outState.putInt(STATE_SELECTED_POSITION, mCurrentSelectedPosition);
-    }
+    }*/
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {

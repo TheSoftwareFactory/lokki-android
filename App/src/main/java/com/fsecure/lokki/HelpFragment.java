@@ -20,7 +20,8 @@ public class HelpFragment extends Fragment {
 
     //private static final String TAG = "Help";
 
-    public HelpFragment() {}
+    public HelpFragment() {
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

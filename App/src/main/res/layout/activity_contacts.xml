@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    android:layout_gravity="center" >
+    android:layout_gravity="center">
 
     <RelativeLayout
         android:id="@+id/headers"
@@ -38,7 +38,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/headers"
-        android:id="@+id/contacts_list_view" >
-    </ListView>
+        android:id="@+id/contacts_list_view"></ListView>
 
 </RelativeLayout>

@@ -45,7 +45,7 @@ public class ServerAPI {
         params.put("email", userAccount);
         params.put("device_id", deviceId);
 
-        if (!Utils.getLanguage().equals("")) {
+        if (!Utils.getLanguage().isEmpty()) {
             params.put("language", Utils.getLanguage());
         }
 
@@ -60,7 +60,7 @@ public class ServerAPI {
 
         String userId = PreferenceUtils.getValue(context, PreferenceUtils.KEY_USER_ID);
         String authorizationToken = PreferenceUtils.getValue(context, PreferenceUtils.KEY_AUTH_TOKEN);
-        String url = ApiUrl  + "user/" + userId + "/dashboard";
+        String url = ApiUrl + "user/" + userId + "/dashboard";
 
         AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
         cb.weakHandler(context, dashboardCallback);
@@ -75,7 +75,7 @@ public class ServerAPI {
 
         String userId = PreferenceUtils.getValue(context, PreferenceUtils.KEY_USER_ID);
         String authorizationToken = PreferenceUtils.getValue(context, PreferenceUtils.KEY_AUTH_TOKEN);
-        String url = ApiUrl  + "user/" + userId + "/places";
+        String url = ApiUrl + "user/" + userId + "/places";
 
         AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
         cb.weakHandler(context, placesCallback);
@@ -94,7 +94,7 @@ public class ServerAPI {
 
         JSONObject JSONdata = new JSONObject();
         JSONArray JSONemails = new JSONArray();
-        for (String email: emails) {
+        for (String email : emails) {
             JSONemails.put(email);
         }
         JSONdata.put("emails", JSONemails);

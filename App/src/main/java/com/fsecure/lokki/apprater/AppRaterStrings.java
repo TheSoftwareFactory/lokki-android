@@ -15,7 +15,7 @@ public class AppRaterStrings {
 
     private static Map<String, HashMap<String, String>> initialize() {
 
-        HashMap<String, HashMap<String, String>> result = new HashMap<String, HashMap<String, String>> ();
+        HashMap<String, HashMap<String, String>> result = new HashMap<String, HashMap<String, String>>();
 
         // ENGLISH
         HashMap<String, String> en = new HashMap<String, String>();

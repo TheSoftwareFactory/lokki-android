@@ -25,7 +25,7 @@ public class AppRater {
     // App specific settings
     private static String APP_TITLE = "";
     private static String APP_PNAME = "";
-    private static String TAG ="AppRater";
+    private static String TAG = "AppRater";
 
     // Configuration variables
     private static int DAYS_UNTIL_PROMPT = 0;
@@ -80,7 +80,6 @@ public class AppRater {
         Log.e(TAG, "showQuestionDialog");
 
         APP_PNAME = mContext.getPackageName();
-        final ArrayList<Integer> dontRemindMe = new ArrayList<Integer>(1);
 
         if (prefs.getBoolean(DONT_SHOW_AGAIN_RATE_DIALOG, false)) return;
 
@@ -116,7 +115,8 @@ public class AppRater {
         try {
             appVersion = getAppVersion(mContext.getApplicationContext());
 
-        } catch(Exception ex) {}
+        } catch (Exception ex) {
+        }
 
         Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", "lokki-feedback@f-secure.com", null));
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, AppRater.translate("feedback_title") + " [" + osType + "-" + appVersion + "]");
@@ -146,7 +146,9 @@ public class AppRater {
             Log.e(TAG, "getAppVersion: " + packageInfo.versionName);
             return packageInfo.versionName;
 
-        } catch (PackageManager.NameNotFoundException ex) {} catch(Exception e){}
+        } catch (PackageManager.NameNotFoundException ex) {
+        } catch (Exception e) {
+        }
         return "";
     }
 
@@ -160,33 +162,33 @@ public class AppRater {
         Log.e(TAG, "showRateDialog");
 
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext)
-                   .setTitle(AppRater.translate("rate_us"))
-                   .setMessage(AppRater.translate("if_you_enjoy"))
-                   .setPositiveButton(AppRater.translate("rate"), new DialogInterface.OnClickListener() {
-                       @Override
-                       public void onClick(DialogInterface dialog, int which) {
-                           editor.putBoolean(DONT_SHOW_AGAIN_RATE_DIALOG, true).commit();
-                           mContext.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + APP_PNAME)));
-                           dialog.dismiss();
-                           executing = false;
-                       }
-                   })
-                   .setNeutralButton(AppRater.translate("remind_me_later"), new DialogInterface.OnClickListener() {
-                       @Override
-                       public void onClick(DialogInterface dialog, int which) {
-                           editor.putLong("launch_count", LAUNCHES_UNTIL_PROMPT - 3).commit();
-                           dialog.dismiss();
-                           executing = false;
-                       }
-                   })
-                   .setNegativeButton(AppRater.translate("no_thanks"), new DialogInterface.OnClickListener() {
-                       @Override
-                       public void onClick(DialogInterface dialog, int which) {
-                           editor.putBoolean(DONT_SHOW_AGAIN_RATE_DIALOG, true).commit();
-                           dialog.dismiss();
-                           executing = false;
-                       }
-                   });
+                .setTitle(AppRater.translate("rate_us"))
+                .setMessage(AppRater.translate("if_you_enjoy"))
+                .setPositiveButton(AppRater.translate("rate"), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        editor.putBoolean(DONT_SHOW_AGAIN_RATE_DIALOG, true).commit();
+                        mContext.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + APP_PNAME)));
+                        dialog.dismiss();
+                        executing = false;
+                    }
+                })
+                .setNeutralButton(AppRater.translate("remind_me_later"), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        editor.putLong("launch_count", LAUNCHES_UNTIL_PROMPT - 3).commit();
+                        dialog.dismiss();
+                        executing = false;
+                    }
+                })
+                .setNegativeButton(AppRater.translate("no_thanks"), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        editor.putBoolean(DONT_SHOW_AGAIN_RATE_DIALOG, true).commit();
+                        dialog.dismiss();
+                        executing = false;
+                    }
+                });
 
         alertDialog.show();
     }
@@ -197,11 +199,11 @@ public class AppRater {
         try {
             result = AppRaterStrings.translations.get(getLanguage()).get(id);
 
-        } catch(Exception ex1) {
+        } catch (Exception ex1) {
             try {
                 result = AppRaterStrings.translations.get("en").get(id);
 
-            } catch(Exception ex2) {
+            } catch (Exception ex2) {
                 result = "";
             }
         }

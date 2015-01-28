@@ -48,5 +48,4 @@ public class WelcomeScreensTest extends ActivityInstrumentationTestCase2<MainAct
     }
 
 
-
 }

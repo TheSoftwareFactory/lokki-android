@@ -1,8 +1,7 @@
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/bg_gradient" >
+    android:background="@drawable/bg_gradient">
 
     <ImageView
         android:id="@+id/logo"
@@ -45,7 +44,7 @@
         android:layout_centerHorizontal="true"
         android:textColor="@android:color/black"
 
-        android:text="@string/type_your_email_address"/>
+        android:text="@string/type_your_email_address" />
 
     <Button
         android:id="@+id/button"
@@ -55,7 +54,7 @@
         android:layout_centerHorizontal="true"
         android:onClick="signup_click"
         android:background="@android:color/darker_gray"
-        android:text="@string/title_activity_signup"/>
+        android:text="@string/title_activity_signup" />
 
 </RelativeLayout>
 

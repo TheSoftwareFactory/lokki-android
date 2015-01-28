@@ -62,19 +62,16 @@ public class AvatarLoader {
 
             Log.e(TAG, "BitmapWorkerTask: onPostExecute");
             if (isCancelled()) {
-                bitmap = null;
+                return;
             }
+            final ImageView imageView = imageViewReference.get();
+            if (imageView != null) {
 
-            if (bitmap != null) {
-                final ImageView imageView = imageViewReference.get();
-                if (imageView != null) {
+                BitmapWorkerTask task = getTaskFromView(imageView);
 
-                    BitmapWorkerTask task = getTaskFromView(imageView);
-
-                    if (this == task) {
-                        imageView.setImageBitmap(bitmap);
-                        imageView.setTag(data);
-                    }
+                if (this == task) {
+                    imageView.setImageBitmap(bitmap);
+                    imageView.setTag(data);
                 }
             }
         }

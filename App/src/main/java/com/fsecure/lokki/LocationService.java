@@ -28,8 +28,7 @@ import com.google.android.gms.location.LocationServices;
 
 import org.json.JSONException;
 
-
-public class LocationService extends Service implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class LocationService extends Service implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener  {
 
     // INTERVALS
     private static final long INTERVAL_10_MS = 10;
@@ -83,7 +82,7 @@ public class LocationService extends Service implements LocationListener, Google
         Log.e(TAG, "onCreate");
         super.onCreate();
 
-        if (PreferenceUtils.getValue(this, PreferenceUtils.KEY_AUTH_TOKEN).equals("")) {
+        if (PreferenceUtils.getValue(this, PreferenceUtils.KEY_AUTH_TOKEN).isEmpty()) {
 
             Log.e(TAG, "User disabled reporting in App. Service not started.");
             stopSelf();

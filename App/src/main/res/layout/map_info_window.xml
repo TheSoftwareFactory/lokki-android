@@ -3,7 +3,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="4dip" >
+    android:padding="4dip">
 
     <TextView
         android:id="@+id/contact_name"
@@ -13,7 +13,7 @@
         android:textColor="#040404"
         android:typeface="sans"
         android:textSize="15sp"
-        android:textStyle="bold"/>
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/timestamp"

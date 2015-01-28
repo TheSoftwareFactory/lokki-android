@@ -1,7 +1,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/allow_people"
+    <item
+        android:id="@+id/allow_people"
         android:title="@string/send"
         android:icon="@drawable/ic_action_done"
         app:showAsAction="always" />

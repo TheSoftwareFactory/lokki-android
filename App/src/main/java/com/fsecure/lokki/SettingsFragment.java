@@ -21,12 +21,13 @@ import com.fsecure.lokki.utils.PreferenceUtils;
 import com.fsecure.lokki.utils.Utils;
 
 
-public class SettingsFragment extends Fragment implements AdapterView.OnItemSelectedListener{
+public class SettingsFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
     private static final String TAG = "Settings";
     private Context context;
 
-    public SettingsFragment() {}
+    public SettingsFragment() {
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -75,13 +76,14 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemSele
                     MainApplication.visible = false;
                     LocationService.stop(context);
                     ServerAPI.setVisibility(context, false);
-                }
-                else {
+                } else {
                     MainApplication.visible = true;
                     LocationService.start(context);
                     ServerAPI.setVisibility(context, true);
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
-            } catch(Exception ex) {ex.printStackTrace();}
 
         } else if (tag.equals("map")) {
             PreferenceUtils.setValue(context, PreferenceUtils.KEY_SETTING_MAP_MODE, String.valueOf(position));

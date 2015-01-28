@@ -11,8 +11,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.mockito.Mockito;
 
-import java.util.ArrayList;
-
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -58,9 +56,6 @@ public class AddContactsScreenTest extends MainActivityBaseTest {
     }
 
 
-
-
-
     // TEST
 
     public void testContactListScreenIsDisplayed() {
@@ -99,9 +94,5 @@ public class AddContactsScreenTest extends MainActivityBaseTest {
         onView(withText(containsString(secondContactName))).check(matches(isDisplayed()));
         onView(withText(containsString(contactAddedDialogText))).check(matches(isDisplayed()));
     }
-
-
-    
-
 
 }
