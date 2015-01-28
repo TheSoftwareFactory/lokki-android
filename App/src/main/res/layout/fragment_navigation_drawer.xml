@@ -6,4 +6,4 @@
     android:divider="@color/drawer_divider"
     android:dividerHeight="1px"
     android:background="@color/drawer_background"
-    tools:context="com.fsecure.lokki.NavigationDrawerFragment" />
+    tools:context="cc.softwarefactory.lokki.android.NavigationDrawerFragment" />

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.fsecure.lokki">
+    package="cc.softwarefactory.lokki.android">
 
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -11,7 +11,7 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <!-- <uses-permission android:name="android.permission.WAKE_LOCK"/> -->
-    <uses-permission android:name="com.fsecure.lokki.permission.C2D_MESSAGE" />
+    <uses-permission android:name="cc.softwarefactory.lokki.android.permission.C2D_MESSAGE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
 
     <uses-feature
@@ -25,14 +25,14 @@
         android:required="true" />
 
     <application
-        android:name="com.fsecure.lokki.MainApplication"
+        android:name="cc.softwarefactory.lokki.android.MainApplication"
         android:allowBackup="false"
         android:hardwareAccelerated="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/FSecureTheme">
         <activity
-            android:name="com.fsecure.lokki.MainActivity"
+            android:name="cc.softwarefactory.lokki.android.MainActivity"
             android:configChanges="orientation|screenSize|locale"
             android:label="@string/app_name"
             android:launchMode="singleTop">
@@ -43,7 +43,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.fsecure.lokki.FirstTimeActivity"
+            android:name="cc.softwarefactory.lokki.android.FirstTimeActivity"
             android:configChanges="orientation|screenSize|locale"
             android:label="@string/app_name"
             android:uiOptions="splitActionBarWhenNarrow">
@@ -52,16 +52,16 @@
                 android:value="splitActionBarWhenNarrow" />
         </activity>
 
-        <service android:name="com.fsecure.lokki.LocationService" />
-        <service android:name="com.fsecure.lokki.DataService" />
+        <service android:name="cc.softwarefactory.lokki.android.LocationService" />
+        <service android:name="cc.softwarefactory.lokki.android.DataService" />
 
         <receiver
-            android:name="com.fsecure.lokki.GcmBroadcastReceiver"
+            android:name="cc.softwarefactory.lokki.android.GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
 
-                <category android:name="com.fsecure.lokki" />
+                <category android:name="cc.softwarefactory.lokki.android" />
             </intent-filter>
         </receiver>
 
@@ -73,7 +73,7 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name="com.fsecure.lokki.SignupActivity"
+            android:name="cc.softwarefactory.lokki.android.SignupActivity"
             android:label="@string/title_activity_signup"></activity>
     </application>
 
