@@ -16,11 +16,11 @@ import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.fsecure.lokki.utils.PreferenceUtils;
+import com.fsecure.lokki.utils.MapUtils;
+import com.fsecure.lokki.utils.Utils;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
@@ -88,7 +88,7 @@ public class LocationService extends Service implements LocationListener, Google
             Log.e(TAG, "User disabled reporting in App. Service not started.");
             stopSelf();
 
-        } else if (checkGooglePlayServices()) {
+        } else if (Utils.checkGooglePlayServices(this)) {
 
             Log.e(TAG, "Starting Service..");
             setLocationClient();
@@ -190,7 +190,7 @@ public class LocationService extends Service implements LocationListener, Google
     }
 
     private void updateLokkiLocation(Location location) {
-        if (useNewLocation(location)) {
+        if (MapUtils.useNewLocation(location, lastLocation, INTERVAL_30_SECS)) {
             Log.e(TAG, "New location taken into use.");
             lastLocation = location;
             DataService.updateDashboard(this, location);
@@ -209,16 +209,6 @@ public class LocationService extends Service implements LocationListener, Google
         }
     }
 
-    /**
-     * Determines if the location should be used or discarded depending on the current accuracy and
-     * the distance to the last location
-     * @param location New location to be checked
-     * @return true if the new location should be used
-     */
-    private boolean useNewLocation(Location location) {
-        return (lastLocation == null || (location.getTime() - lastLocation.getTime() > INTERVAL_30_SECS) ||
-                lastLocation.distanceTo(location) > 5 || lastLocation.getAccuracy() - location.getAccuracy() > 5);
-    }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
@@ -237,21 +227,5 @@ public class LocationService extends Service implements LocationListener, Google
         } else Log.e(TAG, "locationClient didn't exist.");
         serviceRunning = false;
         super.onDestroy();
-    }
-
-    private boolean checkGooglePlayServices() {
-
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-        if (resultCode != ConnectionResult.SUCCESS) {
-            if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
-                Toast.makeText(this, GooglePlayServicesUtil.getErrorString(resultCode), Toast.LENGTH_LONG).show();
-            } else {
-                Log.e(TAG, "This device is not supported.");
-                stopSelf();
-            }
-            return false;
-        }
-        Log.e(TAG, "Google Play Services is OK.");
-        return true;
     }
 }
