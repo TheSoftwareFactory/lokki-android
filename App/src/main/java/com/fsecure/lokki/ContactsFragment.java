@@ -80,15 +80,17 @@ public class ContactsFragment extends Fragment {
             JSONArray canSeeMeObj = MainApplication.dashboard.getJSONArray("canseeme");
             JSONObject idMappingObj = MainApplication.dashboard.getJSONObject("idmapping");
 
+            
             Iterator keys = iCanSeeObj.keys();
             while (keys.hasNext()) {
                 String key = (String) keys.next();
                 String email = (String) idMappingObj.get(key);
                 String name = Utils.getNameFromEmail(context, email);
-                Long timestamp = iCanSeeObj.getJSONObject(key).getJSONObject("location").getLong("time");
+                if (iCanSeeObj.getJSONObject(key).getJSONObject("location").has("time")) {
+                    timestamps.put(name, iCanSeeObj.getJSONObject(key).getJSONObject("location").getLong("time"));
+                }
                 iCanSee.add(email);
                 mapping.put(name, email);
-                timestamps.put(name, timestamp);
                 Log.e(TAG, "I can see: " + email);
             }
 

@@ -1,12 +1,10 @@
 package com.fsecure.lokki.espresso;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.test.ActivityInstrumentationTestCase2;
-import android.test.suitebuilder.annotation.LargeTest;
 
 import com.fsecure.lokki.MainActivity;
 import com.fsecure.lokki.R;
+import com.fsecure.lokki.espresso.utilities.TestUtils;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;

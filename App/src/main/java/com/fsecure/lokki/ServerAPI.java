@@ -380,6 +380,16 @@ public class ServerAPI {
         cb.header("authorizationtoken", authorizationToken);
         aq.post(url, JSONdata, JSONObject.class, cb);
     }
+
+
+    // For dependency injection
+    public static void setApiUrl(String mockUrl) {
+        ApiUrl = mockUrl;
+    }
+    public static String getApiUrl() {
+        return ApiUrl;
+    }
+
 }
 
 

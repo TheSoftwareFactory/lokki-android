@@ -1,5 +1,6 @@
-package com.fsecure.lokki.espresso;
+package com.fsecure.lokki.espresso.utilities;
 
+import android.app.Instrumentation;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.test.espresso.ViewAction;
@@ -18,6 +19,10 @@ public class TestUtils {
     final static String VALUE_TEST_USER_ID = "a1b2c3d4e5f6g7h8i9j10k11l12m13n14o15p16q";
     final static String VALUE_TEST_AUTH_TOKEN = "ABCDEFGHIJ";
 
+
+    public static String getStringFromResources(Instrumentation instrumentation, int id) {
+        return instrumentation.getTargetContext().getResources().getString(id);
+    }
 
     public static void clearAppData(Context targetContext) {
         MainActivity.firstTimeLaunch = null;
