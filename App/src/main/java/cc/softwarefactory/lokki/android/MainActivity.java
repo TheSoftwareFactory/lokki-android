@@ -27,7 +27,7 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import cc.softwarefactory.lokki.android.apprater.AppRater;
+
 import cc.softwarefactory.lokki.android.utils.ContactUtils;
 import cc.softwarefactory.lokki.android.utils.DefaultContactUtils;
 import cc.softwarefactory.lokki.android.utils.PreferenceUtils;
@@ -107,9 +107,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
             Log.e(TAG, "onResume - NOT firstTimeLaunch, so launching services.");
             startServices();
             LocalBroadcastManager.getInstance(this).registerReceiver(exitMessageReceiver, new IntentFilter("EXIT"));
-            // Launch App Rater
-            AppRater.start(MainActivity.this, 4, 8);
-
         } else
             Log.e(TAG, "onResume - firstTimeLaunch, so avoiding launching services.");
     }
