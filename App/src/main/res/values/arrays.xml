@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="menuOptions">
+        <item>@string/app_name</item>
+        <item>@string/contacts</item>
+        <item>@string/settings</item>
+        <item>@string/about</item>
+    </string-array>
+
+    <string-array name="visibility_modes">
+        <item>@string/yes</item>
+        <item>@string/no</item>
+    </string-array>
+
+    <string-array name="visibility_modes_icons">
+        <item>@drawable/ic_visible</item>
+        <item>@drawable/ic_invisible</item>
+    </string-array>
+
+    <string-array name="map_modes">
+        <item>@string/map_mode_default</item>
+        <item>@string/map_mode_satellite</item>
+        <item>@string/map_mode_hybrid</item>
+    </string-array>
+
+    <string-array name="about_links">
+        <item>@string/help</item>
+        <item>@string/send_feedback</item>
+        <item>@string/about_link_tell_a_friend</item>
+    </string-array>
+
+    <string-array name="about_links_url">
+        <item>@string/lokki_github_repo_link</item>
+        <item>@string/lokki_github_repo_link</item>
+        <item>@string/about_link_tell_a_friend</item>
+    </string-array>
+
+</resources>

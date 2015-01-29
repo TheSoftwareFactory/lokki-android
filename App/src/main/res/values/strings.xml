@@ -1,19 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!--TODO: Set arrays to separate values file and reference strings from the strings.xml file -->
-    <string-array name="menuOptions">
-        <item>Lokki</item>
-        <item>Contacts</item>
-        <item>Settings</item>
-        <item>About</item>
-    </string-array>
+    <!--TODO: organize strings better-->
 
     <string name="app_name">Lokki</string>
-    <string name="action_example">Example action</string>
-    <string name="action_settings">Settings</string>
+    <string name="app_long_name">Lokki</string>
+
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="map">Map</string>
+    <string name="places">Places</string>
+    <string name="contacts">Contacts</string>
+    <string name="about">About</string>
     <string name="visibility">Visibility</string>
-    <string name="feedback_title">Send feedback</string>
+    <string name="send">Send</string>
+    <string name="map_mode">Map mode</string>
+    <string name="help">Help</string>
+    <string name="settings">Settings</string>
+
+    <string name="loading">Loading...</string>
+    <string name="signing_up">Signing up...</string>
+
+    <string name="send_feedback">Send feedback</string>
     <string name="error_send_email_title">Cannot send email</string>
     <string name="error_send_email_message">We could not find your email app.\nContact us at: https://github.com/TheSoftwareFactory/lokki-android/</string>
     <string name="share">Tell your friends about this app</string>
@@ -25,53 +33,22 @@
     <string name="add_contact_dialog_save">can now see where you are and you will see them in Lokki when they allow it.</string>
     <string name="i_can_see">Show on map</string>
     <string name="can_see_me">Can see me</string>
-    <string name="send">Send</string>
-    <string name="loading">Loading...</string>
     <string name="your_lokki_id">Your Lokki ID is:</string>
     <string name="your_friends">Tell your friends to use this email with Lokki.</string>
     <string name="privacy_policy_link"><a href="http://www.f-secure.com">Privacy policy</a></string>
     <string name="privacy_policy_title">Privacy policy</string>
     <string name="my_visibility">My contacts can see me</string>
-    <string name="map_mode">Map mode</string>
-
-    <string-array name="visibility_modes">
-        <item>Yes</item>
-        <item>No</item>
-    </string-array>
-    <string-array name="visibility_modes_icons">
-        <item>@drawable/ic_visible</item>
-        <item>@drawable/ic_invisible</item>
-    </string-array>
-    <string-array name="map_modes">
-        <item>Default</item>
-        <item>Satellite</item>
-        <item>Hybrid</item>
-    </string-array>
-
-    <string-array name="about_links">
-        <item>Help</item>
-        <item>Send feedback</item>
-        <item>Tell a friend about Lokki</item>
-    </string-array>
-
-    <string-array name="about_links_url">
-        <item>https://github.com/TheSoftwareFactory/lokki-android/</item>
-        <item>https://github.com/TheSoftwareFactory/lokki-android/</item>
-        <item>Tell a friend about Lokki</item>
-    </string-array>
-
     <string name="privacy_policy_text">placeholder</string>
-
     <string name="license_link"><![CDATA[<a href=\"\">License terms</a>]]></string>
     <string name="version_and_copyright">\nCopyright © F-Secure Corporation. \nAll rights reserved.</string>
     <string name="title_activity_first_time">FirstTimeActivity</string>
-    <string name="hello_world">Hello world!</string>
     <string name="i_agree">I have read and I agree</string>
     <string name="continue_with_terms">Continue</string>
     <string name="welcome_title">Welcome to Lokki</string>
     <string name="welcome_text"><![CDATA[ <b>Welcome to Lokki 3.0!</b><br/>Now you can see where your friends and family members are on a map. You choose who can see where you are, and you can hide your location whenever you want.]]></string>
+
     <string name="terms_text">
-<![CDATA[ Your privacy is of the utmost importance to us. Before you get started, you need to agree to the following terms:<br/><br/><br/>
+                                <![CDATA[ Your privacy is of the utmost importance to us. Before you get started, you need to agree to the following terms:<br/><br/><br/>
                               1. I have read the terms of service and accept them.<br/><br/>
                               2. I consent to the collection and processing of personal data.<br/><br/>
                               3. I consent that the service can process and display my location.<br/><br/>
@@ -79,13 +56,12 @@
                               5. If I am under 13 and living in the United States, I may not use Lokki.<br/><br/><br/>
                               <a href="http://www.f-secure.com/en/web/home_global/privacy/privacy-summary">Read more on our web site</a>]]>
     </string>
+
     <string name="terms_title">Terms of use</string>
     <string name="security_signup">We need to authorize your account before you sign up. Follow the instructions that we have sent to:</string>
     <string name="title_activity_signup">Signup</string>
-    <string name="app_long_name">Lokki</string>
     <string name="signup_explanation">Enter your email address - other Lokki users will find you with this address.</string>
     <string name="type_your_email_address">Your email address</string>
-    <string name="signing_up">Signing up...</string>
     <string name="general_error">There was an error. Please try again later.</string>
     <string name="create_place">Would you like to create a place here?</string>
     <string name="write_place_name">Enter a name for this place</string>
@@ -95,11 +71,16 @@
     <string name="place_removed">Place removed</string>
     <string name="place_limit_reached">You cannot create more places. Maximum limit reached.</string>
     <string name="dashboard_view">map/places</string>
-    <string name="map">Map</string>
-    <string name="places">Places</string>
     <string name="you_are_visible">You are now VISIBLE</string>
     <string name="you_are_invisible">You are now INVISIBLE</string>
     <string name="places_how_to_create">To create a new place go to the map and long press the location where to place is located. Then type a name and click OK.</string>
     <string name="search_contacts">Search contacts...</string>
+
+    <string name="map_mode_default">Default</string>
+    <string name="map_mode_satellite">Satellite</string>
+    <string name="map_mode_hybrid">Hybrid</string>
+
+    <string name="about_link_tell_a_friend">Tell a friend about Lokki</string>
+    <string name="lokki_github_repo_link">https://github.com/TheSoftwareFactory/lokki-android/</string>
 
 </resources>
