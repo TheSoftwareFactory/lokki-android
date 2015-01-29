@@ -53,6 +53,7 @@ public class ServerAPI {
         Log.e(TAG, "Signup - email: " + userAccount + ", deviceId: " + deviceId + ", language: " + Utils.getLanguage());
     }
 
+    /*
     public static void getDashboard(Context context, String dashboardCallback) {
 
         Log.e(TAG, "getDashboard");
@@ -66,9 +67,46 @@ public class ServerAPI {
         cb.weakHandler(context, dashboardCallback);
         cb.header("authorizationtoken", authorizationToken);
         aq.ajax(url, JSONObject.class, cb);
+    }*/
+
+
+    public static void getDashboard(final Context context) {
+        Log.e(TAG, "getDashboard");
+        AQuery aq = new AQuery(context);
+
+        String userId = PreferenceUtils.getValue(context, PreferenceUtils.KEY_USER_ID);
+        final String authorizationToken = PreferenceUtils.getValue(context, PreferenceUtils.KEY_AUTH_TOKEN);
+        String url = ApiUrl  + "user/" + userId + "/dashboard";
+
+        AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>() {
+            @Override
+            public void callback(String url, JSONObject json, AjaxStatus status) {
+                Log.e(TAG, "Make sure this doesnt cock anything up...");
+                Log.e(TAG, "dashboardCallback");
+
+                if (status.getCode() == 401) {
+                    Log.e(TAG, "Status login failed. App should exit.");
+                    PreferenceUtils.setValue(context, PreferenceUtils.KEY_AUTH_TOKEN, "");
+                    Intent intent = new Intent("EXIT");
+                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+
+                } else if (json != null){
+                    Log.e(TAG, "json returned: " + json);
+                    MainApplication.dashboard = json;
+                    PreferenceUtils.setValue(context, PreferenceUtils.KEY_DASHBOARD, json.toString());
+                    Intent intent = new Intent("LOCATION-UPDATE");
+                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+
+                } else {
+                    Log.e(TAG, "Error: " + status.getCode() + " - " + status.getMessage());
+                }
+            }
+        };
+        cb.header("authorizationtoken", authorizationToken);
+        aq.ajax(url, JSONObject.class, cb);
     }
 
-    public static void getPlaces(Context context, String placesCallback) {
+    public static void getPlaces(final Context context) {
 
         Log.e(TAG, "getPlaces");
         AQuery aq = new AQuery(context);
@@ -77,8 +115,24 @@ public class ServerAPI {
         String authorizationToken = PreferenceUtils.getValue(context, PreferenceUtils.KEY_AUTH_TOKEN);
         String url = ApiUrl + "user/" + userId + "/places";
 
-        AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-        cb.weakHandler(context, placesCallback);
+        AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>(){
+            @Override
+            public void callback(String url, JSONObject json, AjaxStatus status) {
+                Log.e(TAG, "placesCallback");
+                Log.e(TAG, "Make sure this one doesnt cock anything up either...");
+
+                if (json != null) {
+                    Log.e(TAG, "json returned: " + json);
+                    MainApplication.places = json;
+                    PreferenceUtils.setValue(context, PreferenceUtils.KEY_PLACES, json.toString());
+                    Intent intent = new Intent("PLACES-UPDATE");
+                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+
+                } else {
+                    Log.e(TAG, "Error: " + status.getCode() + " - " + status.getMessage());
+                }
+            }
+        };
         cb.header("authorizationtoken", authorizationToken);
         aq.ajax(url, JSONObject.class, cb);
     }
