@@ -11,7 +11,11 @@ import android.support.test.espresso.action.Tap;
 import android.view.View;
 
 import cc.softwarefactory.lokki.android.MainActivity;
+import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.utils.PreferenceUtils;
+
+import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
 public class TestUtils {
 
@@ -57,4 +61,7 @@ public class TestUtils {
                 Press.FINGER);
     }
 
+    public static void toggleNavigationDrawer() {
+        onView(withId(R.id.decor_content_parent)).perform(clickScreenPosition(0, 0));
+    }
 }
