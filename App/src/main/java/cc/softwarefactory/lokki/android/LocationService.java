@@ -68,7 +68,6 @@ public class LocationService extends Service implements LocationListener, Google
 
     public static void run1min(Context context) {
 
-
         if (serviceRunning || !MainApplication.visible) return; // If service is running, stop
         Log.e(TAG, "run1min called");
         Intent intent = new Intent(context, LocationService.class);
@@ -165,11 +164,12 @@ public class LocationService extends Service implements LocationListener, Google
     public void onConnected(Bundle bundle) {
         Log.e(TAG, "locationClient connected");
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest, this);
-
         Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        Log.e(TAG, "last location: " + mLastLocation.getLatitude() + " " + mLastLocation.getLongitude());
-
-        updateLokkiLocation(mLastLocation);
+        if (mLastLocation != null) {
+            updateLokkiLocation(mLastLocation);
+        } else {
+            Log.e(TAG, "Location is null?! Check location service?!");    // todo add prompt for checking that location services are enabled maybe?
+        }
     }
 
     @Override

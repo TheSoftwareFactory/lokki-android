@@ -53,22 +53,6 @@ public class ServerAPI {
         Log.e(TAG, "Signup - email: " + userAccount + ", deviceId: " + deviceId + ", language: " + Utils.getLanguage());
     }
 
-    /*
-    public static void getDashboard(Context context, String dashboardCallback) {
-
-        Log.e(TAG, "getDashboard");
-        AQuery aq = new AQuery(context);
-
-        String userId = PreferenceUtils.getValue(context, PreferenceUtils.KEY_USER_ID);
-        String authorizationToken = PreferenceUtils.getValue(context, PreferenceUtils.KEY_AUTH_TOKEN);
-        String url = ApiUrl + "user/" + userId + "/dashboard";
-
-        AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>();
-        cb.weakHandler(context, dashboardCallback);
-        cb.header("authorizationtoken", authorizationToken);
-        aq.ajax(url, JSONObject.class, cb);
-    }*/
-
 
     public static void getDashboard(final Context context) {
         Log.e(TAG, "getDashboard");
@@ -81,7 +65,6 @@ public class ServerAPI {
         AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject json, AjaxStatus status) {
-                Log.e(TAG, "Make sure this doesnt cock anything up...");
                 Log.e(TAG, "dashboardCallback");
 
                 if (status.getCode() == 401) {
@@ -119,7 +102,6 @@ public class ServerAPI {
             @Override
             public void callback(String url, JSONObject json, AjaxStatus status) {
                 Log.e(TAG, "placesCallback");
-                Log.e(TAG, "Make sure this one doesnt cock anything up either...");
 
                 if (json != null) {
                     Log.e(TAG, "json returned: " + json);
