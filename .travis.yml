@@ -3,6 +3,10 @@ language: android
 # To use Travis Container-Based Infrastructure
 sudo: false
 
+cache:
+  directories:
+   - $HOME/.gradle/caches/
+
 android:
   components:
     - platform-tools
@@ -19,9 +23,6 @@ before_script:
   - android-wait-for-emulator
   - adb devices
   - adb shell input keyevent 82 &
-
-script:
-  - ./gradlew connectedCheck
 
 deploy:
   provider: releases
