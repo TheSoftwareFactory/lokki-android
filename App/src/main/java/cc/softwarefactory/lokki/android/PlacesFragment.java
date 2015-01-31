@@ -47,9 +47,6 @@ public class PlacesFragment extends Fragment {
     private ListView listView;
     private AvatarLoader avatarLoader;
 
-    public PlacesFragment() {
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 

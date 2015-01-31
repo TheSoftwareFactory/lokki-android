@@ -26,9 +26,6 @@ public class AboutFragment extends Fragment {
     private AQuery aq;
     private String[] aboutLinksUrls;
 
-    public AboutFragment() {
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 

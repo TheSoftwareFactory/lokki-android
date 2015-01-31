@@ -26,16 +26,13 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemSele
     private static final String TAG = "Settings";
     private Context context;
 
-    public SettingsFragment() {
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.activity_settings, container, false);
         AQuery aq = new AQuery(getActivity(), rootView);
         context = getActivity().getApplicationContext();
-        //------------------------------------------------------------
+
         ImageView avatarImage = (ImageView) rootView.findViewById(R.id.avatar);
         AvatarLoader avatarLoader = new AvatarLoader(context);
 
@@ -60,7 +57,7 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemSele
         aq.id(R.id.spinner_visibility).tag("visibility").itemSelected(SettingsFragment.this);
         aq.id(R.id.spinner_map).adapter(adapter_map).setSelection(map_mode_int);
         aq.id(R.id.spinner_map).tag("map").itemSelected(SettingsFragment.this);
-        //------------------------------------------------------------
+
         return rootView;
     }
 
