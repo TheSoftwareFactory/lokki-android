@@ -55,6 +55,18 @@ public class AboutFragment extends Fragment {
         }
     }
 
+    private void openTellAFriendActivity() {
+        try {
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            intent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.share_subject));
+            intent.putExtra(Intent.EXTRA_TEXT, getResources().getString(R.string.share_text));
+            startActivity(Intent.createChooser(intent, getResources().getString(R.string.share)));
+        } catch (ActivityNotFoundException e) {
+            Log.e(TAG, "Couldn't open 'tell a friend about lokki' activity");
+        }
+    }
+
     private class AboutItemClickListener implements AdapterView.OnItemClickListener {
 
         @Override
@@ -63,26 +75,13 @@ public class AboutFragment extends Fragment {
             String url = aboutLinksUrls[position];
 
             switch (position) {
-
                 case 0: // Help
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-                    break;
-
                 case 1: // Send feedback
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
                     break;
 
                 case 2: // Tell a friend about Lokki
-                    try {
-                        Intent intent = new Intent(Intent.ACTION_SEND);
-                        intent.setType("text/plain");
-                        intent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.share_subject));
-                        intent.putExtra(Intent.EXTRA_TEXT, getResources().getString(R.string.share_text));
-                        startActivity(Intent.createChooser(intent, getResources().getString(R.string.share)));
-
-                    } catch (ActivityNotFoundException e) {
-                        Log.e(TAG, "Couldn't open 'tell a friend about lokki' activity");
-                    }
+                    openTellAFriendActivity();
                     break;
             }
         }
