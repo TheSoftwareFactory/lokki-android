@@ -305,6 +305,11 @@ public class PlacesFragment extends Fragment {
 
                 JSONObject locationObj = iCanSeeObj.getJSONObject(key).getJSONObject("location");
                 Location userLocation = new Location(email);
+
+                if (!locationObj.has("lat") || !locationObj.has("lon")) {
+                    continue;
+                }
+
                 userLocation.setLatitude(locationObj.getDouble("lat"));
                 userLocation.setLongitude(locationObj.getDouble("lon"));
                 //Log.e(TAG, "userLocation: " + userLocation);
