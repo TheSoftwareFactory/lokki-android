@@ -23,6 +23,30 @@ public class MockJsonUtils {
         return jsonObject.toString();
     }
 
+
+
+    public static String getPlacesJson() throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("cb693820-3ce7-4c95-af2f-1f079d2841b1", new JSONObject()
+                        .put("lat", "37.483477313364574")
+                        .put("lon", "-122.14838393032551")
+                        .put("rad", "100")
+                        .put("name", "Testplace1")
+                        .put("img", ""));
+
+        jsonObject.put("105df9a7-33cc-4880-9001-66aab110c3dd", new JSONObject()
+                        .put("lat", "40.2290817553899")
+                        .put("lon", "-116.64331555366516")
+                        .put("rad", "100")
+                        .put("name", "Testplace2")
+                        .put("img", ""));
+
+        return jsonObject.toString();
+    }
+
+
+
+
     public static String getOneContact() throws JSONException {
         JSONObject jsonObject = new JSONObject();
         jsonObject
@@ -49,6 +73,7 @@ public class MockJsonUtils {
 
         return jsonObject.toString();
     }
+
 
     public static String getDashboardJsonWithContacts(String... contactEmails) throws JSONException {
         JSONArray canseemeJsonArray = new JSONArray();
