@@ -23,6 +23,7 @@ public class TestUtils {
     final static String VALUE_TEST_USER_ID = "a1b2c3d4e5f6g7h8i9j10k11l12m13n14o15p16q";
     final static String VALUE_TEST_AUTH_TOKEN = "ABCDEFGHIJ";
 
+    public final static int WAIT_FOR_ACTIVITY_TIMEOUT = 10000; // milliseconds
 
     public static String getStringFromResources(Instrumentation instrumentation, int id) {
         return instrumentation.getTargetContext().getResources().getString(id);
