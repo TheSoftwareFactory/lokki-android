@@ -40,7 +40,7 @@
     <string name="my_visibility">My contacts can see me</string>
     <string name="privacy_policy_text">placeholder</string>
     <string name="license_link"><![CDATA[<a href=\"\">License terms</a>]]></string>
-    <string name="version_and_copyright">\nCopyright © F-Secure Corporation. \nAll rights reserved.</string>
+    <string name="version_and_copyright">Version: %1$s \nCopyright © F-Secure Corporation. \nAll rights reserved.</string>
     <string name="title_activity_first_time">FirstTimeActivity</string>
     <string name="i_agree">I have read and I agree</string>
     <string name="continue_with_terms">Continue</string>

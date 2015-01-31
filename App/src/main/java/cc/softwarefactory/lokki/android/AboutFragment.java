@@ -49,7 +49,7 @@ public class AboutFragment extends Fragment {
         aq.id(R.id.listView1).itemClicked(new AboutItemClickListener());
 
         try {
-            aq.id(R.id.version).text("Version: " + Utils.getAppVersion(getActivity()) + getResources().getString(R.string.version_and_copyright));
+            aq.id(R.id.version).text(getResources().getString(R.string.version_and_copyright, Utils.getAppVersion(getActivity())));
         } catch (PackageManager.NameNotFoundException e) {
             Log.e(TAG, "Couldn't set text in about screen");
         }
