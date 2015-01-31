@@ -29,7 +29,7 @@ public class ContactsScreenTest extends MainActivityBaseTest {
     private void enterContactsScreen() {
         getActivity();
         TestUtils.toggleNavigationDrawer();
-        onView(withText("Contacts")).perform(click());
+        onView(withText(R.string.contacts)).perform(click());
     }
 
     public void testNoContactsShownWhenNoContacts() {
