@@ -13,23 +13,12 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 
-public class WelcomeScreensTest extends ActivityInstrumentationTestCase2<MainActivity> {
-
-    public WelcomeScreensTest() {
-        super(MainActivity.class);
-    }
+public class WelcomeScreensTest extends NotLoggedInBaseTest {
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        TestUtils.clearAppData(getInstrumentation().getTargetContext());
         getActivity();
-    }
-
-    @Override
-    public void tearDown() throws Exception {
-        TestUtils.clearAppData(getInstrumentation().getTargetContext());
-        super.tearDown();
     }
 
     public void testWelcomeTextIsOnScreen() {
