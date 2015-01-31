@@ -36,7 +36,7 @@ To run the tests run the following command in the project root:
 $ ./gradlew connectedCheck
 ```
 
-Make sure an emulator or device is connected, running and the screen is unlocked.
+Make sure an emulator or device is connected, running and the screen is unlocked. If it looks like your tests are failing without a good reason, try to [disable animations in your device/emulator you're using](http://lifehacker.com/disable-animations-on-android-to-improve-performance-1583554900).
 
 ### Contributing
 
