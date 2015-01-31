@@ -46,7 +46,6 @@ public class MockJsonUtils {
 
 
 
-
     public static String getOneContact() throws JSONException {
         JSONObject jsonObject = new JSONObject();
         jsonObject
