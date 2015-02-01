@@ -20,8 +20,6 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 public class AboutScreenTest extends MainActivityBaseTest {
 
-    public static final String CHOOSER_ACTIVITY_PACKAGE_NAME = "com.android.internal.app.ChooserActivity";
-
     private void enterAboutScreen() {
         getActivity();
         TestUtils.toggleNavigationDrawer();
@@ -70,9 +68,11 @@ public class AboutScreenTest extends MainActivityBaseTest {
 
     public void testChooserIsOpenedWhenTellAFriendButtonIsClicked() {
         enterAboutScreen();
-        Instrumentation.ActivityMonitor monitor = getInstrumentation().addMonitor(CHOOSER_ACTIVITY_PACKAGE_NAME, null, false);
+        IntentFilter filter = new IntentFilter(Intent.ACTION_CHOOSER);
+        Instrumentation.ActivityMonitor monitor = getInstrumentation().addMonitor(filter, null, true);
+        assertEquals(0, monitor.getHits());
         onView(withText(R.string.about_link_tell_a_friend)).perform(click());
-        Activity activity = monitor.waitForActivityWithTimeout(TestUtils.WAIT_FOR_ACTIVITY_TIMEOUT);
-        assertNotNull(activity);
+        assertEquals(1, monitor.getHits());
+        getInstrumentation().removeMonitor(monitor);
     }
 }
