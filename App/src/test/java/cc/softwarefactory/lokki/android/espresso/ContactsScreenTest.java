@@ -28,9 +28,8 @@ public class ContactsScreenTest extends MainActivityBaseTest {
 
     private void enterContactsScreen() {
         getActivity();
-        // TODO: hardcoded click position and menu text
-        onView(withId(R.id.decor_content_parent)).perform(TestUtils.clickScreenPosition(0, 0));
-        onView(withText("Contacts")).perform(click());
+        TestUtils.toggleNavigationDrawer();
+        onView(withText(R.string.contacts)).perform(click());
     }
 
     public void testNoContactsShownWhenNoContacts() {
