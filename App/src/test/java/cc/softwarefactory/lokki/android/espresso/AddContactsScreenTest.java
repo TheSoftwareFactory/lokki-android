@@ -83,6 +83,7 @@ public class AddContactsScreenTest extends MainActivityBaseTest {
         onView(withText(containsString(contactAddedDialogText))).check(matches(isDisplayed()));
     }
 
+
     public void testAddingTwoContactsShowsDialog() {
         String firstContactName = "Family Member";
         String secondContactName = "Test Friend";
@@ -95,4 +96,9 @@ public class AddContactsScreenTest extends MainActivityBaseTest {
         onView(withText(containsString(contactAddedDialogText))).check(matches(isDisplayed()));
     }
 
+    public void testAddingNoContact() {
+        addContactsFromContactListScreen();
+
+        onView(withText(R.string.add_contact_dialog_message)).check(matches(isDisplayed()));
+    }
 }
