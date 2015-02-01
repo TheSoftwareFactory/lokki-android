@@ -72,4 +72,6 @@ dependencies {
     // MockWebServer
     androidTestCompile 'com.squareup.okhttp:mockwebserver:2.1.0'
 
+    // Android-compatible but recent version of HttpClient
+    androidTestCompile group: 'org.apache.httpcomponents' , name: 'httpclient-android' , version: '4.3.5.1'
 }

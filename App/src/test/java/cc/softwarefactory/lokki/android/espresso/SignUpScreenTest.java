@@ -4,12 +4,14 @@ import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.RecordedRequest;
 
 import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
+import org.apache.http.client.utils.URLEncodedUtilsHC4;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import cc.softwarefactory.lokki.android.R;
@@ -59,7 +61,13 @@ public class SignUpScreenTest extends NotLoggedInBaseTest {
                 new BasicNameValuePair("language", language)
         );
 
-        return URLEncodedUtils.format(params, "utf8");
+        return URLEncodedUtilsHC4.format(params, "utf8");
+    }
+
+    private void assertQueryStringEquals(String first, String second) {
+        List<NameValuePair> firstList = URLEncodedUtilsHC4.parse(first, Charset.forName("utf8"));
+        List<NameValuePair> secondList = URLEncodedUtilsHC4.parse(second, Charset.forName("utf8"));
+        assertEquals(new HashSet(firstList), new HashSet(secondList));
     }
 
     public void testMapIsShownAfterSuccessfulSignup() throws InterruptedException, JSONException, UnsupportedEncodingException {
@@ -69,7 +77,7 @@ public class SignUpScreenTest extends NotLoggedInBaseTest {
         loginOkResponse.setBody(MockJsonUtils.getSignupResponse("123123", new String[]{}, new String[]{}, "3213123"));
         List<RecordedRequest> requests = mockDispatcher.setSignupResponse(loginOkResponse);
         clickSignUpButton();
-        assertEquals(getRequest("email@example.com"), requests.get(0).getUtf8Body());
+        assertQueryStringEquals(getRequest("email@example.com"), requests.get(0).getUtf8Body());
         onView(withText(R.string.map)).check(matches(isDisplayed()));
     }
 
@@ -81,7 +89,7 @@ public class SignUpScreenTest extends NotLoggedInBaseTest {
         loginErrorResponse.setBody("Invalid email address.");
         List<RecordedRequest> requests = mockDispatcher.setSignupResponse(loginErrorResponse);
         clickSignUpButton();
-        assertEquals(getRequest("invalid_email"), requests.get(0).getUtf8Body());
+        assertQueryStringEquals(getRequest("invalid_email"), requests.get(0).getUtf8Body());
         onView(withText(R.string.general_error)).check(matches(isDisplayed()));
     }
 
@@ -93,7 +101,7 @@ public class SignUpScreenTest extends NotLoggedInBaseTest {
         List<RecordedRequest> requests = mockDispatcher.setSignupResponse(loginNeedAuthorizationResponse);
         String signupText = getInstrumentation().getTargetContext().getResources().getString(R.string.security_signup) + " test@example.com";
         clickSignUpButton();
-        assertEquals(getRequest("test@example.com"), requests.get(0).getUtf8Body());
+        assertQueryStringEquals(getRequest("test@example.com"), requests.get(0).getUtf8Body());
         onView(withText(signupText)).check(matches(isDisplayed()));
     }
 
