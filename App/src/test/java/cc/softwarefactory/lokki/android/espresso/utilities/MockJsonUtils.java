@@ -134,7 +134,7 @@ public class MockJsonUtils {
                 .put("canseeme", canseemeJsonArray)
                 .put("icansee", icanseeJsonObject)
                 .put("idmapping", idmappingJsonObject)
-                .put("location", new JSONObject())
+                .put("location", new JSONObject()) //new JSONObject()
                 .put("visibility", true);
 
         return jsonObject.toString();
