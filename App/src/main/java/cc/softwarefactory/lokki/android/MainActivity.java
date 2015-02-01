@@ -255,6 +255,10 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
                 break;
 
             case R.id.allow_people: // In list of ALL contacts, when adding new ones.
+                if (AddContactsFragment.emailsSelected.isEmpty()){
+                    Toast.makeText(MainActivity.this, getText(R.string.no_contact_selected_toast), Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 try {
                     ServerAPI.allowPeople(this, AddContactsFragment.emailsSelected);
                     Dialogs.addPeopleSave(this, AddContactsFragment.emailsSelected);
