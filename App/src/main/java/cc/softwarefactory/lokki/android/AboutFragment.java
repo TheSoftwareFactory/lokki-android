@@ -6,6 +6,7 @@ package cc.softwarefactory.lokki.android;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -22,7 +23,7 @@ import cc.softwarefactory.lokki.android.utils.Utils;
 
 public class AboutFragment extends Fragment {
 
-    private static final String TAG = "About";
+    private static final String TAG = "AboutFragment";
     private AQuery aq;
     private String[] aboutLinksUrls;
 
@@ -42,40 +43,44 @@ public class AboutFragment extends Fragment {
         aboutLinksUrls = getResources().getStringArray(R.array.about_links_url);
         String[] aboutLinks = getResources().getStringArray(R.array.about_links);
         aq.id(R.id.listView1).adapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, aboutLinks));
-        aq.id(R.id.listView1).itemClicked(this, "onItemSelected");
+        aq.id(R.id.listView1).itemClicked(new AboutItemClickListener());
+
         try {
-            aq.id(R.id.version).text("Version: " + Utils.getAppVersion(getActivity()) + getResources().getString(R.string.version_and_copyright));
-        } catch (Exception ex) {
+            aq.id(R.id.version).text(getResources().getString(R.string.version_and_copyright, Utils.getAppVersion(getActivity())));
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.e(TAG, "Couldn't set text in about screen");
         }
     }
 
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+    private void openTellAFriendActivity() {
+        try {
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            intent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.share_subject));
+            intent.putExtra(Intent.EXTRA_TEXT, getResources().getString(R.string.share_text));
+            startActivity(Intent.createChooser(intent, getResources().getString(R.string.share)));
+        } catch (ActivityNotFoundException e) {
+            Log.e(TAG, "Couldn't open 'tell a friend about lokki' activity");
+        }
+    }
 
-        Log.e(TAG, "onItemSelected: " + position + ", tag:" + parent.getTag());
-        String url = aboutLinksUrls[position];
+    private class AboutItemClickListener implements AdapterView.OnItemClickListener {
 
-        switch (position) {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            Log.e(TAG, "onItemSelected: " + position + ", tag:" + parent.getTag());
+            String url = aboutLinksUrls[position];
 
-            case 0: // Help
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-                break;
+            switch (position) {
+                case 0: // Help
+                case 1: // Send feedback
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                    break;
 
-            case 1: // Send feedback
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-                break;
-
-            case 2: // Tell a friend about Lokki
-                try {
-                    Intent intent = new Intent(Intent.ACTION_SEND);
-                    intent.setType("text/plain");
-                    intent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.share_subject));
-                    intent.putExtra(Intent.EXTRA_TEXT, getResources().getString(R.string.share_text));
-                    startActivity(Intent.createChooser(intent, getResources().getString(R.string.share)));
-
-                } catch (ActivityNotFoundException anfe) {
-                }
-                break;
-
+                case 2: // Tell a friend about Lokki
+                    openTellAFriendActivity();
+                    break;
+            }
         }
     }
 }

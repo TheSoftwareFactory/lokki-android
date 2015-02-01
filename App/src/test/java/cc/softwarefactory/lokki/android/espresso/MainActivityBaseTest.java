@@ -1,5 +1,6 @@
 package cc.softwarefactory.lokki.android.espresso;
 
+import android.content.res.Resources;
 import android.test.ActivityInstrumentationTestCase2;
 
 import cc.softwarefactory.lokki.android.MainActivity;
@@ -15,6 +16,10 @@ public abstract class MainActivityBaseTest extends ActivityInstrumentationTestCa
 
     public MainActivityBaseTest() {
         super(MainActivity.class);
+    }
+
+    protected Resources getResources() {
+        return getInstrumentation().getTargetContext().getResources();
     }
 
     @Override

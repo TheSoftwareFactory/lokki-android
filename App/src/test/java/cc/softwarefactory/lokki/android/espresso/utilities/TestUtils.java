@@ -11,7 +11,11 @@ import android.support.test.espresso.action.Tap;
 import android.view.View;
 
 import cc.softwarefactory.lokki.android.MainActivity;
+import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.utils.PreferenceUtils;
+
+import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
 public class TestUtils {
 
@@ -19,6 +23,7 @@ public class TestUtils {
     final static String VALUE_TEST_USER_ID = "a1b2c3d4e5f6g7h8i9j10k11l12m13n14o15p16q";
     final static String VALUE_TEST_AUTH_TOKEN = "ABCDEFGHIJ";
 
+    public final static int WAIT_FOR_ACTIVITY_TIMEOUT = 10000; // milliseconds
 
     public static String getStringFromResources(Instrumentation instrumentation, int id) {
         return instrumentation.getTargetContext().getResources().getString(id);
@@ -57,4 +62,8 @@ public class TestUtils {
                 Press.FINGER);
     }
 
+    public static void toggleNavigationDrawer() {
+        // TODO: hardcoded click position and menu text
+        onView(withId(R.id.decor_content_parent)).perform(clickScreenPosition(0, 0));
+    }
 }
