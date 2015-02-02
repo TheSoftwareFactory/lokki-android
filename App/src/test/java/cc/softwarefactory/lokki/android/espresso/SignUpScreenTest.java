@@ -17,6 +17,7 @@ import java.util.Set;
 
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.espresso.utilities.MockJsonUtils;
+import cc.softwarefactory.lokki.android.espresso.utilities.TestUtils;
 import cc.softwarefactory.lokki.android.utils.Utils;
 
 import static android.support.test.espresso.Espresso.onView;
@@ -72,7 +73,7 @@ public class SignUpScreenTest extends LokkiBaseTest {
 
     public void testMapIsShownAfterSuccessfulSignup() throws InterruptedException, JSONException, UnsupportedEncodingException {
         MockResponse loginOkResponse = new MockResponse();
-        loginOkResponse.setBody(MockJsonUtils.getSignupResponse("123123", new String[]{}, new String[]{}, "3213123"));
+        loginOkResponse.setBody(MockJsonUtils.getSignupResponse(TestUtils.VALUE_TEST_USER_ID, new String[]{}, new String[]{}, TestUtils.VALUE_TEST_AUTH_TOKEN));
         List<RecordedRequest> requests = getMockDispatcher().setSignupResponse(loginOkResponse);
 
         signUpUsingEmail("email@example.com");
