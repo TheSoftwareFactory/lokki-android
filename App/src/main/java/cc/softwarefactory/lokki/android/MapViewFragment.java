@@ -370,8 +370,9 @@ public class MapViewFragment extends Fragment {
             else userImage = Utils.getRoundedCornerBitmap(userImage, 50);
             // Store in cache
             //MainApplication.avatarCache.put(email, userImage);
-        } else
+        } else {
             Log.e(TAG, "AvatarLoader IN cache. Email: " + email);
+        }
 
         // Marker colors, etc.
         Log.e(TAG, "userImage size: " + userImage);
@@ -381,13 +382,14 @@ public class MapViewFragment extends Fragment {
         aq.id(R.id.user_image).image(userImage);
         Log.e(TAG, "aq in place");
 
-        if (email.equals(MainApplication.userAccount))
+        if (email.equals(MainApplication.userAccount)) {
             aq.id(R.id.marker_frame).image(R.drawable.pointers_android_pointer_green);
-        else if (!recent)
+        } else if (!recent) {
             aq.id(R.id.marker_frame).image(R.drawable.pointers_android_pointer_orange);
-        else if (!accurate)
+        } else if (!accurate) {
             //aq.id(R.id.marker_frame).image(R.drawable.pointers_android_pointer_grey);
             aq.id(R.id.marker_frame).image(R.drawable.pointers_android_pointer_orange);
+        }
 
         Log.e(TAG, "Image set. Calling createDrawableFromView");
 

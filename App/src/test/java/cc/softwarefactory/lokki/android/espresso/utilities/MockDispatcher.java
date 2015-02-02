@@ -40,7 +40,11 @@ public class MockDispatcher extends Dispatcher {
     }
 
     public void setPlacesResponse(MockResponse response) {
-        installResponse(METHOD_GET, DEFAULT_USER_BASE_PATH + "places", response);
+        setPlacesResponse(response, METHOD_GET);
+    }
+
+    public void setPlacesResponse(MockResponse response, String method) {
+        installResponse(method, DEFAULT_USER_BASE_PATH + "places", response);
     }
 
     public void installResponse(String method, String path, MockResponse response) {
