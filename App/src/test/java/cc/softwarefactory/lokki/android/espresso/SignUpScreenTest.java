@@ -37,15 +37,14 @@ public class SignUpScreenTest extends NotLoggedInBaseTest {
         onView(withText(R.string.i_agree)).perform(click());
     }
 
-    private void enterEmail(String email) throws InterruptedException {
+    private void signUpUsingEmail(String email) throws InterruptedException {
+        moveToSignUpScreen();
         onView(withId(R.id.email)).perform(clearText(), typeText(email), closeSoftKeyboard());
 
         // Without this we get "PerformException: Error performing 'single click' on view".
         // See https://code.google.com/p/android-test-kit/issues/detail?id=44
         Thread.sleep(100);
-    }
 
-    private void clickSignUpButton() {
         onView(withId(R.id.signup_button)).perform(click());
     }
 
@@ -71,44 +70,39 @@ public class SignUpScreenTest extends NotLoggedInBaseTest {
     }
 
     public void testMapIsShownAfterSuccessfulSignup() throws InterruptedException, JSONException, UnsupportedEncodingException {
-        moveToSignUpScreen();
-        enterEmail("email@example.com");
         MockResponse loginOkResponse = new MockResponse();
         loginOkResponse.setBody(MockJsonUtils.getSignupResponse("123123", new String[]{}, new String[]{}, "3213123"));
         List<RecordedRequest> requests = mockDispatcher.setSignupResponse(loginOkResponse);
-        clickSignUpButton();
+
+        signUpUsingEmail("email@example.com");
         assertQueryStringEquals(getRequest("email@example.com"), requests.get(0).getUtf8Body());
         onView(withText(R.string.map)).check(matches(isDisplayed()));
     }
 
     public void testInvalidEmailGivesErrorMessage() throws InterruptedException, UnsupportedEncodingException {
-        moveToSignUpScreen();
-        enterEmail("invalid_email");
         MockResponse loginErrorResponse = new MockResponse();
         loginErrorResponse.setResponseCode(400);
         loginErrorResponse.setBody("Invalid email address.");
         List<RecordedRequest> requests = mockDispatcher.setSignupResponse(loginErrorResponse);
-        clickSignUpButton();
+
+        signUpUsingEmail("invalid_email");
         assertQueryStringEquals(getRequest("invalid_email"), requests.get(0).getUtf8Body());
         onView(withText(R.string.general_error)).check(matches(isDisplayed()));
     }
 
     public void testMessageIsShownIfAccountRequiresAuthorization() throws InterruptedException, UnsupportedEncodingException {
-        moveToSignUpScreen();
-        enterEmail("test@example.com");
         MockResponse loginNeedAuthorizationResponse = new MockResponse();
         loginNeedAuthorizationResponse.setResponseCode(401);
         List<RecordedRequest> requests = mockDispatcher.setSignupResponse(loginNeedAuthorizationResponse);
-        String signupText = getInstrumentation().getTargetContext().getResources().getString(R.string.security_signup) + " test@example.com";
-        clickSignUpButton();
+        String signupText = getResources().getString(R.string.security_signup) + " test@example.com";
+
+        signUpUsingEmail("test@example.com");
         assertQueryStringEquals(getRequest("test@example.com"), requests.get(0).getUtf8Body());
         onView(withText(signupText)).check(matches(isDisplayed()));
     }
 
     public void testTypeYourEmailAddressIsShownWhenFieldIsEmptyAndTryingToSignup() throws InterruptedException {
-        moveToSignUpScreen();
-        enterEmail("");
-        clickSignUpButton();
+        signUpUsingEmail("");
         onView(allOf(withId(R.id.email), withText(R.string.type_your_email_address))).check(matches(isDisplayed()));
     }
 }
