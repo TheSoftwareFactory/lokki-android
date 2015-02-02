@@ -18,7 +18,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 
 
-public class ContactsScreenTest extends MainActivityBaseTest {
+public class ContactsScreenTest extends LoggedInBaseTest {
 
 
     @Override
@@ -45,7 +45,7 @@ public class ContactsScreenTest extends MainActivityBaseTest {
 
     public void testOneContactShownWhenOneContact() throws JSONException, InterruptedException {
         String contactEmail = "family.member@example.com";
-        mockDispatcher.setDashboardResponse(new MockResponse().setBody(MockJsonUtils.getDashboardJsonWithContacts(contactEmail)));
+        getMockDispatcher().setDashboardResponse(new MockResponse().setBody(MockJsonUtils.getDashboardJsonWithContacts(contactEmail)));
 
         enterContactsScreen();
 
@@ -54,7 +54,7 @@ public class ContactsScreenTest extends MainActivityBaseTest {
 
     public void testAllCheckboxesShownWhenOneContact() throws JSONException, InterruptedException {
         String contactEmail = "family.member@example.com";
-        mockDispatcher.setDashboardResponse(new MockResponse().setBody(MockJsonUtils.getDashboardJsonWithContacts(contactEmail)));
+        getMockDispatcher().setDashboardResponse(new MockResponse().setBody(MockJsonUtils.getDashboardJsonWithContacts(contactEmail)));
 
         enterContactsScreen();
 
@@ -65,7 +65,7 @@ public class ContactsScreenTest extends MainActivityBaseTest {
     public void testTwoContactsShownWhenTwoContacts() throws JSONException, InterruptedException {
         String firstContactEmail = "family.member@example.com";
         String secondContactEmail = "work.buddy@example.com";
-        mockDispatcher.setDashboardResponse(new MockResponse().setBody(MockJsonUtils.getDashboardJsonWithContacts(firstContactEmail, secondContactEmail)));
+        getMockDispatcher().setDashboardResponse(new MockResponse().setBody(MockJsonUtils.getDashboardJsonWithContacts(firstContactEmail, secondContactEmail)));
 
         enterContactsScreen();
 
@@ -76,7 +76,7 @@ public class ContactsScreenTest extends MainActivityBaseTest {
     public void testAllCheckboxesShownWhenTwoContacts() throws JSONException, InterruptedException {
         String firstContactEmail = "family.member@example.com";
         String secondContactEmail = "work.buddy@example.com";
-        mockDispatcher.setDashboardResponse(new MockResponse().setBody(MockJsonUtils.getDashboardJsonWithContacts(firstContactEmail, secondContactEmail)));
+        getMockDispatcher().setDashboardResponse(new MockResponse().setBody(MockJsonUtils.getDashboardJsonWithContacts(firstContactEmail, secondContactEmail)));
 
         enterContactsScreen();
 
