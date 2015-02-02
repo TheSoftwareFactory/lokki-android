@@ -13,6 +13,7 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.espresso.utilities.MockJsonUtils;
@@ -64,9 +65,9 @@ public class SignUpScreenTest extends LokkiBaseTest {
     }
 
     private void assertQueryStringEquals(String first, String second) {
-        List<NameValuePair> firstList = URLEncodedUtilsHC4.parse(first, Charset.forName("utf8"));
-        List<NameValuePair> secondList = URLEncodedUtilsHC4.parse(second, Charset.forName("utf8"));
-        assertEquals(new HashSet(firstList), new HashSet(secondList));
+        Set<NameValuePair> firstList = new HashSet(URLEncodedUtilsHC4.parse(first, Charset.forName("utf8")));
+        Set<NameValuePair> secondList = new HashSet(URLEncodedUtilsHC4.parse(second, Charset.forName("utf8")));
+        assertEquals(firstList, secondList);
     }
 
     public void testMapIsShownAfterSuccessfulSignup() throws InterruptedException, JSONException, UnsupportedEncodingException {
