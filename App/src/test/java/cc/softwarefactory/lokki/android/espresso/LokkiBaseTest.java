@@ -1,5 +1,6 @@
 package cc.softwarefactory.lokki.android.espresso;
 
+import android.content.res.Resources;
 import android.test.ActivityInstrumentationTestCase2;
 
 import com.squareup.okhttp.mockwebserver.MockWebServer;
@@ -9,15 +10,20 @@ import cc.softwarefactory.lokki.android.ServerAPI;
 import cc.softwarefactory.lokki.android.espresso.utilities.MockDispatcher;
 
 /**
- * Abstract base class for tests that want to have a mock HTTP server running on each test.
+ * Abstract base class for tests that want to have a mock HTTP server running on each test. Also has
+ * some convenient helpers.
  */
-public abstract class MockHttpServerBaseTest extends ActivityInstrumentationTestCase2<MainActivity>  {
+public abstract class LokkiBaseTest extends ActivityInstrumentationTestCase2<MainActivity>  {
 
     private MockWebServer mockWebServer;
     MockDispatcher mockDispatcher;
 
-    public MockHttpServerBaseTest() {
+    public LokkiBaseTest() {
         super(MainActivity.class);
+    }
+
+    protected Resources getResources() {
+        return getInstrumentation().getTargetContext().getResources();
     }
 
     @Override

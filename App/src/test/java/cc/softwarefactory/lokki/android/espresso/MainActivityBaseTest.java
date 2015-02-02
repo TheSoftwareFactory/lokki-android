@@ -1,13 +1,8 @@
 package cc.softwarefactory.lokki.android.espresso;
 
-import android.content.res.Resources;
 import cc.softwarefactory.lokki.android.espresso.utilities.TestUtils;
 
-public abstract class MainActivityBaseTest extends MockHttpServerBaseTest {
-
-    protected Resources getResources() {
-        return getInstrumentation().getTargetContext().getResources();
-    }
+public abstract class MainActivityBaseTest extends LokkiBaseTest {
 
     @Override
     public void setUp() throws Exception {

@@ -5,7 +5,7 @@ import cc.softwarefactory.lokki.android.espresso.utilities.TestUtils;
 /**
  * Abstract base class for tests when don't want to be logged in at the start of a test.
  */
-public abstract class NotLoggedInBaseTest extends MockHttpServerBaseTest {
+public abstract class NotLoggedInBaseTest extends LokkiBaseTest {
 
     @Override
     public void setUp() throws Exception {
