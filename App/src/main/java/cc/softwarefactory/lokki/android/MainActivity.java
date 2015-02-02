@@ -77,17 +77,15 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         super.onStart();
         Log.e(TAG, "onStart");
 
-        if (firstTimeLaunch == null)
+        if (firstTimeLaunch == null) {
             firstTimeLaunch = firstTimeLaunch();
+        }
 
         if (firstTimeLaunch) {
             Log.e(TAG, "onStart - firstTimeLaunch, so showing terms.");
             startActivityForResult(new Intent(this, FirstTimeActivity.class), REQUEST_TERMS);
-
         } else {
-            //getSupportActionBar().setIcon(R.drawable.icon_action_menu);
-            checkIfUserisLoggedIn(); // Log user In
-            //GCMHelper.start(getApplicationContext()); // Register to GCM
+            checkIfUserIsLoggedIn(); // Log user In
         }
     }
 
@@ -103,23 +101,25 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         Log.e(TAG, "onResume");
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); // WAKE_LOCK
 
-        if (!firstTimeLaunch && !firstTimeLaunch()) {
-            Log.e(TAG, "onResume - NOT firstTimeLaunch, so launching services.");
-            startServices();
-            LocalBroadcastManager.getInstance(this).registerReceiver(exitMessageReceiver, new IntentFilter("EXIT"));
-        } else
+        if (firstTimeLaunch || firstTimeLaunch()) {
             Log.e(TAG, "onResume - firstTimeLaunch, so avoiding launching services.");
+            return;
+        }
+        Log.e(TAG, "onResume - NOT firstTimeLaunch, so launching services.");
+        startServices();
+        LocalBroadcastManager.getInstance(this).registerReceiver(exitMessageReceiver, new IntentFilter("EXIT"));
     }
 
     private void startServices() {
 
-        if (MainApplication.visible)
+        if (MainApplication.visible) {
             LocationService.start(this.getApplicationContext());
+        }
+
         DataService.start(this.getApplicationContext());
 
         try {
             ServerAPI.requestUpdates(this.getApplicationContext());
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -131,29 +131,23 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         LocationService.stop(this.getApplicationContext());
         DataService.stop(this.getApplicationContext());
         LocalBroadcastManager.getInstance(this).unregisterReceiver(exitMessageReceiver);
-
     }
 
-    private void checkIfUserisLoggedIn() {
+    private void checkIfUserIsLoggedIn() {
 
         String userAccount = PreferenceUtils.getValue(this, PreferenceUtils.KEY_USER_ACCOUNT);
         String userId = PreferenceUtils.getValue(this, PreferenceUtils.KEY_USER_ID);
         String authorizationToken = PreferenceUtils.getValue(this, PreferenceUtils.KEY_AUTH_TOKEN);
         boolean debug = false;
 
-        if (debug || userId.isEmpty() || userAccount.isEmpty() || authorizationToken.isEmpty())
+        if (debug || userId.isEmpty() || userAccount.isEmpty() || authorizationToken.isEmpty()) {
             try {
                 startActivityForResult(new Intent(this, SignupActivity.class), REQUEST_CODE_EMAIL);
-                /*
-                Intent intent = AccountPicker.newChooseAccountIntent(null, null, new String[]{GoogleAuthUtil.GOOGLE_ACCOUNT_TYPE}, false, null, null, null, null);
-                startActivityForResult(intent, REQUEST_CODE_EMAIL);
-                */
-
             } catch (ActivityNotFoundException e) {
                 Toast.makeText(this, getResources().getString(R.string.general_error), Toast.LENGTH_LONG).show();
                 finish();
             }
-        else { // User already logged-in
+        } else { // User already logged-in
             MainApplication.userAccount = userAccount;
             MainApplication.userId = userId;
             getSupportActionBar().setIcon(R.drawable.icon_action_menu);
@@ -184,7 +178,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
                 break;
 
             case 2: // Settings
-                //fragmentManager.beginTransaction().replace(R.id.container, new SettingsFragment()).setCustomAnimations(android.R.anim.fade_in,android.R.anim.fade_out,android.R.anim.fade_in,android.R.anim.fade_out).commit();
                 fragmentManager.beginTransaction().replace(R.id.container, new SettingsFragment()).commit();
                 break;
 
@@ -232,11 +225,9 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
                 }
             } else if (selectedOption == 1) { // People
                 getMenuInflater().inflate(R.menu.contacts, menu);
-
             } else if (selectedOption == -10) { // People
                 getMenuInflater().inflate(R.menu.add_contact, menu);
             }
-            //restoreActionBar();
         }
         return super.onPrepareOptionsMenu(menu);
     }
@@ -269,7 +260,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
                 break;
 
             case R.id.action_visibility:
-                //mNavigationDrawerFragment.selectItem(2);
                 toggleVisibility();
                 break;
 
@@ -349,30 +339,31 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
         Log.e(TAG, "CheckBox clicked. View: " + view);
 
-        if (view != null) {
-            Log.e(TAG, "View NOT null");
-
-            CheckBox checkBox = (CheckBox) view;
-            String email = (String) checkBox.getTag();
-            Log.e(TAG, "addSelectedEmail: " + email);
-
-            if (AddContactsFragment.emailsSelected.contains(email)) {
-                AddContactsFragment.emailsSelected.remove(email);
-            } else {
-                AddContactsFragment.emailsSelected.add(email);
-            }
+        if (view == null) {
+            return;
         }
-        Log.e(TAG, "emailsSelected: " + AddContactsFragment.emailsSelected);
+        Log.e(TAG, "View NOT null");
+
+        CheckBox checkBox = (CheckBox) view;
+        String email = (String) checkBox.getTag();
+        Log.e(TAG, "addSelectedEmail: " + email);
+
+        if (AddContactsFragment.emailsSelected.contains(email)) {
+            AddContactsFragment.emailsSelected.remove(email);
+        } else {
+            AddContactsFragment.emailsSelected.add(email);
+        }
 
     }
 
     public void showUserInMap(View view) { // Used in Contacts
 
-        if (view != null) {
-            ImageView image = (ImageView) view;
-            String email = (String) image.getTag();
-            showUserInMap(email);
+        if (view == null) {
+            return;
         }
+        ImageView image = (ImageView) view;
+        String email = (String) image.getTag();
+        showUserInMap(email);
     }
 
     public void showUserInMap(String email) { // Used in Contacts
@@ -385,22 +376,23 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
     public void toggleIDontWantToSee(View view) {
 
-        if (view != null) {
-            CheckBox checkBox = (CheckBox) view;
-            Boolean allow = checkBox.isChecked();
-            String email = (String) checkBox.getTag();
-            Log.e(TAG, "toggleIDontWantToSee: " + email + ", Checkbox is: " + allow);
-            if (!allow)
-                try {
-                    MainApplication.iDontWantToSee.put(email, 1);
-                    PreferenceUtils.setValue(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, MainApplication.iDontWantToSee.toString());
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            else if (MainApplication.iDontWantToSee.has(email)) {
-                MainApplication.iDontWantToSee.remove(email);
+        if (view == null) {
+            return;
+        }
+        CheckBox checkBox = (CheckBox) view;
+        Boolean allow = checkBox.isChecked();
+        String email = (String) checkBox.getTag();
+        Log.e(TAG, "toggleIDontWantToSee: " + email + ", Checkbox is: " + allow);
+        if (!allow) {
+            try {
+                MainApplication.iDontWantToSee.put(email, 1);
                 PreferenceUtils.setValue(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, MainApplication.iDontWantToSee.toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
+        } else if (MainApplication.iDontWantToSee.has(email)) {
+            MainApplication.iDontWantToSee.remove(email);
+            PreferenceUtils.setValue(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, MainApplication.iDontWantToSee.toString());
         }
     }
 
@@ -411,13 +403,13 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
             Boolean allow = checkBox.isChecked();
             String email = (String) checkBox.getTag();
             Log.e(TAG, "toggleUserCanSeeMe: " + email + ", Checkbox is: " + allow);
-            if (!allow)
+            if (!allow) {
                 try {
                     ServerAPI.disallowUser(this, email);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-            else
+            } else {
                 try {
                     Set<String> emails = new HashSet<String>();
                     emails.add(email);
@@ -425,6 +417,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+            }
         }
 
     }
@@ -452,9 +445,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
                     .setCancelable(false);
             try {
                 alertDialog.show();
-
             } catch (Exception ex) {
-
             }
         }
     };

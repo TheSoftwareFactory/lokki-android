@@ -25,15 +25,15 @@ public class FragmentTabsFragmentSupport extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View rootview = inflater.inflate(R.layout.fragment_tabs, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_tabs, container, false);
 
-        tabHost = (FragmentTabHost) rootview.findViewById(android.R.id.tabhost);
+        tabHost = (FragmentTabHost) rootView.findViewById(android.R.id.tabhost);
         tabHost.setup(getActivity(), getChildFragmentManager(), android.R.id.tabcontent);
 
         tabHost.addTab(tabHost.newTabSpec("map").setIndicator(getResources().getString(R.string.map)), MapViewFragment.class, null);
         tabHost.addTab(tabHost.newTabSpec("places").setIndicator(getResources().getString(R.string.places)), PlacesFragment.class, null);
 
-        return rootview;
+        return rootView;
     }
 
     @Override

@@ -73,8 +73,9 @@ public class ContactsFragment extends Fragment {
     private void getPeopleThatCanSeeMe() {
 
         try {
-            if (MainApplication.dashboard == null)
+            if (MainApplication.dashboard == null) {
                 MainApplication.dashboard = new JSONObject(PreferenceUtils.getValue(context, PreferenceUtils.KEY_DASHBOARD));
+            }
 
             JSONObject iCanSeeObj = MainApplication.dashboard.getJSONObject("icansee");
             JSONArray canSeeMeObj = MainApplication.dashboard.getJSONArray("canseeme");
@@ -169,10 +170,11 @@ public class ContactsFragment extends Fragment {
                 //holder.imageLoader = new LoadPhotoAsync(position, holder);
                 //holder.imageLoader.execute(contactName);
 
-                if (!iCanSee.contains(email))
+                if (!iCanSee.contains(email)) {
                     aq.id(holder.checkICanSee).invisible();
-                else
+                } else {
                     aq.id(holder.checkICanSee).visible();
+                }
 
                 return convertView;
             }
@@ -189,7 +191,6 @@ public class ContactsFragment extends Fragment {
         ImageView photo;
         CheckBox checkICanSee;
         CheckBox checkCanSeeMe;
-        //LoadPhotoAsync imageLoader;
         int position;
     }
 
@@ -199,7 +200,6 @@ public class ContactsFragment extends Fragment {
         protected Void doInBackground(Void... params) {
 
             getPeopleThatCanSeeMe();
-            //defaultAvartar = BitmapFactory.decodeResource(getResources(), R.drawable.default_avatar);
             return null;
         }
 
@@ -207,8 +207,9 @@ public class ContactsFragment extends Fragment {
         protected void onPostExecute(Void aVoid) {
 
             super.onPostExecute(aVoid);
-            if (isAdded() && !cancelAsynTasks)
+            if (isAdded() && !cancelAsynTasks) {
                 setListAdapter();
+            }
         }
     }
 

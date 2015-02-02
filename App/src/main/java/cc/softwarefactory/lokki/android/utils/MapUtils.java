@@ -2,9 +2,6 @@ package cc.softwarefactory.lokki.android.utils;
 
 import android.location.Location;
 
-/**
- * Created by verne_000 on 28.1.2015.
- */
 public class MapUtils {
     /**
      * Determines if the location should be used or discarded depending on the current accuracy and

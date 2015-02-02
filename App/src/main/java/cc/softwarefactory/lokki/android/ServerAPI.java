@@ -103,16 +103,15 @@ public class ServerAPI {
             public void callback(String url, JSONObject json, AjaxStatus status) {
                 Log.e(TAG, "placesCallback");
 
-                if (json != null) {
-                    Log.e(TAG, "json returned: " + json);
-                    MainApplication.places = json;
-                    PreferenceUtils.setValue(context, PreferenceUtils.KEY_PLACES, json.toString());
-                    Intent intent = new Intent("PLACES-UPDATE");
-                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-
-                } else {
+                if (json == null) {
                     Log.e(TAG, "Error: " + status.getCode() + " - " + status.getMessage());
+                    return;
                 }
+                Log.e(TAG, "json returned: " + json);
+                MainApplication.places = json;
+                PreferenceUtils.setValue(context, PreferenceUtils.KEY_PLACES, json.toString());
+                Intent intent = new Intent("PLACES-UPDATE");
+                LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
             }
         };
         cb.header("authorizationtoken", authorizationToken);
@@ -128,12 +127,14 @@ public class ServerAPI {
         String authorizationToken = PreferenceUtils.getValue(context, PreferenceUtils.KEY_AUTH_TOKEN);
         String url = ApiUrl + "user/" + userId + "/allow";
 
-        JSONObject JSONdata = new JSONObject();
         JSONArray JSONemails = new JSONArray();
         for (String email : emails) {
             JSONemails.put(email);
         }
-        JSONdata.put("emails", JSONemails);
+
+        JSONObject JSONdata = new JSONObject()
+                .put("emails", JSONemails);
+
         Log.e(TAG, "Emails to be alloweed: " + JSONdata);
 
         AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>() {
@@ -162,26 +163,28 @@ public class ServerAPI {
         String authorizationToken = PreferenceUtils.getValue(context, PreferenceUtils.KEY_AUTH_TOKEN);
         String url = ApiUrl + "user/" + userId + "/allow/";
         String targetId = Utils.getIdFromEmail(context, email);
-        if (targetId != null) {
-            url += targetId;
-            Log.e(TAG, "Email to be disallowed: " + email + ", userIdToDisallow: " + targetId);
 
-            AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>() {
-                @Override
-                public void callback(String url, JSONObject object, AjaxStatus status) {
-                    Log.e(TAG, "sendLocation result code: " + status.getCode());
-                    Log.e(TAG, "sendLocation result message: " + status.getMessage());
-                    Log.e(TAG, "sendLocation ERROR: " + status.getError());
-                    if (status.getError() == null) {
-                        Log.e(TAG, "Getting new dashboard");
-                        DataService.getDashboard(context);
-                    }
-                }
-            };
-
-            cb.header("authorizationtoken", authorizationToken);
-            aq.delete(url, JSONObject.class, cb);
+        if (targetId == null) {
+            return;
         }
+        url += targetId;
+        Log.e(TAG, "Email to be disallowed: " + email + ", userIdToDisallow: " + targetId);
+
+        AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>() {
+            @Override
+            public void callback(String url, JSONObject object, AjaxStatus status) {
+                Log.e(TAG, "sendLocation result code: " + status.getCode());
+                Log.e(TAG, "sendLocation result message: " + status.getMessage());
+                Log.e(TAG, "sendLocation ERROR: " + status.getError());
+                if (status.getError() == null) {
+                    Log.e(TAG, "Getting new dashboard");
+                    DataService.getDashboard(context);
+                }
+            }
+        };
+
+        cb.header("authorizationtoken", authorizationToken);
+        aq.delete(url, JSONObject.class, cb);
     }
 
     public static void sendLocation(Context context, Location location) throws JSONException {
@@ -193,12 +196,13 @@ public class ServerAPI {
         String authorizationToken = PreferenceUtils.getValue(context, PreferenceUtils.KEY_AUTH_TOKEN);
         String url = ApiUrl + "user/" + userId + "/location";
 
-        JSONObject JSONdata = new JSONObject();
-        JSONObject JSONlocation = new JSONObject();
-        JSONlocation.put("lat", location.getLatitude());
-        JSONlocation.put("lon", location.getLongitude());
-        JSONlocation.put("acc", location.getAccuracy());
-        JSONdata.put("location", JSONlocation);
+        JSONObject JSONlocation = new JSONObject()
+                .put("lat", location.getLatitude())
+                .put("lon", location.getLongitude())
+                .put("acc", location.getAccuracy());
+
+        JSONObject JSONdata = new JSONObject()
+                .put("location", JSONlocation);
 
         AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>() {
             @Override
@@ -222,8 +226,8 @@ public class ServerAPI {
         String authorizationToken = PreferenceUtils.getValue(context, PreferenceUtils.KEY_AUTH_TOKEN);
         String url = ApiUrl + "user/" + userId + "/gcmToken";
 
-        JSONObject JSONdata = new JSONObject();
-        JSONdata.put("gcmToken", GCMToken);
+        JSONObject JSONdata = new JSONObject()
+                .put("gcmToken", GCMToken);
 
         AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>() {
             @Override
@@ -247,8 +251,8 @@ public class ServerAPI {
         String authorizationToken = PreferenceUtils.getValue(context, PreferenceUtils.KEY_AUTH_TOKEN);
         String url = ApiUrl + "user/" + userId + "/update/locations";
 
-        JSONObject JSONdata = new JSONObject();
-        JSONdata.put("item", "");
+        JSONObject JSONdata = new JSONObject()
+                .put("item", "");
 
         AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>() {
             @Override
@@ -272,8 +276,8 @@ public class ServerAPI {
         String authorizationToken = PreferenceUtils.getValue(context, PreferenceUtils.KEY_AUTH_TOKEN);
         String url = ApiUrl + "user/" + userId + "/visibility";
 
-        JSONObject JSONdata = new JSONObject();
-        JSONdata.put("visibility", visible);
+        JSONObject JSONdata = new JSONObject()
+                .put("visibility", visible);
 
         AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>() {
             @Override
@@ -297,12 +301,12 @@ public class ServerAPI {
         String authorizationToken = PreferenceUtils.getValue(context, PreferenceUtils.KEY_AUTH_TOKEN);
         String url = ApiUrl + "crashReport/" + userId;
 
-        JSONObject JSONdata = new JSONObject();
-        JSONdata.put("osType", "android");
-        JSONdata.put("osVersion", osVersion);
-        JSONdata.put("lokkiVersion", lokkiVersion);
-        JSONdata.put("reportTitle", reportTitle);
-        JSONdata.put("reportData", reportData);
+        JSONObject JSONdata = new JSONObject()
+                .put("osType", "android")
+                .put("osVersion", osVersion)
+                .put("lokkiVersion", lokkiVersion)
+                .put("reportTitle", reportTitle)
+                .put("reportData", reportData);
 
         AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>() {
             @Override
@@ -315,14 +319,6 @@ public class ServerAPI {
 
         cb.header("authorizationtoken", authorizationToken);
         aq.post(url, JSONdata, JSONObject.class, cb);
-
-        /*
-        cb.url(url).type(JSONObject.class);
-        aq.sync(cb);
-        Log.e(TAG, "reportCrash returned: " + cb.getStatus());
-        JSONObject jo = cb.getResult();
-        AjaxStatus status = cb.getStatus();
-        */
     }
 
     public static void addPlace(final Context context, String name, LatLng latLng) throws JSONException {
@@ -334,13 +330,15 @@ public class ServerAPI {
         String authorizationToken = PreferenceUtils.getValue(context, PreferenceUtils.KEY_AUTH_TOKEN);
         String url = ApiUrl + "user/" + userId + "/place";
 
-        JSONObject JSONdata = new JSONObject();
-        JSONdata.put("lat", latLng.latitude);
-        JSONdata.put("lon", latLng.longitude);
-        JSONdata.put("rad", 100);
-        JSONdata.put("img", "");
+
         String cleanName = name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
-        JSONdata.put("name", cleanName);
+
+        JSONObject JSONdata = new JSONObject()
+                .put("lat", latLng.latitude)
+                .put("lon", latLng.longitude)
+                .put("rad", 100)
+                .put("img", "")
+                .put("name", cleanName);
 
         AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>() {
             @Override
@@ -401,8 +399,8 @@ public class ServerAPI {
         String authorizationToken = PreferenceUtils.getValue(context, PreferenceUtils.KEY_AUTH_TOKEN);
         String url = ApiUrl + "user/" + userId + "/language";
 
-        JSONObject JSONdata = new JSONObject();
-        JSONdata.put("language", Utils.getLanguage());
+        JSONObject JSONdata = new JSONObject()
+                .put("language", Utils.getLanguage());
 
         AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>() {
             @Override

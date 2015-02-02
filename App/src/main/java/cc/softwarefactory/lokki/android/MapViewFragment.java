@@ -52,7 +52,7 @@ public class MapViewFragment extends Fragment {
     private GoogleMap map;
     private HashMap<String, Marker> markerMap;
     private AQuery aq;
-    private static Boolean cancelAsynTasks = false;
+    private static Boolean cancelAsyncTasks = false;
     private Context context;
     private Boolean firstTimeZoom = true;
     private ArrayList<Circle> placesOverlay;
@@ -108,7 +108,9 @@ public class MapViewFragment extends Fragment {
         if (map == null) {
             Log.e(TAG, "Map null. creating it.");
             setUpMap();
-        } else Log.e(TAG, "Map already exists. Nothing to do.");
+        } else {
+            Log.e(TAG, "Map already exists. Nothing to do.");
+        }
 
         LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver, new IntentFilter("LOCATION-UPDATE"));
         LocalBroadcastManager.getInstance(context).registerReceiver(placesUpdateReceiver, new IntentFilter("PLACES-UPDATE"));
@@ -117,9 +119,10 @@ public class MapViewFragment extends Fragment {
         //new UpdateMap().execute(0); // All users
         //new UpdateMap().execute(1); // All users
         new UpdateMap().execute(2); // All users
-        cancelAsynTasks = false;
-        if (MainApplication.places != null)
+        cancelAsyncTasks = false;
+        if (MainApplication.places != null) {
             updatePlaces();
+        }
     }
 
     private void setUpMap() {
@@ -128,7 +131,9 @@ public class MapViewFragment extends Fragment {
 
         map = fragment.getMap();
 
-        if (map == null) return;
+        if (map == null) {
+            return;
+        }
 
         map.setMapType(MainApplication.mapTypes[MainApplication.mapType]);
         map.setInfoWindowAdapter(new MyInfoWindowAdapter()); // Set the windowInfo view for each marker
@@ -178,7 +183,6 @@ public class MapViewFragment extends Fragment {
             Bundle extras = intent.getExtras();
             if (extras != null && extras.containsKey("current-location")) {
                 //    new UpdateMap().execute(0); // Only user
-
             } else {
                 //    new UpdateMap().execute(1); // Only others (not user)
                 new UpdateMap().execute(2); // All users
@@ -197,20 +201,23 @@ public class MapViewFragment extends Fragment {
     private void updatePlaces() {
 
         Log.e(TAG, "updatePlaces");
-        if (map == null) return;
+        if (map == null)  {
+            return;
+        }
+
         removePlaces();
+
         try {
-            Iterator keys = MainApplication.places.keys();
+            Iterator<String> keys = MainApplication.places.keys();
             while (keys.hasNext()) {
-                String key = (String) keys.next();
+                String key = keys.next();
                 JSONObject placeObj = MainApplication.places.getJSONObject(key);
-                String placeName = placeObj.getString("name");
                 Circle circle = map.addCircle(new CircleOptions()
                         .center(new LatLng(placeObj.getDouble("lat"), placeObj.getDouble("lon")))
                         .radius(placeObj.getInt("rad"))
                         .strokeColor(Color.BLUE)
                         .strokeWidth(2)
-                        .fillColor(0x330000ff));
+                        .fillColor(0x330000ff)); // TODO move color out of here
                 placesOverlay.add(circle);
             }
         } catch (Exception ex) {
@@ -224,6 +231,7 @@ public class MapViewFragment extends Fragment {
         for (Circle circle : placesOverlay) {
             circle.remove();
         }
+        placesOverlay.clear();
     }
 
     class UpdateMap extends AsyncTask<Integer, Void, HashMap<String, Location>> {
@@ -231,7 +239,9 @@ public class MapViewFragment extends Fragment {
         @Override
         protected HashMap<String, Location> doInBackground(Integer... params) {
 
-            if (MainApplication.dashboard == null) return null;
+            if (MainApplication.dashboard == null) {
+                return null;
+            }
 
             int who = params[0]; // 0 = user, 1 = others, 3 = all.
             Log.e(TAG, "UpdateMap update for all users: " + who);
@@ -241,10 +251,10 @@ public class MapViewFragment extends Fragment {
                 JSONObject idMapping = MainApplication.dashboard.getJSONObject("idmapping");
                 HashMap<String, Location> markerData = new HashMap<String, Location>();
 
-                if (who == 0 || who == 2) {
+                if (who == 0 || who == 2) {  // TODO Find out what is number two
                     markerData.put(MainApplication.userAccount, convertToLocation(MainApplication.dashboard.getJSONObject("location"))); // User himself
-
                 }
+
                 if (who == 1 || who == 2) {
                     Iterator keys = iCanSee.keys();
                     while (keys.hasNext()) {
@@ -256,7 +266,6 @@ public class MapViewFragment extends Fragment {
 
                         if (MainApplication.iDontWantToSee != null && MainApplication.iDontWantToSee.has(email)) {
                             Log.e(TAG, "I dont want to see: " + email);
-
                         } else {
                             Location loc = convertToLocation(location);
                             if (loc == null) {
@@ -277,13 +286,14 @@ public class MapViewFragment extends Fragment {
         @Override
         protected void onPostExecute(HashMap<String, Location> markerDataResult) {
 
-            Log.e(TAG, "cancelAsynTasks: " + cancelAsynTasks);
+            Log.e(TAG, "cancelAsyncTasks: " + cancelAsyncTasks);
             super.onPostExecute(markerDataResult);
-            if (markerDataResult != null && !cancelAsynTasks && isAdded()) {
+            if (markerDataResult != null && !cancelAsyncTasks && isAdded()) {
                 for (String email : markerDataResult.keySet()) {
                     Log.e(TAG, "marker to update: " + email);
-                    if (markerDataResult.get(email) != null)
+                    if (markerDataResult.get(email) != null) {
                         new LoadMarkerAsync(markerDataResult.get(email), email).execute();
+                    }
                 }
             }
         }
@@ -305,8 +315,6 @@ public class MapViewFragment extends Fragment {
             myLocation.setAccuracy(acc);
             myLocation.setTime(time);
             return myLocation;
-            //setUpMarker(myLocation, email);
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -323,24 +331,15 @@ public class MapViewFragment extends Fragment {
         @Override
         public View getInfoContents(Marker marker) {
 
-            if (!aq.isExist() || cancelAsynTasks || !isAdded()) return null;
+            if (!aq.isExist() || cancelAsyncTasks || !isAdded()) {
+                return null;
+            }
 
             View myContentsView = getActivity().getLayoutInflater().inflate(R.layout.map_info_window, null);
             AQuery aq = new AQuery(myContentsView);
 
             String name = Utils.getNameFromEmail(context, marker.getTitle());
             aq.id(R.id.contact_name).text(name);
-
-            /*
-            Long timestamp = Long.parseLong(marker.getSnippet());
-            Log.e(TAG, "timestamp: " + timestamp);
-            DateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-            Date netDate = (new Date(timestamp));
-            String timestampStr = sdf.format(netDate);
-            //timestampStr += " (Server time)";
-            Log.e(TAG, "Formated timestamp: " + timestampStr);
-            aq.id(R.id.timestamp).text(timestampStr);
-            */
             aq.id(R.id.timestamp).text(Utils.timestampText(marker.getSnippet()));
 
             return myContentsView;
@@ -356,42 +355,35 @@ public class MapViewFragment extends Fragment {
         if (markerImage != null) {
             Log.e(TAG, "Marker IN cache: " + email + ":" + accurate + ":" + recent);
             return markerImage;
-        } else
+        } else {
             Log.e(TAG, "Marker NOT in cache. Processing: " + email + ":" + accurate + ":" + recent);
+        }
 
-        Bitmap userImage = null;
-        //userImage = MainApplication.avatarCache.get(email);
+        Log.e(TAG, "AvatarLoader not in cache. Fetching it. Email: " + email);
+        // Get avatars
+        Bitmap userImage = Utils.getPhotoFromEmail(context, email);
         if (userImage == null) {
-            Log.e(TAG, "AvatarLoader not in cache. Fetching it. Email: " + email);
-            // Get avatars
-            userImage = Utils.getPhotoFromEmail(context, email);
-            if (userImage == null)
-                userImage = BitmapFactory.decodeResource(getResources(), R.drawable.default_avatar);
-            else userImage = Utils.getRoundedCornerBitmap(userImage, 50);
-            // Store in cache
-            //MainApplication.avatarCache.put(email, userImage);
-        } else
-            Log.e(TAG, "AvatarLoader IN cache. Email: " + email);
+            userImage = BitmapFactory.decodeResource(getResources(), R.drawable.default_avatar);
+        } else {
+            userImage = Utils.getRoundedCornerBitmap(userImage, 50);
+        }
 
         // Marker colors, etc.
         Log.e(TAG, "userImage size: " + userImage);
         View markerView = ((LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.map_marker, null);
-        //Log.e(TAG, "markerView created");
+
         aq = new AQuery(markerView);
         aq.id(R.id.user_image).image(userImage);
         Log.e(TAG, "aq in place");
 
-        if (email.equals(MainApplication.userAccount))
+        if (email.equals(MainApplication.userAccount)) {
             aq.id(R.id.marker_frame).image(R.drawable.pointers_android_pointer_green);
-        else if (!recent)
+        } else if (!recent || !accurate) {
             aq.id(R.id.marker_frame).image(R.drawable.pointers_android_pointer_orange);
-        else if (!accurate)
-            //aq.id(R.id.marker_frame).image(R.drawable.pointers_android_pointer_grey);
-            aq.id(R.id.marker_frame).image(R.drawable.pointers_android_pointer_orange);
+        }
 
         Log.e(TAG, "Image set. Calling createDrawableFromView");
 
-        //return createDrawableFromView(markerView);
         markerImage = createDrawableFromView(markerView);
         MainApplication.avatarCache.put(email + ":" + accurate + ":" + recent, markerImage);
         return markerImage;
@@ -434,19 +426,19 @@ public class MapViewFragment extends Fragment {
         @Override
         protected Bitmap doInBackground(Void... params) {
 
-            if (position != null && email != null) {
-                Log.e(TAG, "LoadMarkerAsync - Email: " + email + ", Position: " + position);
-                latLng = new LatLng(position.getLatitude(), position.getLongitude());
-                time = String.valueOf(position.getTime());
-                accurate = Math.round(position.getAccuracy()) < 100;
-                recent = (System.currentTimeMillis() - position.getTime()) < 60 * 60 * 1000;
+            if (position == null || email == null) {
+                return null;
+            }
+            Log.e(TAG, "LoadMarkerAsync - Email: " + email + ", Position: " + position);
+            latLng = new LatLng(position.getLatitude(), position.getLongitude());
+            time = String.valueOf(position.getTime());
+            accurate = Math.round(position.getAccuracy()) < 100;
+            recent = (System.currentTimeMillis() - position.getTime()) < 60 * 60 * 1000;
 
-                try {
-                    return getMarkerBitmap(email, accurate, recent);
-
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+            try {
+                return getMarkerBitmap(email, accurate, recent);
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
             return null;
         }
@@ -455,38 +447,38 @@ public class MapViewFragment extends Fragment {
         protected void onPostExecute(Bitmap bitmapResult) {
 
             super.onPostExecute(bitmapResult);
-            if (bitmapResult != null && !cancelAsynTasks && isAdded() && map != null) {
-                Marker marker = markerMap.get(email);
-                Boolean isNew = false;
-                if (marker != null) {
-                    Log.e(TAG, "onPostExecute - updating marker: " + email);
-                    marker.setPosition(latLng);
-                    marker.setSnippet(time);
-                    marker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmapResult));
+            if (bitmapResult == null || cancelAsyncTasks || !isAdded() || map == null) {
+                return;
+            }
+            Marker marker = markerMap.get(email);
+            Boolean isNew = false;
+            if (marker != null) {
+                Log.e(TAG, "onPostExecute - updating marker: " + email);
+                marker.setPosition(latLng);
+                marker.setSnippet(time);
+                marker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmapResult));
 
-                } else {
-                    Log.e(TAG, "onPostExecute - creating marker: " + email);
-                    marker = map.addMarker(new MarkerOptions().position(latLng).title(email).snippet(time).icon(BitmapDescriptorFactory.fromBitmap(bitmapResult)));
-                    Log.e(TAG, "onPostExecute - marker created");
-                    markerMap.put(email, marker);
-                    Log.e(TAG, "onPostExecute - marker in map stored. markerMap: " + markerMap.size());
-                    isNew = true;
-                }
-
-                if (marker.getTitle().equals(MainApplication.emailBeingTracked)) {
-                    marker.showInfoWindow();
-                    Log.e(TAG, "onPostExecute - showInfoWindow open");
-                    if (isNew)
-                        map.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 16));
-                    else
-                        map.moveCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
-
-                } else if (firstTimeZoom && MainApplication.emailBeingTracked == null && MainApplication.userAccount != null && marker.getTitle().equals(MainApplication.userAccount)) {
-                    firstTimeZoom = false;
-                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 16));
-                }
+            } else {
+                Log.e(TAG, "onPostExecute - creating marker: " + email);
+                marker = map.addMarker(new MarkerOptions().position(latLng).title(email).snippet(time).icon(BitmapDescriptorFactory.fromBitmap(bitmapResult)));
+                Log.e(TAG, "onPostExecute - marker created");
+                markerMap.put(email, marker);
+                Log.e(TAG, "onPostExecute - marker in map stored. markerMap: " + markerMap.size());
+                isNew = true;
             }
 
+            if (marker.getTitle().equals(MainApplication.emailBeingTracked)) {
+                marker.showInfoWindow();
+                Log.e(TAG, "onPostExecute - showInfoWindow open");
+                if (isNew) {
+                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 16));
+                } else {
+                    map.moveCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
+                }
+            } else if (firstTimeZoom && MainApplication.emailBeingTracked == null && MainApplication.userAccount != null && marker.getTitle().equals(MainApplication.userAccount)) {
+                firstTimeZoom = false;
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 16));
+            }
         }
 
     }
@@ -495,7 +487,7 @@ public class MapViewFragment extends Fragment {
     public void onDestroy() {
 
         // TODO: Cancel ALL Async tasks
-        cancelAsynTasks = true;
+        cancelAsyncTasks = true;
         super.onDestroy();
     }
 

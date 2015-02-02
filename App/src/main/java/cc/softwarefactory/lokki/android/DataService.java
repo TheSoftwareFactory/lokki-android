@@ -66,20 +66,21 @@ public class DataService extends Service {
     public static void updateDashboard(Context context, Location location) {
 
         Log.e(TAG, "updateDashboard");
-        if (MainApplication.dashboard != null)
-            try {
-                // TODO: hardcoded keys
-                JSONObject dashboardLocation = MainApplication.dashboard.getJSONObject("location");
-                dashboardLocation.put("lat", location.getLatitude());
-                dashboardLocation.put("lon", location.getLongitude());
-                dashboardLocation.put("acc", location.getAccuracy());
-                dashboardLocation.put("time", location.getTime());
-                MainApplication.dashboard.put("location", dashboardLocation);
-                Log.e(TAG, "new Dashboard: " + MainApplication.dashboard);
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+        if (MainApplication.dashboard == null) {
+            return;
+        }
+        try {
+            // TODO: hardcoded keys
+            JSONObject dashboardLocation = MainApplication.dashboard.getJSONObject("location");
+            dashboardLocation.put("lat", location.getLatitude());
+            dashboardLocation.put("lon", location.getLongitude());
+            dashboardLocation.put("acc", location.getAccuracy());
+            dashboardLocation.put("time", location.getTime());
+            MainApplication.dashboard.put("location", dashboardLocation);
+            Log.e(TAG, "new Dashboard: " + MainApplication.dashboard);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -117,18 +118,21 @@ public class DataService extends Service {
 
         Log.e(TAG, "onStartCommand invoked");
 
-        if (intent != null) { // Check that intent isnt null, and service is connected to Google Play Services
-            Bundle extras = intent.getExtras();
+        if (intent == null) {
+            return START_STICKY;
+        }
+        // Check that intent isnt null, and service is connected to Google Play Services
+        Bundle extras = intent.getExtras();
 
-            if (extras != null && extras.containsKey(ALARM_TIMER)) {
-                fetchDashboard();
-
-            } else if (extras != null && extras.containsKey(GET_PLACES)) {
-                getPlaces();
-
-            }
+        if (extras == null) {
+            return START_STICKY;
         }
 
+        if (extras.containsKey(ALARM_TIMER)) {
+            fetchDashboard();
+        } else if (extras.containsKey(GET_PLACES)) {
+            getPlaces();
+        }
         return START_STICKY;
     }
 
@@ -143,8 +147,6 @@ public class DataService extends Service {
         Log.e(TAG, "alarmCallback");
         ServerAPI.getDashboard(this);
     }
-
-
 
     @Override
     public void onDestroy() {

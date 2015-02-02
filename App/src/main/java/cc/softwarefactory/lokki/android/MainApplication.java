@@ -16,6 +16,7 @@ import cc.softwarefactory.lokki.android.utils.PreferenceUtils;
 import cc.softwarefactory.lokki.android.utils.Utils;
 import com.google.android.gms.maps.GoogleMap;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MainApplication extends Application {
@@ -53,7 +54,6 @@ public class MainApplication extends Application {
             @Override
             protected int sizeOf(String key, Bitmap bitmap) {
                 // The cache size will be measured in kilobytes rather than number of items.
-                //return bitmap.getByteCount() / 1024; // API > 12 only
                 return (bitmap.getRowBytes() * bitmap.getHeight()) / 1024;
             }
         };
@@ -62,7 +62,7 @@ public class MainApplication extends Application {
         if (!iDontWantToSeeString.isEmpty()) {
             try {
                 MainApplication.iDontWantToSee = new JSONObject(iDontWantToSeeString);
-            } catch (Exception ex) {
+            } catch (JSONException ex) {
             }
         } else {
             MainApplication.iDontWantToSee = new JSONObject();
@@ -137,13 +137,4 @@ public class MainApplication extends Application {
             DataService.stop(MainApplication.this);
         }
     }
-
-    /*
-    public static void exitApp() {
-
-        Log.e(TAG, "exitApp");
-        System.exit(-1);
-    }
-    */
-
 }

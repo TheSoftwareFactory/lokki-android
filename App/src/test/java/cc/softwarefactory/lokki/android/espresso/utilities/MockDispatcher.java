@@ -49,7 +49,11 @@ public class MockDispatcher extends Dispatcher {
     }
 
     public List<RecordedRequest> setPlacesResponse(MockResponse response) {
-        return installResponse(METHOD_GET, DEFAULT_USER_BASE_PATH + "places", response);
+        return setPlacesResponse(response, METHOD_GET);
+    }
+
+    public List<RecordedRequest> setPlacesResponse(MockResponse response, String method) {
+        return installResponse(method, DEFAULT_USER_BASE_PATH + "places", response);
     }
 
     public List<RecordedRequest> setPlacesDeleteResponse(MockResponse response, String placeId) {
