@@ -13,7 +13,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 
-public class WelcomeScreensTest extends NotLoggedInBaseTest {
+public class WelcomeScreensTest extends LokkiBaseTest {
 
     @Override
     public void setUp() throws Exception {

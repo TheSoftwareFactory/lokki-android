@@ -29,7 +29,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 
-public class SignUpScreenTest extends NotLoggedInBaseTest {
+public class SignUpScreenTest extends LokkiBaseTest {
 
     private void moveToSignUpScreen() {
         getActivity();
@@ -72,7 +72,7 @@ public class SignUpScreenTest extends NotLoggedInBaseTest {
     public void testMapIsShownAfterSuccessfulSignup() throws InterruptedException, JSONException, UnsupportedEncodingException {
         MockResponse loginOkResponse = new MockResponse();
         loginOkResponse.setBody(MockJsonUtils.getSignupResponse("123123", new String[]{}, new String[]{}, "3213123"));
-        List<RecordedRequest> requests = mockDispatcher.setSignupResponse(loginOkResponse);
+        List<RecordedRequest> requests = getMockDispatcher().setSignupResponse(loginOkResponse);
 
         signUpUsingEmail("email@example.com");
         assertQueryStringEquals(getRequest("email@example.com"), requests.get(0).getUtf8Body());
@@ -83,7 +83,7 @@ public class SignUpScreenTest extends NotLoggedInBaseTest {
         MockResponse loginErrorResponse = new MockResponse();
         loginErrorResponse.setResponseCode(400);
         loginErrorResponse.setBody("Invalid email address.");
-        List<RecordedRequest> requests = mockDispatcher.setSignupResponse(loginErrorResponse);
+        List<RecordedRequest> requests = getMockDispatcher().setSignupResponse(loginErrorResponse);
 
         signUpUsingEmail("invalid_email");
         assertQueryStringEquals(getRequest("invalid_email"), requests.get(0).getUtf8Body());
@@ -93,7 +93,7 @@ public class SignUpScreenTest extends NotLoggedInBaseTest {
     public void testMessageIsShownIfAccountRequiresAuthorization() throws InterruptedException, UnsupportedEncodingException {
         MockResponse loginNeedAuthorizationResponse = new MockResponse();
         loginNeedAuthorizationResponse.setResponseCode(401);
-        List<RecordedRequest> requests = mockDispatcher.setSignupResponse(loginNeedAuthorizationResponse);
+        List<RecordedRequest> requests = getMockDispatcher().setSignupResponse(loginNeedAuthorizationResponse);
         String signupText = getResources().getString(R.string.security_signup) + " test@example.com";
 
         signUpUsingEmail("test@example.com");
