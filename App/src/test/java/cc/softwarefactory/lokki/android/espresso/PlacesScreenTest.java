@@ -33,6 +33,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.instanceOf;
 
 
@@ -76,7 +77,7 @@ public class PlacesScreenTest extends MainActivityBaseTest {
                 .getDashboardJsonWithContactsAndLocations(contactEmails, locations)));
         enterPlacesScreen();
 
-        //onView(withId(R.id.avatar_row)).check(matches(isDisplayed()));
-        //onView(withId(R.id.avatar_row)).check(matches(hasDescendant(isAssignableFrom(ImageView.class))));
+        onView(allOf(withId(R.id.scrollView1), hasSibling(withText("Testplace1"))))
+                .check(matches(hasDescendant(isAssignableFrom(ImageView.class))));
     }
 }
