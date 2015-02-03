@@ -106,7 +106,7 @@ public class MockJsonUtils {
         return jsonObject.toString();
     }
 
-    public static String getDashboardJsonWithContactsAndLocations(String[] contactEmails, JSONObject[] locations) throws JSONException {
+    public static String getDashboardJsonContactsUserLocation(String[] contactEmails, JSONObject[] locations, JSONObject userLocation) throws JSONException {
         if (contactEmails.length != locations.length) {
             return "parameters must be equal";
         }
@@ -121,12 +121,11 @@ public class MockJsonUtils {
 
             icanseeJsonObject.put(contactId, new JSONObject()
                     .put("battery", "")
-                    .put("location", locations[i])
+                    .put("location", userLocation)
                     .put("visibility", true));
 
             idmappingJsonObject.put(contactId, contactEmails[i]);
         }
-
 
         JSONObject jsonObject = new JSONObject();
         jsonObject

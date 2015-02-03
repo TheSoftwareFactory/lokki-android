@@ -69,14 +69,13 @@ public class PlacesScreenTest extends MainActivityBaseTest {
         mockDispatcher.setPlacesResponse(new MockResponse().setBody(MockJsonUtils.getPlacesJson()));
         String[] contactEmails = (new String[]{"family.member@example.com"});
         JSONObject location = new JSONObject();
-        location.put("lat", "37.483477313364574") //testPlace1
+        location.put("lat", "37.483477313364574") //Testplace1
                 .put("lon", "-122.14838393032551")
                 .put("rad", "100");
         JSONObject[] locations = (new JSONObject[]{location});
         mockDispatcher.setDashboardResponse(new MockResponse().setBody(MockJsonUtils
-                .getDashboardJsonWithContactsAndLocations(contactEmails, locations)));
+                .getDashboardJsonContactsUserLocation(contactEmails, locations, location)));
         enterPlacesScreen();
-
         onView(allOf(withId(R.id.scrollView1), hasSibling(withText("Testplace1"))))
                 .check(matches(hasDescendant(isAssignableFrom(ImageView.class))));
     }
