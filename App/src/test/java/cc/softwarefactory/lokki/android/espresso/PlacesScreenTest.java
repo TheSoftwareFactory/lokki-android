@@ -1,5 +1,6 @@
 package cc.softwarefactory.lokki.android.espresso;
 
+
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -10,11 +11,9 @@ import org.json.JSONObject;
 
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.espresso.utilities.MockJsonUtils;
-import cc.softwarefactory.lokki.android.espresso.utilities.TestUtils;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static android.support.test.espresso.matcher.ViewMatchers.hasSibling;
@@ -25,7 +24,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 
 
-public class PlacesScreenTest extends MainActivityBaseTest {
+public class PlacesScreenTest extends LoggedInBaseTest {
 
 
     @Override
@@ -47,21 +46,21 @@ public class PlacesScreenTest extends MainActivityBaseTest {
 
 
     public void testPlacesOnPlacesScreen() throws JSONException {
-        mockDispatcher.setPlacesResponse(new MockResponse().setBody(MockJsonUtils.getPlacesJson()));
+        getMockDispatcher().setPlacesResponse(new MockResponse().setBody(MockJsonUtils.getPlacesJson()));
         enterPlacesScreen();
         onView(withText("Testplace1")).check(matches(isDisplayed()));
     }
 
 
     public void testContactAppearsInPlace() throws JSONException {
-        mockDispatcher.setPlacesResponse(new MockResponse().setBody(MockJsonUtils.getPlacesJson()));
+        getMockDispatcher().setPlacesResponse(new MockResponse().setBody(MockJsonUtils.getPlacesJson()));
         String[] contactEmails = (new String[]{"family.member@example.com"});
         JSONObject location = new JSONObject();
         location.put("lat", "37.483477313364574") //Testplace1
                 .put("lon", "-122.14838393032551")
                 .put("rad", "100");
         JSONObject[] locations = (new JSONObject[]{location});
-        mockDispatcher.setDashboardResponse(new MockResponse().setBody(MockJsonUtils
+        getMockDispatcher().setDashboardResponse(new MockResponse().setBody(MockJsonUtils
                 .getDashboardJsonContactsUserLocation(contactEmails, locations, location)));
         enterPlacesScreen();
         onView(allOf(withId(R.id.scrollView1), hasSibling(withText("Testplace1"))))

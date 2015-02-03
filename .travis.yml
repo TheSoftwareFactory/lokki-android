@@ -35,3 +35,8 @@ deploy:
     tags: true
     all_branches: true
     repo: TheSoftwareFactory/lokki-android
+
+notifications:
+  slack:
+    secure: eV5cEvPOZnp8ZK20CEI+0jt9VUxbtWpJJiSmo17C8TgL4MO5j0rjIBiDOMJhVExMEHxF9AZBCvXNEm1sozNv2VEt755QSPwqA6DTRswKmVQ1LWCOko4UWi3RF8rfSKPTPxAe5JM7Scm6SJQ8aQSIeXD6R8kw4nH6DbzuL/icqv0=
+  email: false

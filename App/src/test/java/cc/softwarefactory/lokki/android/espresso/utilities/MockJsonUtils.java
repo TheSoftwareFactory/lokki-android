@@ -143,4 +143,15 @@ public class MockJsonUtils {
         return "{}";
     }
 
+    public static String getSignupResponse(String id, String[] canSeeMe, String[] iCanSee, String authorizationToken) throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject
+                .put("id", id)
+                .put("canseeme", canSeeMe)
+                .put("icansee", iCanSee)
+                .put("authorizationtoken", authorizationToken);
+
+        return jsonObject.toString();
+    }
+
 }

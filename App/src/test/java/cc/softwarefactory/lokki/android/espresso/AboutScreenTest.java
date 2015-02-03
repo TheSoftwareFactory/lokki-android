@@ -1,6 +1,5 @@
 package cc.softwarefactory.lokki.android.espresso;
 
-import android.app.Activity;
 import android.app.Instrumentation;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -18,7 +17,7 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
-public class AboutScreenTest extends MainActivityBaseTest {
+public class AboutScreenTest extends LoggedInBaseTest {
 
     private void enterAboutScreen() {
         getActivity();

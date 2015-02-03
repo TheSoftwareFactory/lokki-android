@@ -73,7 +73,7 @@ public class SignupActivity extends ActionBarActivity {
                 ServerAPI.signup(this, "signupCallback");
 
                 // Block button and show progress.
-                aq.id(R.id.button).clickable(false).text(R.string.signing_up);
+                aq.id(R.id.signup_button).clickable(false).text(R.string.signing_up);
 
             } else {
                 aq.id(R.id.email).text(R.string.type_your_email_address);
