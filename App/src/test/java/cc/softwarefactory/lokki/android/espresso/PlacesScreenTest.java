@@ -1,19 +1,13 @@
 package cc.softwarefactory.lokki.android.espresso;
 
-import android.media.Image;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
-import android.widget.ListView;
 
 import com.squareup.okhttp.mockwebserver.MockResponse;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Date;
-
-import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.espresso.utilities.MockJsonUtils;
 import cc.softwarefactory.lokki.android.espresso.utilities.TestUtils;
@@ -25,16 +19,10 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static android.support.test.espresso.matcher.ViewMatchers.hasSibling;
 import static android.support.test.espresso.matcher.ViewMatchers.isAssignableFrom;
-import static android.support.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.isDescendantOfA;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.endsWith;
-import static org.hamcrest.Matchers.instanceOf;
 
 
 public class PlacesScreenTest extends MainActivityBaseTest {
