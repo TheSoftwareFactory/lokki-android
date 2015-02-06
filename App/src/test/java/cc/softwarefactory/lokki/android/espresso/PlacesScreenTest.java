@@ -9,11 +9,15 @@ import com.squareup.okhttp.mockwebserver.MockResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Date;
+
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.espresso.utilities.MockJsonUtils;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.longClick;
+import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.hasDescendant;
 import static android.support.test.espresso.matcher.ViewMatchers.hasSibling;
@@ -66,4 +70,30 @@ public class PlacesScreenTest extends LoggedInBaseTest {
         onView(allOf(withId(R.id.scrollView1), hasSibling(withText("Testplace1"))))
                 .check(matches(hasDescendant(isAssignableFrom(ImageView.class))));
     }
+
+
+    public static void waitForView(String name) {
+        long startTime = (new Date()).getTime();
+        long endTime = startTime + 15000;
+        do {
+            try {
+                onView(withText(name)).check(matches(isDisplayed()));
+                return;
+            } catch (Throwable ex) {
+                Thread.yield();
+            }
+        } while (((new Date()).getTime()) < endTime);
+        onView(withText(name)).check(doesNotExist());
+    }
+
+    public void testDeletePlaces() throws JSONException, InterruptedException {
+        getMockDispatcher().setPlacesResponse(new MockResponse().setBody(MockJsonUtils.getPlacesJson()));
+        getMockDispatcher().setPlacesDeleteResponse(new MockResponse().setResponseCode(200), "cb693820-3ce7-4c95-af2f-1f079d2841b1");
+        enterPlacesScreen();
+        onView(withText("Testplace1")).perform((longClick()));
+        onView(withText("OK")).perform(click());
+        waitForView("Testplace1");
+    }
 }
+
+
