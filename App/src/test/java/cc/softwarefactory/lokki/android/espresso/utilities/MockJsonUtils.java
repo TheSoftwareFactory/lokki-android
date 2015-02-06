@@ -106,6 +106,39 @@ public class MockJsonUtils {
         return jsonObject.toString();
     }
 
+    public static String getDashboardJsonContactsUserLocation(String[] contactEmails, JSONObject[] locations, JSONObject userLocation) throws JSONException {
+        if (contactEmails.length != locations.length) {
+            return "parameters must be equal";
+        }
+        JSONArray canseemeJsonArray = new JSONArray();
+        JSONObject icanseeJsonObject = new JSONObject();
+        JSONObject idmappingJsonObject = new JSONObject().put(TestUtils.VALUE_TEST_USER_ID, TestUtils.VALUE_TEST_USER_ACCOUNT);
+
+        for (int i = 0; i < contactEmails.length; i++) {
+            String contactId = Hashing.sha1().hashString(contactEmails[i]).toString();
+
+            canseemeJsonArray.put(contactId);
+
+            icanseeJsonObject.put(contactId, new JSONObject()
+                    .put("battery", "")
+                    .put("location", userLocation)
+                    .put("visibility", true));
+
+            idmappingJsonObject.put(contactId, contactEmails[i]);
+        }
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject
+                .put("battery", "")
+                .put("canseeme", canseemeJsonArray)
+                .put("icansee", icanseeJsonObject)
+                .put("idmapping", idmappingJsonObject)
+                .put("location", locations[0])
+                .put("visibility", true);
+
+        return jsonObject.toString();
+    }
+
     public static String getEmptyPlacesJson() throws JSONException {
         return "{}";
     }
