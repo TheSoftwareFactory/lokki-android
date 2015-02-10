@@ -303,9 +303,13 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
                 if (selectedOption == 0) {
                     Log.e(TAG, "Exiting app because requested by user.");
                     finish();
+                } else if (selectedOption == -10) {
+                    mNavigationDrawerFragment.selectItem(1);
+                    return true;
+                } else {
+                    mNavigationDrawerFragment.selectItem(0);
+                    return true;
                 }
-                mNavigationDrawerFragment.selectItem(0);
-                return true;
         }
         return super.onKeyUp(keycode, e);
     }
