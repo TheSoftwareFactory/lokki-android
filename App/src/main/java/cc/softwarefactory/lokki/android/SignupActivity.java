@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.androidquery.AQuery;
+import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import cc.softwarefactory.lokki.android.utils.PreferenceUtils;
 import cc.softwarefactory.lokki.android.utils.Utils;
@@ -70,55 +71,57 @@ public class SignupActivity extends ActionBarActivity {
                 PreferenceUtils.setValue(this, PreferenceUtils.KEY_DEVICE_ID, Utils.getDeviceId());
                 MainApplication.userAccount = accountName;
 
-                ServerAPI.signup(this, "signupCallback");
+                ServerAPI.signup(this, new SignupCallback());
 
                 // Block button and show progress.
                 aq.id(R.id.signup_button).clickable(false).text(R.string.signing_up);
-
             } else {
                 aq.id(R.id.email).text(R.string.type_your_email_address);
             }
         }
     }
 
-    public void signupCallback(String url, JSONObject json, AjaxStatus status) {
-        Log.e(TAG, "signupCallback");
+    private class SignupCallback extends AjaxCallback<JSONObject> {
+        @Override
+        public void callback(String url, JSONObject json, AjaxStatus status) {
+            Log.e(TAG, "signupCallback");
 
-        if (json != null && status.getCode() == 200) {
-            Log.e(TAG, "json response: " + json);
-            String id = json.optString("id");
-            String authorizationtoken = json.optString("authorizationtoken");
+            if (json != null && status.getCode() == 200) {
+                Log.e(TAG, "json response: " + json);
+                String id = json.optString("id");
+                String authorizationtoken = json.optString("authorizationtoken");
 
-            if (!id.isEmpty() && !authorizationtoken.isEmpty()) {
+                if (!id.isEmpty() && !authorizationtoken.isEmpty()) {
 
-                PreferenceUtils.setValue(this, PreferenceUtils.KEY_USER_ID, id);
-                PreferenceUtils.setValue(this, PreferenceUtils.KEY_AUTH_TOKEN, authorizationtoken);
+                    PreferenceUtils.setValue(SignupActivity.this, PreferenceUtils.KEY_USER_ID, id);
+                    PreferenceUtils.setValue(SignupActivity.this, PreferenceUtils.KEY_AUTH_TOKEN, authorizationtoken);
                 /*
                 startServices();
                 GCMHelper.start(getApplicationContext()); // Register to GCM
                 */
-                MainApplication.userId = id;
-                Log.e(TAG, "User id: " + id);
-                Log.e(TAG, "authorizationToken: " + authorizationtoken);
+                    MainApplication.userId = id;
+                    Log.e(TAG, "User id: " + id);
+                    Log.e(TAG, "authorizationToken: " + authorizationtoken);
 
-                setResult(RESULT_OK);
-                finish();
-            }
-        } else {
-            Log.e(TAG, "Error response: " + status.getError() + " - " + status.getMessage());
-            Log.e(TAG, "json response: " + json);
-            Log.e(TAG, "status code: " + status.getCode());
-
-            if (status.getCode() == 401) {
-                Log.e(TAG, "401 Error");
-                Dialogs.securitySignup(this);
-                //finish();
+                    setResult(RESULT_OK);
+                    finish();
+                }
             } else {
-                Log.e(TAG, "General Error");
-                Dialogs.generalError(this);
+                Log.e(TAG, "Error response: " + status.getError() + " - " + status.getMessage());
+                Log.e(TAG, "json response: " + json);
+                Log.e(TAG, "status code: " + status.getCode());
 
-                //setResult(RESULT_CANCELED);
-                //finish();
+                if (status.getCode() == 401) {
+                    Log.e(TAG, "401 Error");
+                    Dialogs.securitySignup(SignupActivity.this);
+                    //finish();
+                } else {
+                    Log.e(TAG, "General Error");
+                    Dialogs.generalError(SignupActivity.this);
+
+                    //setResult(RESULT_CANCELED);
+                    //finish();
+                }
             }
         }
     }
