@@ -12,10 +12,15 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.Paint;
+import android.graphics.Point;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.DisplayMetrics;
@@ -24,9 +29,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Button;
 
 import com.androidquery.AQuery;
+
+import cc.softwarefactory.lokki.android.utils.MapUtils;
 import cc.softwarefactory.lokki.android.utils.Utils;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -36,6 +45,7 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.VisibleRegion;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -56,6 +66,8 @@ public class MapViewFragment extends Fragment {
     private Context context;
     private Boolean firstTimeZoom = true;
     private ArrayList<Circle> placesOverlay;
+    private double radiusMultiplier = 0.9;  // Dont want to fill the screen from edge to edge...
+    private Drawable d;
 
     public MapViewFragment() {
         markerMap = new HashMap<String, Marker>();
@@ -107,6 +119,7 @@ public class MapViewFragment extends Fragment {
         if (map == null) {
             Log.e(TAG, "Map null. creating it.");
             setUpMap();
+            setupAddPlacesOverlay();
         } else {
             Log.e(TAG, "Map already exists. Nothing to do.");
         }
@@ -139,6 +152,7 @@ public class MapViewFragment extends Fragment {
         map.setMyLocationEnabled(true);
         map.setIndoorEnabled(true);
         map.setBuildingsEnabled(true);
+        map.getUiSettings().setZoomControlsEnabled(false);
 
         map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
@@ -163,9 +177,90 @@ public class MapViewFragment extends Fragment {
         map.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
-                Dialogs.addPlace(getActivity(), latLng);
+
+                setAddPlacesVisible(true);
             }
         });
+    }
+
+    private void setupAddPlacesOverlay() {
+        // todo these should probably be initialized once...
+        Button cancelButton = (Button) getView().findViewById(R.id.cancel_add_place_button);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setAddPlacesVisible(false);
+            }
+        });
+
+        Button addPlaceButton = (Button) getView().findViewById(R.id.add_place_button);
+        addPlaceButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int mapWidth = fragment.getView().getWidth();
+                int mapHeight = fragment.getView().getHeight();
+
+                Location middleSideLocation;
+                if (mapWidth > mapHeight) {
+                    middleSideLocation = MapUtils.convertToLocation(map.getProjection().fromScreenLocation(new Point(mapWidth / 2, 0)), "middleSide");
+                } else {
+                    middleSideLocation = MapUtils.convertToLocation(map.getProjection().fromScreenLocation(new Point(0, mapHeight / 2)), "middleSide");
+                }
+
+                LatLng centerLatLng = map.getProjection().getVisibleRegion().latLngBounds.getCenter();
+                int radius = (int) middleSideLocation.distanceTo(MapUtils.convertToLocation(centerLatLng, "center"));
+                Dialogs.addPlace(getActivity(), centerLatLng, (int) (radius * radiusMultiplier));
+            }
+        });
+    }
+
+    public void setAddPlacesVisible(boolean visible) {
+        View addPlaceOverlay = getView().findViewById(R.id.add_place_overlay);
+        if (d != null) {
+            addPlaceOverlay.getOverlay().remove(d); // todo see if this can be changed to some lower API level... or bump API level?
+        }
+        if (visible) {
+            d = new Drawable() {
+                @Override
+                public void draw(Canvas canvas) {
+                    int mapCenterX = fragment.getView().getWidth() / 2;
+                    int mapCenterY = fragment.getView().getHeight() / 2;
+                    int radius = mapCenterX > mapCenterY ? mapCenterY : mapCenterX;
+
+                    Paint fill = new Paint();
+                    fill.setColor(Color.BLUE);
+                    fill.setAlpha(25);
+                    fill.setAntiAlias(true);
+                    canvas.drawCircle(mapCenterX, mapCenterY, (int) (radius * radiusMultiplier), fill);
+
+                    Paint border = new Paint();
+                    border.setColor(Color.BLUE);
+                    border.setAntiAlias(true);
+                    border.setStyle(Paint.Style.STROKE);
+                    canvas.drawCircle(mapCenterX, mapCenterY, (int) (radius * radiusMultiplier), border);
+                }
+
+                @Override
+                public void setAlpha(int alpha) {
+
+                }
+
+                @Override
+                public void setColorFilter(ColorFilter cf) {
+
+                }
+
+                @Override
+                public int getOpacity() {
+                    return 0;
+                }
+            };
+
+            addPlaceOverlay.getOverlay().add(d);
+            getView().findViewById(R.id.add_place_overlay).setVisibility(View.VISIBLE);
+        } else {
+            getView().findViewById(R.id.add_place_overlay).setVisibility(View.INVISIBLE);
+        }
     }
 
     private void removeMarkers() {
@@ -209,7 +304,7 @@ public class MapViewFragment extends Fragment {
     private void updatePlaces() {
 
         Log.e(TAG, "updatePlaces");
-        if (map == null)  {
+        if (map == null) {
             return;
         }
 
@@ -311,7 +406,7 @@ public class MapViewFragment extends Fragment {
 
         Location myLocation = new Location("fused");
         try {
-            if (locationObj.length() == 0){
+            if (locationObj.length() == 0) {
                 return null;
             }
             double lat = locationObj.getDouble("lat");

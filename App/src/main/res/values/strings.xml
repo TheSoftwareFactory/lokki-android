@@ -87,5 +87,6 @@
     <string name="email_required">An email address is required.</string>
     <string name="required">Required.</string>
     <string name="place_name_already_in_use">Name is already in use</string>
+    <string name="add_place">Add place</string>
 
 </resources>
