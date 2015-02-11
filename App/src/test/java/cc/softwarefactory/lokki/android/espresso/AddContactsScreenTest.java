@@ -1,6 +1,7 @@
 package cc.softwarefactory.lokki.android.espresso;
 
 import android.content.Context;
+import android.support.test.espresso.action.ViewActions;
 
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.espresso.utilities.MockJsonUtils;
@@ -16,6 +17,7 @@ import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.hasSibling;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.isRoot;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
@@ -100,5 +102,13 @@ public class AddContactsScreenTest extends LoggedInBaseTest {
         addContactsFromContactListScreen();
 
         onView(withText(R.string.add_contact_dialog_message)).check(matches(isDisplayed()));
+    }
+
+    public void testBackButtonToContactsScreen() {
+        onView(withId(R.id.add_people)).perform(click());
+        onView(isRoot()).perform(ViewActions.pressBack());
+
+        onView(withText(R.string.can_see_me)).check(matches(isDisplayed()));
+        onView(withText(R.string.i_can_see)).check(matches(isDisplayed()));
     }
 }
