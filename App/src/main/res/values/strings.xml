@@ -82,6 +82,7 @@
 
     <string name="about_link_tell_a_friend">Tell a friend about Lokki</string>
     <string name="lokki_github_repo_link">https://github.com/TheSoftwareFactory/lokki-android/</string>
-    <string name="no_contact_selected_toast">No contact selected</string>>
+    <string name="no_contact_selected_toast">No contact selected</string>
+    <string name="email_required">An email address is required.</string>
 
 </resources>

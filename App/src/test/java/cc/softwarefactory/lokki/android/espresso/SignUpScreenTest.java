@@ -27,9 +27,11 @@ import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.withHint;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.not;
 
 public class SignUpScreenTest extends LokkiBaseTest {
 
@@ -39,13 +41,17 @@ public class SignUpScreenTest extends LokkiBaseTest {
         onView(withText(R.string.i_agree)).perform(click());
     }
 
-    private void signUpUsingEmail(String email) throws InterruptedException {
-        moveToSignUpScreen();
+    private void typeToEmailField(String email) throws InterruptedException {
         onView(withId(R.id.email)).perform(clearText(), typeText(email), closeSoftKeyboard());
 
         // Without this we get "PerformException: Error performing 'single click' on view".
         // See https://code.google.com/p/android-test-kit/issues/detail?id=44
         Thread.sleep(100);
+    }
+
+    private void signUpUsingEmail(String email) throws InterruptedException {
+        moveToSignUpScreen();
+        typeToEmailField(email);
 
         onView(withId(R.id.signup_button)).perform(click());
     }
@@ -103,8 +109,8 @@ public class SignUpScreenTest extends LokkiBaseTest {
         onView(withText(signupText)).check(matches(isDisplayed()));
     }
 
-    public void testTypeYourEmailAddressIsShownWhenFieldIsEmptyAndTryingToSignup() throws InterruptedException {
-        signUpUsingEmail("");
-        onView(allOf(withId(R.id.email), withText(R.string.type_your_email_address))).check(matches(isDisplayed()));
+    public void testEmailFieldHasHint() throws InterruptedException {
+        moveToSignUpScreen();
+        onView(withHint(R.string.type_your_email_address)).check(matches(isDisplayed()));
     }
 }
