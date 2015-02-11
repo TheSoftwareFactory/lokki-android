@@ -26,15 +26,16 @@ public class AvatarLoader {
     }
 
     public void load(String email, ImageView imageView) {
-
         Log.e(TAG, "1) load: " + email);
-        if (cancelPotentialWork(email, imageView)) {
-            Log.e(TAG, "load: Creating new task");
-            final BitmapWorkerTask task = new BitmapWorkerTask(imageView);
-            final WeakReference<BitmapWorkerTask> taskReference = new WeakReference<BitmapWorkerTask>(task);
-            imageView.setTag(taskReference);
-            task.execute(email);
+        if (!cancelPotentialWork(email, imageView)) {
+            return;
         }
+
+        Log.e(TAG, "load: Creating new task");
+        final BitmapWorkerTask task = new BitmapWorkerTask(imageView);
+        final WeakReference<BitmapWorkerTask> taskReference = new WeakReference<BitmapWorkerTask>(task);
+        imageView.setTag(taskReference);
+        task.execute(email);
     }
 
     class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
@@ -64,15 +65,17 @@ public class AvatarLoader {
             if (isCancelled()) {
                 return;
             }
+
             final ImageView imageView = imageViewReference.get();
-            if (imageView != null) {
+            if (imageView == null) {
+                return;
+            }
 
-                BitmapWorkerTask task = getTaskFromView(imageView);
+            BitmapWorkerTask task = getTaskFromView(imageView);
 
-                if (this == task) {
-                    imageView.setImageBitmap(bitmap);
-                    imageView.setTag(data);
-                }
+            if (this == task) {
+                imageView.setImageBitmap(bitmap);
+                imageView.setTag(data);
             }
         }
     }
@@ -87,32 +90,26 @@ public class AvatarLoader {
 
         BitmapWorkerTask task = getTaskFromView(imageView);
 
-        if (task != null) {
-            if (!task.data.equals(data)) {
-                Log.e(TAG, "cancelPotentialWork: Cancel previous task"); // Cancel previous task
-                task.cancel(true);
-            } else {
-                Log.e(TAG, "cancelPotentialWork: The same work is already in progress"); // The same work is already in progress
-                return false;
-            }
+        if (task == null) {
+            Log.e(TAG, "cancelPotentialWork: No task associated with the ImageView, or an existing task was cancelled"); // No task associated with the ImageView, or an existing task was cancelled
+            return true;
         }
-        Log.e(TAG, "cancelPotentialWork: No task associated with the ImageView, or an existing task was cancelled"); // No task associated with the ImageView, or an existing task was cancelled
-        return true;
+
+        if (!task.data.equals(data)) {
+            Log.e(TAG, "cancelPotentialWork: Cancel previous task"); // Cancel previous task
+            task.cancel(true);
+            return true;
+        }
+        Log.e(TAG, "cancelPotentialWork: The same work is already in progress"); // The same work is already in progress
+        return false;
     }
 
     private static BitmapWorkerTask getTaskFromView(ImageView imageView) {
 
-        BitmapWorkerTask task = null;
-
-        if (imageView != null) {
-            //Log.e(TAG, "Tag: " + imageView.getTag());
-            if (imageView.getTag() instanceof WeakReference) {
-                final WeakReference<BitmapWorkerTask> taskReference = (WeakReference<BitmapWorkerTask>) imageView.getTag();
-                if (taskReference != null)
-                    task = taskReference.get();
-            }
+        if (imageView == null || !(imageView.getTag() instanceof WeakReference)) {
+            return null;
         }
-        return task;
+        return ((WeakReference<BitmapWorkerTask>) imageView.getTag()).get();
     }
 
 }

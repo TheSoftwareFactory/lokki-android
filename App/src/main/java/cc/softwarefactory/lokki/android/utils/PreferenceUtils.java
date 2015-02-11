@@ -20,7 +20,9 @@ public class PreferenceUtils {
 
     public static String getValue(Context context, String key) {
 
-        if (context == null) return null;
+        if (context == null) {
+            return null;
+        }
 
         SharedPreferences prefs = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
         return prefs.getString(key, "");
@@ -28,7 +30,9 @@ public class PreferenceUtils {
 
     public static void setValue(Context context, String key, String value) {
 
-        if (context == null) return;
+        if (context == null) {
+            return;
+        }
 
         SharedPreferences prefs = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
         prefs.edit().putString(key, value).commit();

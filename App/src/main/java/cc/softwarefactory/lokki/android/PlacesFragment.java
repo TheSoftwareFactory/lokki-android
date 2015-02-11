@@ -55,9 +55,6 @@ public class PlacesFragment extends Fragment {
         listView = (ListView) rootView.findViewById(R.id.listView1);
         avatarLoader = new AvatarLoader(context);
         return rootView;
-
-        //listView = new ListView(getActivity());
-        //return listView;
     }
 
     @Override
@@ -76,7 +73,6 @@ public class PlacesFragment extends Fragment {
         super.onResume();
         LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver, new IntentFilter("PLACES-UPDATE"));
         LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver, new IntentFilter("LOCATION-UPDATE"));
-        //showPlaces();
     }
 
     @Override
@@ -118,10 +114,8 @@ public class PlacesFragment extends Fragment {
                 });
 
                 String bgImage = "place_0" + (position + 1);
-                //Log.e(TAG, "bgImage: " + bgImage);
                 int resourceId = getResources().getIdentifier(bgImage, "drawable", "cc.softwarefactory.lokki.android");
                 aq.id(R.id.background).background(resourceId);
-                //Log.e(TAG, "Resource id: " + resourceId);
 
                 Log.e(TAG, "Plane name: " + placeName);
                 Log.e(TAG, "peopleInsidePlace? " + peopleInsidePlace.has(placeName));
@@ -134,23 +128,21 @@ public class PlacesFragment extends Fragment {
                         avatarRow.removeAllViewsInLayout(); // Deletes old avatars, if any.
 
                         for (int i = 0; i < people.length(); i++) {
+
                             final String email = people.getString(i);
-                            if (!MainApplication.iDontWantToSee.has(email)) {
-
-                                RoundedImageView image = createAvatar(email);
-                                //image.setImageResource(R.drawable.default_avatar);
-                                //avatarLoader.load(email, image);
-
-
-                                if (MainApplication.avatarCache.get(email) != null) {
-                                    image.setImageBitmap(MainApplication.avatarCache.get(email));
-                                } else {
-                                    Log.e(TAG, "Avatar not in cache, email: " + email);
-                                    image.setImageResource(R.drawable.default_avatar);
-                                }
-
-                                avatarRow.addView(image);
+                            if (MainApplication.iDontWantToSee.has(email)) {
+                                continue;
                             }
+                            RoundedImageView image = createAvatar(email);
+
+                            if (MainApplication.avatarCache.get(email) != null) {
+                                image.setImageBitmap(MainApplication.avatarCache.get(email));
+                            } else {
+                                Log.e(TAG, "Avatar not in cache, email: " + email);
+                                image.setImageResource(R.drawable.default_avatar);
+                            }
+
+                            avatarRow.addView(image);
                         }
 
                     } catch (Exception ex) {
@@ -194,9 +186,9 @@ public class PlacesFragment extends Fragment {
 
         Log.e(TAG, "deletePlace");
         try {
-            Iterator keys = MainApplication.places.keys();
+            Iterator<String> keys = MainApplication.places.keys();
             while (keys.hasNext()) {
-                String key = (String) keys.next();
+                String key = keys.next();
                 JSONObject placeObj = MainApplication.places.getJSONObject(key);
                 if (name.equals(placeObj.getString("name"))) {
                     Log.e(TAG, "Place ID to be deleted: " + key);
@@ -211,19 +203,18 @@ public class PlacesFragment extends Fragment {
 
     private RoundedImageView createAvatar(final String email) {
 
-        int sizeinDip = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 65, getResources().getDisplayMetrics());
+        int sizeInDip = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 65, getResources().getDisplayMetrics());
         RoundedImageView image = new RoundedImageView(getActivity());
         image.setTag(email);
         image.setCornerRadius(100);
         image.setBorderWidth(0);
         image.setPadding(20, 0, 0, 0);
-        image.setLayoutParams(new LinearLayout.LayoutParams(sizeinDip, sizeinDip));
+        image.setLayoutParams(new LinearLayout.LayoutParams(sizeInDip, sizeInDip));
         image.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
 
-                //((MainActivity) getActivity()).showUserInMap(email);
                 MainApplication.emailBeingTracked = email;
                 Intent intentLocation = new Intent("LOCATION-UPDATE");
                 LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intentLocation);
@@ -243,15 +234,16 @@ public class PlacesFragment extends Fragment {
 
         try {
             if (MainApplication.places == null) { // Read them from cache
-                if (!PreferenceUtils.getValue(context, PreferenceUtils.KEY_PLACES).isEmpty())
-                    MainApplication.places = new JSONObject(PreferenceUtils.getValue(context, PreferenceUtils.KEY_PLACES));
-                else return;
+                if (PreferenceUtils.getValue(context, PreferenceUtils.KEY_PLACES).isEmpty()) {
+                    return;
+                }
+                MainApplication.places = new JSONObject(PreferenceUtils.getValue(context, PreferenceUtils.KEY_PLACES));
             }
 
             Log.e(TAG, "Places json: " + MainApplication.places);
-            Iterator keys = MainApplication.places.keys();
+            Iterator<String> keys = MainApplication.places.keys();
             while (keys.hasNext()) {
-                String key = (String) keys.next();
+                String key = keys.next();
                 JSONObject placeObj = MainApplication.places.getJSONObject(key);
                 String placeName = placeObj.getString("name");
                 placesList.add(placeName);
@@ -272,7 +264,9 @@ public class PlacesFragment extends Fragment {
     private void calculatePeopleInside(JSONObject placeObj) {
 
         try {
-            if (MainApplication.dashboard == null) return;
+            if (MainApplication.dashboard == null) {
+                return;
+            }
 
             JSONObject iCanSeeObj = MainApplication.dashboard.getJSONObject("icansee");
             JSONObject idMappingObj = MainApplication.dashboard.getJSONObject("idmapping");
@@ -298,10 +292,10 @@ public class PlacesFragment extends Fragment {
             }
 
             // Check for my contacts
-            Iterator keys = iCanSeeObj.keys();
+            Iterator<String> keys = iCanSeeObj.keys();
             while (keys.hasNext()) {
-                String key = (String) keys.next();
-                String email = (String) idMappingObj.get(key);
+                String key = keys.next();
+                String email = idMappingObj.getString(key);
 
                 JSONObject locationObj = iCanSeeObj.getJSONObject(key).getJSONObject("location");
                 Location userLocation = new Location(email);

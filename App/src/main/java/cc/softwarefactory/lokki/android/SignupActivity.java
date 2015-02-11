@@ -48,37 +48,41 @@ public class SignupActivity extends ActionBarActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if (data != null) {
-            Log.e(TAG, "onActivityResult. Data: " + data.getExtras());
-            super.onActivityResult(requestCode, resultCode, data);
-            if (requestCode == REQUEST_CODE_EMAIL && resultCode == RESULT_OK) {
-                String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
-                if (accountName != null)
-                    aq.id(R.id.email).text(accountName);
-            }
-        } else
+        if (data == null) {
             Log.e(TAG, "Get default account returned null. Nothing to do.");
+            return;
+        }
+        Log.e(TAG, "onActivityResult. Data: " + data.getExtras());
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_EMAIL && resultCode == RESULT_OK) {
+            String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+            if (accountName != null) {
+                aq.id(R.id.email).text(accountName);
+            }
+        }
     }
 
     public void signup_click(View view) {
 
         Log.e(TAG, "Button clicked");
-        if (aq.id(R.id.email).getText() != null) {
-            String accountName = aq.id(R.id.email).getText().toString();
-            Log.e(TAG, "Email: " + accountName);
-            if (!accountName.isEmpty()) {
-                PreferenceUtils.setValue(this, PreferenceUtils.KEY_USER_ACCOUNT, accountName);
-                PreferenceUtils.setValue(this, PreferenceUtils.KEY_DEVICE_ID, Utils.getDeviceId());
-                MainApplication.userAccount = accountName;
-
-                ServerAPI.signup(this, new SignupCallback());
-
-                // Block button and show progress.
-                aq.id(R.id.signup_button).clickable(false).text(R.string.signing_up);
-            } else {
-                aq.id(R.id.email).text(R.string.type_your_email_address);
-            }
+        CharSequence email = aq.id(R.id.email).getText();
+        if (email == null) {
+            return;
         }
+        String accountName = email.toString();
+        Log.e(TAG, "Email: " + accountName);
+        if (accountName.isEmpty()) {
+            aq.id(R.id.email).text(R.string.type_your_email_address);
+            return;
+        }
+        PreferenceUtils.setValue(this, PreferenceUtils.KEY_USER_ACCOUNT, accountName);
+        PreferenceUtils.setValue(this, PreferenceUtils.KEY_DEVICE_ID, Utils.getDeviceId());
+        MainApplication.userAccount = accountName;
+
+        ServerAPI.signup(this, new SignupCallback());
+
+        // Block button and show progress.
+        aq.id(R.id.signup_button).clickable(false).text(R.string.signing_up);
     }
 
     private class SignupCallback extends AjaxCallback<JSONObject> {
@@ -86,27 +90,7 @@ public class SignupActivity extends ActionBarActivity {
         public void callback(String url, JSONObject json, AjaxStatus status) {
             Log.e(TAG, "signupCallback");
 
-            if (json != null && status.getCode() == 200) {
-                Log.e(TAG, "json response: " + json);
-                String id = json.optString("id");
-                String authorizationtoken = json.optString("authorizationtoken");
-
-                if (!id.isEmpty() && !authorizationtoken.isEmpty()) {
-
-                    PreferenceUtils.setValue(SignupActivity.this, PreferenceUtils.KEY_USER_ID, id);
-                    PreferenceUtils.setValue(SignupActivity.this, PreferenceUtils.KEY_AUTH_TOKEN, authorizationtoken);
-                /*
-                startServices();
-                GCMHelper.start(getApplicationContext()); // Register to GCM
-                */
-                    MainApplication.userId = id;
-                    Log.e(TAG, "User id: " + id);
-                    Log.e(TAG, "authorizationToken: " + authorizationtoken);
-
-                    setResult(RESULT_OK);
-                    finish();
-                }
-            } else {
+            if (json == null || status.getCode() != 200) {
                 Log.e(TAG, "Error response: " + status.getError() + " - " + status.getMessage());
                 Log.e(TAG, "json response: " + json);
                 Log.e(TAG, "status code: " + status.getCode());
@@ -114,15 +98,31 @@ public class SignupActivity extends ActionBarActivity {
                 if (status.getCode() == 401) {
                     Log.e(TAG, "401 Error");
                     Dialogs.securitySignup(SignupActivity.this);
-                    //finish();
-                } else {
-                    Log.e(TAG, "General Error");
-                    Dialogs.generalError(SignupActivity.this);
-
-                    //setResult(RESULT_CANCELED);
-                    //finish();
+                    return;
                 }
+
+                Log.e(TAG, "General Error");
+                Dialogs.generalError(SignupActivity.this);
+                return;
             }
+
+            Log.e(TAG, "json response: " + json);
+            String id = json.optString("id");
+            String authorizationToken = json.optString("authorizationtoken");
+
+            if (id.isEmpty() || authorizationToken.isEmpty()) {
+                return;
+            }
+
+            PreferenceUtils.setValue(SignupActivity.this, PreferenceUtils.KEY_USER_ID, id);
+            PreferenceUtils.setValue(SignupActivity.this, PreferenceUtils.KEY_AUTH_TOKEN, authorizationToken);
+
+            MainApplication.userId = id;
+            Log.e(TAG, "User id: " + id);
+            Log.e(TAG, "authorizationToken: " + authorizationToken);
+
+            setResult(RESULT_OK);
+            finish();
         }
     }
 }

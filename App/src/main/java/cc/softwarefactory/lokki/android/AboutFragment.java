@@ -44,12 +44,7 @@ public class AboutFragment extends Fragment {
         String[] aboutLinks = getResources().getStringArray(R.array.about_links);
         aq.id(R.id.listView1).adapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, aboutLinks));
         aq.id(R.id.listView1).itemClicked(new AboutItemClickListener());
-
-        try {
-            aq.id(R.id.version).text(getResources().getString(R.string.version_and_copyright, Utils.getAppVersion(getActivity())));
-        } catch (PackageManager.NameNotFoundException e) {
-            Log.e(TAG, "Couldn't set text in about screen");
-        }
+        aq.id(R.id.version).text(getResources().getString(R.string.version_and_copyright, Utils.getAppVersion(getActivity())));
     }
 
     private void openTellAFriendActivity() {

@@ -68,7 +68,9 @@ public class LocationService extends Service implements LocationListener, Google
 
     public static void run1min(Context context) {
 
-        if (serviceRunning || !MainApplication.visible) return; // If service is running, stop
+        if (serviceRunning || !MainApplication.visible) {
+            return; // If service is running, stop
+        }
         Log.e(TAG, "run1min called");
         Intent intent = new Intent(context, LocationService.class);
         intent.putExtra(RUN_1_MIN, 1);
@@ -82,18 +84,13 @@ public class LocationService extends Service implements LocationListener, Google
         super.onCreate();
 
         if (PreferenceUtils.getValue(this, PreferenceUtils.KEY_AUTH_TOKEN).isEmpty()) {
-
             Log.e(TAG, "User disabled reporting in App. Service not started.");
             stopSelf();
-
         } else if (Utils.checkGooglePlayServices(this)) {
-
             Log.e(TAG, "Starting Service..");
             setLocationClient();
             setNotificationAndForeground();
-            //setTimer();
             serviceRunning = true;
-
         } else {
             Log.e(TAG, "Google Play Services Are NOT installed.");
             stopSelf();
@@ -140,17 +137,22 @@ public class LocationService extends Service implements LocationListener, Google
 
         Log.e(TAG, "onStartCommand invoked");
 
-        if (intent != null) {
-            Bundle extras = intent.getExtras();
+        if (intent == null) {
+            return START_STICKY;
+        }
 
-            if (extras != null && extras.containsKey(RUN_1_MIN)) {
-                Log.e(TAG, "onStartCommand RUN_1_MIN");
-                setTemporalTimer();
+        Bundle extras = intent.getExtras();
 
-            } else if (extras != null && extras.containsKey(ALARM_TIMER)) {
-                Log.e(TAG, "onStartCommand ALARM_TIMER");
-                stopSelf();
-            }
+        if (extras == null) {
+            return START_STICKY;
+        }
+
+        if (extras.containsKey(RUN_1_MIN)) {
+            Log.e(TAG, "onStartCommand RUN_1_MIN");
+            setTemporalTimer();
+        } else if (extras.containsKey(ALARM_TIMER)) {
+            Log.e(TAG, "onStartCommand ALARM_TIMER");
+            stopSelf();
         }
         return START_STICKY;
     }
@@ -189,22 +191,25 @@ public class LocationService extends Service implements LocationListener, Google
     }
 
     private void updateLokkiLocation(Location location) {
-        if (MapUtils.useNewLocation(location, lastLocation, INTERVAL_30_SECS)) {
-            Log.e(TAG, "New location taken into use.");
-            lastLocation = location;
-            DataService.updateDashboard(this, location);
-            Intent intent = new Intent("LOCATION-UPDATE");
-            intent.putExtra("current-location", 1);
-            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-            try {
-                if (MainApplication.visible)
-                    ServerAPI.sendLocation(this, location);
 
+        if (!MapUtils.useNewLocation(location, lastLocation, INTERVAL_30_SECS)) {
+            Log.e(TAG, "New location discarded.");
+            return;
+        }
+
+        Log.e(TAG, "New location taken into use.");
+        lastLocation = location;
+        DataService.updateDashboard(this, location);
+        Intent intent = new Intent("LOCATION-UPDATE");
+        intent.putExtra("current-location", 1);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+
+        if (MainApplication.visible) {
+            try {
+                ServerAPI.sendLocation(this, location);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-        } else {
-            Log.e(TAG, "New location discarded.");
         }
     }
 
@@ -223,7 +228,9 @@ public class LocationService extends Service implements LocationListener, Google
             mGoogleApiClient.disconnect();
             Log.e(TAG, "Location Updates removed.");
 
-        } else Log.e(TAG, "locationClient didn't exist.");
+        } else {
+            Log.e(TAG, "locationClient didn't exist.");
+        }
         serviceRunning = false;
         super.onDestroy();
     }

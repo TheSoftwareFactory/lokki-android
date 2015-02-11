@@ -21,9 +21,7 @@ public class HelpFragment extends Fragment {
 
         TextView textView = new TextView(getActivity());
         textView.setPadding(15, 15, 15, 15);
-        //textView.setText(Html.fromHtml(getString(R.string.help_text)));
         textView.setMovementMethod(LinkMovementMethod.getInstance());
-        //textView.setMovementMethod(new ScrollingMovementMethod());
 
         ScrollView scroller = new ScrollView(getActivity());
         scroller.addView(textView);

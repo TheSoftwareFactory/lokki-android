@@ -33,15 +33,6 @@ public class Dialogs {
                         dialog.dismiss();
                     }
                 });
-                /*
-                .setNegativeButton("Not now", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
-                .setIcon(R.drawable.ic_launcher);
-                */
         alertDialog.show();
     }
 
@@ -53,9 +44,11 @@ public class Dialogs {
         String message = "";
         for (String email : emails) {
             message += Utils.getNameFromEmail(context, email);
-            if (emails.size() > 1)
+            if (emails.size() > 1) {
                 message += ", ";
-            else message += " ";
+            } else {
+                message += " ";
+            }
         }
         message += context.getResources().getString(R.string.add_contact_dialog_save);
         alertDialog.setMessage(message)
@@ -119,14 +112,14 @@ public class Dialogs {
                 if (value != null && !value.toString().isEmpty()) {
                     try {
                         ServerAPI.addPlace(context, value.toString(), latLng);
-
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                     dialog.dismiss();
 
-                } else
+                } else {
                     addPlace(context, latLng);
+                }
             }
         });
 

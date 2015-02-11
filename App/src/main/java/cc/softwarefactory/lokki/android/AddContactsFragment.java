@@ -82,8 +82,9 @@ public class AddContactsFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
                 // When user changed the Text
-                if (adapter != null)
+                if (adapter != null) {
                     adapter.getFilter().filter(cs);
+                }
             }
 
             @Override
@@ -102,18 +103,24 @@ public class AddContactsFragment extends Fragment {
 
     public Boolean loadContacts(Context context) {
 
-        if (MainApplication.contacts != null) return true;
-        String jsonData = PreferenceUtils.getValue(context, PreferenceUtils.KEY_CONTACTS);
-        if (!jsonData.isEmpty())
-            try {
-                MainApplication.contacts = new JSONObject(jsonData);
-                MainApplication.mapping = MainApplication.contacts.getJSONObject("mapping");
-                return true;
+        if (MainApplication.contacts != null) {
+            return true;
+        }
 
-            } catch (JSONException e) {
-                MainApplication.contacts = new JSONObject();
-            }
-        return false;
+        String jsonData = PreferenceUtils.getValue(context, PreferenceUtils.KEY_CONTACTS);
+        if (jsonData.isEmpty()) {
+            return false;
+        }
+
+        try {
+            MainApplication.contacts = new JSONObject(jsonData);
+            MainApplication.mapping = MainApplication.contacts.getJSONObject("mapping");
+
+        } catch (JSONException e) {
+            MainApplication.contacts = new JSONObject();
+            return false;
+        }
+        return true;
     }
 
     class prepareAdapterAsync extends AsyncTask<Void, Void, Boolean> {
@@ -122,8 +129,6 @@ public class AddContactsFragment extends Fragment {
         protected Boolean doInBackground(Void... params) {
 
             Log.e(TAG, "prepareAdapterAsync");
-
-            //defaultAvartar = BitmapFactory.decodeResource(getResources(), R.drawable.default_avatar);
             getContactList();
             return true;
         }
@@ -156,31 +161,34 @@ public class AddContactsFragment extends Fragment {
         @Override
         protected void onPostExecute(JSONObject contactsResult) {
 
-            if (contactsResult != null && isAdded() && !cancelAsynTasks) {
-                Log.e(TAG, "Number of contacts: " + (contactsResult.length() - 1));
-                try {
-                    MainApplication.contacts = contactsResult;
-                    MainApplication.mapping = MainApplication.contacts.getJSONObject("mapping");
-                    PreferenceUtils.setValue(context, PreferenceUtils.KEY_CONTACTS, MainApplication.contacts.toString());
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                //Log.e(TAG, "existing contacts? " + existingContacts);
-                //if (!existingContacts)
-                new prepareAdapterAsync().execute();
+            if (contactsResult == null || !isAdded() || cancelAsynTasks) {
+                super.onPostExecute(MainApplication.contacts);
+                return;
             }
+            Log.e(TAG, "Number of contacts: " + (contactsResult.length() - 1));
+            try {
+                MainApplication.contacts = contactsResult;
+                MainApplication.mapping = MainApplication.contacts.getJSONObject("mapping");
+                PreferenceUtils.setValue(context, PreferenceUtils.KEY_CONTACTS, MainApplication.contacts.toString());
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            new prepareAdapterAsync().execute();
             super.onPostExecute(MainApplication.contacts);
         }
     }
 
     private void getContactList() {
 
-        contactList = new ArrayList<String>();
+        contactList = new ArrayList<>();
 
         JSONArray keys = MainApplication.mapping.names();
 
-        if (keys == null) return;
+        if (keys == null) {
+            return;
+        }
+
         for (int i = 0; i < keys.length(); i++) {
             try {
                 contactList.add(keys.get(i).toString());
@@ -213,7 +221,6 @@ public class AddContactsFragment extends Fragment {
 
                 } else {
                     holder = (ViewHolder) convertView.getTag();
-                    //holder.imageLoader.cancel();
                 }
 
                 try {
@@ -221,15 +228,12 @@ public class AddContactsFragment extends Fragment {
                     String contactName = getItem(position);
                     String email = MainApplication.mapping.getString(contactName);
 
-                    //aq.id(holder.photo).image(R.drawable.default_avatar);
                     avatarLoader.load(email, holder.photo);
 
                     aq.id(holder.name).text(contactName);
                     aq.id(holder.email).text(email);
                     aq.id(holder.check).tag(email).checked(emailsSelected.contains(email));
                     holder.position = position;
-                    //holder.imageLoader = new LoadPhotoAsync(position, holder);
-                    //holder.imageLoader.execute(contactName);
 
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -239,7 +243,6 @@ public class AddContactsFragment extends Fragment {
         };
 
         aq.id(R.id.add_contacts_list_view).adapter(adapter);
-        //listView.setAdapter(adapter);
     }
 
     static class ViewHolder {
@@ -247,77 +250,8 @@ public class AddContactsFragment extends Fragment {
         TextView email;
         ImageView photo;
         CheckBox check;
-        //LoadPhotoAsync imageLoader;
         int position;
     }
 
 
 }
-
-
-    /*
-    class LoadPhotoAsync extends AsyncTask<String, Void, Bitmap> {
-
-        private String userName;
-        private Boolean cancel = false;
-        private int mPosition;
-        private ViewHolder mHolder;
-
-        public LoadPhotoAsync(int position, ViewHolder holder) {
-
-            mPosition = position;
-            mHolder = holder;
-        }
-
-        public void cancel() {
-
-            cancel = true;
-        }
-
-        @Override
-        protected Bitmap doInBackground(String... params) {
-
-            userName = params[0];
-
-            if(!cancel) {
-                try {
-                    Log.e(TAG, "Fetching avatar for: " + userName);
-                    String email = MainApplication.mapping.getString(userName);
-                    Long contactId = MainApplication.contacts.getJSONObject(email).getLong("id");
-                    Bitmap photo = Utils.openPhoto(context, contactId);
-                    if (photo == null) return null;
-                    return Utils.getRoundedCornerBitmap(photo, 50);
-
-                } catch(Exception ex) {
-                    ex.printStackTrace();
-                    return null;
-                }
-            }
-            Log.e(TAG, "Cancelled fetching avatar for: " + userName);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap bitmapResult) {
-
-            super.onPostExecute(bitmapResult);
-            if (mHolder != null && isAdded() && aq.isExist() && !cancelAsynTasks)
-                if (bitmapResult != null && mHolder.position == mPosition) {
-                    mHolder.photo.setImageBitmap(bitmapResult);
-
-                } else {
-                    Log.e(TAG, "onPostExecute failed: " + bitmapResult + ", position: " + mPosition + ", mHolder.position: " + mHolder.position);
-                    //mHolder.photo.setImageBitmap(defaultAvartar);
-                    AQuery aq = new AQuery(mHolder.photo);
-                    aq.image(R.drawable.default_avatar);
-                }
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-
-        cancelAsynTasks = true;
-        super.onDestroy();
-    }
-    */

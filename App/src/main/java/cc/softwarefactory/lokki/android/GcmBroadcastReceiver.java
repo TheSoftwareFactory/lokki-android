@@ -15,8 +15,9 @@ public class GcmBroadcastReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.e("GcmBroadcastReceiver", "onReceive: received location update.");
 
-        if (MainApplication.visible)
+        if (MainApplication.visible) {
             LocationService.run1min(context);
+        }
     }
 
 }
