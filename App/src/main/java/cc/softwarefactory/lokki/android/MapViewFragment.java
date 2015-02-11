@@ -65,10 +65,10 @@ public class MapViewFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View rootview = inflater.inflate(R.layout.activity_map, container, false);
-        aq = new AQuery(getActivity(), rootview);
+        View rootView = inflater.inflate(R.layout.activity_map, container, false);
+        aq = new AQuery(getActivity(), rootView);
         context = getActivity().getApplicationContext();
-        return rootview;
+        return rootView;
 
     }
 
