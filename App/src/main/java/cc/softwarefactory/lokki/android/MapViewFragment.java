@@ -58,7 +58,7 @@ public class MapViewFragment extends Fragment {
     private ArrayList<Circle> placesOverlay;
 
     public MapViewFragment() {
-
+        markerMap = new HashMap<String, Marker>();
         placesOverlay = new ArrayList<Circle>();
     }
 
@@ -78,7 +78,6 @@ public class MapViewFragment extends Fragment {
         super.onDestroyView();
         fragment = null;
         map = null;
-        markerMap = null;
         aq = null;
     }
 
@@ -127,13 +126,13 @@ public class MapViewFragment extends Fragment {
 
     private void setUpMap() {
 
-        markerMap = new HashMap<String, Marker>();
-
         map = fragment.getMap();
 
         if (map == null) {
             return;
         }
+
+        removeMarkers();
 
         map.setMapType(MainApplication.mapTypes[MainApplication.mapType]);
         map.setInfoWindowAdapter(new MyInfoWindowAdapter()); // Set the windowInfo view for each marker
@@ -167,6 +166,15 @@ public class MapViewFragment extends Fragment {
                 Dialogs.addPlace(getActivity(), latLng);
             }
         });
+    }
+
+    private void removeMarkers() {
+
+        Log.e(TAG, "removeMarkers");
+        for (Marker m : markerMap.values()) {
+            m.remove();
+        }
+        markerMap.clear();
     }
 
     @Override
