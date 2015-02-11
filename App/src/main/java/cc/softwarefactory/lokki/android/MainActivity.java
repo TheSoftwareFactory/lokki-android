@@ -142,7 +142,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
         if (debug || userId.isEmpty() || userAccount.isEmpty() || authorizationToken.isEmpty()) {
             try {
-                startActivityForResult(new Intent(this, SignupActivity.class), REQUEST_CODE_EMAIL);
+                startActivityForResult(new Intent(this, SignUpActivity.class), REQUEST_CODE_EMAIL);
             } catch (ActivityNotFoundException e) {
                 Toast.makeText(this, getResources().getString(R.string.general_error), Toast.LENGTH_LONG).show();
                 finish();
@@ -320,17 +320,17 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
         if (requestCode == REQUEST_CODE_EMAIL) {
             if (resultCode == RESULT_OK) {
-                Log.e(TAG, "Returned from signup. Now we will show the map.");
+                Log.e(TAG, "Returned from sign up. Now we will show the map.");
                 startServices();
                 GCMHelper.start(getApplicationContext()); // Register to GCM
 
             } else {
-                Log.e(TAG, "Returned from signup. Exiting app on request.");
+                Log.e(TAG, "Returned from sign up. Exiting app on request.");
                 finish();
             }
 
         } else if (requestCode == REQUEST_TERMS && resultCode == RESULT_OK) {
-            Log.e(TAG, "Returned from terms. Now we will show signup form.");
+            Log.e(TAG, "Returned from terms. Now we will show sign up form.");
             // Terms shown and accepted.
 
         } else {
@@ -436,7 +436,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
             alertDialog.setTitle(context.getResources().getString(R.string.app_name));
-            String message = context.getResources().getString(R.string.security_signup);
+            String message = context.getResources().getString(R.string.security_sign_up);
             message = message + " " + MainApplication.userAccount;
             alertDialog.setMessage(message)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {

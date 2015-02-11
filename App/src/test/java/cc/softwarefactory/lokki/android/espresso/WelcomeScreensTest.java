@@ -33,7 +33,7 @@ public class WelcomeScreensTest extends LokkiBaseTest {
     public void testAgreeOnTermsTakesToRegistrationScreen() {
         onView(withText(R.string.continue_with_terms)).perform(click());
         onView(withText(R.string.i_agree)).perform(click());
-        onView(withText(R.string.signup_explanation)).check(matches(isDisplayed()));
+        onView(withText(R.string.sign_up_explanation)).check(matches(isDisplayed()));
     }
 
 

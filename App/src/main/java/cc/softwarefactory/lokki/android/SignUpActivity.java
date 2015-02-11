@@ -22,17 +22,17 @@ import com.google.android.gms.common.AccountPicker;
 
 import org.json.JSONObject;
 
-public class SignupActivity extends ActionBarActivity {
+public class SignUpActivity extends ActionBarActivity {
 
     private static final int REQUEST_CODE_EMAIL = 1010;
-    private static final String TAG = "SignupActivity";
+    private static final String TAG = "SignUpActivity";
     private AQuery aq;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signup);
+        setContentView(R.layout.activity_sign_up);
         aq = new AQuery(this);
         getSupportActionBar().hide();
 
@@ -62,7 +62,7 @@ public class SignupActivity extends ActionBarActivity {
         }
     }
 
-    public void signup_click(View view) {
+    public void signUpClick(View view) {
 
         Log.e(TAG, "Button clicked");
         CharSequence email = aq.id(R.id.email).getText();
@@ -80,30 +80,31 @@ public class SignupActivity extends ActionBarActivity {
         PreferenceUtils.setValue(this, PreferenceUtils.KEY_DEVICE_ID, Utils.getDeviceId());
         MainApplication.userAccount = accountName;
 
-        ServerAPI.signup(this, new SignupCallback());
+        ServerAPI.signUp(this, new SignUpCallback());
 
         // Block button and show progress.
-        aq.id(R.id.signup_button).clickable(false).text(R.string.signing_up);
+        aq.id(R.id.sign_up_button).clickable(false).text(R.string.signing_up);
     }
 
-    private class SignupCallback extends AjaxCallback<JSONObject> {
+    private class SignUpCallback extends AjaxCallback<JSONObject> {
         @Override
         public void callback(String url, JSONObject json, AjaxStatus status) {
-            Log.e(TAG, "signupCallback");
+            Log.e(TAG, "signUpCallback");
 
-            if (json == null || status.getCode() != 200) {
+            if (!successfulSignUp(json, status)) {
+                aq.id(R.id.sign_up_button).clickable(true).text(R.string.title_activity_sign_up);
                 Log.e(TAG, "Error response: " + status.getError() + " - " + status.getMessage());
                 Log.e(TAG, "json response: " + json);
                 Log.e(TAG, "status code: " + status.getCode());
 
                 if (status.getCode() == 401) {
                     Log.e(TAG, "401 Error");
-                    Dialogs.securitySignup(SignupActivity.this);
+                    Dialogs.securitySignUp(SignUpActivity.this);
                     return;
                 }
 
                 Log.e(TAG, "General Error");
-                Dialogs.generalError(SignupActivity.this);
+                Dialogs.generalError(SignUpActivity.this);
                 return;
             }
 
@@ -111,12 +112,8 @@ public class SignupActivity extends ActionBarActivity {
             String id = json.optString("id");
             String authorizationToken = json.optString("authorizationtoken");
 
-            if (id.isEmpty() || authorizationToken.isEmpty()) {
-                return;
-            }
-
-            PreferenceUtils.setValue(SignupActivity.this, PreferenceUtils.KEY_USER_ID, id);
-            PreferenceUtils.setValue(SignupActivity.this, PreferenceUtils.KEY_AUTH_TOKEN, authorizationToken);
+            PreferenceUtils.setValue(SignUpActivity.this, PreferenceUtils.KEY_USER_ID, id);
+            PreferenceUtils.setValue(SignUpActivity.this, PreferenceUtils.KEY_AUTH_TOKEN, authorizationToken);
 
             MainApplication.userId = id;
             Log.e(TAG, "User id: " + id);
@@ -124,6 +121,10 @@ public class SignupActivity extends ActionBarActivity {
 
             setResult(RESULT_OK);
             finish();
+        }
+
+        private boolean successfulSignUp(JSONObject json, AjaxStatus status) {
+            return json != null && status.getCode() == 200 && !json.optString("id").isEmpty() && !json.optString("authorizationtoken").isEmpty();
         }
     }
 }

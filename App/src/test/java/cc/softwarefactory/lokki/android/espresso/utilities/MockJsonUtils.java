@@ -143,7 +143,7 @@ public class MockJsonUtils {
         return "{}";
     }
 
-    public static String getSignupResponse(String id, String[] canSeeMe, String[] iCanSee, String authorizationToken) throws JSONException {
+    public static String getSignUpResponse(String id, String[] canSeeMe, String[] iCanSee, String authorizationToken) throws JSONException {
         JSONObject jsonObject = new JSONObject();
         jsonObject
                 .put("id", id)
