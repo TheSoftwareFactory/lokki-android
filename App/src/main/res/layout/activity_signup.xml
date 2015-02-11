@@ -43,7 +43,7 @@
         android:layout_below="@id/explanation"
         android:layout_centerHorizontal="true"
         android:textColor="@android:color/black"
-        android:text="@string/type_your_email_address" />
+        android:hint="@string/type_your_email_address" />
 
     <Button
         android:id="@+id/signup_button"

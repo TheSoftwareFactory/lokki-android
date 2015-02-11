@@ -72,7 +72,8 @@ public class SignupActivity extends ActionBarActivity {
         String accountName = email.toString();
         Log.e(TAG, "Email: " + accountName);
         if (accountName.isEmpty()) {
-            aq.id(R.id.email).text(R.string.type_your_email_address);
+            String errorMessage = getResources().getString(R.string.email_required);
+            aq.id(R.id.email).getEditText().setError(errorMessage);
             return;
         }
         PreferenceUtils.setValue(this, PreferenceUtils.KEY_USER_ACCOUNT, accountName);
