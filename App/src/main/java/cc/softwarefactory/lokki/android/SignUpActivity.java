@@ -81,9 +81,7 @@ public class SignUpActivity extends ActionBarActivity {
         MainApplication.userAccount = accountName;
 
         ServerAPI.signUp(this, new SignUpCallback());
-
-        // Block button and show progress.
-        aq.id(R.id.sign_up_button).clickable(false).text(R.string.signing_up);
+        toggleLoading(true);
     }
 
     private class SignUpCallback extends AjaxCallback<JSONObject> {
@@ -100,11 +98,12 @@ public class SignUpActivity extends ActionBarActivity {
                 if (status.getCode() == 401) {
                     Log.e(TAG, "401 Error");
                     Dialogs.securitySignUp(SignUpActivity.this);
-                    return;
+                } else {
+                    Log.e(TAG, "General Error");
+                    Dialogs.generalError(SignUpActivity.this);
                 }
 
-                Log.e(TAG, "General Error");
-                Dialogs.generalError(SignUpActivity.this);
+                toggleLoading(false);
                 return;
             }
 
@@ -126,5 +125,10 @@ public class SignUpActivity extends ActionBarActivity {
         private boolean successfulSignUp(JSONObject json, AjaxStatus status) {
             return json != null && status.getCode() == 200 && !json.optString("id").isEmpty() && !json.optString("authorizationtoken").isEmpty();
         }
+    }
+
+    private void toggleLoading(Boolean isLoading) {
+        aq.id(R.id.sign_up_loading).visibility(isLoading ? View.VISIBLE : View.INVISIBLE);
+        aq.id(R.id.sign_up_button).visibility(isLoading ? View.INVISIBLE : View.VISIBLE);
     }
 }
