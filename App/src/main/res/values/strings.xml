@@ -6,6 +6,8 @@
     <string name="app_name">Lokki</string>
     <string name="app_long_name">Lokki</string>
 
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="map">Map</string>
@@ -30,7 +32,7 @@
     <string name="add_contact">Add contacts</string>
     <string name="allow_people">Allow people</string>
     <string name="add_contact_dialog_message">Select the people who can see where you are when you allow it. Choose the email addresses that your contacts use in Lokki. If you don\'t find a person or email in this list, please add him or her first via the People or Contacts app.</string>
-    <string name="add_contact_dialog_save">can now see where you are and you will see them in Lokki when they allow it.</string>
+    <string name="add_contact_dialog_save">%1$s can now see where you are and you will see them in Lokki when they allow it.</string>
     <string name="i_can_see">Show on map</string>
     <string name="can_see_me">Can see me</string>
     <string name="your_lokki_id">Your Lokki ID is:</string>
@@ -58,8 +60,8 @@
     </string>
 
     <string name="terms_title">Terms of use</string>
-    <string name="security_sign_up">We need to authorize your account before you sign up. Follow the instructions that we have sent to:</string>
-    <string name="title_activity_sign_up">Sign Up</string>
+    <string name="security_sign_up">We need to authorize your account before you sign up. Follow the instructions that we have sent to: %1$s</string>
+    <string name="title_activity_sign_up">Sign up</string>
     <string name="sign_up_explanation">Enter your email address - other Lokki users will find you with this address.</string>
     <string name="type_your_email_address">Your email address</string>
     <string name="general_error">There was an error. Please try again later.</string>

@@ -21,7 +21,6 @@ import static android.support.test.espresso.matcher.ViewMatchers.isRoot;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
@@ -77,25 +76,34 @@ public class AddContactsScreenTest extends LoggedInBaseTest {
 
     public void testAddingSingleContactShowsDialog() {
         String contactName = "Family Member";
-        String contactAddedDialogText = TestUtils.getStringFromResources(getInstrumentation(), R.string.add_contact_dialog_save);
+        String contactEmail = "family.member@example.com";
+        String contactAddedDialogText = getResources().getString(R.string.add_contact_dialog_save, contactEmail);
 
         addContactsFromContactListScreen(contactName);
 
-        onView(withText(containsString(contactName))).check(matches(isDisplayed()));
-        onView(withText(containsString(contactAddedDialogText))).check(matches(isDisplayed()));
+        onView(withText(contactAddedDialogText)).check(matches(isDisplayed()));
     }
 
-
-    public void testAddingTwoContactsShowsDialog() {
-        String firstContactName = "Family Member";
-        String secondContactName = "Test Friend";
-        String contactAddedDialogText = TestUtils.getStringFromResources(getInstrumentation(), R.string.add_contact_dialog_save);
+    public void testAddingTwoContactsUsingNameShowsDialog() {
+        String firstContactName = "Test Friend";
+        String firstContactEmail = "test.friend@example.com";
+        String secondContactName = "Family Member";
+        String secondContactEmail = "family.member@example.com";
 
         addContactsFromContactListScreen(firstContactName, secondContactName);
 
-        onView(withText(containsString(firstContactName))).check(matches(isDisplayed()));
-        onView(withText(containsString(secondContactName))).check(matches(isDisplayed()));
-        onView(withText(containsString(contactAddedDialogText))).check(matches(isDisplayed()));
+        String contactsCombined = firstContactEmail + ", " + secondContactEmail;
+        onView(withText(getResources().getString(R.string.add_contact_dialog_save, contactsCombined))).check(matches(isDisplayed()));
+    }
+
+    public void testAddingTwoContactsUsingEmailShowsDialog() {
+        String firstContactEmail = "test.friend@example.com";
+        String secondContactEmail = "family.member@example.com";
+
+        addContactsFromContactListScreen(firstContactEmail, secondContactEmail);
+
+        String contactsCombined = firstContactEmail + ", " + secondContactEmail;
+        onView(withText(getResources().getString(R.string.add_contact_dialog_save, contactsCombined))).check(matches(isDisplayed()));
     }
 
     public void testAddingNoContact() {
