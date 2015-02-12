@@ -76,6 +76,7 @@ public class Dialogs {
         addPlaceDialog.setTitle(context.getResources().getString(R.string.create_place));
         addPlaceDialog.setMessage(context.getResources().getString(R.string.write_place_name));
         final EditText input = new EditText(context); // Set an EditText view to get user input
+        input.setSingleLine(true);
         addPlaceDialog.setView(input);
 
         addPlaceDialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
