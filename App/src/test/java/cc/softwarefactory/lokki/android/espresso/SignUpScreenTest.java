@@ -100,7 +100,7 @@ public class SignUpScreenTest extends LokkiBaseTest {
         MockResponse loginNeedAuthorizationResponse = new MockResponse();
         loginNeedAuthorizationResponse.setResponseCode(401);
         List<RecordedRequest> requests = getMockDispatcher().setSignUpResponse(loginNeedAuthorizationResponse);
-        String signUpText = getResources().getString(R.string.security_sign_up) + " test@example.com";
+        String signUpText = getResources().getString(R.string.security_sign_up, "test@example.com");
 
         signUpUsingEmail("test@example.com");
         assertQueryStringEquals(getRequest("test@example.com"), requests.get(0).getUtf8Body());
