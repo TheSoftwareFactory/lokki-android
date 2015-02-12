@@ -73,8 +73,8 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name="cc.softwarefactory.lokki.android.SignupActivity"
-            android:label="@string/title_activity_signup"></activity>
+            android:name="cc.softwarefactory.lokki.android.SignUpActivity"
+            android:label="@string/title_activity_sign_up"></activity>
     </application>
 
 </manifest>

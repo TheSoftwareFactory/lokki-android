@@ -30,8 +30,6 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withHint;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.not;
 
 public class SignUpScreenTest extends LokkiBaseTest {
 
@@ -53,7 +51,7 @@ public class SignUpScreenTest extends LokkiBaseTest {
         moveToSignUpScreen();
         typeToEmailField(email);
 
-        onView(withId(R.id.signup_button)).perform(click());
+        onView(withId(R.id.sign_up_button)).perform(click());
     }
 
     private String getRequest(String email) throws UnsupportedEncodingException {
@@ -77,10 +75,10 @@ public class SignUpScreenTest extends LokkiBaseTest {
         assertEquals(firstList, secondList);
     }
 
-    public void testMapIsShownAfterSuccessfulSignup() throws InterruptedException, JSONException, UnsupportedEncodingException {
+    public void testMapIsShownAfterSuccessfulSignUp() throws InterruptedException, JSONException, UnsupportedEncodingException {
         MockResponse loginOkResponse = new MockResponse();
-        loginOkResponse.setBody(MockJsonUtils.getSignupResponse(TestUtils.VALUE_TEST_USER_ID, new String[]{}, new String[]{}, TestUtils.VALUE_TEST_AUTH_TOKEN));
-        List<RecordedRequest> requests = getMockDispatcher().setSignupResponse(loginOkResponse);
+        loginOkResponse.setBody(MockJsonUtils.getSignUpResponse(TestUtils.VALUE_TEST_USER_ID, new String[]{}, new String[]{}, TestUtils.VALUE_TEST_AUTH_TOKEN));
+        List<RecordedRequest> requests = getMockDispatcher().setSignUpResponse(loginOkResponse);
 
         signUpUsingEmail("email@example.com");
         assertQueryStringEquals(getRequest("email@example.com"), requests.get(0).getUtf8Body());
@@ -91,7 +89,7 @@ public class SignUpScreenTest extends LokkiBaseTest {
         MockResponse loginErrorResponse = new MockResponse();
         loginErrorResponse.setResponseCode(400);
         loginErrorResponse.setBody("Invalid email address.");
-        List<RecordedRequest> requests = getMockDispatcher().setSignupResponse(loginErrorResponse);
+        List<RecordedRequest> requests = getMockDispatcher().setSignUpResponse(loginErrorResponse);
 
         signUpUsingEmail("invalid_email");
         assertQueryStringEquals(getRequest("invalid_email"), requests.get(0).getUtf8Body());
@@ -101,12 +99,12 @@ public class SignUpScreenTest extends LokkiBaseTest {
     public void testMessageIsShownIfAccountRequiresAuthorization() throws InterruptedException, UnsupportedEncodingException {
         MockResponse loginNeedAuthorizationResponse = new MockResponse();
         loginNeedAuthorizationResponse.setResponseCode(401);
-        List<RecordedRequest> requests = getMockDispatcher().setSignupResponse(loginNeedAuthorizationResponse);
-        String signupText = getResources().getString(R.string.security_signup) + " test@example.com";
+        List<RecordedRequest> requests = getMockDispatcher().setSignUpResponse(loginNeedAuthorizationResponse);
+        String signUpText = getResources().getString(R.string.security_sign_up) + " test@example.com";
 
         signUpUsingEmail("test@example.com");
         assertQueryStringEquals(getRequest("test@example.com"), requests.get(0).getUtf8Body());
-        onView(withText(signupText)).check(matches(isDisplayed()));
+        onView(withText(signUpText)).check(matches(isDisplayed()));
     }
 
     public void testEmailFieldHasHint() throws InterruptedException {

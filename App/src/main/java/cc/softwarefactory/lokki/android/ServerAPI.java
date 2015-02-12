@@ -33,9 +33,9 @@ public class ServerAPI {
     private static String ApiUrl = "https://lokki.herokuapp.com/api/locmap/v1/";
 //    private static String ApiUrl = "FILLME";
 
-    public static void signup(Context context, AjaxCallback<JSONObject> signupCallback) {
+    public static void signUp(Context context, AjaxCallback<JSONObject> signUpCallback) {
 
-        Log.e(TAG, "signup");
+        Log.e(TAG, "Sign up");
         AQuery aq = new AQuery(context);
         String url = ApiUrl + "signup";
 
@@ -49,8 +49,8 @@ public class ServerAPI {
             params.put("language", Utils.getLanguage());
         }
 
-        aq.ajax(url, params, JSONObject.class, signupCallback);
-        Log.e(TAG, "Signup - email: " + userAccount + ", deviceId: " + deviceId + ", language: " + Utils.getLanguage());
+        aq.ajax(url, params, JSONObject.class, signUpCallback);
+        Log.e(TAG, "Sign up - email: " + userAccount + ", deviceId: " + deviceId + ", language: " + Utils.getLanguage());
     }
 
 

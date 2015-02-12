@@ -62,12 +62,12 @@ public class Dialogs {
     }
 
 
-    public static void securitySignup(final Context context) {
+    public static void securitySignUp(final Context context) {
 
         Log.e(TAG, "securitySignup");
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
         alertDialog.setTitle(context.getResources().getString(R.string.app_name));
-        String message = context.getResources().getString(R.string.security_signup);
+        String message = context.getResources().getString(R.string.security_sign_up);
         message = message + " " + MainApplication.userAccount;
         alertDialog.setMessage(message)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {

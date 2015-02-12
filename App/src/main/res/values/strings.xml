@@ -58,9 +58,9 @@
     </string>
 
     <string name="terms_title">Terms of use</string>
-    <string name="security_signup">We need to authorize your account before you sign up. Follow the instructions that we have sent to:</string>
-    <string name="title_activity_signup">Signup</string>
-    <string name="signup_explanation">Enter your email address - other Lokki users will find you with this address.</string>
+    <string name="security_sign_up">We need to authorize your account before you sign up. Follow the instructions that we have sent to:</string>
+    <string name="title_activity_sign_up">Sign Up</string>
+    <string name="sign_up_explanation">Enter your email address - other Lokki users will find you with this address.</string>
     <string name="type_your_email_address">Your email address</string>
     <string name="general_error">There was an error. Please try again later.</string>
     <string name="create_place">Would you like to create a place here?</string>

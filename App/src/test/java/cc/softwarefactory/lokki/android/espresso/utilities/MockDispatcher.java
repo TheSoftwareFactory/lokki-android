@@ -60,7 +60,7 @@ public class MockDispatcher extends Dispatcher {
         return installResponse(METHOD_DELETE, DEFAULT_USER_BASE_PATH + "places" + "/" + placeId, response);
     }
 
-    public List<RecordedRequest> setSignupResponse(MockResponse response) {
+    public List<RecordedRequest> setSignUpResponse(MockResponse response) {
         return installResponse(METHOD_POST, "/signup", response);
     }
 
