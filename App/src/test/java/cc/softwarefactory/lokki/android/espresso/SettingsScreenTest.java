@@ -7,8 +7,6 @@ import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.hasDescendant;
-import static android.support.test.espresso.matcher.ViewMatchers.hasSibling;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withParent;
@@ -27,7 +25,7 @@ public class SettingsScreenTest extends LoggedInBaseTest {
     private void enterSettingScreen() {
         getActivity();
         onView(withId(R.id.decor_content_parent)).perform(TestUtils.clickScreenPosition(0, 0));
-        onView(withText("Settings")).perform(click());
+        onView(withText(R.string.settings)).perform(click());
     }
     
     
@@ -47,36 +45,36 @@ public class SettingsScreenTest extends LoggedInBaseTest {
     public void testVisibilitySpinnerDefaultYes() {
         enterSettingScreen();
 
-        onView(allOf(withText("Yes"), withParent(withId(R.id.spinner_visibility)))).check(matches(isDisplayed()));
+        onView(allOf(withText(R.string.yes), withParent(withId(R.id.spinner_visibility)))).check(matches(isDisplayed()));
     }
     
     public void testVisibilitySpinnerSelectNo() {
         enterSettingScreen();
         onView(withId(R.id.spinner_visibility)).perform(click());
-        onData(allOf(is(instanceOf(String.class)), is("No"))).perform(click());
+        onData(allOf(is(instanceOf(String.class)), is(getResources().getString(R.string.no)))).perform(click());
         
-        onView(allOf(withText("No"), withParent(withId(R.id.spinner_visibility)))).check(matches(isDisplayed()));
+        onView(allOf(withText(R.string.no), withParent(withId(R.id.spinner_visibility)))).check(matches(isDisplayed()));
     }
 
     public void testMapTypeSpinnerDefault() {
         enterSettingScreen();
 
-        onView(allOf(withText("Default"), withParent(withId(R.id.spinner_map)))).check(matches(isDisplayed()));
+        onView(allOf(withText(R.string.map_mode_default), withParent(withId(R.id.spinner_map)))).check(matches(isDisplayed()));
     }
 
     public void testMapTypeSpinnerSelectSatellite() {
         enterSettingScreen();
         onView(withId(R.id.spinner_map)).perform(click());
-        onData(allOf(is(instanceOf(String.class)), is("Satellite"))).perform(click());
+        onData(allOf(is(instanceOf(String.class)), is(getResources().getString(R.string.map_mode_satellite)))).perform(click());
 
-        onView(allOf(withText("Satellite"), withParent(withId(R.id.spinner_map)))).check(matches(isDisplayed()));
+        onView(allOf(withText(R.string.map_mode_satellite), withParent(withId(R.id.spinner_map)))).check(matches(isDisplayed()));
     }
 
     public void testMapTypeSpinnerSelectHybrid() {
         enterSettingScreen();
         onView(withId(R.id.spinner_map)).perform(click());
-        onData(allOf(is(instanceOf(String.class)), is("Hybrid"))).perform(click());
+        onData(allOf(is(instanceOf(String.class)), is(getResources().getString(R.string.map_mode_hybrid)))).perform(click());
 
-        onView(allOf(withText("Hybrid"), withParent(withId(R.id.spinner_map)))).check(matches(isDisplayed()));
+        onView(allOf(withText(R.string.map_mode_hybrid), withParent(withId(R.id.spinner_map)))).check(matches(isDisplayed()));
     }
 }
