@@ -24,6 +24,7 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
+import static android.support.test.espresso.action.ViewActions.pressImeActionButton;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -81,8 +82,29 @@ public class SignUpScreenTest extends LokkiBaseTest {
         List<RecordedRequest> requests = getMockDispatcher().setSignUpResponse(loginOkResponse);
 
         signUpUsingEmail("email@example.com");
+        assertSignUpIsOk(requests);
+    }
+
+    private void assertSignUpIsOk(List<RecordedRequest> requests) throws UnsupportedEncodingException {
         assertQueryStringEquals(getRequest("email@example.com"), requests.get(0).getUtf8Body());
         onView(withId(R.id.map)).check(matches(isDisplayed()));
+    }
+
+    public void testMapIsShownAfterSuccessfulSignUpWhenUsingImeAction() throws InterruptedException, JSONException, UnsupportedEncodingException {
+        MockResponse loginOkResponse = new MockResponse();
+        loginOkResponse.setBody(MockJsonUtils.getSignUpResponse(TestUtils.VALUE_TEST_USER_ID, new String[]{}, new String[]{}, TestUtils.VALUE_TEST_AUTH_TOKEN));
+        List<RecordedRequest> requests = getMockDispatcher().setSignUpResponse(loginOkResponse);
+
+        moveToSignUpScreen();
+        typeToEmailField("email@example.com");
+
+        // Yeah, pressImeActionButton() _refuses_ to work if something is entered to text field with
+        // typeText(). For unknown reasons, clicking a logo just before makes it work just as
+        // expected!
+        onView(withId(R.id.logo)).perform(click());
+        onView(withId(R.id.email)).perform(pressImeActionButton());
+
+        assertSignUpIsOk(requests);
     }
 
     public void testInvalidEmailGivesErrorMessage() throws InterruptedException, UnsupportedEncodingException {

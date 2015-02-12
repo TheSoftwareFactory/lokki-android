@@ -10,7 +10,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.TextView;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
@@ -43,6 +46,18 @@ public class SignUpActivity extends ActionBarActivity {
         } catch (ActivityNotFoundException anf) {
             // No problem. Simply don't do anything
         }
+
+        aq.id(R.id.email).getEditText().setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    doSignUp();
+                    return true;
+                }
+
+                return false;
+            }
+        });
     }
 
     @Override
@@ -63,8 +78,11 @@ public class SignUpActivity extends ActionBarActivity {
     }
 
     public void signUpClick(View view) {
+        doSignUp();
+    }
 
-        Log.e(TAG, "Button clicked");
+    private void doSignUp() {
+        Log.e(TAG, "Sign up started");
         CharSequence email = aq.id(R.id.email).getText();
         if (email == null) {
             return;
