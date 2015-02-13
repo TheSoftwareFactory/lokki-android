@@ -324,6 +324,11 @@ public class ServerAPI {
     }
 
     public static void addPlace(final Context context, String name, LatLng latLng) throws JSONException {
+        addPlace(context, name, latLng, 100);
+    }
+
+
+    public static void addPlace(final Context context, String name, LatLng latLng, int radius) throws JSONException {
 
         Log.e(TAG, "addPlace");
         AQuery aq = new AQuery(context);
@@ -338,7 +343,7 @@ public class ServerAPI {
         JSONObject JSONdata = new JSONObject()
                 .put("lat", latLng.latitude)
                 .put("lon", latLng.longitude)
-                .put("rad", 100)
+                .put("rad", radius)
                 .put("img", "")
                 .put("name", cleanName);
 
