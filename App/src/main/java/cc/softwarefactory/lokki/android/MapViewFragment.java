@@ -30,6 +30,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import com.androidquery.AQuery;
 
@@ -215,9 +216,8 @@ public class MapViewFragment extends Fragment {
     }
 
     public void setAddPlacesVisible(boolean visible) {
-        View addPlaceOverlay = getView().findViewById(R.id.add_place_overlay);
         if (d != null) {
-            addPlaceOverlay.getOverlay().remove(d); // todo see if this can be changed to some lower API level... or bump API level?
+            ((ImageView)getView().findViewById(R.id.addPlaceCircle)).setImageDrawable(null);
         }
         if (visible) {
             d = new Drawable() {
@@ -256,7 +256,7 @@ public class MapViewFragment extends Fragment {
                 }
             };
 
-            addPlaceOverlay.getOverlay().add(d);
+            ((ImageView)getView().findViewById(R.id.addPlaceCircle)).setImageDrawable(d);
             getView().findViewById(R.id.add_place_overlay).setVisibility(View.VISIBLE);
         } else {
             getView().findViewById(R.id.add_place_overlay).setVisibility(View.INVISIBLE);
