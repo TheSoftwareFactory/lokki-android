@@ -14,6 +14,8 @@ import android.widget.Toast;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
+
+import cc.softwarefactory.lokki.android.errors.AddPlaceError;
 import cc.softwarefactory.lokki.android.utils.PreferenceUtils;
 import cc.softwarefactory.lokki.android.utils.Utils;
 import com.google.android.gms.maps.model.LatLng;
@@ -346,14 +348,26 @@ public class ServerAPI {
                 Log.e(TAG, "addPlace result code: " + status.getCode());
                 Log.e(TAG, "addPlace result message: " + status.getMessage());
                 Log.e(TAG, "addPlace ERROR: " + status.getError());
-                if (status.getError() == null) {
-                    Log.e(TAG, "No error, place created.");
-                    Toast.makeText(context, context.getResources().getString(R.string.place_created), Toast.LENGTH_SHORT).show();
-                    DataService.getPlaces(context);
 
-                } else if (status.getCode() == 403) {
-                    Toast.makeText(context, context.getResources().getString(R.string.place_limit_reached), Toast.LENGTH_SHORT).show();
+                if (status.getError() != null) {
+                    handleError(status);
+                    return;
                 }
+
+                Log.e(TAG, "No error, place created.");
+                Toast.makeText(context, context.getResources().getString(R.string.place_created), Toast.LENGTH_SHORT).show();
+                DataService.getPlaces(context);
+            }
+
+            private void handleError(AjaxStatus status) {
+
+                AddPlaceError ape = AddPlaceError.getEnum(status.getError());
+                if (ape == null) {
+                    return;
+                }
+
+                String toastMessage = context.getResources().getString(ape.getErrorMessage());
+                Toast.makeText(context, toastMessage, Toast.LENGTH_SHORT).show();
             }
         };
 

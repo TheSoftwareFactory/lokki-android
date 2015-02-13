@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
 
 import cc.softwarefactory.lokki.android.utils.Utils;
@@ -58,50 +59,51 @@ public class Dialogs {
 
     private static void showDialog(final Context context, String title, String message) {
 
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
-        alertDialog.setTitle(title);
-        alertDialog.setMessage(message)
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-        alertDialog.show();
+        new AlertDialog.Builder(context)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(R.string.ok, null)
+                .show();
     }
 
     public static void addPlace(final Context context, final LatLng latLng) {
-
-        AlertDialog.Builder addPlaceDialog = new AlertDialog.Builder(context);
-        addPlaceDialog.setTitle(context.getResources().getString(R.string.create_place));
-        addPlaceDialog.setMessage(context.getResources().getString(R.string.write_place_name));
         final EditText input = new EditText(context); // Set an EditText view to get user input
         input.setSingleLine(true);
-        addPlaceDialog.setView(input);
+        final AlertDialog addPlaceDialog = new AlertDialog.Builder(context)
+                .setTitle(context.getResources().getString(R.string.create_place))
+                .setMessage(context.getResources().getString(R.string.write_place_name))
+                .setView(input)
+                .setPositiveButton(R.string.ok, null)
+                .setNegativeButton(R.string.cancel, null)
+                .create();
 
-        addPlaceDialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                Editable value = input.getText();
-                if (value != null && !value.toString().isEmpty()) {
-                    try {
-                        ServerAPI.addPlace(context, value.toString(), latLng);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    dialog.dismiss();
+        addPlaceDialog.setOnShowListener(new DialogInterface.OnShowListener() {
 
-                } else {
-                    addPlace(context, latLng);
-                }
+            @Override
+            public void onShow(DialogInterface dialog) {
+
+                addPlaceDialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                        .setOnClickListener(new View.OnClickListener() {
+
+                            @Override
+                            public void onClick(View view) {
+                                Editable value = input.getText();
+                                if (value == null || value.toString().isEmpty()) {
+                                    input.setError(context.getResources().getString(R.string.required));
+                                    return;
+                                }
+
+                                try {
+                                    ServerAPI.addPlace(context, value.toString(), latLng);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                                addPlaceDialog.dismiss();
+                            }
+                        });
             }
         });
-
-        addPlaceDialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                dialog.dismiss();
-            }
-        });
-
         addPlaceDialog.show();
     }
 }
