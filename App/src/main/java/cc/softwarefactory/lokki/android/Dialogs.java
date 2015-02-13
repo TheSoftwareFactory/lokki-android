@@ -77,7 +77,7 @@ public class Dialogs {
     public static void addPlace(final Context context, final LatLng latLng, final int radius) {
         final EditText input = new EditText(context); // Set an EditText view to get user input
         input.setSingleLine(true);
-        final AlertDialog addPlaceDialog = new AlertDialog.Builder(context)           
+        final AlertDialog addPlaceDialog = new AlertDialog.Builder(context)
                 .setTitle(context.getResources().getString(R.string.write_place_name))
                 .setView(input)
                 .setPositiveButton(R.string.ok, null)
