@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="actionbar_text">#fff</color>
-    <color name="actionbar_background">#1b75ba</color>
+    <color name="actionbar_background">#03A9F4</color>
     <color name="drawer_selector">#33b5e5</color>
     <color name="drawer_item_selected">#8BC7EB</color>
     <color name="drawer_text">#000</color>

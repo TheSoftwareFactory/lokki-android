@@ -130,7 +130,7 @@ public class LocationService extends Service implements LocationListener, Google
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this);
         notificationBuilder.setContentTitle("Lokki");
         notificationBuilder.setContentText("Running...");
-        notificationBuilder.setSmallIcon(R.drawable.ic_launcher);
+        notificationBuilder.setSmallIcon(R.drawable.ic_stat_notify);
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
         notificationBuilder.setContentIntent(contentIntent);
         startForeground(NOTIFICATION_SERVICE, notificationBuilder.build());
