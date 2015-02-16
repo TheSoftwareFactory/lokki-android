@@ -57,8 +57,6 @@ public class NavigationDrawerFragment extends Fragment {
     private View mFragmentContainerView;
 
     private int mCurrentSelectedPosition = 0;
-    private boolean mFromSavedInstanceState;
-    private boolean mUserLearnedDrawer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -85,8 +83,7 @@ public class NavigationDrawerFragment extends Fragment {
             }
         });
         String[] menuOptions = getResources().getStringArray(R.array.menuOptions);
-        //mDrawerListView.setAdapter(new ArrayAdapter<String>(getActionBar().getThemedContext(), android.R.layout.simple_list_item_1, android.R.id.text1, menuOptions));
-        mDrawerListView.setAdapter(new ArrayAdapter<String>(getActionBar().getThemedContext(), R.layout.drawer_list_item, menuOptions));
+        mDrawerListView.setAdapter(new ArrayAdapter<>(getActionBar().getThemedContext(), R.layout.drawer_list_item, menuOptions));
 
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
         return mDrawerListView;
@@ -99,9 +96,9 @@ public class NavigationDrawerFragment extends Fragment {
     public void toggleDrawer() {
 
         if (isDrawerOpen()) {
-            mDrawerLayout.closeDrawer(Gravity.LEFT);
+            mDrawerLayout.closeDrawer(Gravity.START);
         } else {
-            mDrawerLayout.openDrawer(Gravity.LEFT);
+            mDrawerLayout.openDrawer(Gravity.START);
         }
     }
 
@@ -215,10 +212,7 @@ public class NavigationDrawerFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        return mDrawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
     }
 
     /**

@@ -170,18 +170,22 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
         switch (position) {
             case 0: // Map
-                fragmentManager.beginTransaction().replace(R.id.container, new FragmentTabsFragmentSupport()).commit();
+                fragmentManager.beginTransaction().replace(R.id.container, new MapViewFragment()).commit();
                 break;
 
-            case 1: // People
+            case 1: // Places
+                fragmentManager.beginTransaction().replace(R.id.container, new PlacesFragment()).commit();
+                break;
+
+            case 2: // People
                 fragmentManager.beginTransaction().replace(R.id.container, new ContactsFragment()).commit();
                 break;
 
-            case 2: // Settings
+            case 3: // Settings
                 fragmentManager.beginTransaction().replace(R.id.container, new SettingsFragment()).commit();
                 break;
 
-            case 3: // About
+            case 4: // About
                 fragmentManager.beginTransaction().replace(R.id.container, new AboutFragment()).commit();
                 break;
         }
@@ -223,7 +227,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
                         menuItem.setIcon(R.drawable.ic_invisible);
                     }
                 }
-            } else if (selectedOption == 1) { // People
+            } else if (selectedOption == 2) { // People
                 getMenuInflater().inflate(R.menu.contacts, menu);
             } else if (selectedOption == -10) { // People
                 getMenuInflater().inflate(R.menu.add_contact, menu);
@@ -303,8 +307,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
                 if (selectedOption == 0) {
                     Log.e(TAG, "Exiting app because requested by user.");
                     finish();
-                } else if (selectedOption == -10) {
-                    mNavigationDrawerFragment.selectItem(1);
+                } else if (selectedOption == -10) { // -10 is add contacts screen
+                    mNavigationDrawerFragment.selectItem(2);    // 2 is contacts screen... dah
                     return true;
                 } else {
                     mNavigationDrawerFragment.selectItem(0);
