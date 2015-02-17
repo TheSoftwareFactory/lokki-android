@@ -30,8 +30,10 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import cc.softwarefactory.lokki.android.LocationService;
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
+import cc.softwarefactory.lokki.android.ServerAPI;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -386,4 +388,17 @@ public class Utils {
         return result;
     }
 
+    public static void setVisibility (boolean visible, Context context) {
+        try {
+            MainApplication.visible = visible;
+            ServerAPI.setVisibility(context, visible);
+            if (visible == false) {
+                LocationService.stop(context);
+            } else {
+                LocationService.start(context);
+            }
+        } catch (Exception ex) {
+            Log.e(TAG, "Could not set visibility:" + ex.getMessage());
+        }
+    }
 }

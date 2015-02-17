@@ -11,8 +11,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
+import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -30,6 +31,7 @@ import android.widget.Toast;
 
 import cc.softwarefactory.lokki.android.utilities.DialogUtils;
 import cc.softwarefactory.lokki.android.datasources.contacts.ContactDataSource;
+import cc.softwarefactory.lokki.android.utilities.Utils;
 import cc.softwarefactory.lokki.android.utilities.gcm.GcmHelper;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
 import cc.softwarefactory.lokki.android.services.DataService;
@@ -177,7 +179,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     public void onNavigationDrawerItemSelected(int position) {
 
         String[] menuOptions = getResources().getStringArray(R.array.menuOptions);
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        android.app.FragmentManager fragmentManager = getFragmentManager();
         mTitle = menuOptions[position];
         selectedOption = position;
         getSupportActionBar().setTitle(mTitle);
@@ -257,7 +259,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         switch (id) {
 
             case R.id.add_people: // In Contacts (to add new ones)
-                FragmentManager fragmentManager = getSupportFragmentManager();
+                android.app.FragmentManager fragmentManager = getFragmentManager();
 
                 AddContactsFragment acf = new AddContactsFragment();
                 acf.setContactUtils(mContactDataSource);
@@ -291,22 +293,15 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
     private void toggleVisibility() {
 
-        MainApplication.visible = !MainApplication.visible;
-        int visibility_mode = MainApplication.visible ? 0 : 1;
-        PreferenceUtils.setValue(this, PreferenceUtils.KEY_SETTING_VISIBILITY, String.valueOf(visibility_mode));
+        Utils.setVisibility(!MainApplication.visible, MainActivity.this); // oh the side effects...
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(PreferenceUtils.KEY_SETTING_VISIBILITY, MainApplication.visible).commit();
 
-        try {
-            if (MainApplication.visible) {
-                LocationService.start(MainActivity.this);
-                ServerApi.setVisibility(MainActivity.this, true);
-                Toast.makeText(this, getResources().getString(R.string.you_are_visible), Toast.LENGTH_LONG).show();
-            } else {
-                LocationService.stop(MainActivity.this);
-                ServerApi.setVisibility(MainActivity.this, false);
-                Toast.makeText(this, getResources().getString(R.string.you_are_invisible), Toast.LENGTH_LONG).show();
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        if (MainApplication.visible) {
+            Toast.makeText(this, getResources().getString(R.string.you_are_visible), Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, getResources().getString(R.string.you_are_invisible), Toast.LENGTH_LONG).show();
         }
 
         supportInvalidateOptionsMenu();

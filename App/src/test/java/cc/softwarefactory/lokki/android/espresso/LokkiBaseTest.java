@@ -1,6 +1,8 @@
 package cc.softwarefactory.lokki.android.espresso;
 
+import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.preference.PreferenceManager;
 import android.test.ActivityInstrumentationTestCase2;
 
 import com.squareup.okhttp.mockwebserver.MockWebServer;

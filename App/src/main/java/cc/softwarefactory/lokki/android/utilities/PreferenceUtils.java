@@ -3,6 +3,7 @@ package cc.softwarefactory.lokki.android.utilities;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 public class PreferenceUtils {
 
@@ -24,7 +25,7 @@ public class PreferenceUtils {
             return null;
         }
 
-        SharedPreferences prefs = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getString(key, "");
     }
 
@@ -34,7 +35,7 @@ public class PreferenceUtils {
             return;
         }
 
-        SharedPreferences prefs = context.getSharedPreferences(context.getPackageName(), Context.MODE_PRIVATE);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         prefs.edit().putString(key, value).commit();
     }
 

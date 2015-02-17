@@ -5,9 +5,11 @@ See LICENSE for details
 package cc.softwarefactory.lokki.android;
 
 import android.app.Application;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.StrictMode;
+import android.preference.PreferenceManager;
 import android.support.v4.util.LruCache;
 import android.util.Log;
 
@@ -93,8 +95,7 @@ public class MainApplication extends Application {
     }
 
     private void loadSetting() {
-
-        visible = !PreferenceUtils.getValue(this, PreferenceUtils.KEY_SETTING_VISIBILITY).equals("1"); // If 1 it is disabled, otherwise ON.
+        visible = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean(PreferenceUtils.KEY_SETTING_VISIBILITY, true);
         Log.e(TAG, "Visible: " + visible);
     }
 

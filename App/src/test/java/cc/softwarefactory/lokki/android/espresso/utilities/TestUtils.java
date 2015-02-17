@@ -3,6 +3,8 @@ package cc.softwarefactory.lokki.android.espresso.utilities;
 import android.app.Instrumentation;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.preference.PreferenceManager;
 import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.action.CoordinatesProvider;
 import android.support.test.espresso.action.GeneralClickAction;
@@ -31,7 +33,7 @@ public class TestUtils {
 
     public static void clearAppData(Context targetContext) {
         MainActivity.firstTimeLaunch = null;
-        SharedPreferences.Editor editor = targetContext.getSharedPreferences(targetContext.getPackageName(), Context.MODE_PRIVATE).edit();
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(targetContext).edit();
         editor.clear();
         editor.commit();
     }
