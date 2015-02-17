@@ -91,7 +91,7 @@ public class MainApplication extends Application {
 
     private void loadSetting() {
 
-        visible = !PreferenceUtils.getValue(this, PreferenceUtils.KEY_SETTING_VISIBILITY).equals("1"); // If 1 it is disabled, otherwise ON.
+        visible = !PreferenceUtils.getValue(this, PreferenceUtils.KEY_SETTING_VISIBILITY).equals("1");
         Log.e(TAG, "Visible: " + visible);
     }
 

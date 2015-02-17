@@ -4,24 +4,28 @@ See LICENSE for details
 */
 package cc.softwarefactory.lokki.android;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Switch;
+import android.widget.TextView;
 
 import com.androidquery.AQuery;
+
 import cc.softwarefactory.lokki.android.avatar.AvatarLoader;
 import cc.softwarefactory.lokki.android.utils.PreferenceUtils;
 import cc.softwarefactory.lokki.android.utils.Utils;
 
 
-public class SettingsFragment extends Fragment implements AdapterView.OnItemSelectedListener {
+public class SettingsFragment extends Fragment {
 
     private static final String TAG = "Settings";
     private Context context;
@@ -29,7 +33,8 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemSele
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.activity_settings, container, false);
+        // User info
+        final View rootView = inflater.inflate(R.layout.activity_settings, container, false);
         AQuery aq = new AQuery(getActivity(), rootView);
         context = getActivity().getApplicationContext();
 
@@ -39,58 +44,63 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemSele
         String email = PreferenceUtils.getValue(context, PreferenceUtils.KEY_USER_ACCOUNT);
         avatarLoader.load(email, avatarImage);
 
-        ArrayAdapter<CharSequence> adapter_visibility = ArrayAdapter.createFromResource(context, R.array.visibility_modes, R.layout.spinner_item);
-        adapter_visibility.setDropDownViewResource(R.layout.spinner_dropdown_item);
-
-        int visibility_mode = PreferenceUtils.getValue(context, PreferenceUtils.KEY_SETTING_VISIBILITY).equals("1") ? 1 : 0;
-        MainApplication.visible = visibility_mode == 0;
-
-        ArrayAdapter<CharSequence> adapter_map = ArrayAdapter.createFromResource(context, R.array.map_modes, R.layout.spinner_item);
-        adapter_map.setDropDownViewResource(R.layout.spinner_dropdown_item);
-
-        String map_mode = PreferenceUtils.getValue(context, PreferenceUtils.KEY_SETTING_MAP_MODE);
-        int map_mode_int = (map_mode.equals("0") || map_mode.equals("1") || map_mode.equals("2")) ? Integer.valueOf(map_mode) : 0;
-
         aq.id(R.id.lokki_id_text).text(getResources().getString(R.string.your_lokki_id) + " " + email);
         aq.id(R.id.user_name).text(Utils.getNameFromEmail(context, email));
-        aq.id(R.id.spinner_visibility).adapter(adapter_visibility).setSelection(visibility_mode);
-        aq.id(R.id.spinner_visibility).tag("visibility").itemSelected(SettingsFragment.this);
-        aq.id(R.id.spinner_map).adapter(adapter_map).setSelection(map_mode_int);
-        aq.id(R.id.spinner_map).tag("map").itemSelected(SettingsFragment.this);
+
+
+        // Visibility
+        final TextView visibilityLabel = (TextView) rootView.findViewById(R.id.textView_visible);
+        setVisibilityInfoText(MainApplication.visible, visibilityLabel);
+
+        Switch toggle = (Switch) rootView.findViewById(R.id.switch_visibility);
+        toggle.setChecked(MainApplication.visible);
+        toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Utils.setVisibility(isChecked, context);
+                setVisibilityInfoText(isChecked, visibilityLabel);
+            }
+        });
+
+
+        // Map modes
+        final String[] options = getResources().getStringArray(R.array.map_modes);
+        final TextView mapModeLabel = ((TextView)rootView.findViewById(R.id.textView_map_mode));
+        mapModeLabel.setText(options[getMapMode()]);
+
+        LinearLayout mapModeLayout = (LinearLayout) rootView.findViewById(R.id.settings_map_mode);
+        mapModeLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new AlertDialog.Builder(getActivity())
+                        .setTitle(R.string.map_mode)
+                        .setNegativeButton(R.string.cancel, null)
+                        .setSingleChoiceItems(options, getMapMode(), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                PreferenceUtils.setValue(context, PreferenceUtils.KEY_SETTING_MAP_MODE, String.valueOf(which));
+                                MainApplication.mapType = which;
+                                mapModeLabel.setText(options[which]);
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
+            }
+        });
 
         return rootView;
     }
 
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+    private int getMapMode () {
+        String map_mode = PreferenceUtils.getValue(context, PreferenceUtils.KEY_SETTING_MAP_MODE);
+        return (map_mode.equals("0") || map_mode.equals("1") || map_mode.equals("2")) ? Integer.valueOf(map_mode) : 0;
+    }
 
-        Log.e(TAG, "onItemSelected: " + position + ", tag:" + parent.getTag());
-        String tag = (String) parent.getTag();
-        if (tag.equals("visibility")) {
-            PreferenceUtils.setValue(context, PreferenceUtils.KEY_SETTING_VISIBILITY, String.valueOf(position));
-            try {
-                if (position == 1) {
-                    MainApplication.visible = false;
-                    LocationService.stop(context);
-                    ServerAPI.setVisibility(context, false);
-                } else {
-                    MainApplication.visible = true;
-                    LocationService.start(context);
-                    ServerAPI.setVisibility(context, true);
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-
-        } else if (tag.equals("map")) {
-            PreferenceUtils.setValue(context, PreferenceUtils.KEY_SETTING_MAP_MODE, String.valueOf(position));
-            MainApplication.mapType = position;
+    private void setVisibilityInfoText(boolean visible, TextView view) {
+        if (visible) {
+            view.setText(getResources().getString(R.string.you_are_visible));
+        } else {
+            view.setText(getResources().getString(R.string.you_are_invisible));
         }
     }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-
-    }
-
 }
