@@ -4,8 +4,10 @@ See LICENSE for details
 */
 package cc.softwarefactory.lokki.android;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
@@ -17,6 +19,7 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -126,12 +129,37 @@ public class MapViewFragment extends Fragment {
         LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver, new IntentFilter("LOCATION-UPDATE"));
         LocalBroadcastManager.getInstance(context).registerReceiver(placesUpdateReceiver, new IntentFilter("PLACES-UPDATE"));
 
+        checkLocationServiceStatus();
 
         new UpdateMap().execute(MapUserTypes.All);
         cancelAsyncTasks = false;
         if (MainApplication.places != null) {
             updatePlaces();
         }
+    }
+
+    private void checkLocationServiceStatus() {
+        LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        boolean gps = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        boolean network = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+        if (!gps && !network) {
+            promptLocationService();
+        }
+    }
+
+    private void promptLocationService() {
+        new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.location_services_disabled)
+                .setMessage(R.string.gps_disabled)
+                .setCancelable(false)
+                .setPositiveButton(R.string.settings, new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, final int id) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                })
+                .setNegativeButton(R.string.ignore, null)
+                .show();
     }
 
     private void setUpMap() {
