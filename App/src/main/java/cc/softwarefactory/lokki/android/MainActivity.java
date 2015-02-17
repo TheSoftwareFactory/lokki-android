@@ -227,9 +227,9 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
                         menuItem.setIcon(R.drawable.ic_invisible);
                     }
                 }
-            } else if (selectedOption == 2) { // People
+            } else if (selectedOption == 2) { // Contacts screen
                 getMenuInflater().inflate(R.menu.contacts, menu);
-            } else if (selectedOption == -10) { // People
+            } else if (selectedOption == -10) { // Add contacts screen
                 getMenuInflater().inflate(R.menu.add_contact, menu);
             }
         }
@@ -308,7 +308,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
                     Log.e(TAG, "Exiting app because requested by user.");
                     finish();
                 } else if (selectedOption == -10) { // -10 is add contacts screen
-                    mNavigationDrawerFragment.selectItem(2);    // 2 is contacts screen... dah
+                    mNavigationDrawerFragment.selectItem(2);    // 2 is contacts screen
                     return true;
                 } else {
                     mNavigationDrawerFragment.selectItem(0);
