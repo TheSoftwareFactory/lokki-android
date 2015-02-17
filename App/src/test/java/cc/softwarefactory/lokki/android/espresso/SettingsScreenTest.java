@@ -17,6 +17,7 @@ import static org.hamcrest.Matchers.is;
 
 
 public class SettingsScreenTest extends LoggedInBaseTest {
+    
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -24,7 +25,7 @@ public class SettingsScreenTest extends LoggedInBaseTest {
 
     private void enterSettingScreen() {
         getActivity();
-        onView(withId(R.id.decor_content_parent)).perform(TestUtils.clickScreenPosition(0, 0));
+        TestUtils.toggleNavigationDrawer();
         onView(withText(R.string.settings)).perform(click());
     }
     
