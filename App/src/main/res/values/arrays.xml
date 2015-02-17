@@ -2,7 +2,8 @@
 <resources>
 
     <string-array name="menuOptions">
-        <item>@string/app_name</item>
+        <item>@string/map</item>
+        <item>@string/places</item>
         <item>@string/contacts</item>
         <item>@string/settings</item>
         <item>@string/about</item>

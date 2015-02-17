@@ -82,7 +82,7 @@ public class SignUpScreenTest extends LokkiBaseTest {
 
         signUpUsingEmail("email@example.com");
         assertQueryStringEquals(getRequest("email@example.com"), requests.get(0).getUtf8Body());
-        onView(withText(R.string.map)).check(matches(isDisplayed()));
+        onView(withId(R.id.map)).check(matches(isDisplayed()));
     }
 
     public void testInvalidEmailGivesErrorMessage() throws InterruptedException, UnsupportedEncodingException {
