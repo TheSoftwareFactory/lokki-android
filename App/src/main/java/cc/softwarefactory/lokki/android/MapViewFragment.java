@@ -280,7 +280,7 @@ public class MapViewFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             Log.e(TAG, "BroadcastReceiver onReceive");
             Bundle extras = intent.getExtras();
-            if ((extras == null) || !extras.containsKey("current-location")) {
+            if (extras == null || !extras.containsKey("current-location")) {
                 new UpdateMap().execute(MapUserTypes.All);
             }
         }
@@ -347,7 +347,7 @@ public class MapViewFragment extends Fragment {
                 JSONObject idMapping = MainApplication.dashboard.getJSONObject("idmapping");
                 HashMap<String, Location> markerData = new HashMap<>();
 
-                if (who == MapUserTypes.User || who == MapUserTypes.All) {  // TODO Find out what is number two
+                if (who == MapUserTypes.User || who == MapUserTypes.All) {
                     markerData.put(MainApplication.userAccount, convertToLocation(MainApplication.dashboard.getJSONObject("location"))); // User himself
                 }
 
