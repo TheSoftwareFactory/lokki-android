@@ -20,7 +20,6 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.DisplayMetrics;
@@ -46,7 +45,6 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.VisibleRegion;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -71,8 +69,8 @@ public class MapViewFragment extends Fragment {
     private Drawable d;
 
     public MapViewFragment() {
-        markerMap = new HashMap<String, Marker>();
-        placesOverlay = new ArrayList<Circle>();
+        markerMap = new HashMap<>();
+        placesOverlay = new ArrayList<>();
     }
 
     @Override
@@ -129,9 +127,7 @@ public class MapViewFragment extends Fragment {
         LocalBroadcastManager.getInstance(context).registerReceiver(placesUpdateReceiver, new IntentFilter("PLACES-UPDATE"));
 
 
-        //new UpdateMap().execute(0); // All users
-        //new UpdateMap().execute(1); // All users
-        new UpdateMap().execute(2); // All users
+        new UpdateMap().execute(MapUserTypes.All);
         cancelAsyncTasks = false;
         if (MainApplication.places != null) {
             updatePlaces();
@@ -217,7 +213,7 @@ public class MapViewFragment extends Fragment {
 
     public void setAddPlacesVisible(boolean visible) {
         if (d != null) {
-            ((ImageView)getView().findViewById(R.id.addPlaceCircle)).setImageDrawable(null);
+            ((ImageView) getView().findViewById(R.id.addPlaceCircle)).setImageDrawable(null);
         }
         if (visible) {
             d = new Drawable() {
@@ -256,7 +252,7 @@ public class MapViewFragment extends Fragment {
                 }
             };
 
-            ((ImageView)getView().findViewById(R.id.addPlaceCircle)).setImageDrawable(d);
+            ((ImageView) getView().findViewById(R.id.addPlaceCircle)).setImageDrawable(d);
             getView().findViewById(R.id.add_place_overlay).setVisibility(View.VISIBLE);
         } else {
             getView().findViewById(R.id.add_place_overlay).setVisibility(View.INVISIBLE);
@@ -284,11 +280,8 @@ public class MapViewFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             Log.e(TAG, "BroadcastReceiver onReceive");
             Bundle extras = intent.getExtras();
-            if (extras != null && extras.containsKey("current-location")) {
-                //    new UpdateMap().execute(0); // Only user
-            } else {
-                //    new UpdateMap().execute(1); // Only others (not user)
-                new UpdateMap().execute(2); // All users
+            if (extras == null || !extras.containsKey("current-location")) {
+                new UpdateMap().execute(MapUserTypes.All);
             }
         }
     };
@@ -337,28 +330,28 @@ public class MapViewFragment extends Fragment {
         placesOverlay.clear();
     }
 
-    class UpdateMap extends AsyncTask<Integer, Void, HashMap<String, Location>> {
+    class UpdateMap extends AsyncTask<MapUserTypes, Void, HashMap<String, Location>> {
 
         @Override
-        protected HashMap<String, Location> doInBackground(Integer... params) {
+        protected HashMap<String, Location> doInBackground(MapUserTypes... params) {
 
             if (MainApplication.dashboard == null) {
                 return null;
             }
 
-            int who = params[0]; // 0 = user, 1 = others, 3 = all.
+            MapUserTypes who = params[0];
             Log.e(TAG, "UpdateMap update for all users: " + who);
 
             try {
                 JSONObject iCanSee = MainApplication.dashboard.getJSONObject("icansee");
                 JSONObject idMapping = MainApplication.dashboard.getJSONObject("idmapping");
-                HashMap<String, Location> markerData = new HashMap<String, Location>();
+                HashMap<String, Location> markerData = new HashMap<>();
 
-                if (who == 0 || who == 2) {  // TODO Find out what is number two
+                if (who == MapUserTypes.User || who == MapUserTypes.All) {
                     markerData.put(MainApplication.userAccount, convertToLocation(MainApplication.dashboard.getJSONObject("location"))); // User himself
                 }
 
-                if (who == 1 || who == 2) {
+                if (who == MapUserTypes.Others || who == MapUserTypes.All) {
                     Iterator keys = iCanSee.keys();
                     while (keys.hasNext()) {
                         String key = (String) keys.next();
