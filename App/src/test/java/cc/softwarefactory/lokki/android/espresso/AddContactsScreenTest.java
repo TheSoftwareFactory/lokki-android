@@ -6,7 +6,7 @@ import android.support.test.espresso.action.ViewActions;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.espresso.utilities.MockJsonUtils;
 import cc.softwarefactory.lokki.android.espresso.utilities.TestUtils;
-import cc.softwarefactory.lokki.android.utils.contacts.ContactUtils;
+import cc.softwarefactory.lokki.android.utils.contacts.ContactSource;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -36,10 +36,10 @@ public class AddContactsScreenTest extends LoggedInBaseTest {
 
 
     private void setMockContacts() throws JSONException {
-        ContactUtils mockContactUtils = Mockito.mock(ContactUtils.class);
+        ContactSource mockContactSource = Mockito.mock(ContactSource.class);
         JSONObject testJSONObject = new JSONObject(MockJsonUtils.getContactsJson());
-        when(mockContactUtils.listContacts(any(Context.class))).thenReturn(testJSONObject);
-        getActivity().setContactUtils(mockContactUtils);
+        when(mockContactSource.getContactsJson(any(Context.class))).thenReturn(testJSONObject);
+        getActivity().setContactUtils(mockContactSource);
     }
 
     private void enterContactsScreen() {

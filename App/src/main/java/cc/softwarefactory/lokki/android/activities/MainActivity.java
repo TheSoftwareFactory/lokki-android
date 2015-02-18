@@ -42,8 +42,8 @@ import cc.softwarefactory.lokki.android.fragments.SettingsFragment;
 import cc.softwarefactory.lokki.android.fragments.AboutFragment;
 import cc.softwarefactory.lokki.android.fragments.AddContactsFragment;
 import cc.softwarefactory.lokki.android.fragments.ContactsFragment;
-import cc.softwarefactory.lokki.android.utils.contacts.ContactUtils;
-import cc.softwarefactory.lokki.android.utils.contacts.DefaultContactUtils;
+import cc.softwarefactory.lokki.android.utils.contacts.ContactSource;
+import cc.softwarefactory.lokki.android.utils.contacts.DefaultContactSource;
 import cc.softwarefactory.lokki.android.utils.PreferenceUtils;
 
 import org.json.JSONException;
@@ -64,7 +64,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     private CharSequence mTitle;
     private int selectedOption = 0;
 
-    private ContactUtils mContactUtils;
+    private ContactSource mContactSource;
 
     // TODO: make non static, put in shared prefs
     public static Boolean firstTimeLaunch;
@@ -73,7 +73,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        mContactUtils = new DefaultContactUtils();
+        mContactSource = new DefaultContactSource();
 
         Log.e(TAG, "onCreate");
         super.onCreate(savedInstanceState);
@@ -260,7 +260,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
                 FragmentManager fragmentManager = getSupportFragmentManager();
 
                 AddContactsFragment acf = new AddContactsFragment();
-                acf.setContactUtils(mContactUtils);
+                acf.setContactUtils(mContactSource);
 
                 fragmentManager.beginTransaction().replace(R.id.container, acf).commit();
                 selectedOption = -10;
@@ -474,8 +474,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     };
 
     // For dependency injection
-    public void setContactUtils(ContactUtils contactUtils) {
-        this.mContactUtils = contactUtils;
+    public void setContactUtils(ContactSource contactSource) {
+        this.mContactSource = contactSource;
     }
 
 }

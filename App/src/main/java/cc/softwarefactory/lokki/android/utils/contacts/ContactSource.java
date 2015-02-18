@@ -4,8 +4,8 @@ import android.content.Context;
 
 import org.json.JSONObject;
 
-public interface ContactUtils {
+public interface ContactSource {
 
-    public JSONObject listContacts(Context context);
+    public JSONObject getContactsJson(Context context);
 
 }

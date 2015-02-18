@@ -8,13 +8,11 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import cc.softwarefactory.lokki.android.utils.contacts.ContactUtils;
+public class DefaultContactSource implements ContactSource {
 
-public class DefaultContactUtils implements ContactUtils {
+    private static final String TAG = "DefaultContactSource";
 
-    private static final String TAG = "DefaultContactUtils";
-
-    public JSONObject listContacts(Context context) {
+    public JSONObject getContactsJson(Context context) {
 
         JSONObject contactsObj = new JSONObject();
         JSONObject mapping = new JSONObject();
@@ -52,11 +50,11 @@ public class DefaultContactUtils implements ContactUtils {
                 Log.e(TAG, e.getMessage());
             }
         }
+
         try {
             contactsObj.put("mapping", mapping);
-
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, e.getMessage());
         }
         emailsCursor.close();
 
