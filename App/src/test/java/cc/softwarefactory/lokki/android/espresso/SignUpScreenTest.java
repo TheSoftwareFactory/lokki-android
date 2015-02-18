@@ -1,12 +1,10 @@
 package cc.softwarefactory.lokki.android.espresso;
 
 import com.squareup.okhttp.mockwebserver.MockResponse;
-import com.squareup.okhttp.mockwebserver.RecordedRequest;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtilsHC4;
 import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONException;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
@@ -17,6 +15,7 @@ import java.util.Set;
 
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.espresso.utilities.MockJsonUtils;
+import cc.softwarefactory.lokki.android.espresso.utilities.RequestsHandle;
 import cc.softwarefactory.lokki.android.espresso.utilities.TestUtils;
 import cc.softwarefactory.lokki.android.utils.Utils;
 
@@ -76,24 +75,25 @@ public class SignUpScreenTest extends LokkiBaseTest {
         assertEquals(firstList, secondList);
     }
 
-    public void testMapIsShownAfterSuccessfulSignUp() throws InterruptedException, JSONException, UnsupportedEncodingException {
+    public void testMapIsShownAfterSuccessfulSignUp() throws Exception {
         MockResponse loginOkResponse = new MockResponse();
         loginOkResponse.setBody(MockJsonUtils.getSignUpResponse(TestUtils.VALUE_TEST_USER_ID, new String[]{}, new String[]{}, TestUtils.VALUE_TEST_AUTH_TOKEN));
-        List<RecordedRequest> requests = getMockDispatcher().setSignUpResponse(loginOkResponse);
+        RequestsHandle requests = getMockDispatcher().setSignUpResponse(loginOkResponse);
 
         signUpUsingEmail("email@example.com");
         assertSignUpIsOk(requests);
     }
 
-    private void assertSignUpIsOk(List<RecordedRequest> requests) throws UnsupportedEncodingException {
-        assertQueryStringEquals(getRequest("email@example.com"), requests.get(0).getUtf8Body());
+    private void assertSignUpIsOk(RequestsHandle requests) throws Exception {
+        requests.waitUntilAnyRequests();
+        assertQueryStringEquals(getRequest("email@example.com"), requests.getRequests().get(0).getUtf8Body());
         onView(withId(R.id.map)).check(matches(isDisplayed()));
     }
 
-    public void testMapIsShownAfterSuccessfulSignUpWhenUsingImeAction() throws InterruptedException, JSONException, UnsupportedEncodingException {
+    public void testMapIsShownAfterSuccessfulSignUpWhenUsingImeAction() throws Exception {
         MockResponse loginOkResponse = new MockResponse();
         loginOkResponse.setBody(MockJsonUtils.getSignUpResponse(TestUtils.VALUE_TEST_USER_ID, new String[]{}, new String[]{}, TestUtils.VALUE_TEST_AUTH_TOKEN));
-        List<RecordedRequest> requests = getMockDispatcher().setSignUpResponse(loginOkResponse);
+        RequestsHandle requests = getMockDispatcher().setSignUpResponse(loginOkResponse);
 
         moveToSignUpScreen();
         typeToEmailField("email@example.com");
@@ -107,25 +107,27 @@ public class SignUpScreenTest extends LokkiBaseTest {
         assertSignUpIsOk(requests);
     }
 
-    public void testInvalidEmailGivesErrorMessage() throws InterruptedException, UnsupportedEncodingException {
+    public void testInvalidEmailGivesErrorMessage() throws Exception {
         MockResponse loginErrorResponse = new MockResponse();
         loginErrorResponse.setResponseCode(400);
         loginErrorResponse.setBody("Invalid email address.");
-        List<RecordedRequest> requests = getMockDispatcher().setSignUpResponse(loginErrorResponse);
+        RequestsHandle requests = getMockDispatcher().setSignUpResponse(loginErrorResponse);
 
         signUpUsingEmail("invalid_email");
-        assertQueryStringEquals(getRequest("invalid_email"), requests.get(0).getUtf8Body());
+        requests.waitUntilAnyRequests();
+        assertQueryStringEquals(getRequest("invalid_email"), requests.getRequests().get(0).getUtf8Body());
         onView(withText(R.string.general_error)).check(matches(isDisplayed()));
     }
 
-    public void testMessageIsShownIfAccountRequiresAuthorization() throws InterruptedException, UnsupportedEncodingException {
+    public void testMessageIsShownIfAccountRequiresAuthorization() throws Exception {
         MockResponse loginNeedAuthorizationResponse = new MockResponse();
         loginNeedAuthorizationResponse.setResponseCode(401);
-        List<RecordedRequest> requests = getMockDispatcher().setSignUpResponse(loginNeedAuthorizationResponse);
+        RequestsHandle requests = getMockDispatcher().setSignUpResponse(loginNeedAuthorizationResponse);
         String signUpText = getResources().getString(R.string.security_sign_up, "test@example.com");
 
         signUpUsingEmail("test@example.com");
-        assertQueryStringEquals(getRequest("test@example.com"), requests.get(0).getUtf8Body());
+        requests.waitUntilAnyRequests();
+        assertQueryStringEquals(getRequest("test@example.com"), requests.getRequests().get(0).getUtf8Body());
         onView(withText(signUpText)).check(matches(isDisplayed()));
     }
 

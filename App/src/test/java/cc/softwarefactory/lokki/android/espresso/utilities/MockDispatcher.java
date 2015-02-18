@@ -21,7 +21,7 @@ public class MockDispatcher extends Dispatcher {
     public static final String DEFAULT_USER_BASE_PATH = "/user/" + TestUtils.VALUE_TEST_USER_ID + "/";
 
     private Map<String, MockResponse> responses;
-    private Map<String, List<RecordedRequest>> requests;
+    private Map<String, RequestsHandle> requests;
 
     public MockDispatcher() throws JSONException {
         this.responses = new HashMap<>();
@@ -39,48 +39,47 @@ public class MockDispatcher extends Dispatcher {
         System.out.println("RECORDED REQUEST: " + recordedRequest.toString());
         String key = constructKey(recordedRequest.getMethod(), recordedRequest.getPath());
         if (requests.containsKey(key)) {
-            requests.get(key).add(recordedRequest);
+            requests.get(key).addRequest(recordedRequest);
         }
         return responses.get(key);
     }
 
-    public List<RecordedRequest> setDashboardResponse(MockResponse response) {
+    public RequestsHandle setDashboardResponse(MockResponse response) {
         return installResponse(METHOD_GET, DEFAULT_USER_BASE_PATH + "dashboard", response);
     }
 
-    public List<RecordedRequest> setPlacesResponse(MockResponse response) {
+    public RequestsHandle setPlacesResponse(MockResponse response) {
         return setPlacesResponse(response, METHOD_GET);
     }
 
-    public List<RecordedRequest> setPlacesResponse(MockResponse response, String method) {
+    public RequestsHandle setPlacesResponse(MockResponse response, String method) {
         return installResponse(method, DEFAULT_USER_BASE_PATH + "places", response);
     }
 
-    public List<RecordedRequest> setPlacesDeleteResponse(MockResponse response, String placeId) {
+    public RequestsHandle setPlacesDeleteResponse(MockResponse response, String placeId) {
         return installResponse(METHOD_DELETE, DEFAULT_USER_BASE_PATH + "places" + "/" + placeId, response);
     }
 
-    public List<RecordedRequest> setSignUpResponse(MockResponse response) {
+    public RequestsHandle setSignUpResponse(MockResponse response) {
         return installResponse(METHOD_POST, "/signup", response);
     }
 
-    public List<RecordedRequest> installResponse(String method, String path, MockResponse response) {
+    public RequestsHandle installResponse(String method, String path, MockResponse response) {
         String key = constructKey(method, path);
-        List<RecordedRequest> requestsHandle;
+        RequestsHandle requestsHandle;
 
         if (!requests.containsKey(key)) {
-            requestsHandle = new ArrayList<>();
+            requestsHandle = new RequestsHandle();
             requests.put(key, requestsHandle);
         } else {
             requestsHandle = requests.get(key);
         }
 
         responses.put(key, response);
-        return Collections.unmodifiableList(requestsHandle);
+        return requestsHandle;
     }
 
     private String constructKey(String method, String path) {
         return method + " " + path;
     }
-
 }
