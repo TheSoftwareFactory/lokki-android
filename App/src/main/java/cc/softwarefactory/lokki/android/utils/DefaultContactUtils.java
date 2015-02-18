@@ -3,11 +3,14 @@ package cc.softwarefactory.lokki.android.utils;
 import android.content.Context;
 import android.database.Cursor;
 import android.provider.ContactsContract;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class DefaultContactUtils implements ContactUtils {
+
+    private static final String TAG = "DefaultContactUtils";
 
     public JSONObject listContacts(Context context) {
 
@@ -43,7 +46,8 @@ public class DefaultContactUtils implements ContactUtils {
                 contactsObj.put(email, contact);
                 mapping.put(newName, email);
 
-            } catch (Exception ex) {
+            } catch (JSONException e) {
+                Log.e(TAG, e.getMessage());
             }
         }
         try {

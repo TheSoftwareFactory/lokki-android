@@ -323,9 +323,10 @@ public class Utils {
             PackageInfo packageInfo = packageManager.getPackageInfo(context.getPackageName(), 0);
             Log.e(TAG, "getAppVersion: " + packageInfo.versionName);
             return packageInfo.versionName;
-        } catch (PackageManager.NameNotFoundException ex) {
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.e(TAG, e.getMessage());
+            return "";
         }
-        return "";
     }
 
     public static String timestampText(String snippet) {

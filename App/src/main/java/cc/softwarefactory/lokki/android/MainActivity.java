@@ -458,6 +458,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
             try {
                 alertDialog.show();
             } catch (Exception ex) {
+                Log.e(TAG, ex.getMessage());
             }
         }
     };

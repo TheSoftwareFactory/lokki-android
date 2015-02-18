@@ -62,7 +62,9 @@ public class MainApplication extends Application {
         if (!iDontWantToSeeString.isEmpty()) {
             try {
                 MainApplication.iDontWantToSee = new JSONObject(iDontWantToSeeString);
-            } catch (JSONException ex) {
+            } catch (JSONException e) {
+                MainApplication.iDontWantToSee = null;
+                Log.e(TAG, e.getMessage());
             }
         } else {
             MainApplication.iDontWantToSee = new JSONObject();
