@@ -9,7 +9,6 @@
     android:dividerPadding="2.5dp"
     android:showDividers="middle">
 
-
     <RelativeLayout
         android:layout_gravity="center"
         android:layout_width="match_parent"
@@ -73,9 +72,6 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/your_friends"
         android:orientation="horizontal"
-        android:divider="?android:listDivider"
-        android:dividerPadding="2.5dp"
-        android:showDividers="middle"
         android:padding="16dp">
 
         <RelativeLayout
@@ -147,5 +143,8 @@
                 android:textSize="13sp" />
         </RelativeLayout>
     </LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"></LinearLayout>
 
 </LinearLayout>
