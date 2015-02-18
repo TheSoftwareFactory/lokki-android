@@ -2,7 +2,7 @@
 Copyright (c) 2014-2015 F-Secure
 See LICENSE for details
 */
-package cc.softwarefactory.lokki.android;
+package cc.softwarefactory.lokki.android.activities;
 
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
@@ -28,8 +28,22 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 
-import cc.softwarefactory.lokki.android.utils.ContactUtils;
-import cc.softwarefactory.lokki.android.utils.DefaultContactUtils;
+import cc.softwarefactory.lokki.android.utils.DialogUtils;
+import cc.softwarefactory.lokki.android.utils.gcm.GcmHelper;
+import cc.softwarefactory.lokki.android.utils.ServerApi;
+import cc.softwarefactory.lokki.android.services.DataService;
+import cc.softwarefactory.lokki.android.services.LocationService;
+import cc.softwarefactory.lokki.android.MainApplication;
+import cc.softwarefactory.lokki.android.fragments.MapViewFragment;
+import cc.softwarefactory.lokki.android.fragments.NavigationDrawerFragment;
+import cc.softwarefactory.lokki.android.fragments.PlacesFragment;
+import cc.softwarefactory.lokki.android.R;
+import cc.softwarefactory.lokki.android.fragments.SettingsFragment;
+import cc.softwarefactory.lokki.android.fragments.AboutFragment;
+import cc.softwarefactory.lokki.android.fragments.AddContactsFragment;
+import cc.softwarefactory.lokki.android.fragments.ContactsFragment;
+import cc.softwarefactory.lokki.android.utils.contacts.ContactUtils;
+import cc.softwarefactory.lokki.android.utils.contacts.DefaultContactUtils;
 import cc.softwarefactory.lokki.android.utils.PreferenceUtils;
 
 import org.json.JSONException;
@@ -119,7 +133,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         DataService.start(this.getApplicationContext());
 
         try {
-            ServerAPI.requestUpdates(this.getApplicationContext());
+            ServerApi.requestUpdates(this.getApplicationContext());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -151,7 +165,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
             MainApplication.userAccount = userAccount;
             MainApplication.userId = userId;
             getSupportActionBar().setIcon(R.drawable.icon_action_menu);
-            GCMHelper.start(getApplicationContext()); // Register to GCM
+            GcmHelper.start(getApplicationContext()); // Register to GCM
 
             Log.e(TAG, "User email: " + userAccount);
             Log.e(TAG, "User id: " + userId);
@@ -259,8 +273,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
                     break;
                 }
                 try {
-                    ServerAPI.allowPeople(this, AddContactsFragment.emailsSelected);
-                    Dialogs.addPeopleSave(this, AddContactsFragment.emailsSelected);
+                    ServerApi.allowPeople(this, AddContactsFragment.emailsSelected);
+                    DialogUtils.addPeopleSave(this, AddContactsFragment.emailsSelected);
                     mNavigationDrawerFragment.selectItem(0);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -284,11 +298,11 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         try {
             if (MainApplication.visible) {
                 LocationService.start(MainActivity.this);
-                ServerAPI.setVisibility(MainActivity.this, true);
+                ServerApi.setVisibility(MainActivity.this, true);
                 Toast.makeText(this, getResources().getString(R.string.you_are_visible), Toast.LENGTH_LONG).show();
             } else {
                 LocationService.stop(MainActivity.this);
-                ServerAPI.setVisibility(MainActivity.this, false);
+                ServerApi.setVisibility(MainActivity.this, false);
                 Toast.makeText(this, getResources().getString(R.string.you_are_invisible), Toast.LENGTH_LONG).show();
             }
         } catch (Exception ex) {
@@ -330,7 +344,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
             if (resultCode == RESULT_OK) {
                 Log.e(TAG, "Returned from sign up. Now we will show the map.");
                 startServices();
-                GCMHelper.start(getApplicationContext()); // Register to GCM
+                GcmHelper.start(getApplicationContext()); // Register to GCM
 
             } else {
                 Log.e(TAG, "Returned from sign up. Exiting app on request.");
@@ -417,7 +431,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
             Log.e(TAG, "toggleUserCanSeeMe: " + email + ", Checkbox is: " + allow);
             if (!allow) {
                 try {
-                    ServerAPI.disallowUser(this, email);
+                    ServerApi.disallowUser(this, email);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -425,7 +439,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
                 try {
                     Set<String> emails = new HashSet<String>();
                     emails.add(email);
-                    ServerAPI.allowPeople(this, emails);
+                    ServerApi.allowPeople(this, emails);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

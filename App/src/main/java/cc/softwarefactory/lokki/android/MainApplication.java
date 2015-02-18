@@ -12,7 +12,10 @@ import android.support.v4.util.LruCache;
 import android.util.Log;
 
 
+import cc.softwarefactory.lokki.android.services.DataService;
+import cc.softwarefactory.lokki.android.services.LocationService;
 import cc.softwarefactory.lokki.android.utils.PreferenceUtils;
+import cc.softwarefactory.lokki.android.utils.ServerApi;
 import cc.softwarefactory.lokki.android.utils.Utils;
 import com.google.android.gms.maps.GoogleMap;
 
@@ -27,9 +30,9 @@ public class MainApplication extends Application {
 
 
     // TODO: gtfo static globals :(
-    static int[] mapTypes = {GoogleMap.MAP_TYPE_NORMAL, GoogleMap.MAP_TYPE_SATELLITE, GoogleMap.MAP_TYPE_HYBRID};
-    static int mapType = 0;
-    static Boolean showPlaces = false;
+    public static int[] mapTypes = {GoogleMap.MAP_TYPE_NORMAL, GoogleMap.MAP_TYPE_SATELLITE, GoogleMap.MAP_TYPE_HYBRID};
+    public static int mapType = 0;
+    public static Boolean showPlaces = false;
     public static String emailBeingTracked;
     public static JSONObject dashboard = null;
     public static String userId; // Id for REST requests
@@ -127,7 +130,7 @@ public class MainApplication extends Application {
                 String reportTitle = ex.getCause().getMessage();
                 Log.e(TAG, "CRASH - OS: " + osType + ", appVersion: " + appVersion + ", Title: " + reportTitle + ", Data: " + reportData);
 
-                ServerAPI.reportCrash(MainApplication.this, osType, appVersion, reportTitle, reportData);
+                ServerApi.reportCrash(MainApplication.this, osType, appVersion, reportTitle, reportData);
                 Log.e(TAG, "Data sent to server");
 
             } catch (Exception exception) {

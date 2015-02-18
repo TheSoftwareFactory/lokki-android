@@ -2,7 +2,7 @@
 Copyright (c) 2014-2015 F-Secure
 See LICENSE for details
 */
-package cc.softwarefactory.lokki.android;
+package cc.softwarefactory.lokki.android.fragments;
 
 import android.support.v7.app.ActionBarActivity;
 import android.app.Activity;
@@ -23,6 +23,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import cc.softwarefactory.lokki.android.R;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.

@@ -2,7 +2,7 @@
 Copyright (c) 2014-2015 F-Secure
 See LICENSE for details
 */
-package cc.softwarefactory.lokki.android;
+package cc.softwarefactory.lokki.android.fragments;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -18,6 +18,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
 import com.androidquery.AQuery;
+
+import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.utils.Utils;
 
 

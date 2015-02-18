@@ -2,10 +2,9 @@
 Copyright (c) 2014-2015 F-Secure
 See LICENSE for details
 */
-package cc.softwarefactory.lokki.android;
+package cc.softwarefactory.lokki.android.utils;
 
 import android.app.AlertDialog;
-import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v4.app.FragmentActivity;
@@ -15,24 +14,20 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
-import cc.softwarefactory.lokki.android.utils.Utils;
-
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONException;
 
 import java.util.Set;
 
-public class Dialogs {
+import cc.softwarefactory.lokki.android.MainApplication;
+import cc.softwarefactory.lokki.android.R;
 
-    private static final String TAG = "Dialogs";
+public class DialogUtils {
 
-    public static void addPeople(final Context context) {
+    private static final String TAG = "DialogUtils";
 
-        showDialog(context, R.string.add_contact, R.string.add_contact_dialog_message);
-    }
-
+    // TODO: Move this method to the class that calls it
     public static void addPeopleSave(final Context context, Set<String> emails) {
 
         Log.e(TAG, "emails: " + emails);
@@ -41,7 +36,7 @@ public class Dialogs {
         showDialog(context, title, message);
     }
 
-
+    // TODO: Move this method to the class that calls it
     public static void securitySignUp(final Context context) {
 
         Log.e(TAG, "securitySignUp");
@@ -107,7 +102,7 @@ public class Dialogs {
                                 }
 
                                 try {
-                                    ServerAPI.addPlace(context, value.toString(), latLng, radius);
+                                    ServerApi.addPlace(context, value.toString(), latLng, radius);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }

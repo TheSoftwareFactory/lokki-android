@@ -1,4 +1,4 @@
-package cc.softwarefactory.lokki.android.utils;
+package cc.softwarefactory.lokki.android.utils.contacts;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -7,6 +7,8 @@ import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import cc.softwarefactory.lokki.android.utils.contacts.ContactUtils;
 
 public class DefaultContactUtils implements ContactUtils {
 

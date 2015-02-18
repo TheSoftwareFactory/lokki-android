@@ -2,7 +2,7 @@
 Copyright (c) 2014-2015 F-Secure
 See LICENSE for details
 */
-package cc.softwarefactory.lokki.android;
+package cc.softwarefactory.lokki.android.fragments;
 
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -24,6 +24,11 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.androidquery.AQuery;
+
+import cc.softwarefactory.lokki.android.utils.ServerApi;
+import cc.softwarefactory.lokki.android.services.DataService;
+import cc.softwarefactory.lokki.android.MainApplication;
+import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.avatar.AvatarLoader;
 import cc.softwarefactory.lokki.android.utils.PreferenceUtils;
 
@@ -192,7 +197,7 @@ public class PlacesFragment extends Fragment {
                 JSONObject placeObj = MainApplication.places.getJSONObject(key);
                 if (name.equals(placeObj.getString("name"))) {
                     Log.e(TAG, "Place ID to be deleted: " + key);
-                    ServerAPI.removePlace(context, key);
+                    ServerApi.removePlace(context, key);
                     break;
                 }
             }

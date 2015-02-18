@@ -2,7 +2,7 @@
 Copyright (c) 2014-2015 F-Secure
 See LICENSE for details
 */
-package cc.softwarefactory.lokki.android;
+package cc.softwarefactory.lokki.android.fragments;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -22,9 +22,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.androidquery.AQuery;
+
+import cc.softwarefactory.lokki.android.MainApplication;
+import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.avatar.AvatarLoader;
-import cc.softwarefactory.lokki.android.utils.ContactUtils;
-import cc.softwarefactory.lokki.android.utils.DefaultContactUtils;
+import cc.softwarefactory.lokki.android.utils.contacts.ContactUtils;
+import cc.softwarefactory.lokki.android.utils.contacts.DefaultContactUtils;
 import cc.softwarefactory.lokki.android.utils.PreferenceUtils;
 
 import org.json.JSONArray;
