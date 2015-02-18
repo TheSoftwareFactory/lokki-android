@@ -6,10 +6,7 @@ import com.squareup.okhttp.mockwebserver.RecordedRequest;
 
 import org.json.JSONException;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -22,6 +19,12 @@ public class MockDispatcher extends Dispatcher {
 
     private Map<String, MockResponse> responses;
     private Map<String, RequestsHandle> requests;
+
+    /*
+     * Response dispatching is done in different thread than installing responses, so there's a
+     * potential for race condition – thus a lock here.
+     */
+    private final Object dispatchLock = new Object();
 
     public MockDispatcher() throws JSONException {
         this.responses = new HashMap<>();
@@ -38,10 +41,13 @@ public class MockDispatcher extends Dispatcher {
     public MockResponse dispatch(RecordedRequest recordedRequest) throws InterruptedException {
         System.out.println("RECORDED REQUEST: " + recordedRequest.toString());
         String key = constructKey(recordedRequest.getMethod(), recordedRequest.getPath());
-        if (requests.containsKey(key)) {
-            requests.get(key).addRequest(recordedRequest);
+
+        synchronized (dispatchLock) {
+            if (requests.containsKey(key)) {
+                requests.get(key).addRequest(recordedRequest);
+            }
+            return responses.get(key);
         }
-        return responses.get(key);
     }
 
     public RequestsHandle setDashboardResponse(MockResponse response) {
@@ -68,14 +74,17 @@ public class MockDispatcher extends Dispatcher {
         String key = constructKey(method, path);
         RequestsHandle requestsHandle;
 
-        if (!requests.containsKey(key)) {
-            requestsHandle = new RequestsHandle();
-            requests.put(key, requestsHandle);
-        } else {
-            requestsHandle = requests.get(key);
+        synchronized (dispatchLock) {
+            if (!requests.containsKey(key)) {
+                requestsHandle = new RequestsHandle();
+                requests.put(key, requestsHandle);
+            } else {
+                requestsHandle = requests.get(key);
+            }
+
+            responses.put(key, response);
         }
 
-        responses.put(key, response);
         return requestsHandle;
     }
 
