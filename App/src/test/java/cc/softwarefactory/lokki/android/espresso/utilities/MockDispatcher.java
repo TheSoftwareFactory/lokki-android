@@ -6,10 +6,7 @@ import com.squareup.okhttp.mockwebserver.RecordedRequest;
 
 import org.json.JSONException;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 
@@ -21,7 +18,13 @@ public class MockDispatcher extends Dispatcher {
     public static final String DEFAULT_USER_BASE_PATH = "/user/" + TestUtils.VALUE_TEST_USER_ID + "/";
 
     private Map<String, MockResponse> responses;
-    private Map<String, List<RecordedRequest>> requests;
+    private Map<String, RequestsHandle> requests;
+
+    /*
+     * Response dispatching is done in different thread than installing responses, so there's a
+     * potential for race condition – thus a lock here.
+     */
+    private final Object dispatchLock = new Object();
 
     public MockDispatcher() throws JSONException {
         this.responses = new HashMap<>();
@@ -38,49 +41,54 @@ public class MockDispatcher extends Dispatcher {
     public MockResponse dispatch(RecordedRequest recordedRequest) throws InterruptedException {
         System.out.println("RECORDED REQUEST: " + recordedRequest.toString());
         String key = constructKey(recordedRequest.getMethod(), recordedRequest.getPath());
-        if (requests.containsKey(key)) {
-            requests.get(key).add(recordedRequest);
+
+        synchronized (dispatchLock) {
+            if (requests.containsKey(key)) {
+                requests.get(key).addRequest(recordedRequest);
+            }
+            return responses.get(key);
         }
-        return responses.get(key);
     }
 
-    public List<RecordedRequest> setDashboardResponse(MockResponse response) {
+    public RequestsHandle setDashboardResponse(MockResponse response) {
         return installResponse(METHOD_GET, DEFAULT_USER_BASE_PATH + "dashboard", response);
     }
 
-    public List<RecordedRequest> setPlacesResponse(MockResponse response) {
+    public RequestsHandle setPlacesResponse(MockResponse response) {
         return setPlacesResponse(response, METHOD_GET);
     }
 
-    public List<RecordedRequest> setPlacesResponse(MockResponse response, String method) {
+    public RequestsHandle setPlacesResponse(MockResponse response, String method) {
         return installResponse(method, DEFAULT_USER_BASE_PATH + "places", response);
     }
 
-    public List<RecordedRequest> setPlacesDeleteResponse(MockResponse response, String placeId) {
+    public RequestsHandle setPlacesDeleteResponse(MockResponse response, String placeId) {
         return installResponse(METHOD_DELETE, DEFAULT_USER_BASE_PATH + "places" + "/" + placeId, response);
     }
 
-    public List<RecordedRequest> setSignUpResponse(MockResponse response) {
+    public RequestsHandle setSignUpResponse(MockResponse response) {
         return installResponse(METHOD_POST, "/signup", response);
     }
 
-    public List<RecordedRequest> installResponse(String method, String path, MockResponse response) {
+    public RequestsHandle installResponse(String method, String path, MockResponse response) {
         String key = constructKey(method, path);
-        List<RecordedRequest> requestsHandle;
+        RequestsHandle requestsHandle;
 
-        if (!requests.containsKey(key)) {
-            requestsHandle = new ArrayList<>();
-            requests.put(key, requestsHandle);
-        } else {
-            requestsHandle = requests.get(key);
+        synchronized (dispatchLock) {
+            if (!requests.containsKey(key)) {
+                requestsHandle = new RequestsHandle();
+                requests.put(key, requestsHandle);
+            } else {
+                requestsHandle = requests.get(key);
+            }
+
+            responses.put(key, response);
         }
 
-        responses.put(key, response);
-        return Collections.unmodifiableList(requestsHandle);
+        return requestsHandle;
     }
 
     private String constructKey(String method, String path) {
         return method + " " + path;
     }
-
 }
