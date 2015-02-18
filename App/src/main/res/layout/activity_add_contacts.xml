@@ -8,7 +8,7 @@
     android:layout_gravity="center">
 
 
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    <TextView
         android:id="@+id/header_text"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -24,7 +24,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 
-    <ListView xmlns:android="http://schemas.android.com/apk/res/android"
+    <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/inputText"

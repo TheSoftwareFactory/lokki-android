@@ -21,6 +21,7 @@
         <LinearLayout
             android:id="@+id/avatar_row"
             android:layout_width="wrap_content"
+            android:orientation="horizontal"
             android:ellipsize="end"
             android:gravity="center_vertical"
             android:scrollHorizontally="true"
