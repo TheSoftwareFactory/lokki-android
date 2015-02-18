@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,7 +53,7 @@ public class SettingsFragment extends Fragment {
         final TextView visibilityLabel = (TextView) rootView.findViewById(R.id.textView_visible);
         setVisibilityInfoText(MainApplication.visible, visibilityLabel);
 
-        Switch toggle = (Switch) rootView.findViewById(R.id.switch_visibility);
+        SwitchCompat toggle = (SwitchCompat) rootView.findViewById(R.id.switch_visibility);
         toggle.setChecked(MainApplication.visible);
         toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

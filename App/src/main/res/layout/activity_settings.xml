@@ -1,10 +1,21 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
     android:background="@android:color/white"
-    tools:context=".AboutActivity">
+    android:orientation="vertical"
+    android:divider="?android:listDivider"
+    android:dividerPadding="2.5dp"
+    android:showDividers="middle">
+
+
+    <RelativeLayout
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:context=".AboutActivity"
+        android:padding="16dp">
 
     <com.makeramen.RoundedImageView xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/avatar"
@@ -52,6 +63,7 @@
         android:textAlignment="center"
         android:textColor="@android:color/darker_gray"
         android:textSize="12sp" />
+    </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/layout_visible"
@@ -61,6 +73,9 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/your_friends"
         android:orientation="horizontal"
+        android:divider="?android:listDivider"
+        android:dividerPadding="2.5dp"
+        android:showDividers="middle"
         android:padding="16dp">
 
         <RelativeLayout
@@ -92,7 +107,7 @@
             android:layout_gravity="center_vertical"
             android:gravity="center_vertical">
 
-            <Switch
+            <android.support.v7.widget.SwitchCompat
                 android:id="@+id/switch_visibility"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -133,4 +148,4 @@
         </RelativeLayout>
     </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>
