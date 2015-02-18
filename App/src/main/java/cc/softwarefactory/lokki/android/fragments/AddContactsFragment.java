@@ -26,8 +26,8 @@ import com.androidquery.AQuery;
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.avatar.AvatarLoader;
-import cc.softwarefactory.lokki.android.utils.contacts.ContactSource;
-import cc.softwarefactory.lokki.android.utils.contacts.DefaultContactSource;
+import cc.softwarefactory.lokki.android.utils.contacts.ContactDataSource;
+import cc.softwarefactory.lokki.android.utils.contacts.DefaultContactDataSource;
 import cc.softwarefactory.lokki.android.utils.PreferenceUtils;
 
 import org.json.JSONArray;
@@ -44,7 +44,7 @@ public class AddContactsFragment extends Fragment {
 
     private static final String TAG = "AddContacts";
     public static Set<String> emailsSelected;
-    private ContactSource mContactSource;
+    private ContactDataSource mContactDataSource;
     private ArrayList<String> contactList;
     private AQuery aq;
     private Boolean cancelAsynTasks = false;
@@ -56,7 +56,7 @@ public class AddContactsFragment extends Fragment {
     public AddContactsFragment() {
         emailsSelected = new HashSet<>();
         contactList = new ArrayList<>();
-        mContactSource = new DefaultContactSource();
+        mContactDataSource = new DefaultContactDataSource();
     }
 
 
@@ -113,8 +113,8 @@ public class AddContactsFragment extends Fragment {
     }
 
 
-    public void setContactUtils(ContactSource contactSource) {
-        this.mContactSource = contactSource;
+    public void setContactUtils(ContactDataSource contactDataSource) {
+        this.mContactDataSource = contactDataSource;
     }
 
     class prepareAdapterAsync extends AsyncTask<Void, Void, Boolean> {
@@ -142,7 +142,7 @@ public class AddContactsFragment extends Fragment {
 
         @Override
         protected JSONObject doInBackground(Void... params) {
-            return mContactSource.getContactsJson(context);
+            return mContactDataSource.getContactsJson(context);
         }
 
         @Override

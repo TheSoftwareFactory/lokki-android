@@ -25,7 +25,7 @@
         android:required="true" />
 
     <application
-        android:name="cc.softwarefactory.lokki.android.MainApplication"
+        android:name=".MainApplication"
         android:allowBackup="false"
         android:hardwareAccelerated="true"
         android:icon="@drawable/ic_launcher"

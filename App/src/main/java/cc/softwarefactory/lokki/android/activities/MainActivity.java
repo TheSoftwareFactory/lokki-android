@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 
 import cc.softwarefactory.lokki.android.utils.DialogUtils;
+import cc.softwarefactory.lokki.android.utils.contacts.ContactDataSource;
 import cc.softwarefactory.lokki.android.utils.gcm.GcmHelper;
 import cc.softwarefactory.lokki.android.utils.ServerApi;
 import cc.softwarefactory.lokki.android.services.DataService;
@@ -42,8 +43,7 @@ import cc.softwarefactory.lokki.android.fragments.SettingsFragment;
 import cc.softwarefactory.lokki.android.fragments.AboutFragment;
 import cc.softwarefactory.lokki.android.fragments.AddContactsFragment;
 import cc.softwarefactory.lokki.android.fragments.ContactsFragment;
-import cc.softwarefactory.lokki.android.utils.contacts.ContactSource;
-import cc.softwarefactory.lokki.android.utils.contacts.DefaultContactSource;
+import cc.softwarefactory.lokki.android.utils.contacts.DefaultContactDataSource;
 import cc.softwarefactory.lokki.android.utils.PreferenceUtils;
 
 import org.json.JSONException;
@@ -64,7 +64,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     private CharSequence mTitle;
     private int selectedOption = 0;
 
-    private ContactSource mContactSource;
+    private ContactDataSource mContactDataSource;
 
     // TODO: make non static, put in shared prefs
     public static Boolean firstTimeLaunch;
@@ -73,7 +73,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        mContactSource = new DefaultContactSource();
+        mContactDataSource = new DefaultContactDataSource();
 
         Log.e(TAG, "onCreate");
         super.onCreate(savedInstanceState);
@@ -260,7 +260,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
                 FragmentManager fragmentManager = getSupportFragmentManager();
 
                 AddContactsFragment acf = new AddContactsFragment();
-                acf.setContactUtils(mContactSource);
+                acf.setContactUtils(mContactDataSource);
 
                 fragmentManager.beginTransaction().replace(R.id.container, acf).commit();
                 selectedOption = -10;
@@ -474,8 +474,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     };
 
     // For dependency injection
-    public void setContactUtils(ContactSource contactSource) {
-        this.mContactSource = contactSource;
+    public void setContactUtils(ContactDataSource contactDataSource) {
+        this.mContactDataSource = contactDataSource;
     }
 
 }

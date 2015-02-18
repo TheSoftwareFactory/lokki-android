@@ -8,9 +8,9 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class DefaultContactSource implements ContactSource {
+public class DefaultContactDataSource implements ContactDataSource {
 
-    private static final String TAG = "DefaultContactSource";
+    private static final String TAG = "DefaultContactDataSource";
 
     public JSONObject getContactsJson(Context context) {
 
