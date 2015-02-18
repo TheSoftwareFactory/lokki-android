@@ -8,6 +8,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -23,6 +24,7 @@ import android.widget.TextView;
 import com.androidquery.AQuery;
 import cc.softwarefactory.lokki.android.avatar.AvatarLoader;
 import cc.softwarefactory.lokki.android.utils.ContactUtils;
+import cc.softwarefactory.lokki.android.utils.DefaultContactUtils;
 import cc.softwarefactory.lokki.android.utils.PreferenceUtils;
 
 import org.json.JSONArray;
@@ -42,17 +44,19 @@ public class AddContactsFragment extends Fragment {
     private ContactUtils mContactUtils;
     private ArrayList<String> contactList;
     private AQuery aq;
-    private static Boolean cancelAsynTasks = false;
+    private Boolean cancelAsynTasks = false;
     private Context context;
     private AvatarLoader avatarLoader;
     private EditText inputSearch;
     private ArrayAdapter<String> adapter;
 
-    public AddContactsFragment(ContactUtils contactUtils) {
-        mContactUtils = contactUtils;
-        emailsSelected = new HashSet<String>();
-        contactList = new ArrayList<String>();
+    public AddContactsFragment() {
+        emailsSelected = new HashSet<>();
+        contactList = new ArrayList<>();
+        mContactUtils = new DefaultContactUtils();
     }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -67,16 +71,21 @@ public class AddContactsFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
+    public void onResume() {
+        super.onResume();
+        ((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(R.string.add_contact);
+        loadContacts();
+        enableSearchFilter();
+    }
 
-        super.onActivityCreated(savedInstanceState);
-        String[] loadingList = {"Loading..."};
-        aq.id(R.id.add_contacts_list_view).adapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, loadingList));
+    private void loadContacts() {
+        String[] loadingList = {getResources().getString(R.string.loading)};
+        aq.id(R.id.add_contacts_list_view).adapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, loadingList));
         new getAllEmailAddressesAsync().execute();
+    }
 
-        /**
-         * Enabling Search Filter
-         * */
+    private void enableSearchFilter() {
+
         inputSearch.addTextChangedListener(new TextWatcher() {
 
             @Override
@@ -98,29 +107,11 @@ public class AddContactsFragment extends Fragment {
                 // TODO Auto-generated method stub
             }
         });
-
     }
 
-    public Boolean loadContacts(Context context) {
 
-        if (MainApplication.contacts != null) {
-            return true;
-        }
-
-        String jsonData = PreferenceUtils.getValue(context, PreferenceUtils.KEY_CONTACTS);
-        if (jsonData.isEmpty()) {
-            return false;
-        }
-
-        try {
-            MainApplication.contacts = new JSONObject(jsonData);
-            MainApplication.mapping = MainApplication.contacts.getJSONObject("mapping");
-
-        } catch (JSONException e) {
-            MainApplication.contacts = new JSONObject();
-            return false;
-        }
-        return true;
+    public void setContactUtils(ContactUtils contactUtils) {
+        this.mContactUtils = contactUtils;
     }
 
     class prepareAdapterAsync extends AsyncTask<Void, Void, Boolean> {
@@ -148,14 +139,7 @@ public class AddContactsFragment extends Fragment {
 
         @Override
         protected JSONObject doInBackground(Void... params) {
-
-            try {
-                return mContactUtils.listContacts(context);
-
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                return null;
-            }
+            return mContactUtils.listContacts(context);
         }
 
         @Override
@@ -172,7 +156,7 @@ public class AddContactsFragment extends Fragment {
                 PreferenceUtils.setValue(context, PreferenceUtils.KEY_CONTACTS, MainApplication.contacts.toString());
 
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.e(TAG, e.getMessage());
             }
             new prepareAdapterAsync().execute();
             super.onPostExecute(MainApplication.contacts);
@@ -188,13 +172,13 @@ public class AddContactsFragment extends Fragment {
         if (keys == null) {
             return;
         }
+        int contactCount = keys.length();
 
-        for (int i = 0; i < keys.length(); i++) {
+        for (int i = 0; i < contactCount; i++) {
             try {
-                contactList.add(keys.get(i).toString());
-
-            } catch (Exception ex) {
-                ex.printStackTrace();
+                contactList.add(keys.getString(i));
+            } catch (JSONException e) {
+                Log.e(TAG, e.getMessage());
             }
         }
         Collections.sort(contactList);
@@ -235,8 +219,8 @@ public class AddContactsFragment extends Fragment {
                     aq.id(holder.check).tag(email).checked(emailsSelected.contains(email));
                     holder.position = position;
 
-                } catch (Exception ex) {
-                    ex.printStackTrace();
+                } catch (JSONException e) {
+                    Log.e(TAG, e.getMessage());
                 }
                 return convertView;
             }

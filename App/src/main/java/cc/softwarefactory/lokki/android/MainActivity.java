@@ -244,7 +244,11 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
             case R.id.add_people: // In Contacts (to add new ones)
                 FragmentManager fragmentManager = getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.container, new AddContactsFragment(mContactUtils)).commit();
+
+                AddContactsFragment acf = new AddContactsFragment();
+                acf.setContactUtils(mContactUtils);
+
+                fragmentManager.beginTransaction().replace(R.id.container, acf).commit();
                 selectedOption = -10;
                 supportInvalidateOptionsMenu();
                 break;
@@ -457,7 +461,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
             }
         }
     };
-
 
     // For dependency injection
     public void setContactUtils(ContactUtils contactUtils) {
