@@ -74,24 +74,22 @@ public class SettingsFragment extends Fragment {
         final TextView mapModeLabel = ((TextView)rootView.findViewById(R.id.textView_map_mode));
         mapModeLabel.setText(options[getMapMode()]);
 
-        final AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.map_mode)
-                .setNegativeButton(R.string.cancel, null)
-                .setSingleChoiceItems(options, getMapMode(), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        PreferenceUtils.setValue(context, PreferenceUtils.KEY_SETTING_MAP_MODE, String.valueOf(which));
-                        MainApplication.mapType = which;
-                        mapModeLabel.setText(options[which]);
-                        dialog.dismiss();
-                    }
-                });
-
         LinearLayout mapModeLayout = (LinearLayout) rootView.findViewById(R.id.settings_map_mode);
         mapModeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.show();
+                new AlertDialog.Builder(getActivity())
+                        .setTitle(R.string.map_mode)
+                        .setNegativeButton(R.string.cancel, null)
+                        .setSingleChoiceItems(options, getMapMode(), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                PreferenceUtils.setValue(context, PreferenceUtils.KEY_SETTING_MAP_MODE, String.valueOf(which));
+                                MainApplication.mapType = which;
+                                mapModeLabel.setText(options[which]);
+                                dialog.dismiss();
+                            }
+                        }).show();
             }
         });
 
@@ -99,6 +97,7 @@ public class SettingsFragment extends Fragment {
     }
 
     private int getMapMode () {
+
         String mapMode = PreferenceUtils.getValue(context, PreferenceUtils.KEY_SETTING_MAP_MODE);
         return Arrays.asList("0", "1", "2").contains(mapMode) ? Integer.valueOf(mapMode) : 0;
     }
