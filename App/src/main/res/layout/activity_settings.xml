@@ -139,8 +139,9 @@
                 android:textSize="13sp" />
         </RelativeLayout>
     </LinearLayout>
+    <!-- This is here to draw a line at the bottom -->
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"></LinearLayout>
+        android:layout_height="wrap_content" />
 
 </LinearLayout>
