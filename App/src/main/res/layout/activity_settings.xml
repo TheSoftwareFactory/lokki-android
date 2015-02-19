@@ -1,105 +1,151 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
     android:layout_gravity="center"
-    tools:context=".AboutActivity">
+    android:background="@android:color/white"
+    android:orientation="vertical"
+    android:divider="?android:listDivider"
+    android:showDividers="middle">
+
+    <RelativeLayout
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:context=".AboutActivity"
+        android:padding="16dp">
 
     <com.makeramen.RoundedImageView xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/avatar"
-        android:src="@drawable/default_avatar"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:layout_marginTop="10dp"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
         android:scaleType="centerCrop"
-        app:corner_radius="100dip"
-        app:border_width="0dip"
+        android:src="@drawable/default_avatar"
         app:border_color="#215fcc"
+        app:border_width="0dip"
+        app:corner_radius="100dip"
         app:round_background="true" />
-    <!--
-    <ImageView
-        android:id="@+id/avatar"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:src="@drawable/default_avatar" />-->
 
     <TextView
         android:id="@+id/user_name"
-        android:textColor="@android:color/black"
-        android:layout_centerHorizontal="true"
-        android:text="Name Surname"
-        android:padding="10dip"
-        android:textSize="18sp"
-        android:layout_below="@id/avatar"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content" />
+        android:layout_below="@id/avatar"
+        android:layout_centerHorizontal="true"
+        android:padding="10dip"
+        android:text=""
+        android:textColor="@android:color/black"
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/lokki_id_text"
-        android:textColor="@android:color/black"
-        android:textSize="12sp"
-        android:layout_centerHorizontal="true"
-        android:text="Your Lokki ID is user@email.com"
-        android:padding="0dip"
-        android:layout_below="@id/user_name"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content" />
+        android:layout_below="@id/user_name"
+        android:layout_centerHorizontal="true"
+        android:padding="0dip"
+        android:text=""
+        android:textColor="@android:color/black"
+        android:textSize="12sp" />
 
     <TextView
         android:id="@+id/your_friends"
-        android:textColor="@android:color/darker_gray"
-        android:layout_centerHorizontal="true"
-        android:text="@string/your_friends"
-        android:padding="0dip"
-        android:textSize="12sp"
-        android:textAlignment="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@id/lokki_id_text"
-        android:layout_height="wrap_content"
-        android:layout_width="240dp" />
+        android:layout_centerHorizontal="true"
+        android:padding="0dip"
+        android:text="@string/your_friends"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="12sp"
+        android:gravity="center_horizontal" />
+    </RelativeLayout>
 
-    <TextView
-        android:id="@+id/visibility"
-        android:textColor="@android:color/black"
-        android:text="@string/my_visibility"
-        android:textStyle="italic"
-        android:padding="5dip"
-        android:textSize="18sp"
-        android:textAlignment="center"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_below="@+id/your_friends" />
-
-    <Spinner
+    <LinearLayout
+        android:id="@+id/layout_visible"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/spinner_visibility"
-        android:layout_below="@+id/visibility"
-        android:paddingLeft="8dp"
-        android:paddingStart="8dp"/>
+        android:orientation="horizontal"
+        style="?android:borderlessButtonStyle"
+        android:padding="16dp">
 
-    <TextView
-        android:id="@+id/map_type"
-        android:textColor="@android:color/black"
-        android:textStyle="italic"
-        android:text="@string/map_mode"
-        android:padding="5dip"
-        android:textSize="18sp"
-        android:layout_marginTop="10dp"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:layout_below="@+id/spinner_visibility" />
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
 
-    <Spinner
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/my_visibility"
+                android:textColor="@android:color/primary_text_light"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/textView_visible"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/textView"
+                android:textColor="@android:color/tertiary_text_light"
+                android:textSize="13sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical">
+
+            <android.support.v7.widget.SwitchCompat
+                android:id="@+id/switch_visibility"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:gravity="center_vertical|fill_vertical" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/spinner_map"
-        android:layout_below="@+id/map_type"
-        android:paddingLeft="8dp"
-        android:paddingStart="8dp" />
+        android:orientation="horizontal"
+        android:padding="16dp"
+        style="?android:borderlessButtonStyle"
+        android:id="@+id/settings_map_mode"
+        android:gravity="left">
 
-</RelativeLayout>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/textView_map"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/map_mode"
+                android:textColor="@android:color/primary_text_light"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/textView_map_mode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textView_map"
+                android:textColor="@android:color/tertiary_text_light"
+                android:textSize="13sp" />
+        </RelativeLayout>
+    </LinearLayout>
+    <!-- This is here to draw a line at the bottom -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

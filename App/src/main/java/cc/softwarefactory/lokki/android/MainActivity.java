@@ -30,7 +30,9 @@ import android.widget.Toast;
 
 import cc.softwarefactory.lokki.android.utils.ContactUtils;
 import cc.softwarefactory.lokki.android.utils.DefaultContactUtils;
+import cc.softwarefactory.lokki.android.utils.MapUtils;
 import cc.softwarefactory.lokki.android.utils.PreferenceUtils;
+import cc.softwarefactory.lokki.android.utils.Utils;
 
 import org.json.JSONException;
 
@@ -277,22 +279,11 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
     private void toggleVisibility() {
 
-        MainApplication.visible = !MainApplication.visible;
-        int visibility_mode = MainApplication.visible ? 0 : 1;
-        PreferenceUtils.setValue(this, PreferenceUtils.KEY_SETTING_VISIBILITY, String.valueOf(visibility_mode));
-
-        try {
-            if (MainApplication.visible) {
-                LocationService.start(MainActivity.this);
-                ServerAPI.setVisibility(MainActivity.this, true);
-                Toast.makeText(this, getResources().getString(R.string.you_are_visible), Toast.LENGTH_LONG).show();
-            } else {
-                LocationService.stop(MainActivity.this);
-                ServerAPI.setVisibility(MainActivity.this, false);
-                Toast.makeText(this, getResources().getString(R.string.you_are_invisible), Toast.LENGTH_LONG).show();
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        Utils.setVisibility(!MainApplication.visible, MainActivity.this);
+        if (MainApplication.visible) {
+            Toast.makeText(this, getResources().getString(R.string.you_are_visible), Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, getResources().getString(R.string.you_are_invisible), Toast.LENGTH_LONG).show();
         }
 
         supportInvalidateOptionsMenu();
