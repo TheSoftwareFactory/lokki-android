@@ -399,7 +399,7 @@ public class Utils {
                 LocationService.start(context);
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.e(TAG, "Could not set visibility:" + ex.getMessage());
         }
     }
 }

@@ -16,10 +16,11 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.androidquery.AQuery;
+
+import java.util.Arrays;
 
 import cc.softwarefactory.lokki.android.avatar.AvatarLoader;
 import cc.softwarefactory.lokki.android.utils.PreferenceUtils;
@@ -53,13 +54,17 @@ public class SettingsFragment extends Fragment {
         final TextView visibilityLabel = (TextView) rootView.findViewById(R.id.textView_visible);
         setVisibilityInfoText(MainApplication.visible, visibilityLabel);
 
-        SwitchCompat toggle = (SwitchCompat) rootView.findViewById(R.id.switch_visibility);
+        final SwitchCompat toggle = (SwitchCompat) rootView.findViewById(R.id.switch_visibility);
         toggle.setChecked(MainApplication.visible);
-        toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        toggle.setClickable(false); // Set this to false and let the parent linearlayout handle clicks instead...
+
+        LinearLayout visibilityLayout = (LinearLayout) rootView.findViewById(R.id.layout_visible);
+        visibilityLayout.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                Utils.setVisibility(isChecked, context);
-                setVisibilityInfoText(isChecked, visibilityLabel);
+            public void onClick(View v) {
+                toggle.setChecked(!toggle.isChecked());
+                Utils.setVisibility(toggle.isChecked(), context);
+                setVisibilityInfoText(toggle.isChecked(), visibilityLabel);
             }
         });
 
@@ -69,23 +74,24 @@ public class SettingsFragment extends Fragment {
         final TextView mapModeLabel = ((TextView)rootView.findViewById(R.id.textView_map_mode));
         mapModeLabel.setText(options[getMapMode()]);
 
+        final AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.map_mode)
+                .setNegativeButton(R.string.cancel, null)
+                .setSingleChoiceItems(options, getMapMode(), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        PreferenceUtils.setValue(context, PreferenceUtils.KEY_SETTING_MAP_MODE, String.valueOf(which));
+                        MainApplication.mapType = which;
+                        mapModeLabel.setText(options[which]);
+                        dialog.dismiss();
+                    }
+                });
+
         LinearLayout mapModeLayout = (LinearLayout) rootView.findViewById(R.id.settings_map_mode);
         mapModeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new AlertDialog.Builder(getActivity())
-                        .setTitle(R.string.map_mode)
-                        .setNegativeButton(R.string.cancel, null)
-                        .setSingleChoiceItems(options, getMapMode(), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                PreferenceUtils.setValue(context, PreferenceUtils.KEY_SETTING_MAP_MODE, String.valueOf(which));
-                                MainApplication.mapType = which;
-                                mapModeLabel.setText(options[which]);
-                                dialog.dismiss();
-                            }
-                        })
-                        .show();
+                dialog.show();
             }
         });
 
@@ -93,8 +99,8 @@ public class SettingsFragment extends Fragment {
     }
 
     private int getMapMode () {
-        String map_mode = PreferenceUtils.getValue(context, PreferenceUtils.KEY_SETTING_MAP_MODE);
-        return (map_mode.equals("0") || map_mode.equals("1") || map_mode.equals("2")) ? Integer.valueOf(map_mode) : 0;
+        String mapMode = PreferenceUtils.getValue(context, PreferenceUtils.KEY_SETTING_MAP_MODE);
+        return Arrays.asList("0", "1", "2").contains(mapMode) ? Integer.valueOf(mapMode) : 0;
     }
 
     private void setVisibilityInfoText(boolean visible, TextView view) {

@@ -6,7 +6,6 @@
     android:background="@android:color/white"
     android:orientation="vertical"
     android:divider="?android:listDivider"
-    android:dividerPadding="2.5dp"
     android:showDividers="middle">
 
     <RelativeLayout
@@ -69,6 +68,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        style="?android:borderlessButtonStyle"
         android:padding="16dp">
 
         <RelativeLayout
@@ -107,6 +107,8 @@
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
                 android:gravity="center_vertical|fill_vertical" />
         </RelativeLayout>
     </LinearLayout>
@@ -116,7 +118,9 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="16dp"
-        android:id="@+id/settings_map_mode">
+        style="?android:borderlessButtonStyle"
+        android:id="@+id/settings_map_mode"
+        android:gravity="left">
 
         <RelativeLayout
             android:layout_width="wrap_content"
