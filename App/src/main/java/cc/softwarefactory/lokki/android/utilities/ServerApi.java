@@ -122,7 +122,7 @@ public class ServerApi {
         aq.ajax(url, JSONObject.class, cb);
     }
 
-    public static void allowPeople(final Context context, Set<String> emails) throws JSONException {
+    public static void allowPeople(final Context context, String email) throws JSONException {
 
         Log.e(TAG, "allowPeople");
         AQuery aq = new AQuery(context);
@@ -132,9 +132,7 @@ public class ServerApi {
         String url = ApiUrl + "user/" + userId + "/allow";
 
         JSONArray JSONemails = new JSONArray();
-        for (String email : emails) {
-            JSONemails.put(email);
-        }
+        JSONemails.put(email);
 
         JSONObject JSONdata = new JSONObject()
                 .put("emails", JSONemails);

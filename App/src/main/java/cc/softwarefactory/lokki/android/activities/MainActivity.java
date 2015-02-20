@@ -277,17 +277,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
                 break;
 
             case R.id.allow_people: // In list of ALL contacts, when adding new ones.
-                if (AddContactsFragment.emailsSelected.isEmpty()){
-                    Toast.makeText(MainActivity.this, getText(R.string.no_contact_selected_toast), Toast.LENGTH_SHORT).show();
-                    break;
-                }
-                try {
-                    ServerApi.allowPeople(this, AddContactsFragment.emailsSelected);
-                    DialogUtils.addPeopleSave(this, AddContactsFragment.emailsSelected);
-                    mNavigationDrawerFragment.selectItem(0);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                DialogUtils.addContact(this);
                 break;
 
             case R.id.action_visibility:
@@ -362,27 +352,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         }
     }
 
-    public void addContactSelectedEmail(View view) { // Used in AddContacts
-
-        Log.e(TAG, "CheckBox clicked. View: " + view);
-
-        if (view == null) {
-            return;
-        }
-        Log.e(TAG, "View NOT null");
-
-        CheckBox checkBox = (CheckBox) view;
-        String email = (String) checkBox.getTag();
-        Log.e(TAG, "addSelectedEmail: " + email);
-
-        if (AddContactsFragment.emailsSelected.contains(email)) {
-            AddContactsFragment.emailsSelected.remove(email);
-        } else {
-            AddContactsFragment.emailsSelected.add(email);
-        }
-
-    }
-
     public void showUserInMap(View view) { // Used in Contacts
 
         if (view == null) {
@@ -438,9 +407,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
                 }
             } else {
                 try {
-                    Set<String> emails = new HashSet<>();
-                    emails.add(email);
-                    ServerApi.allowPeople(this, emails);
+                    ServerApi.allowPeople(this, email);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

@@ -14,13 +14,18 @@ import org.mockito.Mockito;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.typeText;
+import static android.support.test.espresso.action.ViewActions.typeTextIntoFocusedView;
+import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.hasSibling;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.isRoot;
+import static android.support.test.espresso.matcher.ViewMatchers.withHint;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
+import static org.mockito.AdditionalMatchers.not;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
@@ -48,14 +53,24 @@ public class AddContactsScreenTest extends LoggedInBaseTest {
         onView(withText("Contacts")).perform(click());
     }
 
-    private void addContactsFromContactListScreen(String... contactsArray) {
+    private void enterAddContactsScreen() {
         onView(withId(R.id.add_people)).perform(click());
-        for (String contactName : contactsArray) {
-            onView(allOf(withId(R.id.contact_selected), hasSibling(withText(contactName)))).perform(click());
-        }
+    }
+
+    private void openAddContactDialog() {
         onView(withId(R.id.allow_people)).perform(click());
     }
 
+    private void addContactFromContactListScreen(String clickableText, String email) {
+        onView(withText(clickableText)).perform(click());
+
+        String message = getResources().getString(R.string.add_contact_dialog_save, email);
+        onView(withText(message)).check(matches(isDisplayed()));
+
+        onView(withText(R.string.ok)).perform(click());
+
+        onView(withText(clickableText)).check(doesNotExist());
+    }
 
     // TEST
 
@@ -65,8 +80,12 @@ public class AddContactsScreenTest extends LoggedInBaseTest {
     }
 
     public void testOpenAddContactsScreen() {
-        onView(withId(R.id.add_people)).perform(click());
-        onView(withText(R.string.add_contact_dialog_message)).check(matches(isDisplayed()));
+        enterAddContactsScreen();
+        openAddContactDialog();
+        onView(withText(R.string.add_contact)).check(matches(isDisplayed()));
+        onView(withHint(R.string.contact_email_address)).check(matches(isDisplayed()));
+        onView(withText(R.string.ok)).check(matches(isDisplayed()));
+        onView(withText(R.string.cancel)).check(matches(isDisplayed()));
     }
 
     public void testSeeAnyContactOnAddScreen() {
@@ -74,42 +93,60 @@ public class AddContactsScreenTest extends LoggedInBaseTest {
         onView(withText("Family Member")).check(matches(isDisplayed()));
     }
 
-    public void testAddingSingleContactShowsDialog() {
+    public void testAddingSingleContact() {
+        enterAddContactsScreen();
+
         String contactName = "Family Member";
         String contactEmail = "family.member@example.com";
-        String contactAddedDialogText = getResources().getString(R.string.add_contact_dialog_save, contactEmail);
+        addContactFromContactListScreen(contactName, contactEmail);
 
-        addContactsFromContactListScreen(contactName);
-
-        onView(withText(contactAddedDialogText)).check(matches(isDisplayed()));
     }
 
-    public void testAddingTwoContactsUsingNameShowsDialog() {
+    public void testCancelingSingleContactAdding() {
+        enterAddContactsScreen();
+
+        String contactEmail = "family.member@example.com";
+
+        onView(withText(contactEmail)).perform(click());
+        onView(withText(R.string.cancel)).perform(click());
+
+        onView(withText(contactEmail)).check(matches(isDisplayed()));
+    }
+
+    public void testAddingTwoContactsUsingName() {
+        enterAddContactsScreen();
+
         String firstContactName = "Test Friend";
         String firstContactEmail = "test.friend@example.com";
         String secondContactName = "Family Member";
         String secondContactEmail = "family.member@example.com";
 
-        addContactsFromContactListScreen(firstContactName, secondContactName);
-
-        String contactsCombined = firstContactEmail + ", " + secondContactEmail;
-        onView(withText(getResources().getString(R.string.add_contact_dialog_save, contactsCombined))).check(matches(isDisplayed()));
+        addContactFromContactListScreen(firstContactName, firstContactEmail);
+        addContactFromContactListScreen(secondContactName, secondContactEmail);
     }
 
-    public void testAddingTwoContactsUsingEmailShowsDialog() {
+    public void testAddingTwoContactsUsingEmail() {
+        enterAddContactsScreen();
+
         String firstContactEmail = "test.friend@example.com";
         String secondContactEmail = "family.member@example.com";
 
-        addContactsFromContactListScreen(firstContactEmail, secondContactEmail);
-
-        String contactsCombined = firstContactEmail + ", " + secondContactEmail;
-        onView(withText(getResources().getString(R.string.add_contact_dialog_save, contactsCombined))).check(matches(isDisplayed()));
+        addContactFromContactListScreen(firstContactEmail, firstContactEmail);
+        addContactFromContactListScreen(secondContactEmail, secondContactEmail);
     }
 
-    public void testAddingNoContact() {
-        addContactsFromContactListScreen();
+    public void testAddingEmptyContact() {
+        enterAddContactsScreen();
+        openAddContactDialog();
+        onView(withText(R.string.ok)).perform(click());
+        onView(withHint(R.string.contact_email_address)).check(matches(isDisplayed()));
+    }
 
-        onView(withText(R.string.add_contact_dialog_message)).check(matches(isDisplayed()));
+    public void testAddingCustomContact() {
+        enterAddContactsScreen();
+        openAddContactDialog();
+        onView(withHint(R.string.contact_email_address)).perform(typeText("test@example.com"));
+        onView(withText(R.string.ok)).perform(click());
     }
 
     public void testBackButtonToContactsScreen() {
