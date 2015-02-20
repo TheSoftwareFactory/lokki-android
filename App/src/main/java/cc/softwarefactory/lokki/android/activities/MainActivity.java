@@ -71,6 +71,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     private NavigationDrawerFragment mNavigationDrawerFragment;
     private CharSequence mTitle;
     private int selectedOption = 1;
+    private View infoView;
 
     private ContactDataSource mContactDataSource;
 
@@ -94,7 +95,15 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
         LayoutInflater inflater = getLayoutInflater();
         ListView drawerListView = (ListView) ((FrameLayout)mNavigationDrawerFragment.getView()).getChildAt(0);
-        View infoView = inflater.inflate(R.layout.fragment_drawer_header, drawerListView, false);
+        infoView = inflater.inflate(R.layout.fragment_drawer_header, drawerListView, false);
+
+        setUserInfo();
+
+        drawerListView.addHeaderView(infoView);
+    }
+
+
+    public void setUserInfo() {
         AQuery aq = new AQuery(this, infoView);
 
         ImageView avatarImage = (ImageView) infoView.findViewById(R.id.avatar);
@@ -104,8 +113,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         avatarLoader.load(email, avatarImage);
 
         aq.id(R.id.user_name).text(Utils.getNameFromEmail(this, email));
-
-        drawerListView.addHeaderView(infoView);
     }
 
     @Override
@@ -365,6 +372,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         if (requestCode == REQUEST_CODE_EMAIL) {
             if (resultCode == RESULT_OK) {
                 Log.e(TAG, "Returned from sign up. Now we will show the map.");
+                setUserInfo();
                 startServices();
                 GcmHelper.start(getApplicationContext()); // Register to GCM
 
