@@ -36,7 +36,7 @@ public class AboutScreenTest extends LoggedInBaseTest {
 
     public void testAboutScreenOpens() throws PackageManager.NameNotFoundException {
         enterAboutScreen();
-        String versionAndCopyright = getResources().getString(R.string.version_and_copyright, Utils.getAppVersion(getActivity()));
+        String versionAndCopyright = getResources().getString(R.string.version, Utils.getAppVersion(getActivity()));
         onView(withText(versionAndCopyright)).check(matches(isDisplayed()));
         onView(withText(R.string.help)).check(matches(isDisplayed()));
         onView(withText(R.string.send_feedback)).check(matches(isDisplayed()));
