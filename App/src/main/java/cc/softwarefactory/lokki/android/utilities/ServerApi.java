@@ -17,6 +17,7 @@ import com.androidquery.callback.AjaxStatus;
 
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
+import cc.softwarefactory.lokki.android.constants.Constants;
 import cc.softwarefactory.lokki.android.errors.AddPlaceError;
 import cc.softwarefactory.lokki.android.services.DataService;
 
@@ -34,8 +35,7 @@ import java.util.Set;
 public class ServerApi {
 
     private static final String TAG = "ServerApi";
-    private static String ApiUrl = "https://lokki.herokuapp.com/api/locmap/v1/";
-//    private static String ApiUrl = "FILLME";
+    private static String ApiUrl = Constants.API_URL;
 
     public static void signUp(Context context, AjaxCallback<JSONObject> signUpCallback) {
 

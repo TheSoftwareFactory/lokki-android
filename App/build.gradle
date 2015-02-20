@@ -22,6 +22,11 @@ android {
         }
     }
 
+    productFlavors {
+        development {}
+        production {}
+    }
+
     sourceSets {
         androidTest {
             setRoot('src/test')
