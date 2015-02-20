@@ -38,5 +38,4 @@ public class PreferenceUtils {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         prefs.edit().putString(key, value).commit();
     }
-
 }
