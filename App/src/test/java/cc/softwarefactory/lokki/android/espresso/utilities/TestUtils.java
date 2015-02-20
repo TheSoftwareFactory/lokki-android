@@ -10,9 +10,9 @@ import android.support.test.espresso.action.Press;
 import android.support.test.espresso.action.Tap;
 import android.view.View;
 
-import cc.softwarefactory.lokki.android.MainActivity;
+import cc.softwarefactory.lokki.android.activities.MainActivity;
 import cc.softwarefactory.lokki.android.R;
-import cc.softwarefactory.lokki.android.utils.PreferenceUtils;
+import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;

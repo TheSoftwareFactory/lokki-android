@@ -2,7 +2,7 @@
 Copyright (c) 2014-2015 F-Secure
 See LICENSE for details
 */
-package cc.softwarefactory.lokki.android;
+package cc.softwarefactory.lokki.android.activities;
 
 import android.accounts.AccountManager;
 import android.content.ActivityNotFoundException;
@@ -18,8 +18,13 @@ import android.widget.TextView;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
-import cc.softwarefactory.lokki.android.utils.PreferenceUtils;
-import cc.softwarefactory.lokki.android.utils.Utils;
+
+import cc.softwarefactory.lokki.android.utilities.DialogUtils;
+import cc.softwarefactory.lokki.android.MainApplication;
+import cc.softwarefactory.lokki.android.R;
+import cc.softwarefactory.lokki.android.utilities.ServerApi;
+import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
+import cc.softwarefactory.lokki.android.utilities.Utils;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.AccountPicker;
 
@@ -98,7 +103,7 @@ public class SignUpActivity extends ActionBarActivity {
         PreferenceUtils.setValue(this, PreferenceUtils.KEY_DEVICE_ID, Utils.getDeviceId());
         MainApplication.userAccount = accountName;
 
-        ServerAPI.signUp(this, new SignUpCallback());
+        ServerApi.signUp(this, new SignUpCallback());
         toggleLoading(true);
     }
 
@@ -115,10 +120,10 @@ public class SignUpActivity extends ActionBarActivity {
 
                 if (status.getCode() == 401) {
                     Log.e(TAG, "401 Error");
-                    Dialogs.securitySignUp(SignUpActivity.this);
+                    DialogUtils.securitySignUp(SignUpActivity.this);
                 } else {
                     Log.e(TAG, "General Error");
-                    Dialogs.generalError(SignUpActivity.this);
+                    DialogUtils.generalError(SignUpActivity.this);
                 }
 
                 toggleLoading(false);

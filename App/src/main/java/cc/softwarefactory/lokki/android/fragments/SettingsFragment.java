@@ -2,7 +2,7 @@
 Copyright (c) 2014-2015 F-Secure
 See LICENSE for details
 */
-package cc.softwarefactory.lokki.android;
+package cc.softwarefactory.lokki.android.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -16,9 +16,14 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
 import com.androidquery.AQuery;
+
+import cc.softwarefactory.lokki.android.utilities.ServerApi;
+import cc.softwarefactory.lokki.android.services.LocationService;
+import cc.softwarefactory.lokki.android.MainApplication;
+import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.avatar.AvatarLoader;
-import cc.softwarefactory.lokki.android.utils.PreferenceUtils;
-import cc.softwarefactory.lokki.android.utils.Utils;
+import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
+import cc.softwarefactory.lokki.android.utilities.Utils;
 
 
 public class SettingsFragment extends Fragment implements AdapterView.OnItemSelectedListener {
@@ -72,11 +77,11 @@ public class SettingsFragment extends Fragment implements AdapterView.OnItemSele
                 if (position == 1) {
                     MainApplication.visible = false;
                     LocationService.stop(context);
-                    ServerAPI.setVisibility(context, false);
+                    ServerApi.setVisibility(context, false);
                 } else {
                     MainApplication.visible = true;
                     LocationService.start(context);
-                    ServerAPI.setVisibility(context, true);
+                    ServerApi.setVisibility(context, true);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();

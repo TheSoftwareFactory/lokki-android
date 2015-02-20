@@ -2,7 +2,7 @@
 Copyright (c) 2014-2015 F-Secure
 See LICENSE for details
 */
-package cc.softwarefactory.lokki.android;
+package cc.softwarefactory.lokki.android.utilities.gcm;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -11,7 +11,6 @@ import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import cc.softwarefactory.lokki.android.utils.Utils;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import org.json.JSONException;
@@ -19,7 +18,10 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class GCMHelper {
+import cc.softwarefactory.lokki.android.utilities.ServerApi;
+import cc.softwarefactory.lokki.android.utilities.Utils;
+
+public class GcmHelper {
 
     public static final String EXTRA_MESSAGE = "message";
     public static final String PROPERTY_REG_ID = "registration_id";
@@ -27,7 +29,7 @@ public class GCMHelper {
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
     private static String SENDER_ID = "229584256615";
-    private static final String TAG = "GCMHelper";
+    private static final String TAG = "GcmHelper";
     private static GoogleCloudMessaging gcm;
     private static AtomicInteger msgId = new AtomicInteger();
     private static String regid;
@@ -118,7 +120,7 @@ public class GCMHelper {
 
         Log.e(TAG, "sendRegistrationIdToBackend");
         try {
-            ServerAPI.sendGCMToken(context, regid);
+            ServerApi.sendGCMToken(context, regid);
 
         } catch (JSONException e) {
             e.printStackTrace();

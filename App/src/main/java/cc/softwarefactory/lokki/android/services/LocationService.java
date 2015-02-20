@@ -2,7 +2,7 @@
 Copyright (c) 2014-2015 F-Secure
 See LICENSE for details
 */
-package cc.softwarefactory.lokki.android;
+package cc.softwarefactory.lokki.android.services;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -17,9 +17,13 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import cc.softwarefactory.lokki.android.utils.PreferenceUtils;
-import cc.softwarefactory.lokki.android.utils.MapUtils;
-import cc.softwarefactory.lokki.android.utils.Utils;
+import cc.softwarefactory.lokki.android.MainApplication;
+import cc.softwarefactory.lokki.android.R;
+import cc.softwarefactory.lokki.android.utilities.ServerApi;
+import cc.softwarefactory.lokki.android.activities.MainActivity;
+import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
+import cc.softwarefactory.lokki.android.utilities.map.MapUtils;
+import cc.softwarefactory.lokki.android.utilities.Utils;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -206,7 +210,7 @@ public class LocationService extends Service implements LocationListener, Google
 
         if (MainApplication.visible) {
             try {
-                ServerAPI.sendLocation(this, location);
+                ServerApi.sendLocation(this, location);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

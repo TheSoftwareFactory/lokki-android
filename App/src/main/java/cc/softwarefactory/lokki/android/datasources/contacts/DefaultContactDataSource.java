@@ -1,4 +1,4 @@
-package cc.softwarefactory.lokki.android.utils;
+package cc.softwarefactory.lokki.android.datasources.contacts;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -8,11 +8,11 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class DefaultContactUtils implements ContactUtils {
+public class DefaultContactDataSource implements ContactDataSource {
 
-    private static final String TAG = "DefaultContactUtils";
+    private static final String TAG = "DefaultContactDataSource";
 
-    public JSONObject listContacts(Context context) {
+    public JSONObject getContactsJson(Context context) {
 
         JSONObject contactsObj = new JSONObject();
         JSONObject mapping = new JSONObject();
@@ -50,11 +50,11 @@ public class DefaultContactUtils implements ContactUtils {
                 Log.e(TAG, e.getMessage());
             }
         }
+
         try {
             contactsObj.put("mapping", mapping);
-
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, e.getMessage());
         }
         emailsCursor.close();
 

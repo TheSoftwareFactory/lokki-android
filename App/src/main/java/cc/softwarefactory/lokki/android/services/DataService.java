@@ -2,7 +2,7 @@
 Copyright (c) 2014-2015 F-Secure
 See LICENSE for details
 */
-package cc.softwarefactory.lokki.android;
+package cc.softwarefactory.lokki.android.services;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -14,7 +14,9 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
-import cc.softwarefactory.lokki.android.utils.PreferenceUtils;
+import cc.softwarefactory.lokki.android.MainApplication;
+import cc.softwarefactory.lokki.android.utilities.ServerApi;
+import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -139,13 +141,13 @@ public class DataService extends Service {
     private void getPlaces() {
 
         Log.e(TAG, "getPlaces");
-        ServerAPI.getPlaces(this);
+        ServerApi.getPlaces(this);
     }
 
     private void fetchDashboard() {
 
         Log.e(TAG, "alarmCallback");
-        ServerAPI.getDashboard(this);
+        ServerApi.getDashboard(this);
     }
 
     @Override

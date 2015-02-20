@@ -5,8 +5,8 @@ import android.test.ActivityInstrumentationTestCase2;
 
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 
-import cc.softwarefactory.lokki.android.MainActivity;
-import cc.softwarefactory.lokki.android.ServerAPI;
+import cc.softwarefactory.lokki.android.utilities.ServerApi;
+import cc.softwarefactory.lokki.android.activities.MainActivity;
 import cc.softwarefactory.lokki.android.espresso.utilities.MockDispatcher;
 import cc.softwarefactory.lokki.android.espresso.utilities.TestUtils;
 
@@ -38,7 +38,7 @@ public abstract class LokkiBaseTest extends ActivityInstrumentationTestCase2<Mai
         mockWebServer.play();
 
         String mockUrl = mockWebServer.getUrl("/").toString();
-        ServerAPI.setApiUrl(mockUrl);
+        ServerApi.setApiUrl(mockUrl);
     }
 
     @Override

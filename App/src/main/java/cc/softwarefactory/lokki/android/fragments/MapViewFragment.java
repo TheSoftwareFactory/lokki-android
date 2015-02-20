@@ -2,7 +2,7 @@
 Copyright (c) 2014-2015 F-Secure
 See LICENSE for details
 */
-package cc.softwarefactory.lokki.android;
+package cc.softwarefactory.lokki.android.fragments;
 
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -36,8 +36,13 @@ import android.widget.ImageView;
 
 import com.androidquery.AQuery;
 
-import cc.softwarefactory.lokki.android.utils.MapUtils;
-import cc.softwarefactory.lokki.android.utils.Utils;
+import cc.softwarefactory.lokki.android.utilities.DialogUtils;
+import cc.softwarefactory.lokki.android.MainApplication;
+import cc.softwarefactory.lokki.android.utilities.map.MapUserTypes;
+import cc.softwarefactory.lokki.android.R;
+import cc.softwarefactory.lokki.android.activities.FirstTimeActivity;
+import cc.softwarefactory.lokki.android.utilities.map.MapUtils;
+import cc.softwarefactory.lokki.android.utilities.Utils;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -234,7 +239,7 @@ public class MapViewFragment extends Fragment {
 
                 LatLng centerLatLng = map.getProjection().getVisibleRegion().latLngBounds.getCenter();
                 int radius = (int) middleSideLocation.distanceTo(MapUtils.convertToLocation(centerLatLng, "center"));
-                Dialogs.addPlace(getActivity(), centerLatLng, (int) (radius * radiusMultiplier));
+                DialogUtils.addPlace(getActivity(), centerLatLng, (int) (radius * radiusMultiplier));
             }
         });
     }

@@ -1,10 +1,6 @@
 package cc.softwarefactory.lokki.android.espresso;
 
-import android.test.ActivityInstrumentationTestCase2;
-
-import cc.softwarefactory.lokki.android.MainActivity;
 import cc.softwarefactory.lokki.android.R;
-import cc.softwarefactory.lokki.android.espresso.utilities.TestUtils;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;

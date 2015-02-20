@@ -1,4 +1,4 @@
-package cc.softwarefactory.lokki.android;
+package cc.softwarefactory.lokki.android.utilities.map;
 
 /**
  * Created by verne_000 on 16.2.2015.

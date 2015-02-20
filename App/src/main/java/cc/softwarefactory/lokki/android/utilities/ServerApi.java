@@ -2,7 +2,7 @@
 Copyright (c) 2014-2015 F-Secure
 See LICENSE for details
 */
-package cc.softwarefactory.lokki.android;
+package cc.softwarefactory.lokki.android.utilities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -15,9 +15,11 @@ import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 
+import cc.softwarefactory.lokki.android.MainApplication;
+import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.errors.AddPlaceError;
-import cc.softwarefactory.lokki.android.utils.PreferenceUtils;
-import cc.softwarefactory.lokki.android.utils.Utils;
+import cc.softwarefactory.lokki.android.services.DataService;
+
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
@@ -29,9 +31,9 @@ import java.util.Map;
 import java.util.Set;
 
 
-public class ServerAPI {
+public class ServerApi {
 
-    private static final String TAG = "ServerAPI";
+    private static final String TAG = "ServerApi";
     private static String ApiUrl = "https://lokki.herokuapp.com/api/locmap/v1/";
 //    private static String ApiUrl = "FILLME";
 

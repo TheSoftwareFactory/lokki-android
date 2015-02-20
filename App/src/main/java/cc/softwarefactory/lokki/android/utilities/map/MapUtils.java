@@ -1,4 +1,4 @@
-package cc.softwarefactory.lokki.android.utils;
+package cc.softwarefactory.lokki.android.utilities.map;
 
 import android.location.Location;
 

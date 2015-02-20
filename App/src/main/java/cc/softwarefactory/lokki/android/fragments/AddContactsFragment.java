@@ -2,7 +2,7 @@
 Copyright (c) 2014-2015 F-Secure
 See LICENSE for details
 */
-package cc.softwarefactory.lokki.android;
+package cc.softwarefactory.lokki.android.fragments;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -22,10 +22,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.androidquery.AQuery;
+
+import cc.softwarefactory.lokki.android.MainApplication;
+import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.avatar.AvatarLoader;
-import cc.softwarefactory.lokki.android.utils.ContactUtils;
-import cc.softwarefactory.lokki.android.utils.DefaultContactUtils;
-import cc.softwarefactory.lokki.android.utils.PreferenceUtils;
+import cc.softwarefactory.lokki.android.datasources.contacts.ContactDataSource;
+import cc.softwarefactory.lokki.android.datasources.contacts.DefaultContactDataSource;
+import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,7 +44,7 @@ public class AddContactsFragment extends Fragment {
 
     private static final String TAG = "AddContacts";
     public static Set<String> emailsSelected;
-    private ContactUtils mContactUtils;
+    private ContactDataSource mContactDataSource;
     private ArrayList<String> contactList;
     private AQuery aq;
     private Boolean cancelAsynTasks = false;
@@ -53,7 +56,7 @@ public class AddContactsFragment extends Fragment {
     public AddContactsFragment() {
         emailsSelected = new HashSet<>();
         contactList = new ArrayList<>();
-        mContactUtils = new DefaultContactUtils();
+        mContactDataSource = new DefaultContactDataSource();
     }
 
 
@@ -110,8 +113,8 @@ public class AddContactsFragment extends Fragment {
     }
 
 
-    public void setContactUtils(ContactUtils contactUtils) {
-        this.mContactUtils = contactUtils;
+    public void setContactUtils(ContactDataSource contactDataSource) {
+        this.mContactDataSource = contactDataSource;
     }
 
     class prepareAdapterAsync extends AsyncTask<Void, Void, Boolean> {
@@ -139,7 +142,7 @@ public class AddContactsFragment extends Fragment {
 
         @Override
         protected JSONObject doInBackground(Void... params) {
-            return mContactUtils.listContacts(context);
+            return mContactDataSource.getContactsJson(context);
         }
 
         @Override

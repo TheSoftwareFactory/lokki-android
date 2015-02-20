@@ -11,7 +11,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ImageView;
 
-import cc.softwarefactory.lokki.android.utils.Utils;
+import cc.softwarefactory.lokki.android.utilities.Utils;
 
 import java.lang.ref.WeakReference;
 
