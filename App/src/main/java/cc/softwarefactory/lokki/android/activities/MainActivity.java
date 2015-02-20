@@ -28,10 +28,10 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 
-import cc.softwarefactory.lokki.android.utils.DialogUtils;
-import cc.softwarefactory.lokki.android.utils.contacts.ContactDataSource;
-import cc.softwarefactory.lokki.android.utils.gcm.GcmHelper;
-import cc.softwarefactory.lokki.android.utils.ServerApi;
+import cc.softwarefactory.lokki.android.utilities.DialogUtils;
+import cc.softwarefactory.lokki.android.datasources.contacts.ContactDataSource;
+import cc.softwarefactory.lokki.android.utilities.gcm.GcmHelper;
+import cc.softwarefactory.lokki.android.utilities.ServerApi;
 import cc.softwarefactory.lokki.android.services.DataService;
 import cc.softwarefactory.lokki.android.services.LocationService;
 import cc.softwarefactory.lokki.android.MainApplication;
@@ -43,8 +43,8 @@ import cc.softwarefactory.lokki.android.fragments.SettingsFragment;
 import cc.softwarefactory.lokki.android.fragments.AboutFragment;
 import cc.softwarefactory.lokki.android.fragments.AddContactsFragment;
 import cc.softwarefactory.lokki.android.fragments.ContactsFragment;
-import cc.softwarefactory.lokki.android.utils.contacts.DefaultContactDataSource;
-import cc.softwarefactory.lokki.android.utils.PreferenceUtils;
+import cc.softwarefactory.lokki.android.datasources.contacts.DefaultContactDataSource;
+import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 
 import org.json.JSONException;
 

@@ -2,7 +2,7 @@
 Copyright (c) 2014-2015 F-Secure
 See LICENSE for details
 */
-package cc.softwarefactory.lokki.android.utils.gcm;
+package cc.softwarefactory.lokki.android.utilities.gcm;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

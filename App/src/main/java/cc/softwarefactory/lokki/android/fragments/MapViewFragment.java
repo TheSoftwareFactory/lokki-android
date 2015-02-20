@@ -36,13 +36,13 @@ import android.widget.ImageView;
 
 import com.androidquery.AQuery;
 
-import cc.softwarefactory.lokki.android.utils.DialogUtils;
+import cc.softwarefactory.lokki.android.utilities.DialogUtils;
 import cc.softwarefactory.lokki.android.MainApplication;
-import cc.softwarefactory.lokki.android.utils.map.MapUserTypes;
+import cc.softwarefactory.lokki.android.utilities.map.MapUserTypes;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.activities.FirstTimeActivity;
-import cc.softwarefactory.lokki.android.utils.map.MapUtils;
-import cc.softwarefactory.lokki.android.utils.Utils;
+import cc.softwarefactory.lokki.android.utilities.map.MapUtils;
+import cc.softwarefactory.lokki.android.utilities.Utils;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;

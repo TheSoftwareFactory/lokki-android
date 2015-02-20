@@ -1,4 +1,4 @@
-package cc.softwarefactory.lokki.android.utils.contacts;
+package cc.softwarefactory.lokki.android.datasources.contacts;
 
 import android.content.Context;
 

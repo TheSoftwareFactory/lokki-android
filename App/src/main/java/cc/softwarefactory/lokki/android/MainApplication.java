@@ -14,9 +14,9 @@ import android.util.Log;
 
 import cc.softwarefactory.lokki.android.services.DataService;
 import cc.softwarefactory.lokki.android.services.LocationService;
-import cc.softwarefactory.lokki.android.utils.PreferenceUtils;
-import cc.softwarefactory.lokki.android.utils.ServerApi;
-import cc.softwarefactory.lokki.android.utils.Utils;
+import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
+import cc.softwarefactory.lokki.android.utilities.ServerApi;
+import cc.softwarefactory.lokki.android.utilities.Utils;
 import com.google.android.gms.maps.GoogleMap;
 
 import org.json.JSONException;

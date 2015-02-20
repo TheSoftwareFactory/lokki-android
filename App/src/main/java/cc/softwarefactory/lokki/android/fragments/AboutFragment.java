@@ -6,7 +6,6 @@ package cc.softwarefactory.lokki.android.fragments;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,7 +19,7 @@ import android.widget.ArrayAdapter;
 import com.androidquery.AQuery;
 
 import cc.softwarefactory.lokki.android.R;
-import cc.softwarefactory.lokki.android.utils.Utils;
+import cc.softwarefactory.lokki.android.utilities.Utils;
 
 
 public class AboutFragment extends Fragment {

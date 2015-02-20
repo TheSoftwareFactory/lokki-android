@@ -15,8 +15,8 @@ import android.os.IBinder;
 import android.util.Log;
 
 import cc.softwarefactory.lokki.android.MainApplication;
-import cc.softwarefactory.lokki.android.utils.ServerApi;
-import cc.softwarefactory.lokki.android.utils.PreferenceUtils;
+import cc.softwarefactory.lokki.android.utilities.ServerApi;
+import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;

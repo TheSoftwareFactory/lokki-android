@@ -2,7 +2,7 @@
 Copyright (c) 2014-2015 F-Secure
 See LICENSE for details
 */
-package cc.softwarefactory.lokki.android.utils;
+package cc.softwarefactory.lokki.android.utilities;
 
 import android.app.AlertDialog;
 import android.content.Context;

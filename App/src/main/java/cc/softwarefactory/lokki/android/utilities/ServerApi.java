@@ -2,7 +2,7 @@
 Copyright (c) 2014-2015 F-Secure
 See LICENSE for details
 */
-package cc.softwarefactory.lokki.android.utils;
+package cc.softwarefactory.lokki.android.utilities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -19,8 +19,7 @@ import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.errors.AddPlaceError;
 import cc.softwarefactory.lokki.android.services.DataService;
-import cc.softwarefactory.lokki.android.utils.PreferenceUtils;
-import cc.softwarefactory.lokki.android.utils.Utils;
+
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;

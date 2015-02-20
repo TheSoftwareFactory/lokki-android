@@ -26,9 +26,9 @@ import com.androidquery.AQuery;
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.avatar.AvatarLoader;
-import cc.softwarefactory.lokki.android.utils.contacts.ContactDataSource;
-import cc.softwarefactory.lokki.android.utils.contacts.DefaultContactDataSource;
-import cc.softwarefactory.lokki.android.utils.PreferenceUtils;
+import cc.softwarefactory.lokki.android.datasources.contacts.ContactDataSource;
+import cc.softwarefactory.lokki.android.datasources.contacts.DefaultContactDataSource;
+import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;

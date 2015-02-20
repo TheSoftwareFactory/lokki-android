@@ -6,7 +6,7 @@ import android.support.test.espresso.action.ViewActions;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.espresso.utilities.MockJsonUtils;
 import cc.softwarefactory.lokki.android.espresso.utilities.TestUtils;
-import cc.softwarefactory.lokki.android.utils.contacts.ContactDataSource;
+import cc.softwarefactory.lokki.android.datasources.contacts.ContactDataSource;
 
 import org.json.JSONException;
 import org.json.JSONObject;
