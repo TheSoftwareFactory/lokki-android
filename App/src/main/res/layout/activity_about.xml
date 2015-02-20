@@ -15,7 +15,6 @@
         android:textColor="@android:color/white"
         android:layout_centerHorizontal="true"
         android:text="@string/version_and_copyright"
-        android:textAlignment="center"
         android:gravity="center"
         android:padding="10dip"
         android:textSize="12sp"
