@@ -11,7 +11,7 @@ First replace `ApiUrl` in `ServerAPI.java` with a valid URL leading to the serve
 Then run the following command in the project root to build the project:
 
 ```
-$ ./gradlew build
+$ ./gradlew assembleDevelopment
 ```
 
 To install the debug build on an emulator run the following command in the project root (version number is determined by `versionName` in [App/build.gradle](App/build.gradle)):
@@ -28,12 +28,23 @@ $ adb install -rd App/build/outputs/apk/lokki-v[versionName]-debug.apk
 
 For further information see the [Android documentation](http://developer.android.com/tools/building/building-cmdline.html).
 
+### Product flavors
+
+Project has different product flavors, that can be specified by adding either "Development" or "Production" after some of the gradle commands, like this:
+
+```
+$ ./gradlew assembleDevelopment
+$ ./gradlew assembleProduction
+```
+
+Currently product flavors differ only by server URL they're using.
+
 ### Tests
 
 To run the tests run the following command in the project root:
 
 ```
-$ ./gradlew connectedCheck
+$ ./gradlew connectedAndroidTestDevelopment
 ```
 
 Make sure an emulator or device is connected, running and the screen is unlocked. If it looks like your tests are failing without a good reason, try to [disable animations in your device/emulator you're using](http://lifehacker.com/disable-animations-on-android-to-improve-performance-1583554900).
