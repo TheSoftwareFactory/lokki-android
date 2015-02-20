@@ -37,12 +37,6 @@ public class SettingsScreenTest extends LoggedInBaseTest {
         onView(allOf(withText(R.string.you_are_visible))).check(matches(isDisplayed()));
         onView(allOf(withText(R.string.map_mode))).check(matches(isDisplayed()));
     }
-    
-    public void testUserNameShown() {
-        enterSettingScreen();
-
-        onView(withId(R.id.user_name)).check(matches(isDisplayed()));
-    }
 
     public void testVisibilitySpinnerDefaultYes() {
         enterSettingScreen();
