@@ -146,6 +146,7 @@ public class PlacesFragment extends Fragment {
                                 Log.e(TAG, "Avatar not in cache, email: " + email);
                                 image.setImageResource(R.drawable.default_avatar);
                             }
+                            image.setContentDescription(email);
 
                             avatarRow.addView(image);
                         }
@@ -221,10 +222,8 @@ public class PlacesFragment extends Fragment {
             public void onClick(View v) {
 
                 MainApplication.emailBeingTracked = email;
-                Intent intentLocation = new Intent("LOCATION-UPDATE");
-                LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intentLocation);
-                Intent intentMapTab = new Intent("GO_TO_MAP_TAB");
-                LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(intentMapTab);
+                LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(new Intent("LOCATION-UPDATE"));
+                LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(new Intent("GO-TO-MAP"));
             }
         });
 
