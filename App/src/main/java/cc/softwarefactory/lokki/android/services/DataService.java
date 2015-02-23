@@ -98,7 +98,7 @@ public class DataService extends Service {
         setTimer();
         serviceRunning = true;
         try {
-            MainApplication.dashboard = new JSONObject(PreferenceUtils.getValue(this.getApplicationContext(), PreferenceUtils.KEY_DASHBOARD));
+            MainApplication.dashboard = new JSONObject(PreferenceUtils.getString(this.getApplicationContext(), PreferenceUtils.KEY_DASHBOARD));
         } catch (JSONException e) {
             MainApplication.dashboard = null;
         }

@@ -12,24 +12,32 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
+import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.CheckBox;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 
+import com.androidquery.AQuery;
+
+import cc.softwarefactory.lokki.android.avatar.AvatarLoader;
+import cc.softwarefactory.lokki.android.fragments.PreferencesFragment;
 import cc.softwarefactory.lokki.android.utilities.DialogUtils;
 import cc.softwarefactory.lokki.android.datasources.contacts.ContactDataSource;
+import cc.softwarefactory.lokki.android.utilities.Utils;
 import cc.softwarefactory.lokki.android.utilities.gcm.GcmHelper;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
 import cc.softwarefactory.lokki.android.services.DataService;
@@ -39,7 +47,6 @@ import cc.softwarefactory.lokki.android.fragments.MapViewFragment;
 import cc.softwarefactory.lokki.android.fragments.NavigationDrawerFragment;
 import cc.softwarefactory.lokki.android.fragments.PlacesFragment;
 import cc.softwarefactory.lokki.android.R;
-import cc.softwarefactory.lokki.android.fragments.SettingsFragment;
 import cc.softwarefactory.lokki.android.fragments.AboutFragment;
 import cc.softwarefactory.lokki.android.fragments.AddContactsFragment;
 import cc.softwarefactory.lokki.android.fragments.ContactsFragment;
@@ -62,7 +69,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
     private NavigationDrawerFragment mNavigationDrawerFragment;
     private CharSequence mTitle;
-    private int selectedOption = 0;
+    private int selectedOption = 1;
+    private View infoView;
 
     private ContactDataSource mContactDataSource;
 
@@ -73,16 +81,37 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        Log.e(TAG, "onCreate");
         mContactDataSource = new DefaultContactDataSource();
 
-        Log.e(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
+
+        mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout)); // Set up the drawer.
 
+        LayoutInflater inflater = getLayoutInflater();
+        ListView drawerListView = (ListView) ((FrameLayout)mNavigationDrawerFragment.getView()).getChildAt(0);
+        infoView = inflater.inflate(R.layout.fragment_drawer_header, drawerListView, false);
+
+        setUserInfo();
+
+        drawerListView.addHeaderView(infoView);
+    }
+
+
+    public void setUserInfo() {
+        AQuery aq = new AQuery(this, infoView);
+
+        ImageView avatarImage = (ImageView) infoView.findViewById(R.id.avatar);
+        AvatarLoader avatarLoader = new AvatarLoader(this);
+
+        String email = PreferenceUtils.getString(this, PreferenceUtils.KEY_USER_ACCOUNT);
+        avatarLoader.load(email, avatarImage);
+
+        aq.id(R.id.user_name).text(Utils.getNameFromEmail(this, email));
     }
 
     @Override
@@ -105,7 +134,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
     private boolean firstTimeLaunch() {
 
-        return PreferenceUtils.getValue(this, PreferenceUtils.KEY_AUTH_TOKEN).isEmpty();
+        return PreferenceUtils.getString(this, PreferenceUtils.KEY_AUTH_TOKEN).isEmpty();
     }
 
     @Override
@@ -149,9 +178,9 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
     private void checkIfUserIsLoggedIn() {
 
-        String userAccount = PreferenceUtils.getValue(this, PreferenceUtils.KEY_USER_ACCOUNT);
-        String userId = PreferenceUtils.getValue(this, PreferenceUtils.KEY_USER_ID);
-        String authorizationToken = PreferenceUtils.getValue(this, PreferenceUtils.KEY_AUTH_TOKEN);
+        String userAccount = PreferenceUtils.getString(this, PreferenceUtils.KEY_USER_ACCOUNT);
+        String userId = PreferenceUtils.getString(this, PreferenceUtils.KEY_USER_ID);
+        String authorizationToken = PreferenceUtils.getString(this, PreferenceUtils.KEY_AUTH_TOKEN);
         boolean debug = false;
 
         if (debug || userId.isEmpty() || userAccount.isEmpty() || authorizationToken.isEmpty()) {
@@ -177,12 +206,14 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     public void onNavigationDrawerItemSelected(int position) {
 
         String[] menuOptions = getResources().getStringArray(R.array.menuOptions);
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        android.app.FragmentManager fragmentManager = getFragmentManager();
+        position = position == 0 ? 0 : position - 1;
         mTitle = menuOptions[position];
         selectedOption = position;
         getSupportActionBar().setTitle(mTitle);
 
         switch (position) {
+
             case 0: // Map
                 fragmentManager.beginTransaction().replace(R.id.container, new MapViewFragment()).commit();
                 break;
@@ -196,11 +227,15 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
                 break;
 
             case 3: // Settings
-                fragmentManager.beginTransaction().replace(R.id.container, new SettingsFragment()).commit();
+                fragmentManager.beginTransaction().replace(R.id.container, new PreferencesFragment()).commit();
                 break;
 
             case 4: // About
                 fragmentManager.beginTransaction().replace(R.id.container, new AboutFragment()).commit();
+                break;
+
+            default:
+                fragmentManager.beginTransaction().replace(R.id.container, new MapViewFragment()).commit();
                 break;
         }
         supportInvalidateOptionsMenu();
@@ -257,7 +292,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         switch (id) {
 
             case R.id.add_people: // In Contacts (to add new ones)
-                FragmentManager fragmentManager = getSupportFragmentManager();
+                android.app.FragmentManager fragmentManager = getFragmentManager();
 
                 AddContactsFragment acf = new AddContactsFragment();
                 acf.setContactUtils(mContactDataSource);
@@ -291,22 +326,13 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
     private void toggleVisibility() {
 
-        MainApplication.visible = !MainApplication.visible;
-        int visibility_mode = MainApplication.visible ? 0 : 1;
-        PreferenceUtils.setValue(this, PreferenceUtils.KEY_SETTING_VISIBILITY, String.valueOf(visibility_mode));
+        Utils.setVisibility(!MainApplication.visible, MainActivity.this);
+        PreferenceUtils.setBoolean(getApplicationContext(),PreferenceUtils.KEY_SETTING_VISIBILITY, MainApplication.visible);
 
-        try {
-            if (MainApplication.visible) {
-                LocationService.start(MainActivity.this);
-                ServerApi.setVisibility(MainActivity.this, true);
-                Toast.makeText(this, getResources().getString(R.string.you_are_visible), Toast.LENGTH_LONG).show();
-            } else {
-                LocationService.stop(MainActivity.this);
-                ServerApi.setVisibility(MainActivity.this, false);
-                Toast.makeText(this, getResources().getString(R.string.you_are_invisible), Toast.LENGTH_LONG).show();
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        if (MainApplication.visible) {
+            Toast.makeText(this, getResources().getString(R.string.you_are_visible), Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, getResources().getString(R.string.you_are_invisible), Toast.LENGTH_LONG).show();
         }
 
         supportInvalidateOptionsMenu();
@@ -326,7 +352,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
                     Log.e(TAG, "Exiting app because requested by user.");
                     finish();
                 } else if (selectedOption == -10) { // -10 is add contacts screen
-                    mNavigationDrawerFragment.selectItem(2);    // 2 is contacts screen
+                    mNavigationDrawerFragment.selectItem(3);    // 3 is contacts screen
                     return true;
                 } else {
                     mNavigationDrawerFragment.selectItem(0);
@@ -343,6 +369,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         if (requestCode == REQUEST_CODE_EMAIL) {
             if (resultCode == RESULT_OK) {
                 Log.e(TAG, "Returned from sign up. Now we will show the map.");
+                setUserInfo();
                 startServices();
                 GcmHelper.start(getApplicationContext()); // Register to GCM
 
@@ -412,13 +439,13 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         if (!allow) {
             try {
                 MainApplication.iDontWantToSee.put(email, 1);
-                PreferenceUtils.setValue(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, MainApplication.iDontWantToSee.toString());
+                PreferenceUtils.setString(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, MainApplication.iDontWantToSee.toString());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         } else if (MainApplication.iDontWantToSee.has(email)) {
             MainApplication.iDontWantToSee.remove(email);
-            PreferenceUtils.setValue(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, MainApplication.iDontWantToSee.toString());
+            PreferenceUtils.setString(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, MainApplication.iDontWantToSee.toString());
         }
     }
 
@@ -437,7 +464,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
                 }
             } else {
                 try {
-                    Set<String> emails = new HashSet<String>();
+                    Set<String> emails = new HashSet<>();
                     emails.add(email);
                     ServerApi.allowPeople(this, emails);
                 } catch (JSONException e) {

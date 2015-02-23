@@ -4,10 +4,10 @@ See LICENSE for details
 */
 package cc.softwarefactory.lokki.android.fragments;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -77,7 +77,7 @@ public class ContactsFragment extends Fragment {
 
         try {
             if (MainApplication.dashboard == null) {
-                MainApplication.dashboard = new JSONObject(PreferenceUtils.getValue(context, PreferenceUtils.KEY_DASHBOARD));
+                MainApplication.dashboard = new JSONObject(PreferenceUtils.getString(context, PreferenceUtils.KEY_DASHBOARD));
             }
 
             JSONObject iCanSeeObj = MainApplication.dashboard.getJSONObject("icansee");

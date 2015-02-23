@@ -32,6 +32,7 @@ import android.widget.Toast;
 
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
+import cc.softwarefactory.lokki.android.services.LocationService;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -119,7 +120,7 @@ public class Utils {
             return true;
         }
 
-        String jsonData = PreferenceUtils.getValue(context, PreferenceUtils.KEY_CONTACTS);
+        String jsonData = PreferenceUtils.getString(context, PreferenceUtils.KEY_CONTACTS);
         if (jsonData.isEmpty()) {
             return false;
         }
@@ -386,4 +387,17 @@ public class Utils {
         return result;
     }
 
+    public static void setVisibility (boolean visible, Context context) {
+        try {
+            MainApplication.visible = visible;
+            ServerApi.setVisibility(context, visible);
+            if (visible == false) {
+                LocationService.stop(context);
+            } else {
+                LocationService.start(context);
+            }
+        } catch (JSONException ex) {
+            Log.e(TAG, "Could not set visibility:" + ex.getMessage());
+        }
+    }
 }

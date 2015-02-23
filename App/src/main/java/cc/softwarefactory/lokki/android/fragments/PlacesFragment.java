@@ -5,6 +5,7 @@ See LICENSE for details
 package cc.softwarefactory.lokki.android.fragments;
 
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,7 +13,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.Location;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.util.TypedValue;
@@ -239,10 +239,10 @@ public class PlacesFragment extends Fragment {
 
         try {
             if (MainApplication.places == null) { // Read them from cache
-                if (PreferenceUtils.getValue(context, PreferenceUtils.KEY_PLACES).isEmpty()) {
+                if (PreferenceUtils.getString(context, PreferenceUtils.KEY_PLACES).isEmpty()) {
                     return;
                 }
-                MainApplication.places = new JSONObject(PreferenceUtils.getValue(context, PreferenceUtils.KEY_PLACES));
+                MainApplication.places = new JSONObject(PreferenceUtils.getString(context, PreferenceUtils.KEY_PLACES));
             }
 
             Log.e(TAG, "Places json: " + MainApplication.places);

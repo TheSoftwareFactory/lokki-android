@@ -4,10 +4,10 @@ See LICENSE for details
 */
 package cc.softwarefactory.lokki.android.fragments;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -156,7 +156,7 @@ public class AddContactsFragment extends Fragment {
             try {
                 MainApplication.contacts = contactsResult;
                 MainApplication.mapping = MainApplication.contacts.getJSONObject("mapping");
-                PreferenceUtils.setValue(context, PreferenceUtils.KEY_CONTACTS, MainApplication.contacts.toString());
+                PreferenceUtils.setString(context, PreferenceUtils.KEY_CONTACTS, MainApplication.contacts.toString());
 
             } catch (JSONException e) {
                 Log.e(TAG, e.getMessage());

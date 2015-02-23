@@ -8,6 +8,7 @@ import android.app.Application;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.StrictMode;
+import android.preference.PreferenceManager;
 import android.support.v4.util.LruCache;
 import android.util.Log;
 
@@ -49,6 +50,7 @@ public class MainApplication extends Application {
     public void onCreate() {
 
         Log.e(TAG, "Lokki started component");
+
         loadSetting();
 
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024); // Use 1/8th of the available memory for this memory cache.
@@ -61,7 +63,7 @@ public class MainApplication extends Application {
             }
         };
 
-        String iDontWantToSeeString = PreferenceUtils.getValue(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE);
+        String iDontWantToSeeString = PreferenceUtils.getString(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE);
         if (!iDontWantToSeeString.isEmpty()) {
             try {
                 MainApplication.iDontWantToSee = new JSONObject(iDontWantToSeeString);
@@ -93,8 +95,8 @@ public class MainApplication extends Application {
     }
 
     private void loadSetting() {
-
-        visible = !PreferenceUtils.getValue(this, PreferenceUtils.KEY_SETTING_VISIBILITY).equals("1"); // If 1 it is disabled, otherwise ON.
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+        visible = PreferenceUtils.getBoolean(getApplicationContext(), PreferenceUtils.KEY_SETTING_VISIBILITY);
         Log.e(TAG, "Visible: " + visible);
     }
 
