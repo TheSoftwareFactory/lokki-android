@@ -37,7 +37,7 @@ public class PreferencesFragment extends PreferenceFragment implements SharedPre
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         Log.e(TAG, "onSharedPreferenceChanged key: " + key);
         if (key.equals(PreferenceUtils.KEY_SETTING_MAP_MODE)) {
-            int mapMode = Integer.parseInt(sharedPreferences.getString(PreferenceUtils.KEY_SETTING_MAP_MODE, "0"));    // todo make this an int array?
+            int mapMode = Integer.parseInt(sharedPreferences.getString(PreferenceUtils.KEY_SETTING_MAP_MODE, "0"));
             MainApplication.mapType = mapMode;
         } else if (key.equals(PreferenceUtils.KEY_SETTING_VISIBILITY)) {
             boolean visible = sharedPreferences.getBoolean(PreferenceUtils.KEY_SETTING_VISIBILITY, true);

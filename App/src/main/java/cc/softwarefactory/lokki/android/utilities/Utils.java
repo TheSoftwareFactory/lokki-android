@@ -396,7 +396,7 @@ public class Utils {
             } else {
                 LocationService.start(context);
             }
-        } catch (Exception ex) {
+        } catch (JSONException ex) {
             Log.e(TAG, "Could not set visibility:" + ex.getMessage());
         }
     }

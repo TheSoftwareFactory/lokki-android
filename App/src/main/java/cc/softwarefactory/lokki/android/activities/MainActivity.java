@@ -328,9 +328,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     private void toggleVisibility() {
 
         Utils.setVisibility(!MainApplication.visible, MainActivity.this);
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(PreferenceUtils.KEY_SETTING_VISIBILITY, MainApplication.visible).commit();
+        PreferenceUtils.setBoolean(getApplicationContext(),PreferenceUtils.KEY_SETTING_VISIBILITY, MainApplication.visible);
 
         if (MainApplication.visible) {
             Toast.makeText(this, getResources().getString(R.string.you_are_visible), Toast.LENGTH_LONG).show();

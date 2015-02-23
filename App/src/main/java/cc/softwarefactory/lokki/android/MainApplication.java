@@ -95,7 +95,7 @@ public class MainApplication extends Application {
     }
 
     private void loadSetting() {
-        visible = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean(PreferenceUtils.KEY_SETTING_VISIBILITY, true);
+        visible = PreferenceUtils.getBoolean(getApplicationContext(), PreferenceUtils.KEY_SETTING_VISIBILITY);
         Log.e(TAG, "Visible: " + visible);
     }
 
