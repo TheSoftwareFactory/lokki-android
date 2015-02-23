@@ -36,12 +36,11 @@
     <string name="can_see_me">Can see me</string>
     <string name="your_lokki_id">Your Lokki ID is:</string>
     <string name="your_friends">Tell your friends to use this email with Lokki.</string>
-    <string name="privacy_policy_link"><a href="http://www.f-secure.com">Privacy policy</a></string>
     <string name="privacy_policy_title">Privacy policy</string>
     <string name="my_visibility">My contacts can see me</string>
     <string name="privacy_policy_text">placeholder</string>
     <string name="license_link"><![CDATA[<a href=\"\">License terms</a>]]></string>
-    <string name="version_and_copyright">Version: %1$s \nCopyright © F-Secure Corporation. \nAll rights reserved.</string>
+    <string name="version">Version: %1$s</string>
     <string name="title_activity_first_time">FirstTimeActivity</string>
     <string name="i_agree">I have read and I agree</string>
     <string name="continue_with_terms">Continue</string>
@@ -49,13 +48,12 @@
     <string name="welcome_text"><![CDATA[ <b>Welcome to Lokki 3.0!</b><br/>Now you can see where your friends and family members are on a map. You choose who can see where you are, and you can hide your location whenever you want.]]></string>
 
     <string name="terms_text">
-                                <![CDATA[ Your privacy is of the utmost importance to us. Before you get started, you need to agree to the following terms:<br/><br/><br/>
+                                <![CDATA[ Before you get started, you need to agree to the following terms:<br/><br/><br/>
                               1. I have read the terms of service and accept them.<br/><br/>
                               2. I consent to the collection and processing of personal data.<br/><br/>
                               3. I consent that the service can process and display my location.<br/><br/>
                               4. If I am under 15, I have my parents’ permission to use Lokki according to these terms.<br/><br/>
-                              5. If I am under 13 and living in the United States, I may not use Lokki.<br/><br/><br/>
-                              <a href="http://www.f-secure.com/en/web/home_global/privacy/privacy-summary">Read more on our web site</a>]]>
+                              5. If I am under 13 and living in the United States, I may not use Lokki.<br/><br/><br/>]]>
     </string>
 
     <string name="terms_title">Terms of use</string>
