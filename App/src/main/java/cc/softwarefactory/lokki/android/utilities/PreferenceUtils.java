@@ -24,20 +24,15 @@ public class PreferenceUtils {
      * Get a string value from default shared preferences
      * @param context
      * @param key
-     * @return Key value or null if key not found
+     * @return Key value or empty string if key not found
      */
-    public static String getValue(Context context, String key) {
+    public static String getString(Context context, String key) {
 
         if (context == null) {
             return null;
         }
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        if (!prefs.contains(key)) {
-            Log.e(TAG, "Key not found: " + key);
-            return null;
-        }
-
         return prefs.getString(key, "");
     }
 
@@ -45,7 +40,7 @@ public class PreferenceUtils {
      * Get a boolean value from default shared preferences
      * @param context
      * @param key
-     * @return Key value or null if key not found
+     * @return Key value or false if key not found
      */
     public static Boolean getBoolean(Context context, String key) {
 
@@ -54,11 +49,6 @@ public class PreferenceUtils {
         }
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        if (!prefs.contains(key)) {
-            Log.e(TAG, "Key not found: " + key);
-            return null;
-        }
-
         return prefs.getBoolean(key, false);
     }
 
@@ -66,7 +56,7 @@ public class PreferenceUtils {
 
 
 
-    public static void setValue(Context context, String key, String value) {
+    public static void setString(Context context, String key, String value) {
 
         if (context == null) {
             return;

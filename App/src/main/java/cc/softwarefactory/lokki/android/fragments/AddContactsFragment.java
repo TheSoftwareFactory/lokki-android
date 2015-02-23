@@ -156,7 +156,7 @@ public class AddContactsFragment extends Fragment {
             try {
                 MainApplication.contacts = contactsResult;
                 MainApplication.mapping = MainApplication.contacts.getJSONObject("mapping");
-                PreferenceUtils.setValue(context, PreferenceUtils.KEY_CONTACTS, MainApplication.contacts.toString());
+                PreferenceUtils.setString(context, PreferenceUtils.KEY_CONTACTS, MainApplication.contacts.toString());
 
             } catch (JSONException e) {
                 Log.e(TAG, e.getMessage());

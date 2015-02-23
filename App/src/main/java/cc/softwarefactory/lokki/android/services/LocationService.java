@@ -87,7 +87,7 @@ public class LocationService extends Service implements LocationListener, Google
         Log.e(TAG, "onCreate");
         super.onCreate();
 
-        if (PreferenceUtils.getValue(this, PreferenceUtils.KEY_AUTH_TOKEN).isEmpty()) {
+        if (PreferenceUtils.getString(this, PreferenceUtils.KEY_AUTH_TOKEN).isEmpty()) {
             Log.e(TAG, "User disabled reporting in App. Service not started.");
             stopSelf();
         } else if (Utils.checkGooglePlayServices(this)) {

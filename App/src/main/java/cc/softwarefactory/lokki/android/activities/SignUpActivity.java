@@ -99,8 +99,8 @@ public class SignUpActivity extends ActionBarActivity {
             aq.id(R.id.email).getEditText().setError(errorMessage);
             return;
         }
-        PreferenceUtils.setValue(this, PreferenceUtils.KEY_USER_ACCOUNT, accountName);
-        PreferenceUtils.setValue(this, PreferenceUtils.KEY_DEVICE_ID, Utils.getDeviceId());
+        PreferenceUtils.setString(this, PreferenceUtils.KEY_USER_ACCOUNT, accountName);
+        PreferenceUtils.setString(this, PreferenceUtils.KEY_DEVICE_ID, Utils.getDeviceId());
         MainApplication.userAccount = accountName;
 
         ServerApi.signUp(this, new SignUpCallback());
@@ -134,8 +134,8 @@ public class SignUpActivity extends ActionBarActivity {
             String id = json.optString("id");
             String authorizationToken = json.optString("authorizationtoken");
 
-            PreferenceUtils.setValue(SignUpActivity.this, PreferenceUtils.KEY_USER_ID, id);
-            PreferenceUtils.setValue(SignUpActivity.this, PreferenceUtils.KEY_AUTH_TOKEN, authorizationToken);
+            PreferenceUtils.setString(SignUpActivity.this, PreferenceUtils.KEY_USER_ID, id);
+            PreferenceUtils.setString(SignUpActivity.this, PreferenceUtils.KEY_AUTH_TOKEN, authorizationToken);
 
             MainApplication.userId = id;
             Log.e(TAG, "User id: " + id);

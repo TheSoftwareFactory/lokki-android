@@ -43,8 +43,8 @@ public class ServerApi {
         AQuery aq = new AQuery(context);
         String url = ApiUrl + "signup";
 
-        String userAccount = PreferenceUtils.getValue(context, PreferenceUtils.KEY_USER_ACCOUNT);
-        String deviceId = PreferenceUtils.getValue(context, PreferenceUtils.KEY_DEVICE_ID);
+        String userAccount = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ACCOUNT);
+        String deviceId = PreferenceUtils.getString(context, PreferenceUtils.KEY_DEVICE_ID);
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("email", userAccount);
         params.put("device_id", deviceId);
@@ -62,8 +62,8 @@ public class ServerApi {
         Log.e(TAG, "getDashboard");
         AQuery aq = new AQuery(context);
 
-        String userId = PreferenceUtils.getValue(context, PreferenceUtils.KEY_USER_ID);
-        final String authorizationToken = PreferenceUtils.getValue(context, PreferenceUtils.KEY_AUTH_TOKEN);
+        String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
+        final String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
         String url = ApiUrl  + "user/" + userId + "/dashboard";
 
         AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>() {
@@ -73,14 +73,14 @@ public class ServerApi {
 
                 if (status.getCode() == 401) {
                     Log.e(TAG, "Status login failed. App should exit.");
-                    PreferenceUtils.setValue(context, PreferenceUtils.KEY_AUTH_TOKEN, "");
+                    PreferenceUtils.setString(context, PreferenceUtils.KEY_AUTH_TOKEN, "");
                     Intent intent = new Intent("EXIT");
                     LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
                 } else if (json != null){
                     Log.e(TAG, "json returned: " + json);
                     MainApplication.dashboard = json;
-                    PreferenceUtils.setValue(context, PreferenceUtils.KEY_DASHBOARD, json.toString());
+                    PreferenceUtils.setString(context, PreferenceUtils.KEY_DASHBOARD, json.toString());
                     Intent intent = new Intent("LOCATION-UPDATE");
                     LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
@@ -98,8 +98,8 @@ public class ServerApi {
         Log.e(TAG, "getPlaces");
         AQuery aq = new AQuery(context);
 
-        String userId = PreferenceUtils.getValue(context, PreferenceUtils.KEY_USER_ID);
-        String authorizationToken = PreferenceUtils.getValue(context, PreferenceUtils.KEY_AUTH_TOKEN);
+        String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
+        String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
         String url = ApiUrl + "user/" + userId + "/places";
 
         AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>(){
@@ -113,7 +113,7 @@ public class ServerApi {
                 }
                 Log.e(TAG, "json returned: " + json);
                 MainApplication.places = json;
-                PreferenceUtils.setValue(context, PreferenceUtils.KEY_PLACES, json.toString());
+                PreferenceUtils.setString(context, PreferenceUtils.KEY_PLACES, json.toString());
                 Intent intent = new Intent("PLACES-UPDATE");
                 LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
             }
@@ -127,8 +127,8 @@ public class ServerApi {
         Log.e(TAG, "allowPeople");
         AQuery aq = new AQuery(context);
 
-        String userId = PreferenceUtils.getValue(context, PreferenceUtils.KEY_USER_ID);
-        String authorizationToken = PreferenceUtils.getValue(context, PreferenceUtils.KEY_AUTH_TOKEN);
+        String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
+        String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
         String url = ApiUrl + "user/" + userId + "/allow";
 
         JSONArray JSONemails = new JSONArray();
@@ -163,8 +163,8 @@ public class ServerApi {
         Log.e(TAG, "disallowUser");
         AQuery aq = new AQuery(context);
 
-        String userId = PreferenceUtils.getValue(context, PreferenceUtils.KEY_USER_ID);
-        String authorizationToken = PreferenceUtils.getValue(context, PreferenceUtils.KEY_AUTH_TOKEN);
+        String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
+        String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
         String url = ApiUrl + "user/" + userId + "/allow/";
         String targetId = Utils.getIdFromEmail(context, email);
 
@@ -196,8 +196,8 @@ public class ServerApi {
         Log.e(TAG, "sendLocation");
         AQuery aq = new AQuery(context);
 
-        String userId = PreferenceUtils.getValue(context, PreferenceUtils.KEY_USER_ID);
-        String authorizationToken = PreferenceUtils.getValue(context, PreferenceUtils.KEY_AUTH_TOKEN);
+        String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
+        String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
         String url = ApiUrl + "user/" + userId + "/location";
 
         JSONObject JSONlocation = new JSONObject()
@@ -226,8 +226,8 @@ public class ServerApi {
         Log.e(TAG, "sendGCMToken");
         AQuery aq = new AQuery(context);
 
-        String userId = PreferenceUtils.getValue(context, PreferenceUtils.KEY_USER_ID);
-        String authorizationToken = PreferenceUtils.getValue(context, PreferenceUtils.KEY_AUTH_TOKEN);
+        String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
+        String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
         String url = ApiUrl + "user/" + userId + "/gcmToken";
 
         JSONObject JSONdata = new JSONObject()
@@ -251,8 +251,8 @@ public class ServerApi {
         Log.e(TAG, "requestUpdates");
         AQuery aq = new AQuery(context);
 
-        String userId = PreferenceUtils.getValue(context, PreferenceUtils.KEY_USER_ID);
-        String authorizationToken = PreferenceUtils.getValue(context, PreferenceUtils.KEY_AUTH_TOKEN);
+        String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
+        String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
         String url = ApiUrl + "user/" + userId + "/update/locations";
 
         JSONObject JSONdata = new JSONObject()
@@ -276,8 +276,8 @@ public class ServerApi {
         Log.e(TAG, "setVisibility");
         AQuery aq = new AQuery(context);
 
-        String userId = PreferenceUtils.getValue(context, PreferenceUtils.KEY_USER_ID);
-        String authorizationToken = PreferenceUtils.getValue(context, PreferenceUtils.KEY_AUTH_TOKEN);
+        String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
+        String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
         String url = ApiUrl + "user/" + userId + "/visibility";
 
         JSONObject JSONdata = new JSONObject()
@@ -301,8 +301,8 @@ public class ServerApi {
         Log.e(TAG, "reportCrash");
         AQuery aq = new AQuery(context);
 
-        String userId = PreferenceUtils.getValue(context, PreferenceUtils.KEY_USER_ID);
-        String authorizationToken = PreferenceUtils.getValue(context, PreferenceUtils.KEY_AUTH_TOKEN);
+        String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
+        String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
         String url = ApiUrl + "crashReport/" + userId;
 
         JSONObject JSONdata = new JSONObject()
@@ -335,8 +335,8 @@ public class ServerApi {
         Log.e(TAG, "addPlace");
         AQuery aq = new AQuery(context);
 
-        String userId = PreferenceUtils.getValue(context, PreferenceUtils.KEY_USER_ID);
-        String authorizationToken = PreferenceUtils.getValue(context, PreferenceUtils.KEY_AUTH_TOKEN);
+        String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
+        String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
         String url = ApiUrl + "user/" + userId + "/place";
 
 
@@ -387,8 +387,8 @@ public class ServerApi {
         Log.e(TAG, "removePlace");
         AQuery aq = new AQuery(context);
 
-        String userId = PreferenceUtils.getValue(context, PreferenceUtils.KEY_USER_ID);
-        String authorizationToken = PreferenceUtils.getValue(context, PreferenceUtils.KEY_AUTH_TOKEN);
+        String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
+        String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
         String url = ApiUrl + "user/" + userId + "/place/" + placeId;
 
         AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>() {
@@ -416,8 +416,8 @@ public class ServerApi {
         Log.e(TAG, "sendLanguage");
         AQuery aq = new AQuery(context);
 
-        String userId = PreferenceUtils.getValue(context, PreferenceUtils.KEY_USER_ID);
-        String authorizationToken = PreferenceUtils.getValue(context, PreferenceUtils.KEY_AUTH_TOKEN);
+        String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
+        String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
         String url = ApiUrl + "user/" + userId + "/language";
 
         JSONObject JSONdata = new JSONObject()

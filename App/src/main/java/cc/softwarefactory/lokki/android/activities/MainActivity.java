@@ -11,7 +11,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
@@ -82,9 +81,9 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        Log.e(TAG, "onCreate");
         mContactDataSource = new DefaultContactDataSource();
 
-        Log.e(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -109,7 +108,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         ImageView avatarImage = (ImageView) infoView.findViewById(R.id.avatar);
         AvatarLoader avatarLoader = new AvatarLoader(this);
 
-        String email = PreferenceUtils.getValue(this, PreferenceUtils.KEY_USER_ACCOUNT);
+        String email = PreferenceUtils.getString(this, PreferenceUtils.KEY_USER_ACCOUNT);
         avatarLoader.load(email, avatarImage);
 
         aq.id(R.id.user_name).text(Utils.getNameFromEmail(this, email));
@@ -135,7 +134,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
     private boolean firstTimeLaunch() {
 
-        return PreferenceUtils.getValue(this, PreferenceUtils.KEY_AUTH_TOKEN).isEmpty();
+        return PreferenceUtils.getString(this, PreferenceUtils.KEY_AUTH_TOKEN).isEmpty();
     }
 
     @Override
@@ -179,9 +178,9 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
     private void checkIfUserIsLoggedIn() {
 
-        String userAccount = PreferenceUtils.getValue(this, PreferenceUtils.KEY_USER_ACCOUNT);
-        String userId = PreferenceUtils.getValue(this, PreferenceUtils.KEY_USER_ID);
-        String authorizationToken = PreferenceUtils.getValue(this, PreferenceUtils.KEY_AUTH_TOKEN);
+        String userAccount = PreferenceUtils.getString(this, PreferenceUtils.KEY_USER_ACCOUNT);
+        String userId = PreferenceUtils.getString(this, PreferenceUtils.KEY_USER_ID);
+        String authorizationToken = PreferenceUtils.getString(this, PreferenceUtils.KEY_AUTH_TOKEN);
         boolean debug = false;
 
         if (debug || userId.isEmpty() || userAccount.isEmpty() || authorizationToken.isEmpty()) {
@@ -440,13 +439,13 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         if (!allow) {
             try {
                 MainApplication.iDontWantToSee.put(email, 1);
-                PreferenceUtils.setValue(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, MainApplication.iDontWantToSee.toString());
+                PreferenceUtils.setString(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, MainApplication.iDontWantToSee.toString());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         } else if (MainApplication.iDontWantToSee.has(email)) {
             MainApplication.iDontWantToSee.remove(email);
-            PreferenceUtils.setValue(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, MainApplication.iDontWantToSee.toString());
+            PreferenceUtils.setString(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, MainApplication.iDontWantToSee.toString());
         }
     }
 

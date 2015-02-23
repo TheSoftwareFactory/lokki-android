@@ -239,10 +239,10 @@ public class PlacesFragment extends Fragment {
 
         try {
             if (MainApplication.places == null) { // Read them from cache
-                if (PreferenceUtils.getValue(context, PreferenceUtils.KEY_PLACES).isEmpty()) {
+                if (PreferenceUtils.getString(context, PreferenceUtils.KEY_PLACES).isEmpty()) {
                     return;
                 }
-                MainApplication.places = new JSONObject(PreferenceUtils.getValue(context, PreferenceUtils.KEY_PLACES));
+                MainApplication.places = new JSONObject(PreferenceUtils.getString(context, PreferenceUtils.KEY_PLACES));
             }
 
             Log.e(TAG, "Places json: " + MainApplication.places);

@@ -77,7 +77,7 @@ public class ContactsFragment extends Fragment {
 
         try {
             if (MainApplication.dashboard == null) {
-                MainApplication.dashboard = new JSONObject(PreferenceUtils.getValue(context, PreferenceUtils.KEY_DASHBOARD));
+                MainApplication.dashboard = new JSONObject(PreferenceUtils.getString(context, PreferenceUtils.KEY_DASHBOARD));
             }
 
             JSONObject iCanSeeObj = MainApplication.dashboard.getJSONObject("icansee");

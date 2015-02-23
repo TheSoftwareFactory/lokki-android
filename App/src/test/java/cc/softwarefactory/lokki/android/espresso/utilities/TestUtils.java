@@ -3,7 +3,6 @@ package cc.softwarefactory.lokki.android.espresso.utilities;
 import android.app.Instrumentation;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
 import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.action.CoordinatesProvider;
@@ -40,9 +39,9 @@ public class TestUtils {
 
     public static void setUserRegistrationData(Context targetContext) {
         MainActivity.firstTimeLaunch = null;
-        PreferenceUtils.setValue(targetContext, PreferenceUtils.KEY_USER_ACCOUNT, VALUE_TEST_USER_ACCOUNT);
-        PreferenceUtils.setValue(targetContext, PreferenceUtils.KEY_USER_ID, VALUE_TEST_USER_ID);
-        PreferenceUtils.setValue(targetContext, PreferenceUtils.KEY_AUTH_TOKEN, VALUE_TEST_AUTH_TOKEN);
+        PreferenceUtils.setString(targetContext, PreferenceUtils.KEY_USER_ACCOUNT, VALUE_TEST_USER_ACCOUNT);
+        PreferenceUtils.setString(targetContext, PreferenceUtils.KEY_USER_ID, VALUE_TEST_USER_ID);
+        PreferenceUtils.setString(targetContext, PreferenceUtils.KEY_AUTH_TOKEN, VALUE_TEST_AUTH_TOKEN);
     }
 
 

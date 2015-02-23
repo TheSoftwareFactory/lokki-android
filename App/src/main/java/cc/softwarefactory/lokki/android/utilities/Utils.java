@@ -120,7 +120,7 @@ public class Utils {
             return true;
         }
 
-        String jsonData = PreferenceUtils.getValue(context, PreferenceUtils.KEY_CONTACTS);
+        String jsonData = PreferenceUtils.getString(context, PreferenceUtils.KEY_CONTACTS);
         if (jsonData.isEmpty()) {
             return false;
         }
