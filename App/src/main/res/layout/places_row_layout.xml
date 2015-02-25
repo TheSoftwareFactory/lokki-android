@@ -33,7 +33,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@id/background"
-        android:text="Place Name"
         android:textColor="#fff"
         android:typeface="sans"
         android:layout_marginLeft="5dp"

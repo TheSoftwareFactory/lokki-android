@@ -6,7 +6,7 @@
     <string name="app_name">Lokki</string>
     <string name="app_long_name">Lokki</string>
 
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
@@ -73,7 +73,7 @@
     <string name="you_are_visible">You are now VISIBLE</string>
     <string name="you_are_invisible">You are now INVISIBLE</string>
     <string name="places_how_to_create">To create a new place go to the map and long press the location where to place is located. Then type a name and click OK.</string>
-    <string name="search_contacts">Search contacts...</string>
+    <string name="search_contacts">Search contacts…</string>
 
     <string name="map_mode_default">Default</string>
     <string name="map_mode_satellite">Satellite</string>

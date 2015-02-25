@@ -30,7 +30,6 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/thumbnail"
         android:layout_toRightOf="@+id/thumbnail"
-        android:text="Contact Name"
         android:textColor="#040404"
         android:typeface="sans"
         android:layout_marginTop="0dp"
@@ -53,8 +52,7 @@
         android:scrollHorizontally="true"
         android:layout_marginTop="1dip"
         android:layout_toRightOf="@+id/thumbnail"
-        android:layout_toLeftOf="@+id/i_can_see"
-        android:text="email address" />
+        android:layout_toLeftOf="@+id/i_can_see" />
 
     <TextView
         android:id="@+id/last_report"
@@ -68,8 +66,7 @@
         android:scrollHorizontally="true"
         android:layout_marginTop="1dip"
         android:layout_toRightOf="@+id/thumbnail"
-        android:layout_toLeftOf="@+id/i_can_see"
-        android:text="last report" />
+        android:layout_toLeftOf="@+id/i_can_see" />
 
     <CheckBox
         android:id="@+id/can_see_me"
