@@ -70,6 +70,7 @@ public class MapViewFragment extends Fragment {
     private HashMap<String, Marker> markerMap;
     private AQuery aq;
     private static Boolean cancelAsyncTasks = false;
+    private static Boolean promptShown = false;
     private Context context;
     private Boolean firstTimeZoom = true;
     private ArrayList<Circle> placesOverlay;
@@ -148,8 +149,9 @@ public class MapViewFragment extends Fragment {
         boolean gps = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
         boolean network = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
-        if (!gps && !network) {
+        if (!gps && !network && !promptShown) {
             promptLocationService();
+            promptShown = true;
         }
     }
 
@@ -161,9 +163,14 @@ public class MapViewFragment extends Fragment {
                 .setPositiveButton(R.string.settings, new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, final int id) {
                         startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                        promptShown = false;
                     }
                 })
-                .setNegativeButton(R.string.ignore, null)
+                .setNegativeButton(R.string.ignore, new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, final int id) {
+                        promptShown = false;
+                    }
+                })
                 .show();
     }
 
