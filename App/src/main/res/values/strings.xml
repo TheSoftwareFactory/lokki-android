@@ -90,9 +90,4 @@
     <string name="ignore">Ignore</string>
     <string name="location_services_disabled">Location services disabled</string>
 
-    <string name="contact_name">Contact Name</string>
-    <string name="timestamp">timestamp</string>
-    <string name="email_address">email address</string>
-    <string name="place_name">Place Name</string>
-    <string name="last_report">last report</string>
 </resources>

@@ -29,7 +29,6 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/thumbnail"
         android:layout_toRightOf="@+id/thumbnail"
-        android:text="@string/contact_name"
         android:textColor="#040404"
         android:typeface="sans"
         android:layout_marginTop="8dp"
@@ -53,8 +52,7 @@
         android:ellipsize="end"
         android:scrollHorizontally="true"
         android:layout_toLeftOf="@+id/contact_selected"
-        android:singleLine="true"
-        android:text="@string/email_address" />
+        android:singleLine="true" />
 
     <CheckBox
         android:id="@+id/contact_selected"
