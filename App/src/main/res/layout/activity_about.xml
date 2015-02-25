@@ -7,26 +7,31 @@
         android:id="@+id/logo"
         android:layout_width="fill_parent"
         android:layout_height="200dp"
-        android:background="@drawable/bg_gradient"
-        android:src="@drawable/about_transparent" />
+        android:src="@drawable/logo"
+        style="@style/DarkBackground"
+        android:paddingBottom="40dp"
+        android:paddingLeft="20dp"
+        android:paddingTop="20dp"
+        android:paddingRight="20dp" />
 
     <TextView
         android:id="@+id/version"
-        android:textColor="@android:color/white"
-        android:layout_centerHorizontal="true"
         android:text="@string/version"
         android:gravity="center"
         android:padding="10dip"
         android:textSize="12sp"
-        android:layout_alignBottom="@+id/logo"
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content" />
+        android:layout_width="wrap_content"
+        android:textStyle="bold"
+        android:layout_alignBottom="@+id/logo"
+        android:layout_centerHorizontal="true"
+        android:textColor="@android:color/white" />
 
     <ListView
         android:id="@+id/listView1"
-        android:layout_below="@+id/logo"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"></ListView>
+        android:layout_height="fill_parent"
+        android:layout_below="@+id/version"></ListView>
 
 </RelativeLayout>
 
