@@ -13,6 +13,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,9 +23,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 
+import com.androidquery.AQuery;
+
 import cc.softwarefactory.lokki.android.R;
+import cc.softwarefactory.lokki.android.avatar.AvatarLoader;
+import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
+import cc.softwarefactory.lokki.android.utilities.Utils;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -57,8 +64,10 @@ public class NavigationDrawerFragment extends Fragment {
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerListView;
     private View mFragmentContainerView;
+    private View mListViewHeader;
+    private static final String TAG = "NavDrawerFragment";
 
-    private int mCurrentSelectedPosition = 0;
+    private int mCurrentSelectedPosition = 1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -84,11 +93,33 @@ public class NavigationDrawerFragment extends Fragment {
                 selectItem(position);
             }
         });
+
+        mListViewHeader = inflater.inflate(R.layout.fragment_drawer_header, mDrawerListView, false);
+        mDrawerListView.addHeaderView(mListViewHeader);
+        setUserInfo();
+
         String[] menuOptions = getResources().getStringArray(R.array.menuOptions);
         mDrawerListView.setAdapter(new ArrayAdapter<>(getSupportActionBar().getThemedContext(), R.layout.drawer_list_item, menuOptions));
 
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
         return mDrawerListView;
+    }
+
+    public void setUserInfo() {
+        if (mListViewHeader != null) {
+            AQuery aq = new AQuery(getActivity(), mListViewHeader);
+
+            ImageView avatarImage = (ImageView) mListViewHeader.findViewById(R.id.avatar);
+            AvatarLoader avatarLoader = new AvatarLoader(getActivity());
+
+            String email = PreferenceUtils.getString(getActivity(), PreferenceUtils.KEY_USER_ACCOUNT);
+            avatarLoader.load(email, avatarImage);
+
+            aq.id(R.id.user_name).text(Utils.getNameFromEmail(getActivity(), email));
+        }
+        else {
+            Log.e(TAG, "Cannot add user info. ListViewHeader not initialized");
+        }
     }
 
     public boolean isDrawerOpen() {

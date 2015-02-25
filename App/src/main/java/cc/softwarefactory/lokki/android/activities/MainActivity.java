@@ -91,28 +91,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
         mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout)); // Set up the drawer.
-
-        LayoutInflater inflater = getLayoutInflater();
-        ListView drawerListView = (ListView) ((FrameLayout)mNavigationDrawerFragment.getView()).getChildAt(0);
-        infoView = inflater.inflate(R.layout.fragment_drawer_header, drawerListView, false);
-
-        setUserInfo();
-
-        drawerListView.addHeaderView(infoView);
     }
 
-
-    public void setUserInfo() {
-        AQuery aq = new AQuery(this, infoView);
-
-        ImageView avatarImage = (ImageView) infoView.findViewById(R.id.avatar);
-        AvatarLoader avatarLoader = new AvatarLoader(this);
-
-        String email = PreferenceUtils.getString(this, PreferenceUtils.KEY_USER_ACCOUNT);
-        avatarLoader.load(email, avatarImage);
-
-        aq.id(R.id.user_name).text(Utils.getNameFromEmail(this, email));
-    }
 
     @Override
     protected void onStart() {
@@ -369,8 +349,8 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         if (requestCode == REQUEST_CODE_EMAIL) {
             if (resultCode == RESULT_OK) {
                 Log.e(TAG, "Returned from sign up. Now we will show the map.");
-                setUserInfo();
                 startServices();
+                mNavigationDrawerFragment.setUserInfo();
                 GcmHelper.start(getApplicationContext()); // Register to GCM
 
             } else {
