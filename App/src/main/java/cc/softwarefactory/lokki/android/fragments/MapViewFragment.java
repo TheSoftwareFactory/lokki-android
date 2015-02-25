@@ -70,7 +70,6 @@ public class MapViewFragment extends Fragment {
     private HashMap<String, Marker> markerMap;
     private AQuery aq;
     private static Boolean cancelAsyncTasks = false;
-    private static Boolean promptShown = false;
     private Context context;
     private Boolean firstTimeZoom = true;
     private ArrayList<Circle> placesOverlay;
@@ -149,9 +148,9 @@ public class MapViewFragment extends Fragment {
         boolean gps = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
         boolean network = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
-        if (!gps && !network && !promptShown) {
+        if (!gps && !network && !MainApplication.locationDisabledPromptShown) {
             promptLocationService();
-            promptShown = true;
+            MainApplication.locationDisabledPromptShown = true;
         }
     }
 
@@ -159,18 +158,13 @@ public class MapViewFragment extends Fragment {
         new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.location_services_disabled)
                 .setMessage(R.string.gps_disabled)
-                .setCancelable(false)
+                .setCancelable(true)
                 .setPositiveButton(R.string.settings, new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, final int id) {
                         startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-                        promptShown = false;
                     }
                 })
-                .setNegativeButton(R.string.ignore, new DialogInterface.OnClickListener() {
-                    public void onClick(final DialogInterface dialog, final int id) {
-                        promptShown = false;
-                    }
-                })
+                .setNegativeButton(R.string.ignore, null)
                 .show();
     }
 
@@ -216,6 +210,15 @@ public class MapViewFragment extends Fragment {
             public void onMapLongClick(LatLng latLng) {
 
                 setAddPlacesVisible(true);
+            }
+        });
+
+        map.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
+            @Override
+            public boolean onMyLocationButtonClick() {
+                MainApplication.locationDisabledPromptShown = false;
+                checkLocationServiceStatus();
+                return false;
             }
         });
     }

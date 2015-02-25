@@ -45,6 +45,8 @@ public class MainApplication extends Application {
     public static LruCache<String, Bitmap> avatarCache;
     public static JSONObject places;
     public Boolean exitApp = false;
+    public static boolean locationDisabledPromptShown;
+
 
     @Override
     public void onCreate() {
@@ -52,6 +54,8 @@ public class MainApplication extends Application {
         Log.e(TAG, "Lokki started component");
 
         loadSetting();
+
+        locationDisabledPromptShown = false;
 
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024); // Use 1/8th of the available memory for this memory cache.
         final int cacheSize = maxMemory / 8;
