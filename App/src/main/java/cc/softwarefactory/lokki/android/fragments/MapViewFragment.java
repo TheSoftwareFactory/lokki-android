@@ -148,8 +148,9 @@ public class MapViewFragment extends Fragment {
         boolean gps = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
         boolean network = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
-        if (!gps && !network) {
+        if (!gps && !network && !MainApplication.locationDisabledPromptShown) {
             promptLocationService();
+            MainApplication.locationDisabledPromptShown = true;
         }
     }
 
@@ -157,7 +158,7 @@ public class MapViewFragment extends Fragment {
         new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.location_services_disabled)
                 .setMessage(R.string.gps_disabled)
-                .setCancelable(false)
+                .setCancelable(true)
                 .setPositiveButton(R.string.settings, new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, final int id) {
                         startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
@@ -209,6 +210,15 @@ public class MapViewFragment extends Fragment {
             public void onMapLongClick(LatLng latLng) {
 
                 setAddPlacesVisible(true);
+            }
+        });
+
+        map.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
+            @Override
+            public boolean onMyLocationButtonClick() {
+                MainApplication.locationDisabledPromptShown = false;
+                checkLocationServiceStatus();
+                return false;
             }
         });
     }
