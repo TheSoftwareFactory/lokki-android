@@ -27,7 +27,7 @@
             android:layout_gravity="bottom"
             android:layout_margin="0dp"
             android:padding="8dp"
-            android:background="#ffffffff">
+            android:background="@drawable/bottom_panel">
 
             <Button
                 android:id="@+id/cancel_add_place_button"
