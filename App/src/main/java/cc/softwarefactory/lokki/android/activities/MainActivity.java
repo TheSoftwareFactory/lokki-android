@@ -266,7 +266,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         switch (id) {
 
             case R.id.add_people: // In Contacts (to add new ones)
-                android.app.FragmentManager fragmentManager = getFragmentManager();
+                FragmentManager fragmentManager = getSupportFragmentManager();
 
                 AddContactsFragment acf = new AddContactsFragment();
                 acf.setContactUtils(mContactDataSource);
