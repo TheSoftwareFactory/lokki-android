@@ -240,7 +240,7 @@ public class MapViewFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 int mapWidth = fragment.getView().getWidth();
-                int mapHeight = fragment.getView().getHeight();
+                int mapHeight = fragment.getView().getHeight() - getView().findViewById(R.id.add_place_buttons).getHeight();
 
                 Location middleSideLocation;
                 if (mapWidth > mapHeight) {
@@ -249,7 +249,7 @@ public class MapViewFragment extends Fragment {
                     middleSideLocation = MapUtils.convertToLocation(map.getProjection().fromScreenLocation(new Point(0, mapHeight / 2)), "middleSide");
                 }
 
-                LatLng centerLatLng = map.getProjection().getVisibleRegion().latLngBounds.getCenter();
+                LatLng centerLatLng = map.getProjection().fromScreenLocation(getAddPlaceCircleCenter());
                 int radius = (int) middleSideLocation.distanceTo(MapUtils.convertToLocation(centerLatLng, "center"));
                 DialogUtils.addPlace(getActivity(), centerLatLng, (int) (radius * radiusMultiplier));
             }
@@ -261,41 +261,7 @@ public class MapViewFragment extends Fragment {
             ((ImageView) getView().findViewById(R.id.addPlaceCircle)).setImageDrawable(null);
         }
         if (visible) {
-            d = new Drawable() {
-                @Override
-                public void draw(Canvas canvas) {
-                    int mapCenterX = fragment.getView().getWidth() / 2;
-                    int mapCenterY = fragment.getView().getHeight() / 2;
-                    int radius = mapCenterX > mapCenterY ? mapCenterY : mapCenterX;
-
-                    Paint fill = new Paint();
-                    fill.setColor(Color.BLUE);
-                    fill.setAlpha(25);
-                    fill.setAntiAlias(true);
-                    canvas.drawCircle(mapCenterX, mapCenterY, (int) (radius * radiusMultiplier), fill);
-
-                    Paint border = new Paint();
-                    border.setColor(Color.BLUE);
-                    border.setAntiAlias(true);
-                    border.setStyle(Paint.Style.STROKE);
-                    canvas.drawCircle(mapCenterX, mapCenterY, (int) (radius * radiusMultiplier), border);
-                }
-
-                @Override
-                public void setAlpha(int alpha) {
-
-                }
-
-                @Override
-                public void setColorFilter(ColorFilter cf) {
-
-                }
-
-                @Override
-                public int getOpacity() {
-                    return 0;
-                }
-            };
+            d = new AddPlaceCircleDrawable();
 
             ((ImageView) getView().findViewById(R.id.addPlaceCircle)).setImageDrawable(d);
             showAddPlaceButtons();
@@ -329,6 +295,13 @@ public class MapViewFragment extends Fragment {
             }
         });
         getView().findViewById(R.id.add_place_buttons).startAnimation(slideDown);
+    }
+
+    private Point getAddPlaceCircleCenter() {
+        int mapCenterX = fragment.getView().getWidth() / 2;
+        int mapCenterY = (fragment.getView().getHeight() - getView().findViewById(R.id.add_place_buttons).getHeight()) / 2;
+
+        return new Point(mapCenterX, mapCenterY);
     }
 
     private void removeMarkers() {
@@ -666,5 +639,40 @@ public class MapViewFragment extends Fragment {
         Log.e(TAG, "onLowMemory");
         Log.e(TAG, "---------------------------------------------------------");
         startActivityForResult(new Intent(context, FirstTimeActivity.class), -1);
+    }
+
+    private class AddPlaceCircleDrawable extends Drawable {
+        @Override
+        public void draw(Canvas canvas) {
+            Point mapCenter = getAddPlaceCircleCenter();
+            int radius = Math.min(mapCenter.x, mapCenter.y);
+
+            Paint fill = new Paint();
+            fill.setColor(Color.BLUE);
+            fill.setAlpha(25);
+            fill.setAntiAlias(true);
+            canvas.drawCircle(mapCenter.x, mapCenter.y, (int) (radius * radiusMultiplier), fill);
+
+            Paint border = new Paint();
+            border.setColor(Color.BLUE);
+            border.setAntiAlias(true);
+            border.setStyle(Paint.Style.STROKE);
+            canvas.drawCircle(mapCenter.x, mapCenter.y, (int) (radius * radiusMultiplier), border);
+        }
+
+        @Override
+        public void setAlpha(int alpha) {
+
+        }
+
+        @Override
+        public void setColorFilter(ColorFilter cf) {
+
+        }
+
+        @Override
+        public int getOpacity() {
+            return 0;
+        }
     }
 }
