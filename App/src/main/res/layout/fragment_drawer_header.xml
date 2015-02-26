@@ -3,39 +3,51 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:layout_gravity="center"
-    android:background="@android:color/white"
-    android:orientation="vertical"
+    android:background="@android:color/darker_gray"
     android:divider="?android:listDivider"
+    android:orientation="vertical"
     android:padding="0dp"
     android:showDividers="middle">
 
     <RelativeLayout
-        android:layout_gravity="left"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:context=".AboutActivity"
-        android:padding="16dp">
+        android:layout_gravity="left"
+        android:padding="16dp"
+        tools:context=".AboutActivity">
 
-    <com.makeramen.RoundedImageView xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/avatar"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/default_avatar"
-        app:border_color="#215fcc"
-        app:border_width="0dip"
-        app:corner_radius="100dip"
-        app:round_background="true" />
+        <com.makeramen.RoundedImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/avatar"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/default_avatar"
+            app:border_color="#215fcc"
+            app:border_width="0dip"
+            app:corner_radius="100dip"
+            app:round_background="true" />
 
-    <TextView
-        android:id="@+id/user_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/avatar"
-        android:padding="10dip"
-        android:text=""
-        android:textColor="@android:color/black"
-        android:textSize="14sp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/avatar"
+            android:paddingBottom="0dp"
+            android:paddingTop="20dp"
+            android:id="@+id/lokki_id_label"
+            android:text="@string/your_lokki_id"
+            android:textColor="@android:color/secondary_text_light"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/lokki_id_label"
+            android:paddingTop="5dp"
+            android:paddingBottom="15dp"
+            android:text=""
+            android:textColor="@android:color/primary_text_light"
+            android:textSize="14sp" />
 
     </RelativeLayout>
 
