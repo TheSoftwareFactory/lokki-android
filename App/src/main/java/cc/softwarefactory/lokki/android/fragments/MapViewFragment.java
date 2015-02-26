@@ -31,6 +31,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 
@@ -296,10 +298,37 @@ public class MapViewFragment extends Fragment {
             };
 
             ((ImageView) getView().findViewById(R.id.addPlaceCircle)).setImageDrawable(d);
-            getView().findViewById(R.id.add_place_overlay).setVisibility(View.VISIBLE);
+            showAddPlaceButtons();
         } else {
-            getView().findViewById(R.id.add_place_overlay).setVisibility(View.INVISIBLE);
+            hideAddPlaceButtons();
         }
+    }
+
+    private void showAddPlaceButtons() {
+        Animation slideUp = AnimationUtils.loadAnimation(this.getActivity().getApplicationContext(), R.anim.add_place_buttons_show);
+        getView().findViewById(R.id.add_place_buttons).startAnimation(slideUp);
+        getView().findViewById(R.id.add_place_overlay).setVisibility(View.VISIBLE);
+    }
+
+    private void hideAddPlaceButtons() {
+        Animation slideDown = AnimationUtils.loadAnimation(this.getActivity().getApplicationContext(), R.anim.add_place_buttons_hide);
+        slideDown.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                getView().findViewById(R.id.add_place_overlay).setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        getView().findViewById(R.id.add_place_buttons).startAnimation(slideDown);
     }
 
     private void removeMarkers() {
