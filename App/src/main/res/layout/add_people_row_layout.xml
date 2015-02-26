@@ -10,8 +10,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="3dip"
+        android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
-        android:layout_marginRight="5dip">
+        android:layout_marginEnd="5dip"
+        android:layout_marginRight="5dp" >
 
         <com.makeramen.RoundedImageView xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/contact_photo"
@@ -29,6 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/thumbnail"
         android:layout_toRightOf="@+id/thumbnail"
+        android:layout_toEndOf="@+id/thumbnail"
         android:textColor="#040404"
         android:typeface="sans"
         android:layout_marginTop="8dp"
@@ -36,6 +39,7 @@
         android:ellipsize="end"
         android:scrollHorizontally="true"
         android:layout_toLeftOf="@+id/contact_selected"
+        android:layout_toStartOf="@+id/contact_selected"
         android:singleLine="true"
 
         android:textStyle="bold" />
@@ -49,9 +53,11 @@
         android:textSize="14sp"
         android:layout_marginTop="1dip"
         android:layout_toRightOf="@+id/thumbnail"
+        android:layout_toEndOf="@+id/thumbnail"
         android:ellipsize="end"
         android:scrollHorizontally="true"
         android:layout_toLeftOf="@+id/contact_selected"
+        android:layout_toStartOf="@+id/contact_selected"
         android:singleLine="true" />
 
     <CheckBox
@@ -59,9 +65,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_marginTop="13dp"
-        android:gravity="right"
+        android:gravity="end"
         android:layout_marginRight="5dip"
+        android:layout_marginEnd="5dip"
         android:textSize="0sp"
         android:onClick="addContactSelectedEmail" />
 
