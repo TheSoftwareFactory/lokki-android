@@ -69,6 +69,6 @@ public class TestUtils {
 
     public static void toggleNavigationDrawer() {
         // TODO: hardcoded click position and menu text
-        onView(withId(R.id.decor_content_parent)).perform(clickScreenPosition(0, 0));
+        onView(withId(R.id.toolbar_layout)).perform(clickScreenPosition(0, 0));
     }
 }

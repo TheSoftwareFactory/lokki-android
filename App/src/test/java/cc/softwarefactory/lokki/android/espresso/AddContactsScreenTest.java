@@ -43,8 +43,7 @@ public class AddContactsScreenTest extends LoggedInBaseTest {
     }
 
     private void enterContactsScreen() {
-        // TODO: hardcoded click position and menu text
-        onView(withId(R.id.decor_content_parent)).perform(TestUtils.clickScreenPosition(0, 0));
+        TestUtils.toggleNavigationDrawer();
         onView(withText("Contacts")).perform(click());
     }
 
