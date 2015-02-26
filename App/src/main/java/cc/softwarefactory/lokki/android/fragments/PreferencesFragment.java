@@ -2,6 +2,7 @@ package cc.softwarefactory.lokki.android.fragments;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.ListPreference;
 import android.preference.PreferenceFragment;
 import android.util.Log;
 
@@ -38,6 +39,8 @@ public class PreferencesFragment extends PreferenceFragment implements SharedPre
         Log.e(TAG, "onSharedPreferenceChanged key: " + key);
         if (key.equals(PreferenceUtils.KEY_SETTING_MAP_MODE)) {
             int mapMode = Integer.parseInt(sharedPreferences.getString(PreferenceUtils.KEY_SETTING_MAP_MODE, "0"));
+            ListPreference preference = (ListPreference) findPreference(key);
+            preference.setSummary(preference.getEntry());
             MainApplication.mapType = mapMode;
         } else if (key.equals(PreferenceUtils.KEY_SETTING_VISIBILITY)) {
             boolean visible = sharedPreferences.getBoolean(PreferenceUtils.KEY_SETTING_VISIBILITY, true);
