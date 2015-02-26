@@ -15,6 +15,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
+import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
@@ -356,9 +357,8 @@ public class MapViewFragment extends Fragment {
                 Circle circle = map.addCircle(new CircleOptions()
                         .center(new LatLng(placeObj.getDouble("lat"), placeObj.getDouble("lon")))
                         .radius(placeObj.getInt("rad"))
-                        .strokeColor(Color.BLUE)
-                        .strokeWidth(2)
-                        .fillColor(0x330000ff)); // TODO move color out of here
+                        .strokeWidth(0)
+                        .fillColor(getResources().getColor(R.color.place_circle)));
                 placesOverlay.add(circle);
             }
         } catch (Exception ex) {
@@ -647,17 +647,14 @@ public class MapViewFragment extends Fragment {
             Point mapCenter = getAddPlaceCircleCenter();
             int radius = Math.min(mapCenter.x, mapCenter.y);
 
-            Paint fill = new Paint();
-            fill.setColor(Color.BLUE);
-            fill.setAlpha(25);
-            fill.setAntiAlias(true);
-            canvas.drawCircle(mapCenter.x, mapCenter.y, (int) (radius * radiusMultiplier), fill);
-
-            Paint border = new Paint();
-            border.setColor(Color.BLUE);
-            border.setAntiAlias(true);
-            border.setStyle(Paint.Style.STROKE);
-            canvas.drawCircle(mapCenter.x, mapCenter.y, (int) (radius * radiusMultiplier), border);
+            Paint circlePaint = new Paint();
+            circlePaint.setColor(getResources().getColor(R.color.add_place_circle));
+            circlePaint.setAntiAlias(true);
+            circlePaint.setStrokeWidth(12);
+            DashPathEffect dashPath = new DashPathEffect(new float[] { 48, 36 }, 1.0f);
+            circlePaint.setPathEffect(dashPath);
+            circlePaint.setStyle(Paint.Style.STROKE);
+            canvas.drawCircle(mapCenter.x, mapCenter.y, (int) (radius * radiusMultiplier - 12), circlePaint);
         }
 
         @Override
