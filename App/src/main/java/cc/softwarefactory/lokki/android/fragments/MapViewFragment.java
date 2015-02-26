@@ -5,8 +5,6 @@ See LICENSE for details
 package cc.softwarefactory.lokki.android.fragments;
 
 import android.app.AlertDialog;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -24,6 +22,8 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -46,7 +46,7 @@ import cc.softwarefactory.lokki.android.utilities.Utils;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
@@ -65,7 +65,7 @@ import java.util.Iterator;
 public class MapViewFragment extends Fragment {
 
     private static final String TAG = "MapViewFragment";
-    private MapFragment fragment;
+    private SupportMapFragment fragment;
     private GoogleMap map;
     private HashMap<String, Marker> markerMap;
     private AQuery aq;
@@ -107,9 +107,9 @@ public class MapViewFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         FragmentManager fm = getChildFragmentManager();
-        fragment = (MapFragment) fm.findFragmentById(R.id.map);
+        fragment = (SupportMapFragment) fm.findFragmentById(R.id.map);
         if (fragment == null) {
-            fragment = MapFragment.newInstance();
+            fragment = SupportMapFragment.newInstance();
             //fragment = SupportMapFragment.newInstance(new GoogleMapOptions().useViewLifecycleInFragment(true)); // The map is destroyed when fragment is destroyed. Releasing memory
             fm.beginTransaction().replace(R.id.map, fragment).commit();
         }

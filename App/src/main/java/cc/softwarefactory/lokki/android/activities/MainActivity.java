@@ -12,28 +12,22 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.CheckBox;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.Toast;
 
 
-import com.androidquery.AQuery;
-
-import cc.softwarefactory.lokki.android.avatar.AvatarLoader;
 import cc.softwarefactory.lokki.android.fragments.PreferencesFragment;
 import cc.softwarefactory.lokki.android.utilities.DialogUtils;
 import cc.softwarefactory.lokki.android.datasources.contacts.ContactDataSource;
@@ -186,7 +180,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
     public void onNavigationDrawerItemSelected(int position) {
 
         String[] menuOptions = getResources().getStringArray(R.array.menuOptions);
-        android.app.FragmentManager fragmentManager = getFragmentManager();
+        FragmentManager fragmentManager = getSupportFragmentManager();
         position = position == 0 ? 0 : position - 1;
         mTitle = menuOptions[position];
         selectedOption = position;
