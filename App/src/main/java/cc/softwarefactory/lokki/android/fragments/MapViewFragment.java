@@ -644,6 +644,7 @@ public class MapViewFragment extends Fragment {
     private class AddPlaceCircleDrawable extends Drawable {
 
         public static final int STROKE_WIDTH = 12;
+        public final float[] DASH_INTERVALS = new float[]{49, 36};
 
         @Override
         public void draw(Canvas canvas) {
@@ -654,7 +655,7 @@ public class MapViewFragment extends Fragment {
             circlePaint.setColor(getResources().getColor(R.color.add_place_circle));
             circlePaint.setAntiAlias(true);
             circlePaint.setStrokeWidth(STROKE_WIDTH);
-            DashPathEffect dashPath = new DashPathEffect(new float[] { 48, 36 }, 1.0f);
+            DashPathEffect dashPath = new DashPathEffect(DASH_INTERVALS, 1.0f);
             circlePaint.setPathEffect(dashPath);
             circlePaint.setStyle(Paint.Style.STROKE);
             canvas.drawCircle(mapCenter.x, mapCenter.y, (int) (radius * radiusMultiplier - STROKE_WIDTH), circlePaint);
