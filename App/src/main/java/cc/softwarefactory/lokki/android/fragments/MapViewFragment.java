@@ -77,7 +77,6 @@ public class MapViewFragment extends Fragment {
     private Boolean firstTimeZoom = true;
     private ArrayList<Circle> placesOverlay;
     private double radiusMultiplier = 0.9;  // Dont want to fill the screen from edge to edge...
-    private Drawable d;
 
     public MapViewFragment() {
         markerMap = new HashMap<>();
@@ -258,15 +257,11 @@ public class MapViewFragment extends Fragment {
     }
 
     public void setAddPlacesVisible(boolean visible) {
-        if (d != null) {
-            ((ImageView) getView().findViewById(R.id.addPlaceCircle)).setImageDrawable(null);
-        }
         if (visible) {
-            d = new AddPlaceCircleDrawable();
-
-            ((ImageView) getView().findViewById(R.id.addPlaceCircle)).setImageDrawable(d);
+            ((ImageView) getView().findViewById(R.id.addPlaceCircle)).setImageDrawable(new AddPlaceCircleDrawable());
             showAddPlaceButtons();
         } else {
+            ((ImageView) getView().findViewById(R.id.addPlaceCircle)).setImageDrawable(null);
             hideAddPlaceButtons();
         }
     }
