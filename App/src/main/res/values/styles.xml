@@ -28,14 +28,10 @@
     <!-- general styles for the action bar -->
     <style name="MyActionBar" parent="@style/Widget.AppCompat.ActionBar">
         <item name="android:titleTextStyle">@style/TitleTextStyle</item>
-        <item name="android:background">@color/actionbar_background</item>
-        <item name="android:backgroundSplit">@color/actionbar_background</item>
         <item name="android:subtitleTextStyle">@style/SubtitleTextStyle</item>
 
         <!-- Support library compatibility -->
         <item name="titleTextStyle">@style/TitleTextStyle</item>
-        <item name="background">@color/actionbar_background</item>
-        <item name="backgroundSplit">@color/actionbar_background</item>
         <item name="subtitleTextStyle">@style/SubtitleTextStyle</item>
     </style>
 

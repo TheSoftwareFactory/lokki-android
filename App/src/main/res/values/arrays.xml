@@ -43,4 +43,12 @@
         <item>@string/about_link_tell_a_friend</item>
     </string-array>
 
+    <array name="nav_drawer_icons">
+        <item>@drawable/ic_map_grey600_48dp</item>
+        <item>@drawable/ic_place_grey600_48dp</item>
+        <item>@drawable/ic_people_grey600_48dp</item>
+        <item>@drawable/ic_settings_grey600_48dp</item>
+        <item>@drawable/ic_info_grey600_48dp</item>
+    </array>
+
 </resources>

@@ -1,56 +1,50 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:layout_gravity="center"
-    style="@style/DarkBackground"
-    android:divider="?android:listDivider"
-    android:orientation="vertical"
-    android:padding="0dp"
-    android:showDividers="middle">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/nav_drawer_header"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="start"
+    android:paddingBottom="@dimen/nav_drawer_vertical_padding"
+    android:paddingLeft="@dimen/nav_drawer_horizontal_padding"
+    android:paddingRight="@dimen/nav_drawer_horizontal_padding"
+    style="@style/DarkBackground">
+
+    <com.makeramen.RoundedImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/avatar"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="@dimen/nav_drawer_horizontal_padding"
+        android:scaleType="centerCrop"
+        android:src="@drawable/default_avatar"
+        app:border_color="#215fcc"
+        app:border_width="0dp"
+        app:corner_radius="100dp"
+        app:round_background="true" />
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start"
-        android:paddingBottom="32dp"
-        android:paddingTop="32dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        tools:context=".AboutActivity">
-
-        <com.makeramen.RoundedImageView xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/avatar"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/default_avatar"
-            app:border_color="#215fcc"
-            app:border_width="0dip"
-            app:corner_radius="100dip"
-            app:round_background="true" />
+        android:layout_height="@dimen/nav_drawer_lokki_id_height"
+        android:layout_below="@id/avatar"
+        android:gravity="center_vertical">
 
         <TextView
+            android:id="@+id/lokki_id_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/avatar"
-            android:paddingBottom="0dp"
-            android:paddingTop="20dp"
-            android:id="@+id/lokki_id_label"
             android:text="@string/your_lokki_id"
             android:textColor="@android:color/primary_text_dark"
-            android:textSize="11sp" />
+            android:textSize="@dimen/default_text_size" />
 
         <TextView
             android:id="@+id/user_name"
-            android:textStyle="bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/lokki_id_label"
-            android:paddingTop="5dp"
+            android:textStyle="bold"
             android:textColor="@android:color/primary_text_dark"
-            android:textSize="14sp" />
+            android:textSize="@dimen/default_text_size" />
 
     </RelativeLayout>
 
-</LinearLayout>
+</RelativeLayout>
+
+

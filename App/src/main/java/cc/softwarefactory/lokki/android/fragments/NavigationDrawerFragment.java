@@ -23,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 
@@ -99,7 +100,15 @@ public class NavigationDrawerFragment extends Fragment {
         setUserInfo();
 
         String[] menuOptions = getResources().getStringArray(R.array.menuOptions);
-        mDrawerListView.setAdapter(new ArrayAdapter<>(getActivity().getApplicationContext(), R.layout.drawer_list_item, menuOptions));
+        mDrawerListView.setAdapter(new ArrayAdapter<String>(getActivity().getApplicationContext(),R.layout.drawer_list_item, R.id.nav_drawer_menu_item_text, menuOptions) {
+
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View viewItem = super.getView(position, convertView, parent);
+                ((ImageView) viewItem.findViewById(R.id.drawer_item_icon)).setImageResource(getResources().obtainTypedArray(R.array.nav_drawer_icons).getResourceId(position, -1));
+                return viewItem;
+            }
+        });
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
         return mDrawerListView;
     }
