@@ -459,8 +459,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
             alertDialog.setTitle(context.getResources().getString(R.string.app_name));
-            String message = context.getResources().getString(R.string.security_sign_up);
-            message = message + " " + MainApplication.userAccount;
+            String message = context.getResources().getString(R.string.security_sign_up, MainApplication.userAccount);
             alertDialog.setMessage(message)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
