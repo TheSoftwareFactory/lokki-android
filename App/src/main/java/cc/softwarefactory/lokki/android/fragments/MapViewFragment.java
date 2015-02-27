@@ -15,6 +15,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
+import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
@@ -31,6 +32,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 
@@ -74,7 +77,6 @@ public class MapViewFragment extends Fragment {
     private Boolean firstTimeZoom = true;
     private ArrayList<Circle> placesOverlay;
     private double radiusMultiplier = 0.9;  // Dont want to fill the screen from edge to edge...
-    private Drawable d;
 
     public MapViewFragment() {
         markerMap = new HashMap<>();
@@ -238,7 +240,7 @@ public class MapViewFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 int mapWidth = fragment.getView().getWidth();
-                int mapHeight = fragment.getView().getHeight();
+                int mapHeight = fragment.getView().getHeight() - getView().findViewById(R.id.add_place_buttons).getHeight();
 
                 Location middleSideLocation;
                 if (mapWidth > mapHeight) {
@@ -247,7 +249,7 @@ public class MapViewFragment extends Fragment {
                     middleSideLocation = MapUtils.convertToLocation(map.getProjection().fromScreenLocation(new Point(0, mapHeight / 2)), "middleSide");
                 }
 
-                LatLng centerLatLng = map.getProjection().getVisibleRegion().latLngBounds.getCenter();
+                LatLng centerLatLng = map.getProjection().fromScreenLocation(getAddPlaceCircleCenter());
                 int radius = (int) middleSideLocation.distanceTo(MapUtils.convertToLocation(centerLatLng, "center"));
                 DialogUtils.addPlace(getActivity(), centerLatLng, (int) (radius * radiusMultiplier));
             }
@@ -255,51 +257,47 @@ public class MapViewFragment extends Fragment {
     }
 
     public void setAddPlacesVisible(boolean visible) {
-        if (d != null) {
-            ((ImageView) getView().findViewById(R.id.addPlaceCircle)).setImageDrawable(null);
-        }
         if (visible) {
-            d = new Drawable() {
-                @Override
-                public void draw(Canvas canvas) {
-                    int mapCenterX = fragment.getView().getWidth() / 2;
-                    int mapCenterY = fragment.getView().getHeight() / 2;
-                    int radius = mapCenterX > mapCenterY ? mapCenterY : mapCenterX;
-
-                    Paint fill = new Paint();
-                    fill.setColor(Color.BLUE);
-                    fill.setAlpha(25);
-                    fill.setAntiAlias(true);
-                    canvas.drawCircle(mapCenterX, mapCenterY, (int) (radius * radiusMultiplier), fill);
-
-                    Paint border = new Paint();
-                    border.setColor(Color.BLUE);
-                    border.setAntiAlias(true);
-                    border.setStyle(Paint.Style.STROKE);
-                    canvas.drawCircle(mapCenterX, mapCenterY, (int) (radius * radiusMultiplier), border);
-                }
-
-                @Override
-                public void setAlpha(int alpha) {
-
-                }
-
-                @Override
-                public void setColorFilter(ColorFilter cf) {
-
-                }
-
-                @Override
-                public int getOpacity() {
-                    return 0;
-                }
-            };
-
-            ((ImageView) getView().findViewById(R.id.addPlaceCircle)).setImageDrawable(d);
-            getView().findViewById(R.id.add_place_overlay).setVisibility(View.VISIBLE);
+            ((ImageView) getView().findViewById(R.id.addPlaceCircle)).setImageDrawable(new AddPlaceCircleDrawable());
+            showAddPlaceButtons();
         } else {
-            getView().findViewById(R.id.add_place_overlay).setVisibility(View.INVISIBLE);
+            ((ImageView) getView().findViewById(R.id.addPlaceCircle)).setImageDrawable(null);
+            hideAddPlaceButtons();
         }
+    }
+
+    private void showAddPlaceButtons() {
+        Animation slideUp = AnimationUtils.loadAnimation(this.getActivity().getApplicationContext(), R.anim.add_place_buttons_show);
+        getView().findViewById(R.id.add_place_buttons).startAnimation(slideUp);
+        getView().findViewById(R.id.add_place_overlay).setVisibility(View.VISIBLE);
+    }
+
+    private void hideAddPlaceButtons() {
+        Animation slideDown = AnimationUtils.loadAnimation(this.getActivity().getApplicationContext(), R.anim.add_place_buttons_hide);
+        slideDown.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                getView().findViewById(R.id.add_place_overlay).setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        getView().findViewById(R.id.add_place_buttons).startAnimation(slideDown);
+    }
+
+    private Point getAddPlaceCircleCenter() {
+        int mapCenterX = fragment.getView().getWidth() / 2;
+        int mapCenterY = (fragment.getView().getHeight() - getView().findViewById(R.id.add_place_buttons).getHeight()) / 2;
+
+        return new Point(mapCenterX, mapCenterY);
     }
 
     private void removeMarkers() {
@@ -354,9 +352,8 @@ public class MapViewFragment extends Fragment {
                 Circle circle = map.addCircle(new CircleOptions()
                         .center(new LatLng(placeObj.getDouble("lat"), placeObj.getDouble("lon")))
                         .radius(placeObj.getInt("rad"))
-                        .strokeColor(Color.BLUE)
-                        .strokeWidth(2)
-                        .fillColor(0x330000ff)); // TODO move color out of here
+                        .strokeWidth(0)
+                        .fillColor(getResources().getColor(R.color.place_circle)));
                 placesOverlay.add(circle);
             }
         } catch (Exception ex) {
@@ -637,5 +634,41 @@ public class MapViewFragment extends Fragment {
         Log.e(TAG, "onLowMemory");
         Log.e(TAG, "---------------------------------------------------------");
         startActivityForResult(new Intent(context, FirstTimeActivity.class), -1);
+    }
+
+    private class AddPlaceCircleDrawable extends Drawable {
+
+        public static final int STROKE_WIDTH = 12;
+        public final float[] DASH_INTERVALS = new float[]{49, 36};
+
+        @Override
+        public void draw(Canvas canvas) {
+            Point mapCenter = getAddPlaceCircleCenter();
+            int radius = Math.min(mapCenter.x, mapCenter.y);
+
+            Paint circlePaint = new Paint();
+            circlePaint.setColor(getResources().getColor(R.color.add_place_circle));
+            circlePaint.setAntiAlias(true);
+            circlePaint.setStrokeWidth(STROKE_WIDTH);
+            DashPathEffect dashPath = new DashPathEffect(DASH_INTERVALS, 1.0f);
+            circlePaint.setPathEffect(dashPath);
+            circlePaint.setStyle(Paint.Style.STROKE);
+            canvas.drawCircle(mapCenter.x, mapCenter.y, (int) (radius * radiusMultiplier - STROKE_WIDTH), circlePaint);
+        }
+
+        @Override
+        public void setAlpha(int alpha) {
+
+        }
+
+        @Override
+        public void setColorFilter(ColorFilter cf) {
+
+        }
+
+        @Override
+        public int getOpacity() {
+            return 0;
+        }
     }
 }

@@ -20,13 +20,14 @@
         android:visibility="invisible">
 
         <LinearLayout
+            android:id="@+id/add_place_buttons"
             android:orientation="horizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:layout_margin="0dp"
-            android:padding="0dp"
-            android:background="#ccffffff">
+            android:padding="8dp"
+            android:background="@drawable/bottom_panel">
 
             <Button
                 android:id="@+id/cancel_add_place_button"
@@ -34,7 +35,6 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
                 android:text="@string/cancel"
-                android:textSize="12sp"
                 style="?android:attr/borderlessButtonStyle" />
 
 
@@ -44,7 +44,6 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
                 android:text="@string/add_place"
-                android:textSize="12sp"
                 style="?android:attr/borderlessButtonStyle"
             />
         </LinearLayout>
