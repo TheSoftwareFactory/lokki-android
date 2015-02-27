@@ -216,7 +216,8 @@ public class Utils {
         }
 
         if (result == null) {
-            result = Utils.getDefaultAvatarInitials(getNameFromEmail(context, email));
+            String name = getNameFromEmail(context, email);
+            result = Utils.getDefaultAvatarInitials(context, name);
         }
 
         MainApplication.avatarCache.put(email, result);
@@ -351,7 +352,7 @@ public class Utils {
         return Locale.getDefault().getLanguage();
     }
 
-    public static Bitmap getDefaultAvatarInitials(String text) {
+    public static Bitmap getDefaultAvatarInitials(Context context, String text) {
 
         Log.e(TAG, "getDefaultAvatarInitials");
 
@@ -362,15 +363,17 @@ public class Utils {
         paint.setColor(Color.WHITE);
         paint.setTextSize(36);
         paint.setStrokeWidth(4);
+        paint.setTextAlign(Paint.Align.CENTER);
 
         Bitmap bm = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bm);
-        canvas.drawColor(Color.parseColor("#57b6ea"));
-        if (initials.length() == 2) {
-            canvas.drawText(initials, 25, 60, paint);
-        } else {
-            canvas.drawText(initials, 40, 60, paint);
-        }
+        canvas.drawColor(context.getResources().getColor(R.color.material_blue_300));
+
+        int distanceFromBaseline = (int)((paint.descent() + paint.ascent()) / 2);
+        int xPos = (canvas.getWidth() / 2);
+        int yPos = (canvas.getHeight() / 2) - distanceFromBaseline;
+        canvas.drawText(initials, xPos, yPos, paint);
+
         return bm;
     }
 
