@@ -99,8 +99,7 @@ public class NavigationDrawerFragment extends Fragment {
         setUserInfo();
 
         String[] menuOptions = getResources().getStringArray(R.array.menuOptions);
-        mDrawerListView.setAdapter(new ArrayAdapter<>(getSupportActionBar().getThemedContext(), R.layout.drawer_list_item, menuOptions));
-
+        mDrawerListView.setAdapter(new ArrayAdapter<>(getActivity().getApplicationContext(), R.layout.drawer_list_item, menuOptions));
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
         return mDrawerListView;
     }
@@ -148,11 +147,6 @@ public class NavigationDrawerFragment extends Fragment {
         // set a custom shadow that overlays the map content when the drawer opens
         mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
         // set up the drawer's list view with items and click listener
-
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setIcon(R.drawable.icon_action_menu);
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeButtonEnabled(true);
 
         // ActionBarDrawerToggle ties together the the proper interactions
         // between the navigation drawer and the action bar app icon.

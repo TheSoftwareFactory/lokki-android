@@ -4,9 +4,10 @@ See LICENSE for details
 */
 package cc.softwarefactory.lokki.android.activities;
 
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -20,7 +21,6 @@ import cc.softwarefactory.lokki.android.R;
 public class FirstTimeActivity extends ActionBarActivity {
 
     private String TAG = "FirstTimeActivity";
-    private ActionBar actionBar;
     private TextView textView;
     private Boolean next = false;
 
@@ -35,13 +35,12 @@ public class FirstTimeActivity extends ActionBarActivity {
         textView.setText(Html.fromHtml(getString(R.string.welcome_text)));
         textView.setMovementMethod(LinkMovementMethod.getInstance());
 
-        ScrollView scroller = new ScrollView(this);
+        setContentView(R.layout.first_time_activity_layout);
+        ScrollView scroller = (ScrollView) findViewById(R.id.first_time_text_scrollview);
         scroller.addView(textView);
 
-        setContentView(scroller);
-
-        actionBar = getSupportActionBar();
-        actionBar.setIcon(R.drawable.icon_action_menu);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_layout);
+        setSupportActionBar(toolbar);
     }
 
 
@@ -55,6 +54,7 @@ public class FirstTimeActivity extends ActionBarActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
 
         Log.e(TAG, "onPrepareOptionsMenu - next: " + next);
+        ActionBar actionBar = getSupportActionBar();
         if (!next) {
             getMenuInflater().inflate(R.menu.first_time_welcome, menu);
             actionBar.setTitle(R.string.welcome_title);

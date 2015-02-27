@@ -17,6 +17,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -85,6 +86,11 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
         mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout)); // Set up the drawer.
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_layout);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle(mTitle);
     }
 
 
@@ -167,7 +173,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         } else { // User already logged-in
             MainApplication.userAccount = userAccount;
             MainApplication.userId = userId;
-            getSupportActionBar().setIcon(R.drawable.icon_action_menu);
             GcmHelper.start(getApplicationContext()); // Register to GCM
 
             Log.e(TAG, "User email: " + userAccount);
@@ -184,8 +189,12 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         position = position == 0 ? 0 : position - 1;
         mTitle = menuOptions[position];
         selectedOption = position;
-        getSupportActionBar().setTitle(mTitle);
 
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayShowTitleEnabled(false);
+            actionBar.setTitle(mTitle);
+        }
         switch (position) {
 
             case 0: // Map
@@ -216,16 +225,6 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
     }
 
-    public void restoreActionBar() {
-
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(mTitle);
-    }
-
-    public ActionBar getMainActionBar() {
-
-        return getSupportActionBar();
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
