@@ -7,7 +7,10 @@ import android.preference.PreferenceManager;
 import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.action.CoordinatesProvider;
 import android.support.test.espresso.action.GeneralClickAction;
+import android.support.test.espresso.action.GeneralSwipeAction;
 import android.support.test.espresso.action.Press;
+import android.support.test.espresso.action.Swipe;
+import android.support.test.espresso.action.Swiper;
 import android.support.test.espresso.action.Tap;
 import android.view.View;
 
@@ -71,4 +74,35 @@ public class TestUtils {
         // TODO: hardcoded click position and menu text
         onView(withId(R.id.toolbar_layout)).perform(clickScreenPosition(0, 0));
     }
+
+    public static ViewAction swipeScreen(final int x, final int y, final int z, final int w) {
+        return new GeneralSwipeAction(
+                Swipe.FAST,
+                new CoordinatesProvider() {
+                    @Override
+                    public float[] calculateCoordinates(View view) {
+
+                        final int[] screenPos = new int[2];
+                        view.getLocationOnScreen(screenPos);
+
+                        final float screenX = screenPos[0] + x;
+                        final float screenY = screenPos[1] + y;
+                        return new float[]{screenX, screenY};
+                    }
+                },
+                new CoordinatesProvider() {
+                    @Override
+                    public float[] calculateCoordinates(View view) {
+
+                        final int[] screenPos = new int[2];
+                        view.getLocationOnScreen(screenPos);
+
+                        final float screenX = screenPos[0] + z;
+                        final float screenY = screenPos[1] + w;
+                        return new float[]{screenX, screenY};
+                    }
+                },
+                Press.FINGER);
+    }
+
 }
