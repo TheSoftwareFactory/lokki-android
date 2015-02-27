@@ -12,5 +12,6 @@
     <color name="drawer_divider">#c7c7c7</color>
     <color name="add_place_circle">#bb2196f3</color>
     <color name="place_circle">#662196f3</color>
+    <color name="panel_border">#1e000000</color>
 </resources>
 
