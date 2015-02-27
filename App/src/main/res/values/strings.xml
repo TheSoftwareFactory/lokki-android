@@ -28,10 +28,11 @@
     <string name="share">Tell your friends about this app</string>
     <string name="share_subject">Join me on Lokki!</string>
     <string name="share_text">Hi! I\'m using Lokki, the private location sharing app that\'s easy, secure, and free. Go to https://github.com/TheSoftwareFactory/lokki-android/ to install it.</string>
-    <string name="add_contact">Add contacts</string>
+    <string name="add_contacts">Add contacts</string>
+    <string name="add_contact">Add contact</string>
     <string name="allow_people">Allow people</string>
     <string name="add_contact_dialog_message">Select the people who can see where you are when you allow it. Choose the email addresses that your contacts use in Lokki. If you don\'t find a person or email in this list, please add him or her first via the People or Contacts app.</string>
-    <string name="add_contact_dialog_save">%1$s can now see where you are and you will see them in Lokki when they allow it.</string>
+    <string name="add_contact_dialog_save">Do you want to add %1$s?</string>
     <string name="i_can_see">Show on map</string>
     <string name="can_see_me">Can see me</string>
     <string name="your_lokki_id">Your Lokki ID is:</string>
@@ -89,5 +90,8 @@
     <string name="gps_disabled">Lokki needs access to your location. Please turn on location access.</string>
     <string name="ignore">Ignore</string>
     <string name="location_services_disabled">Location services disabled</string>
+    <string name="contact_added">Contact added</string>
+    <string name="contact_email_address">Contact email address</string>
+    <string name="add_email">Add email</string>
 
 </resources>

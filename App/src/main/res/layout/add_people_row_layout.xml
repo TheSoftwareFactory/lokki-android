@@ -38,10 +38,7 @@
         android:textSize="15sp"
         android:ellipsize="end"
         android:scrollHorizontally="true"
-        android:layout_toLeftOf="@+id/contact_selected"
-        android:layout_toStartOf="@+id/contact_selected"
         android:singleLine="true"
-
         android:textStyle="bold" />
 
     <TextView
@@ -56,22 +53,6 @@
         android:layout_toEndOf="@+id/thumbnail"
         android:ellipsize="end"
         android:scrollHorizontally="true"
-        android:layout_toLeftOf="@+id/contact_selected"
-        android:layout_toStartOf="@+id/contact_selected"
         android:singleLine="true" />
-
-    <CheckBox
-        android:id="@+id/contact_selected"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="13dp"
-        android:gravity="end"
-        android:layout_marginRight="5dip"
-        android:layout_marginEnd="5dip"
-        android:textSize="0sp"
-        android:onClick="addContactSelectedEmail" />
-
 
 </RelativeLayout>

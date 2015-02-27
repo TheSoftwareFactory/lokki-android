@@ -4,7 +4,9 @@ See LICENSE for details
 */
 package cc.softwarefactory.lokki.android.fragments;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -16,10 +18,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.androidquery.AQuery;
 
@@ -29,6 +32,7 @@ import cc.softwarefactory.lokki.android.avatar.AvatarLoader;
 import cc.softwarefactory.lokki.android.datasources.contacts.ContactDataSource;
 import cc.softwarefactory.lokki.android.datasources.contacts.DefaultContactDataSource;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
+import cc.softwarefactory.lokki.android.utilities.ServerApi;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,6 +41,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 
@@ -51,6 +56,7 @@ public class AddContactsFragment extends Fragment {
     private Context context;
     private AvatarLoader avatarLoader;
     private EditText inputSearch;
+    private Button clearFilter;
     private ArrayAdapter<String> adapter;
 
     public AddContactsFragment() {
@@ -58,8 +64,6 @@ public class AddContactsFragment extends Fragment {
         contactList = new ArrayList<>();
         mContactDataSource = new DefaultContactDataSource();
     }
-
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -69,14 +73,16 @@ public class AddContactsFragment extends Fragment {
         cancelAsynTasks = false;
         context = getActivity().getApplicationContext();
         avatarLoader = new AvatarLoader(context);
-        inputSearch = (EditText) rootView.findViewById(R.id.inputText);
+        inputSearch = (EditText) rootView.findViewById(R.id.add_contact_search);
+        clearFilter = (Button) rootView.findViewById(R.id.clear_filter);
+
         return rootView;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        ((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(R.string.add_contact);
+        ((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(R.string.add_contacts);
         loadContacts();
         enableSearchFilter();
     }
@@ -97,6 +103,7 @@ public class AddContactsFragment extends Fragment {
                 if (adapter != null) {
                     adapter.getFilter().filter(cs);
                 }
+                clearFilter.setVisibility(cs.length() == 0 ? View.INVISIBLE : View.VISIBLE);
             }
 
             @Override
@@ -108,6 +115,13 @@ public class AddContactsFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable arg0) {
                 // TODO Auto-generated method stub
+            }
+        });
+
+        clearFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                inputSearch.setText("");
             }
         });
     }
@@ -179,7 +193,11 @@ public class AddContactsFragment extends Fragment {
 
         for (int i = 0; i < contactCount; i++) {
             try {
-                contactList.add(keys.getString(i));
+                String name = keys.getString(i);
+                if (alreadyAdded(MainApplication.mapping.getString(name))) {
+                    continue;
+                }
+                contactList.add(name);
             } catch (JSONException e) {
                 Log.e(TAG, e.getMessage());
             }
@@ -188,12 +206,27 @@ public class AddContactsFragment extends Fragment {
         Log.e(TAG, "Adapter ContactList: " + contactList);
     }
 
+    private boolean alreadyAdded(String email) {
+        try {
+            JSONObject data = MainApplication.dashboard.getJSONObject("idmapping");
+            Iterator<String> keys = data.keys();
+            while (keys.hasNext()) {
+                if (email.equals(data.getString(keys.next()))) {
+                    return true;
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     private void setListAdapter() {
 
         adapter = new ArrayAdapter<String>(getActivity(), R.layout.add_people_row_layout, contactList) {
 
             @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
+            public View getView(final int position, View convertView, ViewGroup parent) {
 
                 ViewHolder holder;
 
@@ -203,7 +236,6 @@ public class AddContactsFragment extends Fragment {
                     holder.name = (TextView) convertView.findViewById(R.id.contact_name);
                     holder.email = (TextView) convertView.findViewById(R.id.contact_email);
                     holder.photo = (ImageView) convertView.findViewById(R.id.contact_photo);
-                    holder.check = (CheckBox) convertView.findViewById(R.id.contact_selected);
                     convertView.setTag(holder);
 
                 } else {
@@ -213,14 +245,40 @@ public class AddContactsFragment extends Fragment {
                 try {
                     AQuery aq = new AQuery(convertView);
                     String contactName = getItem(position);
-                    String email = MainApplication.mapping.getString(contactName);
+                    final String email = MainApplication.mapping.getString(contactName);
 
                     avatarLoader.load(email, holder.photo);
 
                     aq.id(holder.name).text(contactName);
                     aq.id(holder.email).text(email);
-                    aq.id(holder.check).tag(email).checked(emailsSelected.contains(email));
                     holder.position = position;
+
+                    convertView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            final Context context = getContext();
+                            String title = context.getResources().getString(R.string.add_contact);
+                            String message = context.getResources().getString(R.string.add_contact_dialog_save, email);
+                            new AlertDialog.Builder(context)
+                                    .setTitle(title)
+                                    .setMessage(message)
+                                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            try {
+                                                ServerApi.allowPeople(context, email);
+                                                contactList.remove(position);
+                                                notifyDataSetChanged();
+                                                Toast.makeText(context, R.string.contact_added, Toast.LENGTH_SHORT).show();
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    })
+                                    .setNegativeButton(R.string.cancel, null)
+                                    .show();
+                        };
+                    });
 
                 } catch (JSONException e) {
                     Log.e(TAG, e.getMessage());
@@ -236,7 +294,6 @@ public class AddContactsFragment extends Fragment {
         TextView name;
         TextView email;
         ImageView photo;
-        CheckBox check;
         int position;
     }
 

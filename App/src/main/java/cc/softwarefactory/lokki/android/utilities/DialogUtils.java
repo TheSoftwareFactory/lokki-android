@@ -9,10 +9,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -28,12 +30,52 @@ public class DialogUtils {
     private static final String TAG = "DialogUtils";
 
     // TODO: Move this method to the class that calls it
-    public static void addPeopleSave(final Context context, Set<String> emails) {
+    public static void addContact(final Context context) {
 
-        Log.e(TAG, "emails: " + emails);
-        String title = context.getResources().getString(R.string.add_contact);
-        String message = context.getResources().getString(R.string.add_contact_dialog_save, TextUtils.join(", ", emails));
-        showDialog(context, title, message);
+        final EditText input = new EditText(context); // Set an EditText view to get user input
+        input.setSingleLine(true);
+        input.setHint(R.string.contact_email_address);
+        input.setInputType(InputType.TYPE_TEXT_VARIATION_WEB_EMAIL_ADDRESS);
+
+        final AlertDialog addContactDialog = new AlertDialog.Builder(context)
+                .setTitle(context.getResources().getString(R.string.add_contact))
+                .setView(input)
+                .setPositiveButton(R.string.ok, null)
+                .setNegativeButton(R.string.cancel, null)
+                .create();
+
+        addContactDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+
+            @Override
+            public void onShow(DialogInterface dialog) {
+
+                addContactDialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                        .setOnClickListener(new View.OnClickListener() {
+
+                            @Override
+                            public void onClick(View view) {
+                                Editable value = input.getText();
+                                if (value == null || value.toString().isEmpty()) {
+                                    input.setError(context.getResources().getString(R.string.required));
+                                    return;
+                                }
+
+                                String email = value.toString();
+
+                                try {
+                                    ServerApi.allowPeople(context, email);
+                                    Toast.makeText(context, R.string.contact_added, Toast.LENGTH_SHORT).show();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                                addContactDialog.dismiss();
+                            }
+                        });
+            }
+        });
+
+        addContactDialog.show();
     }
 
     // TODO: Move this method to the class that calls it
