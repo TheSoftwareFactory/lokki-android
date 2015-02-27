@@ -36,6 +36,7 @@
         android:textColor="#fff"
         android:typeface="sans"
         android:layout_marginLeft="5dp"
+        android:layout_marginStart="5dp"
         android:textSize="15sp"
         android:ellipsize="end"
         android:scrollHorizontally="true"
