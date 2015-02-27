@@ -50,8 +50,6 @@ import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 
 import org.json.JSONException;
 
-import java.util.HashSet;
-import java.util.Set;
 
 
 public class MainActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -64,7 +62,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
     private NavigationDrawerFragment mNavigationDrawerFragment;
     private CharSequence mTitle;
-    private int selectedOption = 1;
+    private int selectedOption = 0;
     private View infoView;
 
     private ContactDataSource mContactDataSource;
@@ -131,6 +129,17 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         Log.e(TAG, "onResume - NOT firstTimeLaunch, so launching services.");
         startServices();
         LocalBroadcastManager.getInstance(this).registerReceiver(exitMessageReceiver, new IntentFilter("EXIT"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(switchToMapReceiver, new IntentFilter("GO-TO-MAP"));
+    }
+
+
+    private void setUiState(int position) {
+        String[] menuOptions = getResources().getStringArray(R.array.menuOptions);
+        mTitle = menuOptions[position];
+        selectedOption = position;
+        supportInvalidateOptionsMenu();
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle(mTitle);
     }
 
     private void startServices() {
@@ -153,6 +162,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         super.onPause();
         LocationService.stop(this.getApplicationContext());
         DataService.stop(this.getApplicationContext());
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(switchToMapReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(exitMessageReceiver);
     }
 
@@ -183,16 +193,13 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
-
         String[] menuOptions = getResources().getStringArray(R.array.menuOptions);
         FragmentManager fragmentManager = getSupportFragmentManager();
-        position = position == 0 ? 0 : position - 1;
         mTitle = menuOptions[position];
         selectedOption = position;
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setDisplayShowTitleEnabled(false);
             actionBar.setTitle(mTitle);
         }
         switch (position) {
@@ -318,7 +325,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
                     mNavigationDrawerFragment.selectItem(3);    // 3 is contacts screen
                     return true;
                 } else {
-                    mNavigationDrawerFragment.selectItem(0);
+                    mNavigationDrawerFragment.selectItem(1);
                     return true;
                 }
         }
@@ -436,6 +443,16 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
                     })
                     .setCancelable(false);
             alertDialog.show();
+        }
+    };
+
+    private BroadcastReceiver switchToMapReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.container, new MapViewFragment()).commit();
+            mNavigationDrawerFragment.selectItem(1);    // Index 1 because index 0 is the list view header...
         }
     };
 

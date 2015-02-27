@@ -95,7 +95,7 @@ public class NavigationDrawerFragment extends Fragment {
         });
 
         mListViewHeader = inflater.inflate(R.layout.fragment_drawer_header, mDrawerListView, false);
-        mDrawerListView.addHeaderView(mListViewHeader);
+        mDrawerListView.addHeaderView(mListViewHeader, null, false);
         setUserInfo();
 
         String[] menuOptions = getResources().getStringArray(R.array.menuOptions);
@@ -197,7 +197,7 @@ public class NavigationDrawerFragment extends Fragment {
             mDrawerLayout.closeDrawer(mFragmentContainerView);
         }
         if (mCallbacks != null) {
-            mCallbacks.onNavigationDrawerItemSelected(position);
+            mCallbacks.onNavigationDrawerItemSelected(position - 1);
         }
     }
 
