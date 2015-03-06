@@ -30,7 +30,6 @@ public class MainApplication extends Application {
     private static final String TAG = "MainApplication";
 
 
-    // TODO: gtfo static globals :(
     public static int[] mapTypes = {GoogleMap.MAP_TYPE_NORMAL, GoogleMap.MAP_TYPE_SATELLITE, GoogleMap.MAP_TYPE_HYBRID};
     public static int mapType = 0;
     public static Boolean showPlaces = false;

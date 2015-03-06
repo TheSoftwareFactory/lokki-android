@@ -69,6 +69,9 @@ dependencies {
     // Espresso
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.0'
     androidTestCompile 'com.android.support.test:testing-support-lib:0.1'
+    androidTestCompile('com.android.support.test.espresso:espresso-contrib:2.0') {
+        exclude group: 'com.android.support'
+    }
 
     // Mockito
     androidTestCompile 'org.mockito:mockito-core:1.9.5'
