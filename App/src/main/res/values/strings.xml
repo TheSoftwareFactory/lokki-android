@@ -46,7 +46,7 @@
     <string name="i_agree">I have read and I agree</string>
     <string name="continue_with_terms">Continue</string>
     <string name="welcome_title">Welcome to Lokki</string>
-    <string name="welcome_text"><![CDATA[ <b>Welcome to Lokki 3.0!</b><br/>Now you can see where your friends and family members are on a map. You choose who can see where you are, and you can hide your location whenever you want.]]></string>
+    <string name="welcome_text"><![CDATA[ <b>Welcome to Lokki 4.0!</b><br/>Now you can see where your friends and family members are on a map. You choose who can see where you are, and you can hide your location whenever you want.]]></string>
 
     <string name="terms_text">
                                 <![CDATA[ Before you get started, you need to agree to the following terms:<br/><br/><br/>
