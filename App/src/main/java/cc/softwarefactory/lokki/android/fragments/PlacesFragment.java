@@ -16,9 +16,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -45,12 +49,10 @@ import java.util.Iterator;
 public class PlacesFragment extends Fragment {
 
     private static final String TAG = "PlacesFragment";
-    private AQuery aq;
     private Context context;
     private ArrayList<String> placesList;
     private JSONObject peopleInsidePlace;
     private ListView listView;
-    private AvatarLoader avatarLoader;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -58,7 +60,7 @@ public class PlacesFragment extends Fragment {
         context = getActivity().getApplicationContext();
         View rootView = inflater.inflate(R.layout.fragment_places, container, false);
         listView = (ListView) rootView.findViewById(R.id.listView1);
-        avatarLoader = new AvatarLoader(context);
+        registerForContextMenu(listView);
         return rootView;
     }
 
@@ -100,10 +102,11 @@ public class PlacesFragment extends Fragment {
     private void setListAdapter() {
 
         Log.e(TAG, "setListAdapter");
+
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, R.layout.places_row_layout, placesList) {
 
             @Override
-            public View getView(int position, View unusedView, ViewGroup parent) {
+            public View getView(final int position, View unusedView, ViewGroup parent) {
 
                 View convertView = getActivity().getLayoutInflater().inflate(R.layout.places_row_layout, null);
                 AQuery aq = new AQuery(getActivity(), convertView);
@@ -118,9 +121,12 @@ public class PlacesFragment extends Fragment {
                     }
                 });
 
-                String bgImage = "place_0" + (position + 1);
-                int resourceId = getResources().getIdentifier(bgImage, "drawable", "cc.softwarefactory.lokki.android");
-                aq.id(R.id.background).background(resourceId);
+                aq.id(R.id.places_context_menu).clicked(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        v.showContextMenu();
+                    }
+                });
 
                 Log.e(TAG, "Plane name: " + placeName);
                 Log.e(TAG, "peopleInsidePlace? " + peopleInsidePlace.has(placeName));
@@ -162,6 +168,28 @@ public class PlacesFragment extends Fragment {
 
         listView.setAdapter(adapter);
 
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getActivity().getMenuInflater();
+        inflater.inflate(R.menu.places_context, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterContextMenuInfo info = (AdapterContextMenuInfo)item.getMenuInfo();
+        int position = info.position;
+        String placeName = placesList.get(position);
+
+        switch(item.getItemId()) {
+            case R.id.places_context_menu_delete:
+                deletePlaceDialog(placeName);
+                return true;
+        }
+
+        return super.onContextItemSelected(item);
     }
 
     private void deletePlaceDialog(final String name) {
