@@ -39,13 +39,13 @@
 
     <HorizontalScrollView
         android:id="@+id/scrollView1"
-
         android:paddingLeft="4dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/place_name"
         android:layout_toLeftOf="@id/places_context_menu"
         android:layout_toStartOf="@id/places_context_menu" >
+
         <LinearLayout
             android:id="@+id/avatar_row"
             android:layout_width="wrap_content"
@@ -55,9 +55,5 @@
             android:gravity="center_vertical"
             android:scrollHorizontally="true" />
     </HorizontalScrollView>
-
-
-
-
 
 </RelativeLayout>
