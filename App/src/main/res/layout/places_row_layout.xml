@@ -10,7 +10,7 @@
 
 
     <ImageButton
-        android:id="@+id/places_context_menu"
+        android:id="@+id/places_context_menu_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/ic_menu_overflow_dark"
@@ -34,8 +34,8 @@
         android:layout_marginLeft="4dp"
         android:layout_marginTop="4dp"
         android:textStyle="bold"
-        android:layout_toStartOf="@id/places_context_menu"
-        android:layout_toLeftOf="@id/places_context_menu" />
+        android:layout_toStartOf="@id/places_context_menu_button"
+        android:layout_toLeftOf="@id/places_context_menu_button" />
 
     <HorizontalScrollView
         android:id="@+id/scrollView1"
@@ -43,8 +43,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/place_name"
-        android:layout_toLeftOf="@id/places_context_menu"
-        android:layout_toStartOf="@id/places_context_menu" >
+        android:layout_toLeftOf="@id/places_context_menu_button"
+        android:layout_toStartOf="@id/places_context_menu_button" >
 
         <LinearLayout
             android:id="@+id/avatar_row"

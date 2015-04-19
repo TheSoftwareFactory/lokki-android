@@ -111,16 +111,9 @@ public class PlacesFragment extends Fragment {
                 AQuery aq = new AQuery(getActivity(), convertView);
 
                 final String placeName = getItem(position);
-                aq.id(R.id.place_name).text(placeName).longClicked(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View v) {
-                        Log.d(TAG, "Place long clicked: " + placeName);
-                        deletePlaceDialog(placeName);
-                        return false;
-                    }
-                });
+                aq.id(R.id.place_name).text(placeName);
 
-                aq.id(R.id.places_context_menu).clicked(new View.OnClickListener() {
+                aq.id(R.id.places_context_menu_button).clicked(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         v.showContextMenu();
