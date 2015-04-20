@@ -16,9 +16,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -29,7 +33,6 @@ import cc.softwarefactory.lokki.android.utilities.ServerApi;
 import cc.softwarefactory.lokki.android.services.DataService;
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
-import cc.softwarefactory.lokki.android.avatar.AvatarLoader;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 
 import com.makeramen.RoundedImageView;
@@ -45,12 +48,10 @@ import java.util.Iterator;
 public class PlacesFragment extends Fragment {
 
     private static final String TAG = "PlacesFragment";
-    private AQuery aq;
     private Context context;
     private ArrayList<String> placesList;
     private JSONObject peopleInsidePlace;
     private ListView listView;
-    private AvatarLoader avatarLoader;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -58,14 +59,14 @@ public class PlacesFragment extends Fragment {
         context = getActivity().getApplicationContext();
         View rootView = inflater.inflate(R.layout.fragment_places, container, false);
         listView = (ListView) rootView.findViewById(R.id.listView1);
-        avatarLoader = new AvatarLoader(context);
+        registerForContextMenu(listView);
         return rootView;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
 
-        Log.e(TAG, "onActivityCreated");
+        Log.d(TAG, "onActivityCreated");
         super.onActivityCreated(savedInstanceState);
         DataService.getPlaces(context);
         showPlaces();
@@ -74,7 +75,7 @@ public class PlacesFragment extends Fragment {
     @Override
     public void onResume() {
 
-        Log.e(TAG, "onResume");
+        Log.d(TAG, "onResume");
         super.onResume();
         LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver, new IntentFilter("PLACES-UPDATE"));
         LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver, new IntentFilter("LOCATION-UPDATE"));
@@ -92,14 +93,15 @@ public class PlacesFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            Log.e(TAG, "BroadcastReceiver onReceive");
+            Log.d(TAG, "BroadcastReceiver onReceive");
             showPlaces();
         }
     };
 
     private void setListAdapter() {
 
-        Log.e(TAG, "setListAdapter");
+        Log.d(TAG, "setListAdapter");
+
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, R.layout.places_row_layout, placesList) {
 
             @Override
@@ -109,24 +111,20 @@ public class PlacesFragment extends Fragment {
                 AQuery aq = new AQuery(getActivity(), convertView);
 
                 final String placeName = getItem(position);
-                aq.id(R.id.place_name).text(placeName).longClicked(new View.OnLongClickListener() {
+                aq.id(R.id.place_name).text(placeName);
+
+                aq.id(R.id.places_context_menu_button).clicked(new View.OnClickListener() {
                     @Override
-                    public boolean onLongClick(View v) {
-                        Log.e(TAG, "Place long clicked: " + placeName);
-                        deletePlaceDialog(placeName);
-                        return false;
+                    public void onClick(View v) {
+                        v.showContextMenu();
                     }
                 });
 
-                String bgImage = "place_0" + (position + 1);
-                int resourceId = getResources().getIdentifier(bgImage, "drawable", "cc.softwarefactory.lokki.android");
-                aq.id(R.id.background).background(resourceId);
-
-                Log.e(TAG, "Plane name: " + placeName);
-                Log.e(TAG, "peopleInsidePlace? " + peopleInsidePlace.has(placeName));
+                Log.d(TAG, "Plane name: " + placeName);
+                Log.d(TAG, "peopleInsidePlace? " + peopleInsidePlace.has(placeName));
 
                 if (peopleInsidePlace.has(placeName)) { // People are inside this place
-                    Log.e(TAG, "Inside loop");
+                    Log.d(TAG, "Inside loop");
                     try {
                         JSONArray people = peopleInsidePlace.getJSONArray(placeName);
                         LinearLayout avatarRow = (LinearLayout) convertView.findViewById(R.id.avatar_row);
@@ -143,7 +141,7 @@ public class PlacesFragment extends Fragment {
                             if (MainApplication.avatarCache.get(email) != null) {
                                 image.setImageBitmap(MainApplication.avatarCache.get(email));
                             } else {
-                                Log.e(TAG, "Avatar not in cache, email: " + email);
+                                Log.d(TAG, "Avatar not in cache, email: " + email);
                                 image.setImageResource(R.drawable.default_avatar);
                             }
                             image.setContentDescription(email);
@@ -152,7 +150,7 @@ public class PlacesFragment extends Fragment {
                         }
 
                     } catch (Exception ex) {
-                        Log.e(TAG, "Error in adding avatars");
+                        Log.d(TAG, "Error in adding avatars");
                     }
                 }
 
@@ -164,9 +162,31 @@ public class PlacesFragment extends Fragment {
 
     }
 
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        MenuInflater inflater = getActivity().getMenuInflater();
+        inflater.inflate(R.menu.places_context, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterContextMenuInfo info = (AdapterContextMenuInfo)item.getMenuInfo();
+        int position = info.position;
+        String placeName = placesList.get(position);
+
+        switch(item.getItemId()) {
+            case R.id.places_context_menu_delete:
+                deletePlaceDialog(placeName);
+                return true;
+        }
+
+        return super.onContextItemSelected(item);
+    }
+
     private void deletePlaceDialog(final String name) {
 
-        Log.e(TAG, "deletePlaceDialog");
+        Log.d(TAG, "deletePlaceDialog");
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity())
                 .setTitle(context.getResources().getString(R.string.delete_place))
                 .setMessage(name + " " + context.getResources().getString(R.string.will_be_deleted_from_places))
@@ -190,14 +210,14 @@ public class PlacesFragment extends Fragment {
 
     private void deletePlace(String name) {
 
-        Log.e(TAG, "deletePlace");
+        Log.d(TAG, "deletePlace");
         try {
             Iterator<String> keys = MainApplication.places.keys();
             while (keys.hasNext()) {
                 String key = keys.next();
                 JSONObject placeObj = MainApplication.places.getJSONObject(key);
                 if (name.equals(placeObj.getString("name"))) {
-                    Log.e(TAG, "Place ID to be deleted: " + key);
+                    Log.d(TAG, "Place ID to be deleted: " + key);
                     ServerApi.removePlace(context, key);
                     break;
                 }
@@ -232,7 +252,7 @@ public class PlacesFragment extends Fragment {
 
     private void showPlaces() {
 
-        Log.e(TAG, "showPlaces");
+        Log.d(TAG, "showPlaces");
         placesList = new ArrayList<String>();
         peopleInsidePlace = new JSONObject();
 
@@ -244,7 +264,7 @@ public class PlacesFragment extends Fragment {
                 MainApplication.places = new JSONObject(PreferenceUtils.getString(context, PreferenceUtils.KEY_PLACES));
             }
 
-            Log.e(TAG, "Places json: " + MainApplication.places);
+            Log.d(TAG, "Places json: " + MainApplication.places);
             Iterator<String> keys = MainApplication.places.keys();
             while (keys.hasNext()) {
                 String key = keys.next();
@@ -255,12 +275,12 @@ public class PlacesFragment extends Fragment {
                 calculatePeopleInside(placeObj);
             }
 
-            Log.e(TAG, "peopleInsidePlace: " + peopleInsidePlace);
+            Log.d(TAG, "peopleInsidePlace: " + peopleInsidePlace);
             Collections.sort(placesList);
             setListAdapter();
 
         } catch (Exception ex) {
-            Log.e(TAG, "ERROR: " + ex.getMessage());
+            Log.d(TAG, "ERROR: " + ex.getMessage());
             ex.printStackTrace();
         }
     }
@@ -286,12 +306,12 @@ public class PlacesFragment extends Fragment {
             Location myLocation = new Location(MainApplication.userAccount);
             myLocation.setLatitude(userLocationObj.getDouble("lat"));
             myLocation.setLongitude(userLocationObj.getDouble("lon"));
-            //Log.e(TAG, "userLocation: " + userLocation);
+            //Log.d(TAG, "userLocation: " + userLocation);
 
             // Compare location
             float myDistance = placeLocation.distanceTo(myLocation);
             if (myDistance < placeLocation.getAccuracy()) {
-                //Log.e(TAG, email + " is in place: " + placeLocation.getProvider());
+                //Log.d(TAG, email + " is in place: " + placeLocation.getProvider());
                 peopleInThisPlace.put(MainApplication.userAccount);
             }
 
@@ -310,24 +330,24 @@ public class PlacesFragment extends Fragment {
 
                 userLocation.setLatitude(locationObj.getDouble("lat"));
                 userLocation.setLongitude(locationObj.getDouble("lon"));
-                //Log.e(TAG, "userLocation: " + userLocation);
+                //Log.d(TAG, "userLocation: " + userLocation);
 
                 // Compare location
                 float distance = placeLocation.distanceTo(userLocation);
                 if (distance < placeLocation.getAccuracy()) {
-                    //Log.e(TAG, email + " is in place: " + placeLocation.getProvider());
+                    //Log.d(TAG, email + " is in place: " + placeLocation.getProvider());
                     peopleInThisPlace.put(email);
                 }
             }
 
             if (peopleInThisPlace.length() > 0) {
-                //Log.e(TAG, "peopleInThisPlace: " + peopleInThisPlace);
+                //Log.d(TAG, "peopleInThisPlace: " + peopleInThisPlace);
                 peopleInsidePlace.put(placeObj.getString("name"), peopleInThisPlace);
             }
 
 
         } catch (Exception ex) {
-            Log.e(TAG, "Error");
+            Log.d(TAG, "Error");
             ex.printStackTrace();
 
         }

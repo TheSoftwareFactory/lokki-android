@@ -118,8 +118,12 @@ public class PlacesScreenTest extends LoggedInBaseTest {
     public void testDeletePlaces() throws JSONException, InterruptedException {
         getMockDispatcher().setPlacesResponse(new MockResponse().setBody(MockJsonUtils.getPlacesJson()));
         getMockDispatcher().setPlacesDeleteResponse(new MockResponse().setResponseCode(200), "cb693820-3ce7-4c95-af2f-1f079d2841b1");
+
         enterPlacesScreen();
         onView(withText("Testplace1")).perform((longClick()));
+        onView(allOf(withId(R.id.places_context_menu_button), hasSibling(withText("Testplace1"))))
+                .perform(click());
+        onView(withText("Delete")).perform(click());
         onView(withText("OK")).perform(click());
         waitForView("Testplace1");
     }
