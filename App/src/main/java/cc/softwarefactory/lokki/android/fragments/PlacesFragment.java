@@ -235,7 +235,10 @@ public class PlacesFragment extends Fragment {
         Log.d(TAG, "renamePlaceDialog");
         AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
         final EditText input = new EditText(getActivity());
-        dialog.setTitle("Rename " + placeName + "?")
+        String titleFormat = getResources().getString(R.string.rename_place);
+        String title = String.format(titleFormat, placeName);
+
+        dialog.setTitle(title)
                 .setMessage(R.string.write_place_name)
                 .setView(input)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
