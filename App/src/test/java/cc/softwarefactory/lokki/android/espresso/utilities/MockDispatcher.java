@@ -66,6 +66,10 @@ public class MockDispatcher extends Dispatcher {
         return installResponse(METHOD_DELETE, DEFAULT_USER_BASE_PATH + "places" + "/" + placeId, response);
     }
 
+    public RequestsHandle setPlacesRenameResponse(MockResponse response, String placeId) {
+        return installResponse(METHOD_POST, DEFAULT_USER_BASE_PATH + "places" + "/" + placeId, response);
+    }
+
     public RequestsHandle setSignUpResponse(MockResponse response) {
         return installResponse(METHOD_POST, "/signup", response);
     }

@@ -69,6 +69,7 @@
     <string name="will_be_deleted_from_places">will be removed from your places</string>
     <string name="place_created">Place created</string>
     <string name="place_removed">Place removed</string>
+    <string name="place_renamed">Place renamed </string>
     <string name="place_limit_reached">You cannot create more places. Maximum limit reached.</string>
     <string name="dashboard_view">map/places</string>
     <string name="you_are_visible">You are now VISIBLE</string>
