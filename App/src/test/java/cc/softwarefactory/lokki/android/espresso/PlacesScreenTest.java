@@ -22,6 +22,7 @@ import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.longClick;
+import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.hasDescendant;
@@ -100,6 +101,7 @@ public class PlacesScreenTest extends LoggedInBaseTest {
         onView(withId(R.id.map)).check(matches(isDisplayed()));
     }
 
+
     public static void waitForView(String name) {
         long startTime = (new Date()).getTime();
         long endTime = startTime + 15000;
@@ -120,11 +122,29 @@ public class PlacesScreenTest extends LoggedInBaseTest {
         getMockDispatcher().setPlacesDeleteResponse(new MockResponse().setResponseCode(200), "cb693820-3ce7-4c95-af2f-1f079d2841b1");
 
         enterPlacesScreen();
-        onView(withText("Testplace1")).perform((longClick()));
         onView(allOf(withId(R.id.places_context_menu_button), hasSibling(withText("Testplace1"))))
                 .perform(click());
         onView(withText("Delete")).perform(click());
         onView(withText("OK")).perform(click());
+        waitForView("Testplace1");
+    }
+
+
+    public void testRenamePlaces() throws JSONException, InterruptedException {
+        getMockDispatcher().setPlacesResponse(new MockResponse().setBody(MockJsonUtils.getPlacesJson()));
+        getMockDispatcher().setPlacesRenameResponse(new MockResponse().setResponseCode(200), "cb693820-3ce7-4c95-af2f-1f079d2841b1");
+
+
+        enterPlacesScreen();
+        onView(withText("Testplace1")).perform((longClick()));
+        onView(allOf(withId(R.id.places_context_menu_button), hasSibling(withText("Testplace1"))))
+                .perform(click());
+        onView(withText("Rename")).perform(click());
+        onView(withClassName(endsWith("EditText")))
+                .perform(click())
+                .perform(typeText("Renametext"));
+        onView(withText("OK")).perform(click());
+        // Test that old name no longer exists
         waitForView("Testplace1");
     }
 }

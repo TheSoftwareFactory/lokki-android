@@ -409,6 +409,56 @@ public class ServerApi {
         aq.delete(url, JSONObject.class, cb);
     }
 
+    public static void renamePlace(final Context context, final String placeId,
+                                   final String newName) throws JSONException {
+        Log.e(TAG, "renamePlace");
+        AQuery aq = new AQuery(context);
+
+        String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
+        String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
+        String url = ApiUrl + "user/" + userId + "/place/" + placeId;
+
+
+        String cleanName = newName.substring(0, 1).toUpperCase() + newName.substring(1).toLowerCase();
+
+        // Get place info
+        if (MainApplication.places == null) { // Read them from cache
+            if (PreferenceUtils.getString(context, PreferenceUtils.KEY_PLACES).isEmpty()) {
+                return;
+            }
+            MainApplication.places = new JSONObject(PreferenceUtils.
+                    getString(context, PreferenceUtils.KEY_PLACES));
+        }
+        JSONObject placeObj = MainApplication.places.getJSONObject(placeId);
+
+        JSONObject JSONdata = new JSONObject()
+                .put("lat", placeObj.getString("lat"))
+                .put("lon", placeObj.getString("lon"))
+                .put("rad", placeObj.getString("rad"))
+                .put("img", placeObj.getString("img"))
+                .put("name", cleanName);
+
+        AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>() {
+            @Override
+            public void callback(String url, JSONObject object, AjaxStatus status) {
+                Log.e(TAG, "renamePlace result code: " + status.getCode());
+                Log.e(TAG, "renamePlace result message: " + status.getMessage());
+                Log.e(TAG, "renamePlace ERROR: " + status.getError());
+
+                if (status.getError() == null) {
+                    Log.e(TAG, "No error, place renamed.");
+                    DataService.getPlaces(context);
+                    Intent intent = new Intent("PLACES-UPDATE");
+                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+                    Toast.makeText(context, R.string.place_renamed, Toast.LENGTH_SHORT).show();
+                }
+            }
+        };
+
+        cb.header("authorizationtoken", authorizationToken);
+        aq.put(url, JSONdata, JSONObject.class, cb);
+    }
+
     public static void sendLanguage(Context context) throws JSONException {
 
         Log.e(TAG, "sendLanguage");

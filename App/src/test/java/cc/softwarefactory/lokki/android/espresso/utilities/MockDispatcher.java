@@ -15,6 +15,7 @@ public class MockDispatcher extends Dispatcher {
     public static final String METHOD_GET = "GET";
     public static final String METHOD_POST = "POST";
     public static final String METHOD_DELETE = "DELETE";
+    public static final String METHOD_PUT = "PUT";
     public static final String DEFAULT_USER_BASE_PATH = "/user/" + TestUtils.VALUE_TEST_USER_ID + "/";
 
     private Map<String, MockResponse> responses;
@@ -64,6 +65,10 @@ public class MockDispatcher extends Dispatcher {
 
     public RequestsHandle setPlacesDeleteResponse(MockResponse response, String placeId) {
         return installResponse(METHOD_DELETE, DEFAULT_USER_BASE_PATH + "places" + "/" + placeId, response);
+    }
+
+    public RequestsHandle setPlacesRenameResponse(MockResponse response, String placeId) {
+        return installResponse(METHOD_PUT, DEFAULT_USER_BASE_PATH + "places" + "/" + placeId, response);
     }
 
     public RequestsHandle setSignUpResponse(MockResponse response) {

@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
@@ -179,6 +180,8 @@ public class PlacesFragment extends Fragment {
             case R.id.places_context_menu_delete:
                 deletePlaceDialog(placeName);
                 return true;
+            case R.id.places_context_menu_rename:
+                renamePlaceDialog(placeName);
         }
 
         return super.onContextItemSelected(item);
@@ -219,6 +222,53 @@ public class PlacesFragment extends Fragment {
                 if (name.equals(placeObj.getString("name"))) {
                     Log.d(TAG, "Place ID to be deleted: " + key);
                     ServerApi.removePlace(context, key);
+                    break;
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void renamePlaceDialog(final String placeName) {
+
+        Log.d(TAG, "renamePlaceDialog");
+        AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+        final EditText input = new EditText(getActivity());
+        String titleFormat = getResources().getString(R.string.rename_place);
+        String title = String.format(titleFormat, placeName);
+
+        dialog.setTitle(title)
+                .setMessage(R.string.write_place_name)
+                .setView(input)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String newName = input.getText().toString();
+                        renamePlace(placeName, newName);
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        dialog.show();
+    }
+
+    private void renamePlace(String oldName, String newName) {
+
+        Log.d(TAG, "renamePlace");
+        try {
+            Iterator<String> keys = MainApplication.places.keys();
+            while (keys.hasNext()) {
+                String key = keys.next();
+                JSONObject placeObj = MainApplication.places.getJSONObject(key);
+                if (oldName.equals(placeObj.getString("name"))) {
+                    Log.d(TAG, "Place ID to be renamed: " + key);
+                    ServerApi.renamePlace(context, key, newName);
                     break;
                 }
             }
