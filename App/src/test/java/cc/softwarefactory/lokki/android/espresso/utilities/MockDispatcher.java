@@ -36,6 +36,10 @@ public class MockDispatcher extends Dispatcher {
     private void setDefaultResponses() throws JSONException {
         setDashboardResponse(new MockResponse().setBody(MockJsonUtils.getEmptyDashboardJson()));
         setPlacesResponse(new MockResponse().setBody(MockJsonUtils.getEmptyPlacesJson()));
+        setUpdateLocationsResponse(new MockResponse().setResponseCode(200));
+        setPostLocationResponse(new MockResponse().setResponseCode(200));
+        setAllowPostResponse(new MockResponse().setResponseCode(200));
+        setGcmTokenResponse(new MockResponse().setResponseCode(200));
     }
 
     @Override
@@ -53,6 +57,22 @@ public class MockDispatcher extends Dispatcher {
 
     public RequestsHandle setDashboardResponse(MockResponse response) {
         return installResponse(METHOD_GET, DEFAULT_USER_BASE_PATH + "dashboard", response);
+    }
+
+    public RequestsHandle setUpdateLocationsResponse(MockResponse response) {
+        return installResponse(METHOD_POST, DEFAULT_USER_BASE_PATH + "update/locations", response);
+    }
+
+    public RequestsHandle setPostLocationResponse(MockResponse response) {
+        return installResponse(METHOD_POST, DEFAULT_USER_BASE_PATH + "location", response);
+    }
+
+    public RequestsHandle setAllowPostResponse(MockResponse response) {
+        return installResponse(METHOD_POST, DEFAULT_USER_BASE_PATH + "allow", response);
+    }
+
+    public RequestsHandle setGcmTokenResponse(MockResponse response) {
+        return installResponse(METHOD_POST, DEFAULT_USER_BASE_PATH + "gcmToken", response);
     }
 
     public RequestsHandle setPlacesResponse(MockResponse response) {
