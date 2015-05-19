@@ -207,6 +207,11 @@ public class AddContactsFragment extends Fragment {
     }
 
     private boolean alreadyAdded(String email) {
+
+        if (MainApplication.dashboard == null) {
+            return false;
+        }
+
         try {
             JSONObject data = MainApplication.dashboard.getJSONObject("idmapping");
             Iterator<String> keys = data.keys();
