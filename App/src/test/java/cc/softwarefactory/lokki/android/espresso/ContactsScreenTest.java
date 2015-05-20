@@ -28,6 +28,7 @@ public class ContactsScreenTest extends LoggedInBaseTest {
 
     private void enterContactsScreen() {
         getActivity();
+        TestUtils.ignoreLocationDisabledDialog();
         TestUtils.toggleNavigationDrawer();
         onView(withText(R.string.contacts)).perform(click());
     }

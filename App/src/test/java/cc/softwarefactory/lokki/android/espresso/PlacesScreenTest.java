@@ -38,11 +38,11 @@ public class PlacesScreenTest extends LoggedInBaseTest {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        //enterPlacesScreen();
     }
 
     private void enterPlacesScreen() {
         getActivity();
+        TestUtils.ignoreLocationDisabledDialog();
         TestUtils.toggleNavigationDrawer();
         onView(withText(R.string.places)).perform((click()));
     }

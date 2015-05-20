@@ -21,6 +21,7 @@ public class AboutScreenTest extends LoggedInBaseTest {
 
     private void enterAboutScreen() {
         getActivity();
+        TestUtils.ignoreLocationDisabledDialog();
         TestUtils.toggleNavigationDrawer();
         onView(withText(R.string.about)).perform(click());
     }
