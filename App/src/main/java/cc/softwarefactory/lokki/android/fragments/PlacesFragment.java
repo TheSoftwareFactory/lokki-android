@@ -36,7 +36,7 @@ import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 
-import com.makeramen.RoundedImageView;
+import com.makeramen.roundedimageview.RoundedImageView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -282,8 +282,8 @@ public class PlacesFragment extends Fragment {
         int sizeInDip = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 65, getResources().getDisplayMetrics());
         RoundedImageView image = new RoundedImageView(getActivity());
         image.setTag(email);
-        image.setCornerRadius(100);
-        image.setBorderWidth(0);
+        image.setCornerRadius(100f);
+        image.setBorderWidth(0f);
         image.setPadding(20, 0, 0, 0);
         image.setLayoutParams(new LinearLayout.LayoutParams(sizeInDip, sizeInDip));
         image.setOnClickListener(new View.OnClickListener() {

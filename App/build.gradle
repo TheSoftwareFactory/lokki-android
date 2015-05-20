@@ -60,7 +60,7 @@ android {
 dependencies {
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.google.android.gms:play-services:7.3.0'
-    compile 'com.makeramen:roundedimageview:1.2.4'
+    compile 'com.makeramen:roundedimageview:2.0.1'
     compile files('libs/android-query.0.26.7.jar')
     compile(name:'android-support-v4-preferencefragment-master-release', ext:'aar')
 
