@@ -9,6 +9,9 @@ cache:
   directories:
    - $HOME/.gradle/caches/
 
+matrix:
+  fast_finish: true
+
 android:
   components:
     - platform-tools

@@ -6,6 +6,7 @@ import android.preference.PreferenceManager;
 import android.support.test.espresso.NoMatchingViewException;
 import android.util.Log;
 
+import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.activities.MainActivity;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
@@ -24,6 +25,7 @@ public class TestUtils {
 
     public static void clearAppData(Context targetContext) {
         MainActivity.firstTimeLaunch = null;
+        MainApplication.dashboard = null;
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(targetContext).edit();
         editor.clear();
         editor.commit();

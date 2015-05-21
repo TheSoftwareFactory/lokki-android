@@ -126,10 +126,19 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
             Log.e(TAG, "onResume - firstTimeLaunch, so avoiding launching services.");
             return;
         }
+
+
         Log.e(TAG, "onResume - NOT firstTimeLaunch, so launching services.");
         startServices();
         LocalBroadcastManager.getInstance(this).registerReceiver(exitMessageReceiver, new IntentFilter("EXIT"));
         LocalBroadcastManager.getInstance(this).registerReceiver(switchToMapReceiver, new IntentFilter("GO-TO-MAP"));
+
+
+        Log.e(TAG, "onResume - check if dashboard is null");
+        if (MainApplication.dashboard == null) {
+            Log.e(TAG, "onResume - dashboard was null, get dashboard from server");
+            ServerApi.getDashboard(getApplicationContext());
+        }
     }
 
 
