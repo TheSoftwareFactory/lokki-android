@@ -1,11 +1,12 @@
 package cc.softwarefactory.lokki.android.espresso;
 
-import cc.softwarefactory.lokki.android.R;
-import cc.softwarefactory.lokki.android.espresso.utilities.MockJsonUtils;
-import cc.softwarefactory.lokki.android.espresso.utilities.TestUtils;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 
 import org.json.JSONException;
+
+import cc.softwarefactory.lokki.android.R;
+import cc.softwarefactory.lokki.android.espresso.utilities.MockJsonUtils;
+import cc.softwarefactory.lokki.android.espresso.utilities.TestUtils;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -28,7 +29,6 @@ public class ContactsScreenTest extends LoggedInBaseTest {
 
     private void enterContactsScreen() {
         getActivity();
-        TestUtils.ignoreLocationDisabledDialog();
         TestUtils.toggleNavigationDrawer();
         onView(withText(R.string.contacts)).perform(click());
     }

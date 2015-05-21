@@ -42,7 +42,6 @@ public class PlacesScreenTest extends LoggedInBaseTest {
 
     private void enterPlacesScreen() {
         getActivity();
-        TestUtils.ignoreLocationDisabledDialog();
         TestUtils.toggleNavigationDrawer();
         onView(withText(R.string.places)).perform((click()));
     }

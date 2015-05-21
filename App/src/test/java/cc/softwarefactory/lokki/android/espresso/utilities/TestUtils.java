@@ -37,6 +37,7 @@ public class TestUtils {
     }
 
     public static void toggleNavigationDrawer() {
+        ignoreLocationDisabledDialog();
         openDrawer(R.id.drawer_layout);
     }
 
