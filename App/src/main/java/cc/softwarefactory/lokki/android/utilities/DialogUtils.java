@@ -4,13 +4,12 @@ See LICENSE for details
 */
 package cc.softwarefactory.lokki.android.utilities;
 
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.InputType;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -19,8 +18,6 @@ import android.widget.Toast;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONException;
-
-import java.util.Set;
 
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;

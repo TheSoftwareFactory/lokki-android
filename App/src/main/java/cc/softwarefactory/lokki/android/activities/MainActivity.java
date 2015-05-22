@@ -4,7 +4,7 @@ See LICENSE for details
 */
 package cc.softwarefactory.lokki.android.activities;
 
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -16,7 +16,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -28,31 +28,30 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import org.json.JSONException;
 
-import cc.softwarefactory.lokki.android.fragments.PreferencesFragment;
-import cc.softwarefactory.lokki.android.utilities.DialogUtils;
-import cc.softwarefactory.lokki.android.datasources.contacts.ContactDataSource;
-import cc.softwarefactory.lokki.android.utilities.Utils;
-import cc.softwarefactory.lokki.android.utilities.gcm.GcmHelper;
-import cc.softwarefactory.lokki.android.utilities.ServerApi;
-import cc.softwarefactory.lokki.android.services.DataService;
-import cc.softwarefactory.lokki.android.services.LocationService;
 import cc.softwarefactory.lokki.android.MainApplication;
-import cc.softwarefactory.lokki.android.fragments.MapViewFragment;
-import cc.softwarefactory.lokki.android.fragments.NavigationDrawerFragment;
-import cc.softwarefactory.lokki.android.fragments.PlacesFragment;
 import cc.softwarefactory.lokki.android.R;
+import cc.softwarefactory.lokki.android.datasources.contacts.ContactDataSource;
+import cc.softwarefactory.lokki.android.datasources.contacts.DefaultContactDataSource;
 import cc.softwarefactory.lokki.android.fragments.AboutFragment;
 import cc.softwarefactory.lokki.android.fragments.AddContactsFragment;
 import cc.softwarefactory.lokki.android.fragments.ContactsFragment;
-import cc.softwarefactory.lokki.android.datasources.contacts.DefaultContactDataSource;
+import cc.softwarefactory.lokki.android.fragments.MapViewFragment;
+import cc.softwarefactory.lokki.android.fragments.NavigationDrawerFragment;
+import cc.softwarefactory.lokki.android.fragments.PlacesFragment;
+import cc.softwarefactory.lokki.android.fragments.PreferencesFragment;
+import cc.softwarefactory.lokki.android.services.DataService;
+import cc.softwarefactory.lokki.android.services.LocationService;
+import cc.softwarefactory.lokki.android.utilities.DialogUtils;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
+import cc.softwarefactory.lokki.android.utilities.ServerApi;
+import cc.softwarefactory.lokki.android.utilities.Utils;
+import cc.softwarefactory.lokki.android.utilities.gcm.GcmHelper;
 
-import org.json.JSONException;
 
 
-
-public class MainActivity extends ActionBarActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+public class MainActivity extends AppCompatActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
     private static final String TAG = "MainActivity";
 
@@ -89,6 +88,7 @@ public class MainActivity extends ActionBarActivity implements NavigationDrawerF
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(mTitle);
+        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
 

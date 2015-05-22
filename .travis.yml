@@ -3,14 +3,11 @@ language: android
 # To use Travis Container-Based Infrastructure
 sudo: false
 
-env: BUILD_TOOLS=22.0.1 ANDROID_API=android-21 ANDROID_ABI=armeabi-v7a
+env: BUILD_TOOLS=22.0.1 ANDROID_API=android-22 ANDROID_ABI=armeabi-v7a
 
 cache:
   directories:
    - $HOME/.gradle/caches/
-
-matrix:
-  fast_finish: true
 
 android:
   components:

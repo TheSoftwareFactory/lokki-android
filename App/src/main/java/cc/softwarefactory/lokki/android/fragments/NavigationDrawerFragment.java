@@ -13,6 +13,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -261,7 +262,7 @@ public class NavigationDrawerFragment extends Fragment {
     }
 
     private ActionBar getSupportActionBar() {
-        return ((ActionBarActivity) getActivity()).getSupportActionBar();
+        return ((AppCompatActivity) getActivity()).getSupportActionBar();
     }
 
     /**
