@@ -108,7 +108,7 @@ public class PlacesFragment extends Fragment {
             @Override
             public View getView(int position, View unusedView, ViewGroup parent) {
 
-                View convertView = getActivity().getLayoutInflater().inflate(R.layout.places_row_layout, null);
+                View convertView = getActivity().getLayoutInflater().inflate(R.layout.places_row_layout, parent, false);
                 AQuery aq = new AQuery(getActivity(), convertView);
 
                 final String placeName = getItem(position);
@@ -303,7 +303,7 @@ public class PlacesFragment extends Fragment {
     private void showPlaces() {
 
         Log.d(TAG, "showPlaces");
-        placesList = new ArrayList<String>();
+        placesList = new ArrayList<>();
         peopleInsidePlace = new JSONObject();
 
         try {

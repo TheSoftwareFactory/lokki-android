@@ -15,16 +15,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.androidquery.AQuery;
-
-import cc.softwarefactory.lokki.android.MainApplication;
-import cc.softwarefactory.lokki.android.R;
-import cc.softwarefactory.lokki.android.avatar.AvatarLoader;
-import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
-import cc.softwarefactory.lokki.android.utilities.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,11 +30,16 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import cc.softwarefactory.lokki.android.MainApplication;
+import cc.softwarefactory.lokki.android.R;
+import cc.softwarefactory.lokki.android.avatar.AvatarLoader;
+import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
+import cc.softwarefactory.lokki.android.utilities.Utils;
+
 
 public class ContactsFragment extends Fragment {
 
     private static final String TAG = "Contacts";
-    RelativeLayout layout;
     ArrayList<String> peopleList;
     Set<String> iCanSee;
     Set<String> canSeeMe;
@@ -54,11 +52,11 @@ public class ContactsFragment extends Fragment {
 
     public ContactsFragment() {
 
-        peopleList = new ArrayList<String>();
-        iCanSee = new HashSet<String>();
-        canSeeMe = new HashSet<String>();
-        mapping = new HashMap<String, String>();
-        timestamps = new HashMap<String, Long>();
+        peopleList = new ArrayList<>();
+        iCanSee = new HashSet<>();
+        canSeeMe = new HashSet<>();
+        mapping = new HashMap<>();
+        timestamps = new HashMap<>();
     }
 
     @Override
@@ -134,7 +132,7 @@ public class ContactsFragment extends Fragment {
             public View getView(int position, View convertView, ViewGroup parent) {
 
                 if (convertView == null) {
-                    convertView = getActivity().getLayoutInflater().inflate(R.layout.people_row_layout, null);
+                    convertView = getActivity().getLayoutInflater().inflate(R.layout.people_row_layout, parent, false);
                     holder = new ViewHolder();
                     holder.name = (TextView) convertView.findViewById(R.id.contact_name);
                     holder.email = (TextView) convertView.findViewById(R.id.contact_email);

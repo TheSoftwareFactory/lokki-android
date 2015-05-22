@@ -104,10 +104,6 @@ public class DialogUtils {
                 .show();
     }
 
-    public static void addPlace(final Context context, final LatLng latLng) {
-        addPlace(context, latLng, 100);
-    }
-
     public static void addPlace(final Context context, final LatLng latLng, final int radius) {
         final EditText input = new EditText(context); // Set an EditText view to get user input
         input.setSingleLine(true);

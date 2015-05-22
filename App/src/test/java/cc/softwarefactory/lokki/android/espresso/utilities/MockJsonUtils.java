@@ -114,8 +114,8 @@ public class MockJsonUtils {
         JSONObject icanseeJsonObject = new JSONObject();
         JSONObject idmappingJsonObject = new JSONObject().put(TestUtils.VALUE_TEST_USER_ID, TestUtils.VALUE_TEST_USER_ACCOUNT);
 
-        for (int i = 0; i < contactEmails.length; i++) {
-            String contactId = Hashing.sha1().hashString(contactEmails[i]).toString();
+        for (String contactEmail : contactEmails) {
+            String contactId = Hashing.sha1().hashString(contactEmail).toString();
 
             canseemeJsonArray.put(contactId);
 
@@ -124,7 +124,7 @@ public class MockJsonUtils {
                     .put("location", userLocation)
                     .put("visibility", true));
 
-            idmappingJsonObject.put(contactId, contactEmails[i]);
+            idmappingJsonObject.put(contactId, contactEmail);
         }
 
         JSONObject jsonObject = new JSONObject();
@@ -139,7 +139,7 @@ public class MockJsonUtils {
         return jsonObject.toString();
     }
 
-    public static String getEmptyPlacesJson() throws JSONException {
+    public static String getEmptyPlacesJson() {
         return "{}";
     }
 

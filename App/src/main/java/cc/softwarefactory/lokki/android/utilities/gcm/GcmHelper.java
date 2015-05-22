@@ -16,22 +16,18 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import org.json.JSONException;
 
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
 import cc.softwarefactory.lokki.android.utilities.Utils;
 
 public class GcmHelper {
 
-    public static final String EXTRA_MESSAGE = "message";
     public static final String PROPERTY_REG_ID = "registration_id";
     private static final String PROPERTY_APP_VERSION = "appVersion";
-    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
     private static String SENDER_ID = "229584256615";
     private static final String TAG = "GcmHelper";
     private static GoogleCloudMessaging gcm;
-    private static AtomicInteger msgId = new AtomicInteger();
     private static String regid;
 
     public static void start(Context context) {
@@ -136,7 +132,7 @@ public class GcmHelper {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(PROPERTY_REG_ID, regId);
         editor.putInt(PROPERTY_APP_VERSION, appVersion);
-        editor.commit();
+        editor.apply();
     }
 
 }

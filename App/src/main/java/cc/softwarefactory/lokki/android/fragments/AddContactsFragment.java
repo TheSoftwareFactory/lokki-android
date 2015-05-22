@@ -236,7 +236,7 @@ public class AddContactsFragment extends Fragment {
                 ViewHolder holder;
 
                 if (convertView == null) {
-                    convertView = getActivity().getLayoutInflater().inflate(R.layout.add_people_row_layout, null);
+                    convertView = getActivity().getLayoutInflater().inflate(R.layout.add_people_row_layout, parent, false);
                     holder = new ViewHolder();
                     holder.name = (TextView) convertView.findViewById(R.id.contact_name);
                     holder.email = (TextView) convertView.findViewById(R.id.contact_email);
@@ -282,7 +282,7 @@ public class AddContactsFragment extends Fragment {
                                     })
                                     .setNegativeButton(R.string.cancel, null)
                                     .show();
-                        };
+                        }
                     });
 
                 } catch (JSONException e) {

@@ -3,22 +3,20 @@ package cc.softwarefactory.lokki.android.espresso;
 import android.content.Context;
 import android.support.test.espresso.action.ViewActions;
 
-import cc.softwarefactory.lokki.android.R;
-import cc.softwarefactory.lokki.android.espresso.utilities.MockJsonUtils;
-import cc.softwarefactory.lokki.android.espresso.utilities.TestUtils;
-import cc.softwarefactory.lokki.android.datasources.contacts.ContactDataSource;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mockito.Mockito;
 
+import cc.softwarefactory.lokki.android.R;
+import cc.softwarefactory.lokki.android.datasources.contacts.ContactDataSource;
+import cc.softwarefactory.lokki.android.espresso.utilities.MockJsonUtils;
+import cc.softwarefactory.lokki.android.espresso.utilities.TestUtils;
+
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.typeText;
-import static android.support.test.espresso.action.ViewActions.typeTextIntoFocusedView;
 import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.hasSibling;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.isRoot;
 import static android.support.test.espresso.matcher.ViewMatchers.withHint;

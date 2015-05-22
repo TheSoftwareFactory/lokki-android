@@ -43,7 +43,7 @@ public class AboutFragment extends Fragment {
 
         aboutLinksUrls = getResources().getStringArray(R.array.about_links_url);
         String[] aboutLinks = getResources().getStringArray(R.array.about_links);
-        aq.id(R.id.listView1).adapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, aboutLinks));
+        aq.id(R.id.listView1).adapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, aboutLinks));
         aq.id(R.id.listView1).itemClicked(new AboutItemClickListener());
         aq.id(R.id.version).text(R.string.version, Utils.getAppVersion(getActivity()));
     }

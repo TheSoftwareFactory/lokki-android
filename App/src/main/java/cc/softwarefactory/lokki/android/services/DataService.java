@@ -65,7 +65,7 @@ public class DataService extends Service {
         context.startService(placesIntent);
     }
 
-    public static void updateDashboard(Context context, Location location) {
+    public static void updateDashboard(Location location) {
 
         Log.e(TAG, "updateDashboard");
         if (MainApplication.dashboard == null) {

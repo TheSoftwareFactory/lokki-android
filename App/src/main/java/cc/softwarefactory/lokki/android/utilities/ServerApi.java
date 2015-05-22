@@ -14,13 +14,6 @@ import android.widget.Toast;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
-
-import cc.softwarefactory.lokki.android.MainApplication;
-import cc.softwarefactory.lokki.android.R;
-import cc.softwarefactory.lokki.android.constants.Constants;
-import cc.softwarefactory.lokki.android.errors.AddPlaceError;
-import cc.softwarefactory.lokki.android.services.DataService;
-
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
@@ -29,7 +22,12 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+
+import cc.softwarefactory.lokki.android.MainApplication;
+import cc.softwarefactory.lokki.android.R;
+import cc.softwarefactory.lokki.android.constants.Constants;
+import cc.softwarefactory.lokki.android.errors.AddPlaceError;
+import cc.softwarefactory.lokki.android.services.DataService;
 
 
 public class ServerApi {
@@ -45,7 +43,7 @@ public class ServerApi {
 
         String userAccount = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ACCOUNT);
         String deviceId = PreferenceUtils.getString(context, PreferenceUtils.KEY_DEVICE_ID);
-        Map<String, Object> params = new HashMap<String, Object>();
+        Map<String, Object> params = new HashMap<>();
         params.put("email", userAccount);
         params.put("device_id", deviceId);
 
@@ -323,10 +321,6 @@ public class ServerApi {
         aq.post(url, JSONdata, JSONObject.class, cb);
     }
 
-    public static void addPlace(final Context context, String name, LatLng latLng) throws JSONException {
-        addPlace(context, name, latLng, 100);
-    }
-
 
     public static void addPlace(final Context context, String name, LatLng latLng, int radius) throws JSONException {
 
@@ -459,38 +453,10 @@ public class ServerApi {
         aq.put(url, JSONdata, JSONObject.class, cb);
     }
 
-    public static void sendLanguage(Context context) throws JSONException {
-
-        Log.e(TAG, "sendLanguage");
-        AQuery aq = new AQuery(context);
-
-        String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
-        String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
-        String url = ApiUrl + "user/" + userId + "/language";
-
-        JSONObject JSONdata = new JSONObject()
-                .put("language", Utils.getLanguage());
-
-        AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>() {
-            @Override
-            public void callback(String url, JSONObject object, AjaxStatus status) {
-                Log.e(TAG, "sendLanguage result code: " + status.getCode());
-                Log.e(TAG, "sendLanguage result message: " + status.getMessage());
-                Log.e(TAG, "sendLanguage ERROR: " + status.getError());
-            }
-        };
-
-        cb.header("authorizationtoken", authorizationToken);
-        aq.post(url, JSONdata, JSONObject.class, cb);
-    }
-
 
     // For dependency injection
     public static void setApiUrl(String mockUrl) {
         ApiUrl = mockUrl;
-    }
-    public static String getApiUrl() {
-        return ApiUrl;
     }
 
 }

@@ -24,7 +24,7 @@
         android:id="@+id/place_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Place Name"
+        android:text="@string/place_name"
         android:textColor="#000"
         android:typeface="sans"
         android:textSize="15sp"

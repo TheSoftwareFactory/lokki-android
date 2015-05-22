@@ -57,12 +57,10 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
     private static final int REQUEST_CODE_EMAIL = 1001;
     private static final int REQUEST_TERMS = 1002;
-    private static final int SIGNUP_CONTINUE = 1003;
 
     private NavigationDrawerFragment mNavigationDrawerFragment;
     private CharSequence mTitle;
     private int selectedOption = 0;
-    private View infoView;
 
     private ContactDataSource mContactDataSource;
 
@@ -141,15 +139,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         }
     }
 
-
-    private void setUiState(int position) {
-        String[] menuOptions = getResources().getStringArray(R.array.menuOptions);
-        mTitle = menuOptions[position];
-        selectedOption = position;
-        supportInvalidateOptionsMenu();
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(mTitle);
-    }
 
     private void startServices() {
 
@@ -318,7 +307,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     }
 
 
-    // TODO: implement back button logic in onBackPressed()
     @Override
     public boolean onKeyUp(int keycode, KeyEvent e) {
         switch (keycode) {

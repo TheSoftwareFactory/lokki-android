@@ -4,7 +4,6 @@ package cc.softwarefactory.lokki.android.utilities;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 public class PreferenceUtils {
 
@@ -22,8 +21,8 @@ public class PreferenceUtils {
 
     /**
      * Get a string value from default shared preferences
-     * @param context
-     * @param key
+     * @param context Application context
+     * @param key Key to find value from preferences
      * @return Key value or empty string if key not found
      */
     public static String getString(Context context, String key) {
@@ -38,8 +37,8 @@ public class PreferenceUtils {
 
     /**
      * Get a boolean value from default shared preferences
-     * @param context
-     * @param key
+     * @param context Application context
+     * @param key Key to find value from preferences
      * @return Key value or false if key not found
      */
     public static Boolean getBoolean(Context context, String key) {
@@ -63,7 +62,7 @@ public class PreferenceUtils {
         }
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        prefs.edit().putString(key, value).commit();
+        prefs.edit().putString(key, value).apply();
     }
 
     public static void setBoolean(Context context, String key, boolean value) {
@@ -73,6 +72,6 @@ public class PreferenceUtils {
         }
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        prefs.edit().putBoolean(key, value).commit();
+        prefs.edit().putBoolean(key, value).apply();
     }
 }

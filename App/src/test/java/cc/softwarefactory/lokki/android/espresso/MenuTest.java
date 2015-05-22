@@ -50,7 +50,7 @@ public class MenuTest extends LoggedInBaseTest {
         onView(withId(R.id.drawer_layout)).check(matches(isClosed()));
         onView(allOf(withContentDescription("Lokki"), withParent(withId(R.id.toolbar_layout)), not(withText("Lokki"))))
                 .perform(click());
-        onView(withId(R.id.drawer_layout)).check(matches(isOpen()));
+        onView(withId(R.id.drawer_layout)).check(matches(not(isClosed())));
     }
 
 }
