@@ -4,7 +4,6 @@ See LICENSE for details
 */
 package cc.softwarefactory.lokki.android.utilities;
 
-import android.app.NotificationManager;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -19,14 +18,10 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
-import android.net.wifi.WifiManager;
 
 import android.os.Build;
 import android.provider.ContactsContract;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -52,58 +47,12 @@ public class Utils {
 
     private static final String TAG = "Utils";
 
-    public static void showNotification(Context context, int type, String title, String text) {
-
-        if (context == null) {
-            return;
-        }
-
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        NotificationCompat.Builder notification = new NotificationCompat.Builder(context);
-        notification.setContentTitle(title);
-        notification.setContentText(text);
-        notification.setAutoCancel(true);
-        notification.setSmallIcon(R.drawable.ic_launcher);
-        notificationManager.notify(type, notification.build());
-    }
-
-    public static void cancelNotification(Context context, int type) {
-
-        if (context == null) {
-            return;
-        }
-
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(type);
-    }
-
-    public static boolean isWifiEnabled(Context context) {
-
-        if (context == null) {
-            return false;
-        }
-
-        WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        return wifi.isWifiEnabled();
-    }
-
-    public static boolean isOnline(Context context) {
-
-        if (context == null) {
-            return false;
-        }
-
-        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
-        return (networkInfo != null && networkInfo.isAvailable() && networkInfo.isConnected()); // Returns true if connected to Wifi
-    }
-
 
     public static String getDeviceId() {
 
         return "35" + //we make this look like a valid IMEI
                 Build.BOARD.length() % 10 + Build.BRAND.length() % 10 +
-                Build.CPU_ABI.length() % 10 + Build.DEVICE.length() % 10 +
+                Build.SERIAL.length() % 10 + Build.DEVICE.length() % 10 +
                 Build.DISPLAY.length() % 10 + Build.HOST.length() % 10 +
                 Build.ID.length() % 10 + Build.MANUFACTURER.length() % 10 +
                 Build.MODEL.length() % 10 + Build.PRODUCT.length() % 10 +
@@ -182,8 +131,10 @@ public class Utils {
         if (emailCursor.moveToNext()) {
             String name = emailCursor.getString(emailCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DISPLAY_NAME_PRIMARY));
             Log.e(TAG, "getNameFromEmail - Email: " + email + ", Name: " + name);
+            emailCursor.close();
             return name;
         }
+        emailCursor.close();
         return email;
     }
 
@@ -212,6 +163,9 @@ public class Utils {
             while (emailCursor != null && emailCursor.moveToNext()) {
                 Long contactId = Long.valueOf(emailCursor.getString(emailCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.CONTACT_ID)));
                 result = openPhoto(context, contactId);
+            }
+            if (emailCursor != null) {
+                emailCursor.close();
             }
         }
 
@@ -246,29 +200,6 @@ public class Utils {
         return output;
     }
 
-    public static Bitmap decodeFile(byte[] f) {
-
-        Log.e(TAG, "decodeFile");
-        //Decode image size
-        BitmapFactory.Options o = new BitmapFactory.Options();
-        o.inJustDecodeBounds = true;
-        BitmapFactory.decodeStream(new ByteArrayInputStream(f), null, o);
-
-        //The new size we want to scale to
-        final int REQUIRED_SIZE = 60;
-
-        //Find the correct scale value. It should be the power of 2.
-        int scale = 1;
-        while (o.outWidth / scale / 2 >= REQUIRED_SIZE && o.outHeight / scale / 2 >= REQUIRED_SIZE) {
-            scale *= 2;
-        }
-
-        //Decode with inSampleSize
-        BitmapFactory.Options o2 = new BitmapFactory.Options();
-        o2.inSampleSize = scale;
-        return BitmapFactory.decodeStream(new ByteArrayInputStream(f), null, o2);
-    }
-
     public static Bitmap openPhoto(Context context, long contactId) {
 
         Log.e(TAG, "openPhoto");
@@ -288,7 +219,6 @@ public class Utils {
                 byte[] data = cursor.getBlob(0);
                 if (data != null) {
                     return BitmapFactory.decodeStream(new ByteArrayInputStream(data));
-                    //return decodeFile(data);
                 }
             }
         } finally {
@@ -394,7 +324,7 @@ public class Utils {
         try {
             MainApplication.visible = visible;
             ServerApi.setVisibility(context, visible);
-            if (visible == false) {
+            if (!visible) {
                 LocationService.stop(context);
             } else {
                 LocationService.start(context);

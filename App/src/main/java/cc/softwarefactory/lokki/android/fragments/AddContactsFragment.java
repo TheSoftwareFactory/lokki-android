@@ -4,13 +4,13 @@ See LICENSE for details
 */
 package cc.softwarefactory.lokki.android.fragments;
 
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -26,14 +26,6 @@ import android.widget.Toast;
 
 import com.androidquery.AQuery;
 
-import cc.softwarefactory.lokki.android.MainApplication;
-import cc.softwarefactory.lokki.android.R;
-import cc.softwarefactory.lokki.android.avatar.AvatarLoader;
-import cc.softwarefactory.lokki.android.datasources.contacts.ContactDataSource;
-import cc.softwarefactory.lokki.android.datasources.contacts.DefaultContactDataSource;
-import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
-import cc.softwarefactory.lokki.android.utilities.ServerApi;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,6 +35,14 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+
+import cc.softwarefactory.lokki.android.MainApplication;
+import cc.softwarefactory.lokki.android.R;
+import cc.softwarefactory.lokki.android.avatar.AvatarLoader;
+import cc.softwarefactory.lokki.android.datasources.contacts.ContactDataSource;
+import cc.softwarefactory.lokki.android.datasources.contacts.DefaultContactDataSource;
+import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
+import cc.softwarefactory.lokki.android.utilities.ServerApi;
 
 
 public class AddContactsFragment extends Fragment {
@@ -82,7 +82,7 @@ public class AddContactsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        ((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(R.string.add_contacts);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.add_contacts);
         loadContacts();
         enableSearchFilter();
     }
@@ -207,6 +207,11 @@ public class AddContactsFragment extends Fragment {
     }
 
     private boolean alreadyAdded(String email) {
+
+        if (MainApplication.dashboard == null) {
+            return false;
+        }
+
         try {
             JSONObject data = MainApplication.dashboard.getJSONObject("idmapping");
             Iterator<String> keys = data.keys();
@@ -231,7 +236,7 @@ public class AddContactsFragment extends Fragment {
                 ViewHolder holder;
 
                 if (convertView == null) {
-                    convertView = getActivity().getLayoutInflater().inflate(R.layout.add_people_row_layout, null);
+                    convertView = getActivity().getLayoutInflater().inflate(R.layout.add_people_row_layout, parent, false);
                     holder = new ViewHolder();
                     holder.name = (TextView) convertView.findViewById(R.id.contact_name);
                     holder.email = (TextView) convertView.findViewById(R.id.contact_email);
@@ -277,7 +282,7 @@ public class AddContactsFragment extends Fragment {
                                     })
                                     .setNegativeButton(R.string.cancel, null)
                                     .show();
-                        };
+                        }
                     });
 
                 } catch (JSONException e) {

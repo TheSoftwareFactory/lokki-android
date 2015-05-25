@@ -33,7 +33,7 @@ public class AvatarLoader {
 
         Log.e(TAG, "load: Creating new task");
         final BitmapWorkerTask task = new BitmapWorkerTask(imageView);
-        final WeakReference<BitmapWorkerTask> taskReference = new WeakReference<BitmapWorkerTask>(task);
+        final WeakReference<BitmapWorkerTask> taskReference = new WeakReference<>(task);
         imageView.setTag(taskReference);
         task.execute(email);
     }
@@ -45,7 +45,7 @@ public class AvatarLoader {
 
         public BitmapWorkerTask(ImageView imageView) {
             // Use a WeakReference to ensure the ImageView can be garbage collected
-            imageViewReference = new WeakReference<ImageView>(imageView);
+            imageViewReference = new WeakReference<>(imageView);
         }
 
         // Decode image in background.

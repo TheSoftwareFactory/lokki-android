@@ -8,7 +8,7 @@ import android.accounts.AccountManager;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -18,19 +18,19 @@ import android.widget.TextView;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
-
-import cc.softwarefactory.lokki.android.utilities.DialogUtils;
-import cc.softwarefactory.lokki.android.MainApplication;
-import cc.softwarefactory.lokki.android.R;
-import cc.softwarefactory.lokki.android.utilities.ServerApi;
-import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
-import cc.softwarefactory.lokki.android.utilities.Utils;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.common.AccountPicker;
 
 import org.json.JSONObject;
 
-public class SignUpActivity extends ActionBarActivity {
+import cc.softwarefactory.lokki.android.MainApplication;
+import cc.softwarefactory.lokki.android.R;
+import cc.softwarefactory.lokki.android.utilities.DialogUtils;
+import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
+import cc.softwarefactory.lokki.android.utilities.ServerApi;
+import cc.softwarefactory.lokki.android.utilities.Utils;
+
+public class SignUpActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE_EMAIL = 1010;
     private static final String TAG = "SignUpActivity";

@@ -1,24 +1,19 @@
 package cc.softwarefactory.lokki.android.espresso;
 
 
-import android.util.Log;
 import android.widget.ImageView;
 
-import com.makeramen.RoundedImageView;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 
-import org.hamcrest.CoreMatchers;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Date;
-import java.util.regex.Matcher;
 
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.espresso.utilities.MockJsonUtils;
 import cc.softwarefactory.lokki.android.espresso.utilities.TestUtils;
 
-import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.longClick;
@@ -33,9 +28,6 @@ import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
 import static android.support.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static com.android.support.test.deps.guava.base.CharMatcher.is;
-import static org.hamcrest.CoreMatchers.anything;
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.endsWith;
 
@@ -46,7 +38,6 @@ public class PlacesScreenTest extends LoggedInBaseTest {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        //enterPlacesScreen();
     }
 
     private void enterPlacesScreen() {

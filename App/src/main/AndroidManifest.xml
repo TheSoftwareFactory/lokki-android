@@ -10,7 +10,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-    <!-- <uses-permission android:name="android.permission.WAKE_LOCK"/> -->
     <uses-permission android:name="cc.softwarefactory.lokki.android.permission.C2D_MESSAGE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
 
@@ -28,7 +27,6 @@
         android:name=".MainApplication"
         android:allowBackup="false"
         android:hardwareAccelerated="true"
-        android:supportsRtl="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/LokkiTheme">

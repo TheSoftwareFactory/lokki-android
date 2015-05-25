@@ -43,7 +43,6 @@ public class MainApplication extends Application {
     public static Boolean visible = true;
     public static LruCache<String, Bitmap> avatarCache;
     public static JSONObject places;
-    public Boolean exitApp = false;
     public static boolean locationDisabledPromptShown;
 
 

@@ -6,6 +6,6 @@ import org.json.JSONObject;
 
 public interface ContactDataSource {
 
-    public JSONObject getContactsJson(Context context);
+    JSONObject getContactsJson(Context context);
 
 }

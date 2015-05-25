@@ -10,7 +10,7 @@ import org.json.JSONObject;
 
 public class DefaultContactDataSource implements ContactDataSource {
 
-    private static final String TAG = "DefaultContactDataSource";
+    private static final String TAG = "DefaultContactDataSrc";
 
     public JSONObject getContactsJson(Context context) {
 

@@ -4,9 +4,9 @@ See LICENSE for details
 */
 package cc.softwarefactory.lokki.android.activities;
 
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
@@ -18,7 +18,7 @@ import android.widget.TextView;
 
 import cc.softwarefactory.lokki.android.R;
 
-public class FirstTimeActivity extends ActionBarActivity {
+public class FirstTimeActivity extends AppCompatActivity {
 
     private String TAG = "FirstTimeActivity";
     private TextView textView;

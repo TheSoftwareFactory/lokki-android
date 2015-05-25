@@ -1,16 +1,14 @@
 package cc.softwarefactory.lokki.android.espresso;
 
-import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.preference.PreferenceManager;
 import android.test.ActivityInstrumentationTestCase2;
 
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 
-import cc.softwarefactory.lokki.android.utilities.ServerApi;
 import cc.softwarefactory.lokki.android.activities.MainActivity;
 import cc.softwarefactory.lokki.android.espresso.utilities.MockDispatcher;
 import cc.softwarefactory.lokki.android.espresso.utilities.TestUtils;
+import cc.softwarefactory.lokki.android.utilities.ServerApi;
 
 /**
  * Abstract base class for tests that want to have a mock HTTP server running on each test. Also has
@@ -37,7 +35,7 @@ public abstract class LokkiBaseTest extends ActivityInstrumentationTestCase2<Mai
         mockWebServer = new MockWebServer();
         mockDispatcher = new MockDispatcher();
         mockWebServer.setDispatcher(mockDispatcher);
-        mockWebServer.play();
+        mockWebServer.start();
 
         String mockUrl = mockWebServer.getUrl("/").toString();
         ServerApi.setApiUrl(mockUrl);

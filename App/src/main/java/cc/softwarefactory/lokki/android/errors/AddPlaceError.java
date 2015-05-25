@@ -9,7 +9,7 @@ public enum AddPlaceError {
     private String name;
     private int errorMessage;
 
-    private AddPlaceError(String name, int errorMessage) {
+    AddPlaceError(String name, int errorMessage) {
         this.name = name;
         this.errorMessage = errorMessage;
     }

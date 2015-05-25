@@ -4,7 +4,7 @@ See LICENSE for details
 */
 package cc.softwarefactory.lokki.android.fragments;
 
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -36,7 +36,7 @@ import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 
-import com.makeramen.RoundedImageView;
+import com.makeramen.roundedimageview.RoundedImageView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -108,7 +108,7 @@ public class PlacesFragment extends Fragment {
             @Override
             public View getView(int position, View unusedView, ViewGroup parent) {
 
-                View convertView = getActivity().getLayoutInflater().inflate(R.layout.places_row_layout, null);
+                View convertView = getActivity().getLayoutInflater().inflate(R.layout.places_row_layout, parent, false);
                 AQuery aq = new AQuery(getActivity(), convertView);
 
                 final String placeName = getItem(position);
@@ -282,8 +282,8 @@ public class PlacesFragment extends Fragment {
         int sizeInDip = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 65, getResources().getDisplayMetrics());
         RoundedImageView image = new RoundedImageView(getActivity());
         image.setTag(email);
-        image.setCornerRadius(100);
-        image.setBorderWidth(0);
+        image.setCornerRadius(100f);
+        image.setBorderWidth(0f);
         image.setPadding(20, 0, 0, 0);
         image.setLayoutParams(new LinearLayout.LayoutParams(sizeInDip, sizeInDip));
         image.setOnClickListener(new View.OnClickListener() {
@@ -303,7 +303,7 @@ public class PlacesFragment extends Fragment {
     private void showPlaces() {
 
         Log.d(TAG, "showPlaces");
-        placesList = new ArrayList<String>();
+        placesList = new ArrayList<>();
         peopleInsidePlace = new JSONObject();
 
         try {

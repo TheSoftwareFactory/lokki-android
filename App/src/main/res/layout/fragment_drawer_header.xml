@@ -8,17 +8,17 @@
     android:paddingRight="@dimen/nav_drawer_horizontal_padding"
     style="@style/DarkBackground">
 
-    <com.makeramen.RoundedImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+    <com.makeramen.roundedimageview.RoundedImageView xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/avatar"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginTop="@dimen/nav_drawer_horizontal_padding"
         android:scaleType="centerCrop"
         android:src="@drawable/default_avatar"
-        app:border_color="#215fcc"
-        app:border_width="0dp"
-        app:corner_radius="100dp"
-        app:round_background="true" />
+        app:riv_border_color="#215fcc"
+        app:riv_border_width="0dp"
+        app:riv_corner_radius="100dp"
+        app:riv_mutate_background="true" />
 
     <RelativeLayout
         android:layout_width="match_parent"
