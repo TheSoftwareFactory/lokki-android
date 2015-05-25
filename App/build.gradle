@@ -59,7 +59,9 @@ android {
 
 dependencies {
     compile 'com.android.support:appcompat-v7:22.1.1'
-    compile 'com.google.android.gms:play-services:7.3.0'
+    compile 'com.google.android.gms:play-services-gcm:7.3.0'
+    compile 'com.google.android.gms:play-services-maps:7.3.0'
+    compile 'com.google.android.gms:play-services-location:7.3.0'
     compile 'com.makeramen:roundedimageview:2.0.1'
     compile files('libs/android-query.0.26.7.jar')
     compile(name:'android-support-v4-preferencefragment-master-release', ext:'aar')

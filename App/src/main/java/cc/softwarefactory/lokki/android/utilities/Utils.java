@@ -52,7 +52,7 @@ public class Utils {
 
         return "35" + //we make this look like a valid IMEI
                 Build.BOARD.length() % 10 + Build.BRAND.length() % 10 +
-                Build.BOOTLOADER.length() % 10 + Build.DEVICE.length() % 10 +
+                Build.SERIAL.length() % 10 + Build.DEVICE.length() % 10 +
                 Build.DISPLAY.length() % 10 + Build.HOST.length() % 10 +
                 Build.ID.length() % 10 + Build.MANUFACTURER.length() % 10 +
                 Build.MODEL.length() % 10 + Build.PRODUCT.length() % 10 +
