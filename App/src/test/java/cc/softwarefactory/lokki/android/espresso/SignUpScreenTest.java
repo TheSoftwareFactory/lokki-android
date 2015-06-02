@@ -44,7 +44,7 @@ public class SignUpScreenTest extends LokkiBaseTest {
 
         // Without this we get "PerformException: Error performing 'single click' on view".
         // See https://code.google.com/p/android-test-kit/issues/detail?id=44
-        Thread.sleep(100);
+        Thread.sleep(1000);
     }
 
     private void signUpUsingEmail(String email) throws InterruptedException {
