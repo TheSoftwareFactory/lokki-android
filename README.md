@@ -1,4 +1,4 @@
-lokki-android [![Build Status](http://sf-8.cs.helsinki.fi:8080/job/lokki-android-master-test/badge/icon)](http://sf-8.cs.helsinki.fi:8080/job/lokki-android-master-test/)
+lokki-android
 =======================
 
 Development
