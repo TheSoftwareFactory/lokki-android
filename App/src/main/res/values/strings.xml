@@ -98,5 +98,6 @@
     <string name="contact_email_address">Contact email address</string>
     <string name="add_email">Add email</string>
     <string name="place_name">Place Name</string>
+    <string name="logout">Logout</string>
 
 </resources>

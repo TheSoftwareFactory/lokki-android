@@ -38,6 +38,10 @@ public class TestUtils {
         PreferenceUtils.setString(targetContext, PreferenceUtils.KEY_AUTH_TOKEN, VALUE_TEST_AUTH_TOKEN);
     }
 
+    public static String getUserRegistrationData(Context targetContext){
+        return PreferenceUtils.getString(targetContext, PreferenceUtils.KEY_USER_ACCOUNT);
+    }
+
     public static void toggleNavigationDrawer() {
         ignoreLocationDisabledDialog();
         openDrawer(R.id.drawer_layout);

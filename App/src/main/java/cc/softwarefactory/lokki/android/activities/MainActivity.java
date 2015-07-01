@@ -288,8 +288,24 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                 toggleVisibility();
                 break;
 
+            case R.id.action_logout:
+                logout();
+                break;
+
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void logout(){
+
+        PreferenceUtils pu = new PreferenceUtils();
+
+        pu.setString(this, PreferenceUtils.KEY_USER_ACCOUNT, null);
+        String uid = pu.getString(this, PreferenceUtils.KEY_USER_ACCOUNT);
+        MainApplication.userId = uid;
+        Log.e(TAG, "test: " + uid);
+        Intent intent = new Intent(this, SignUpActivity.class);
+        startActivity(intent);
     }
 
     private void toggleVisibility() {
