@@ -55,14 +55,14 @@ public class NavigationDrawerFragment extends Fragment {
     private View mListViewHeader;
     private static final String TAG = "NavDrawerFragment";
 
-    private int mCurrentSelectedPosition = 1;
+    private int mCurrentSelectedNavDrawerListPosition = 1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // Select either the default item (0) or the last selected item.
-        selectItem(mCurrentSelectedPosition);
+        selectNavDrawerItem(mCurrentSelectedNavDrawerListPosition);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class NavigationDrawerFragment extends Fragment {
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                selectItem(position);
+                selectNavDrawerItem(position);
             }
         });
 
@@ -87,7 +87,7 @@ public class NavigationDrawerFragment extends Fragment {
         setUserInfo();
 
         String[] menuOptions = getResources().getStringArray(R.array.menuOptions);
-        mDrawerListView.setAdapter(new ArrayAdapter<String>(getActivity().getApplicationContext(),R.layout.drawer_list_item, R.id.nav_drawer_menu_item_text, menuOptions) {
+        mDrawerListView.setAdapter(new ArrayAdapter<String>(getActivity().getApplicationContext(), R.layout.drawer_list_item, R.id.nav_drawer_menu_item_text, menuOptions) {
 
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
@@ -96,7 +96,7 @@ public class NavigationDrawerFragment extends Fragment {
                 return viewItem;
             }
         });
-        mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
+        mDrawerListView.setItemChecked(mCurrentSelectedNavDrawerListPosition, true);
         return mDrawerListView;
     }
 
@@ -183,17 +183,17 @@ public class NavigationDrawerFragment extends Fragment {
         mDrawerLayout.setDrawerListener(mDrawerToggle);
     }
 
-    public void selectItem(int position) {
+    public void selectNavDrawerItem(int navDrawerListPosition) {
 
-        mCurrentSelectedPosition = position;
+        mCurrentSelectedNavDrawerListPosition = navDrawerListPosition;
         if (mDrawerListView != null) {
-            mDrawerListView.setItemChecked(position, true);
+            mDrawerListView.setItemChecked(navDrawerListPosition, true);
         }
         if (mDrawerLayout != null) {
             mDrawerLayout.closeDrawer(mFragmentContainerView);
         }
         if (mCallbacks != null) {
-            mCallbacks.onNavigationDrawerItemSelected(position - 1);
+            mCallbacks.onNavigationDrawerItemSelected(navDrawerListPosition - 1);
         }
     }
 
