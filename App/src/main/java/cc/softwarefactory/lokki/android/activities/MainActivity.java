@@ -210,7 +210,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                 fragmentManager.beginTransaction().replace(R.id.container, new PlacesFragment()).commit();
                 break;
 
-            case 2: // People
+            case 2: // Contacts
                 fragmentManager.beginTransaction().replace(R.id.container, new ContactsFragment()).commit();
                 break;
 
@@ -318,11 +318,11 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                 if (selectedOption == 0) {
                     Log.e(TAG, "Exiting app because requested by user.");
                     finish();
-                } else if (selectedOption == -10) { // -10 is add contacts screen
-                    mNavigationDrawerFragment.selectItem(3);    // 3 is contacts screen
+                } else if (selectedOption == -10) { // -10 is the Add Contacts screen
+                    mNavigationDrawerFragment.selectNavDrawerItem(3);    // 3 is the Contacts screen
                     return true;
                 } else {
-                    mNavigationDrawerFragment.selectItem(1);
+                    mNavigationDrawerFragment.selectNavDrawerItem(1);
                     return true;
                 }
         }
@@ -370,7 +370,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         Log.e(TAG, "showUserInMap: " + email);
         MainApplication.emailBeingTracked = email;
         MainApplication.showPlaces = false;
-        mNavigationDrawerFragment.selectItem(0);
+        mNavigationDrawerFragment.selectNavDrawerItem(1); // Position 1 is the Map
     }
 
     public void toggleIDontWantToSee(View view) {
@@ -449,7 +449,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         public void onReceive(Context context, Intent intent) {
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.container, new MapViewFragment()).commit();
-            mNavigationDrawerFragment.selectItem(1);    // Index 1 because index 0 is the list view header...
+            mNavigationDrawerFragment.selectNavDrawerItem(1);    // Index 1 because index 0 is the list view header...
         }
     };
 
