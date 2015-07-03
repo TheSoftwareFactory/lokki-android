@@ -2,7 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/allow_people"
+        android:id="@+id/add_email"
         android:title="@string/add_email"
         app:showAsAction="withText|always" />
 

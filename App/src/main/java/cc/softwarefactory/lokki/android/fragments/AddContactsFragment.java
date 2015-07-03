@@ -41,6 +41,7 @@ import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.avatar.AvatarLoader;
 import cc.softwarefactory.lokki.android.datasources.contacts.ContactDataSource;
 import cc.softwarefactory.lokki.android.datasources.contacts.DefaultContactDataSource;
+import cc.softwarefactory.lokki.android.utilities.ContactUtils;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
 
@@ -272,6 +273,7 @@ public class AddContactsFragment extends Fragment {
                                         public void onClick(DialogInterface dialog, int which) {
                                             try {
                                                 ServerApi.allowPeople(context, email);
+                                                ContactUtils.addLocalContact(context, email);
                                                 contactList.remove(position);
                                                 notifyDataSetChanged();
                                                 Toast.makeText(context, R.string.contact_added, Toast.LENGTH_SHORT).show();

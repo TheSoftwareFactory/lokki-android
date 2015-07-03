@@ -269,7 +269,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         int id = item.getItemId();
         switch (id) {
 
-            case R.id.add_people: // In Contacts (to add new ones)
+            case R.id.add_contacts: // In Contacts (to add new ones)
                 FragmentManager fragmentManager = getSupportFragmentManager();
 
                 AddContactsFragment acf = new AddContactsFragment();
@@ -280,7 +280,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                 supportInvalidateOptionsMenu();
                 break;
 
-            case R.id.allow_people: // In list of ALL contacts, when adding new ones.
+            case R.id.add_email: // In list of ALL contacts, when adding new ones.
                 DialogUtils.addContact(this);
                 break;
 

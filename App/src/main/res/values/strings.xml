@@ -98,5 +98,6 @@
     <string name="contact_email_address">Contact email address</string>
     <string name="add_email">Add email</string>
     <string name="place_name">Place Name</string>
+    <string name="seeing_contact_not_allowed">The contact has not allowed you to see their location.</string>
 
 </resources>

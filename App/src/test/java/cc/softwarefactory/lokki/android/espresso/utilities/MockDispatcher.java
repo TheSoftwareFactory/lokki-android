@@ -71,6 +71,10 @@ public class MockDispatcher extends Dispatcher {
         return installResponse(METHOD_POST, DEFAULT_USER_BASE_PATH + "allow", response);
     }
 
+    public RequestsHandle setAllowDeleteResponse(MockResponse response, String idToDelete) {
+        return installResponse(METHOD_DELETE, DEFAULT_USER_BASE_PATH + "allow/" + idToDelete, response);
+    }
+
     public RequestsHandle setGcmTokenResponse(MockResponse response) {
         return installResponse(METHOD_POST, DEFAULT_USER_BASE_PATH + "gcmToken", response);
     }

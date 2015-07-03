@@ -2,8 +2,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/add_people"
-        android:title="@string/add_contact"
+        android:id="@+id/add_contacts"
+        android:title="@string/add_contacts"
         android:icon="@drawable/ic_6_social_add_person"
         app:showAsAction="always" />
 
