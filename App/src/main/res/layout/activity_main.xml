@@ -30,6 +30,7 @@
         android:layout_width="@dimen/nav_drawer_width"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:name="cc.softwarefactory.lokki.android.fragments.NavigationDrawerFragment" />
+        android:name="cc.softwarefactory.lokki.android.fragments.NavigationDrawerFragment"
+        tools:layout="@layout/fragment_drawer_header" />
 
 </android.support.v4.widget.DrawerLayout>

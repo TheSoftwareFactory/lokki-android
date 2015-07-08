@@ -25,6 +25,7 @@ import org.json.JSONObject;
 
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
+import cc.softwarefactory.lokki.android.fragments.NavigationDrawerFragment;
 import cc.softwarefactory.lokki.android.utilities.DialogUtils;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
@@ -35,6 +36,7 @@ public class SignUpActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_EMAIL = 1010;
     private static final String TAG = "SignUpActivity";
     private AQuery aq;
+    private NavigationDrawerFragment mNavigationDrawerFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +106,10 @@ public class SignUpActivity extends AppCompatActivity {
 
         ServerApi.signUp(this, new SignUpCallback());
         toggleLoading(true);
+
+        String test = PreferenceUtils.getString(this, PreferenceUtils.KEY_USER_ACCOUNT);
+        Log.e(TAG, "test" + test);
+        mNavigationDrawerFragment.updateTextView(test);
     }
 
     private class SignUpCallback extends AjaxCallback<JSONObject> {
