@@ -233,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
+        getMenuInflater().inflate(R.menu.main_activity_actions, menu);
         return true;
     }
 
@@ -259,6 +259,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
             } else if (selectedOption == -10) { // Add contacts screen
                 getMenuInflater().inflate(R.menu.add_contact, menu);
             }
+            getMenuInflater().inflate(R.menu.main_activity_actions, menu);
+            menu.findItem(R.id.action_logout).setVisible(true);
         }
         return super.onPrepareOptionsMenu(menu);
     }

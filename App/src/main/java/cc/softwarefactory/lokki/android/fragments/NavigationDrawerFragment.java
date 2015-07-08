@@ -25,6 +25,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.androidquery.AQuery;
 
@@ -87,7 +88,7 @@ public class NavigationDrawerFragment extends Fragment {
         setUserInfo();
 
         String[] menuOptions = getResources().getStringArray(R.array.menuOptions);
-        mDrawerListView.setAdapter(new ArrayAdapter<String>(getActivity().getApplicationContext(),R.layout.drawer_list_item, R.id.nav_drawer_menu_item_text, menuOptions) {
+        mDrawerListView.setAdapter(new ArrayAdapter<String>(getActivity().getApplicationContext(), R.layout.drawer_list_item, R.id.nav_drawer_menu_item_text, menuOptions) {
 
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
@@ -98,6 +99,11 @@ public class NavigationDrawerFragment extends Fragment {
         });
         mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
         return mDrawerListView;
+    }
+
+    public void updateTextView(String s){
+        Fragment frag = getFragmentManager().findFragmentById(R.id.nav_drawer_header);
+        ((TextView) frag.getView().findViewById(R.id.user_name)).setText(s);
     }
 
     public void setUserInfo() {
