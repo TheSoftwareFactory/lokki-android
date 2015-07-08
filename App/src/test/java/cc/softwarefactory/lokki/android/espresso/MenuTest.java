@@ -53,11 +53,5 @@ public class MenuTest extends LoggedInBaseTest {
         onView(withId(R.id.drawer_layout)).check(matches(not(isClosed())));
     }
 
-    public void testLogoutButtonIsWork() {
-        onView(withId(R.id.action_logout)).perform(click());
-        String actualStr = TestUtils.getUserRegistrationData(getInstrumentation().getTargetContext());
-        assertEquals(null, actualStr);
-
-    }
 
 }
