@@ -250,9 +250,9 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                 if (menuItem != null) {
                     Log.e(TAG, "onPrepareOptionsMenu - Visible: " + MainApplication.visible);
                     if (MainApplication.visible) {
-                        menuItem.setIcon(R.drawable.ic_visible);
+                        menuItem.setIcon(R.drawable.ic_visibility_white_48dp);
                     } else {
-                        menuItem.setIcon(R.drawable.ic_invisible);
+                        menuItem.setIcon(R.drawable.ic_visibility_off_white_48dp);
                     }
                 }
             } else if (selectedOption == 2) { // Contacts screen
