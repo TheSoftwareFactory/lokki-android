@@ -54,7 +54,7 @@ public class SignUpScreenTest extends LokkiBaseTest {
         onView(withId(R.id.sign_up_button)).perform(click());
     }
 
-    private String getRequest(String email) throws UnsupportedEncodingException {
+    private String getRequest(String email) {
         // TODO: ideal would be to set different device ids and languages and test if they're part
         // of the request, but let's just do this for now.
         String deviceId = Utils.getDeviceId();

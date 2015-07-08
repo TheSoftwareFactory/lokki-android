@@ -52,10 +52,6 @@ public abstract class LokkiBaseTest extends ActivityInstrumentationTestCase2<Mai
         super.tearDown();
     }
 
-    public MockWebServer getMockWebServer() {
-        return mockWebServer;
-    }
-
     public MockDispatcher getMockDispatcher() {
         return mockDispatcher;
     }

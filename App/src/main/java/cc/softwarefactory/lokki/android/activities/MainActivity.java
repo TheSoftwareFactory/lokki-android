@@ -85,8 +85,10 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_layout);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(mTitle);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        if (actionBar != null) {
+            actionBar.setTitle(mTitle);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
 
@@ -180,7 +182,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
             }
         } else { // User already logged-in
             MainApplication.userAccount = userAccount;
-            MainApplication.userId = userId;
             GcmHelper.start(getApplicationContext()); // Register to GCM
 
             Log.e(TAG, "User email: " + userAccount);
@@ -365,11 +366,10 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         showUserInMap(email);
     }
 
-    public void showUserInMap(String email) { // Used in Contacts
+    private void showUserInMap(String email) { // Used in Contacts
 
         Log.e(TAG, "showUserInMap: " + email);
         MainApplication.emailBeingTracked = email;
-        MainApplication.showPlaces = false;
         mNavigationDrawerFragment.selectNavDrawerItem(1); // Position 1 is the Map
     }
 
@@ -403,11 +403,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
             String email = (String) checkBox.getTag();
             Log.e(TAG, "toggleUserCanSeeMe: " + email + ", Checkbox is: " + allow);
             if (!allow) {
-                try {
-                    ServerApi.disallowUser(this, email);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                ServerApi.disallowUser(this, email);
             } else {
                 try {
                     ServerApi.allowPeople(this, email);

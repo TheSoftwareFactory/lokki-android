@@ -42,9 +42,9 @@ import cc.softwarefactory.lokki.android.utilities.Utils;
 public class ContactsFragment extends Fragment {
 
     private static final String TAG = "Contacts";
-    ArrayList<String> peopleList;
-    Set<String> iCanSee;
-    Set<String> canSeeMe;
+    private ArrayList<String> peopleList;
+    private Set<String> iCanSee;
+    private Set<String> canSeeMe;
     private HashMap<String, String> mapping;
     private HashMap<String, Long> timestamps;
     private AQuery aq;
@@ -215,7 +215,7 @@ public class ContactsFragment extends Fragment {
         int position;
     }
 
-    class GetPeopleThatCanSeeMe extends AsyncTask<Void, Void, Void> {
+    private class GetPeopleThatCanSeeMe extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... params) {

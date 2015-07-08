@@ -44,23 +44,6 @@ public class MockJsonUtils {
         return jsonObject.toString();
     }
 
-
-
-
-    public static String getOneContact() throws JSONException {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject
-                .put("test.friend@example.com", new JSONObject().put("id", 1).put("name", "Test Friend"))
-                .put("family.member@example.com", new JSONObject().put("id", 2).put("name", "Family Member"))
-                .put("work.buddy@example.com", new JSONObject().put("id", 3).put("name", "Work Buddy"))
-                .put("mapping", new JSONObject().put("Test Friend", "test.friend@example.com")
-                                                .put("Family Member", "family.member@example.com")
-                                                .put("Work Buddy", "work.buddy@example.com"));
-
-
-        return jsonObject.toString();
-    }
-
     public static String getEmptyDashboardJson() throws JSONException {
         JSONObject jsonObject = new JSONObject();
         jsonObject

@@ -32,10 +32,8 @@ public class MainApplication extends Application {
 
     public static int[] mapTypes = {GoogleMap.MAP_TYPE_NORMAL, GoogleMap.MAP_TYPE_SATELLITE, GoogleMap.MAP_TYPE_HYBRID};
     public static int mapType = 0;
-    public static Boolean showPlaces = false;
     public static String emailBeingTracked;
     public static JSONObject dashboard = null;
-    public static String userId; // Id for REST requests
     public static String userAccount; // Email
     public static JSONObject contacts;
     public static JSONObject mapping;
@@ -110,7 +108,7 @@ public class MainApplication extends Application {
         Log.e(TAG, "---------------------------------------------------------");
     }
 
-    class ErrorHandler implements Thread.UncaughtExceptionHandler {
+    private class ErrorHandler implements Thread.UncaughtExceptionHandler {
 
         public ErrorHandler() {
 

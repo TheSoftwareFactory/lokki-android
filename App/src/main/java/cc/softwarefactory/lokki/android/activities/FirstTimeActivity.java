@@ -57,10 +57,14 @@ public class FirstTimeActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         if (!next) {
             getMenuInflater().inflate(R.menu.first_time_welcome, menu);
-            actionBar.setTitle(R.string.welcome_title);
+            if (actionBar != null) {
+                actionBar.setTitle(R.string.welcome_title);
+            }
         } else {
             getMenuInflater().inflate(R.menu.first_time_terms, menu);
-            actionBar.setTitle(R.string.terms_title);
+            if (actionBar != null) {
+                actionBar.setTitle(R.string.terms_title);
+            }
         }
 
         return super.onPrepareOptionsMenu(menu);
