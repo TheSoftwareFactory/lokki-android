@@ -61,6 +61,7 @@ public class DialogUtils {
 
                                 try {
                                     ServerApi.allowPeople(context, email);
+                                    ContactUtils.addLocalContact(context, email);
                                     Toast.makeText(context, R.string.contact_added, Toast.LENGTH_SHORT).show();
                                 } catch (JSONException e) {
                                     e.printStackTrace();

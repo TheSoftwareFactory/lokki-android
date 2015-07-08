@@ -60,7 +60,7 @@ public class Utils {
                 Build.USER.length() % 10; //13 digits
     }
 
-    public static Boolean loadContacts(Context context) {
+    private static Boolean loadContacts(Context context) {
 
         if (context == null) {
             return false;
@@ -200,7 +200,7 @@ public class Utils {
         return output;
     }
 
-    public static Bitmap openPhoto(Context context, long contactId) {
+    private static Bitmap openPhoto(Context context, long contactId) {
 
         Log.e(TAG, "openPhoto");
         if (context == null) {
@@ -282,7 +282,7 @@ public class Utils {
         return Locale.getDefault().getLanguage();
     }
 
-    public static Bitmap getDefaultAvatarInitials(Context context, String text) {
+    private static Bitmap getDefaultAvatarInitials(Context context, String text) {
 
         Log.e(TAG, "getDefaultAvatarInitials");
 

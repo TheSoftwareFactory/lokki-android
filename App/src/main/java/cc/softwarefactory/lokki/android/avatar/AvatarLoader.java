@@ -86,7 +86,7 @@ public class AvatarLoader {
         return Utils.getPhotoFromEmail(context, email);
     }
 
-    public static boolean cancelPotentialWork(String data, ImageView imageView) {
+    private static boolean cancelPotentialWork(String data, ImageView imageView) {
 
         BitmapWorkerTask task = getTaskFromView(imageView);
 

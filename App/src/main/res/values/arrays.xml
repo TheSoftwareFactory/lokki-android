@@ -9,16 +9,6 @@
         <item>@string/about</item>
     </string-array>
 
-    <string-array name="visibility_modes">
-        <item>@string/yes</item>
-        <item>@string/no</item>
-    </string-array>
-
-    <string-array name="visibility_modes_icons">
-        <item>@drawable/ic_visible</item>
-        <item>@drawable/ic_invisible</item>
-    </string-array>
-
     <string-array name="map_modes">
         <item>@string/map_mode_default</item>
         <item>@string/map_mode_satellite</item>

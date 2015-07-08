@@ -14,7 +14,7 @@ public enum AddPlaceError {
         this.errorMessage = errorMessage;
     }
 
-    public String getName() {
+    private String getName() {
         return name;
     }
 

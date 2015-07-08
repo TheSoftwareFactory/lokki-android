@@ -137,12 +137,12 @@ public class ServerApi {
 
         Log.e(TAG, "Emails to be alloweed: " + JSONdata);
 
-        AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>() {
+        AjaxCallback<String> cb = new AjaxCallback<String>() {
             @Override
-            public void callback(String url, JSONObject object, AjaxStatus status) {
-                Log.e(TAG, "sendLocation result code: " + status.getCode());
-                Log.e(TAG, "sendLocation result message: " + status.getMessage());
-                Log.e(TAG, "sendLocation ERROR: " + status.getError());
+            public void callback(String url, String result, AjaxStatus status) {
+                Log.e(TAG, "allowPeople result code: " + status.getCode());
+                Log.e(TAG, "allowPeople result message: " + status.getMessage());
+                Log.e(TAG, "allowPeople ERROR: " + status.getError());
                 if (status.getError() == null) {
                     Log.e(TAG, "Getting new dashboard");
                     DataService.getDashboard(context);
@@ -151,10 +151,10 @@ public class ServerApi {
         };
 
         cb.header("authorizationtoken", authorizationToken);
-        aq.post(url, JSONdata, JSONObject.class, cb);
+        aq.post(url, JSONdata, String.class, cb);
     }
 
-    public static void disallowUser(final Context context, String email) throws JSONException {
+    public static void disallowUser(final Context context, String email) {
 
         Log.e(TAG, "disallowUser");
         AQuery aq = new AQuery(context);
@@ -170,12 +170,12 @@ public class ServerApi {
         url += targetId;
         Log.e(TAG, "Email to be disallowed: " + email + ", userIdToDisallow: " + targetId);
 
-        AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>() {
+        AjaxCallback<String> cb = new AjaxCallback<String>() {
             @Override
-            public void callback(String url, JSONObject object, AjaxStatus status) {
-                Log.e(TAG, "sendLocation result code: " + status.getCode());
-                Log.e(TAG, "sendLocation result message: " + status.getMessage());
-                Log.e(TAG, "sendLocation ERROR: " + status.getError());
+            public void callback(String url, String result, AjaxStatus status) {
+                Log.e(TAG, "disallowUser result code: " + status.getCode());
+                Log.e(TAG, "disallowUser result message: " + status.getMessage());
+                Log.e(TAG, "disallowUser ERROR: " + status.getError());
                 if (status.getError() == null) {
                     Log.e(TAG, "Getting new dashboard");
                     DataService.getDashboard(context);
@@ -184,7 +184,7 @@ public class ServerApi {
         };
 
         cb.header("authorizationtoken", authorizationToken);
-        aq.delete(url, JSONObject.class, cb);
+        aq.delete(url, String.class, cb);
     }
 
     public static void sendLocation(Context context, Location location) throws JSONException {
@@ -204,9 +204,9 @@ public class ServerApi {
         JSONObject JSONdata = new JSONObject()
                 .put("location", JSONlocation);
 
-        AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>() {
+        AjaxCallback<String> cb = new AjaxCallback<String>() {
             @Override
-            public void callback(String url, JSONObject object, AjaxStatus status) {
+            public void callback(String url, String result, AjaxStatus status) {
                 Log.e(TAG, "sendLocation result code: " + status.getCode());
                 Log.e(TAG, "sendLocation result message: " + status.getMessage());
                 Log.e(TAG, "sendLocation ERROR: " + status.getError());
@@ -214,7 +214,7 @@ public class ServerApi {
         };
 
         cb.header("authorizationtoken", authorizationToken);
-        aq.post(url, JSONdata, JSONObject.class, cb);
+        aq.post(url, JSONdata, String.class, cb);
     }
 
     public static void sendGCMToken(Context context, String GCMToken) throws JSONException {
@@ -229,9 +229,9 @@ public class ServerApi {
         JSONObject JSONdata = new JSONObject()
                 .put("gcmToken", GCMToken);
 
-        AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>() {
+        AjaxCallback<String> cb = new AjaxCallback<String>() {
             @Override
-            public void callback(String url, JSONObject object, AjaxStatus status) {
+            public void callback(String url, String result, AjaxStatus status) {
                 Log.e(TAG, "sendGCMToken result code: " + status.getCode());
                 Log.e(TAG, "sendGCMToken result message: " + status.getMessage());
                 Log.e(TAG, "sendGCMToken ERROR: " + status.getError());
@@ -239,7 +239,7 @@ public class ServerApi {
         };
 
         cb.header("authorizationtoken", authorizationToken);
-        aq.post(url, JSONdata, JSONObject.class, cb);
+        aq.post(url, JSONdata, String.class, cb);
     }
 
     public static void requestUpdates(Context context) throws JSONException {
@@ -254,9 +254,9 @@ public class ServerApi {
         JSONObject JSONdata = new JSONObject()
                 .put("item", "");
 
-        AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>() {
+        AjaxCallback<String> cb = new AjaxCallback<String>() {
             @Override
-            public void callback(String url, JSONObject object, AjaxStatus status) {
+            public void callback(String url, String result, AjaxStatus status) {
                 Log.e(TAG, "requestUpdates result code: " + status.getCode());
                 Log.e(TAG, "requestUpdates result message: " + status.getMessage());
                 Log.e(TAG, "requestUpdates ERROR: " + status.getError());
@@ -264,7 +264,7 @@ public class ServerApi {
         };
 
         cb.header("authorizationtoken", authorizationToken);
-        aq.post(url, JSONdata, JSONObject.class, cb);
+        aq.post(url, JSONdata, String.class, cb);
     }
 
     public static void setVisibility(Context context, Boolean visible) throws JSONException {
@@ -279,9 +279,9 @@ public class ServerApi {
         JSONObject JSONdata = new JSONObject()
                 .put("visibility", visible);
 
-        AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>() {
+        AjaxCallback<String> cb = new AjaxCallback<String>() {
             @Override
-            public void callback(String url, JSONObject object, AjaxStatus status) {
+            public void callback(String url, String result, AjaxStatus status) {
                 Log.e(TAG, "setVisibility result code: " + status.getCode());
                 Log.e(TAG, "setVisibility result message: " + status.getMessage());
                 Log.e(TAG, "setVisibility ERROR: " + status.getError());
@@ -289,7 +289,7 @@ public class ServerApi {
         };
 
         cb.header("authorizationtoken", authorizationToken);
-        aq.put(url, JSONdata, JSONObject.class, cb);
+        aq.put(url, JSONdata, String.class, cb);
     }
 
     public static void reportCrash(Context context, String osVersion, String lokkiVersion, String reportTitle, String reportData) throws JSONException {
@@ -308,9 +308,9 @@ public class ServerApi {
                 .put("reportTitle", reportTitle)
                 .put("reportData", reportData);
 
-        AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>() {
+        AjaxCallback<String> cb = new AjaxCallback<String>() {
             @Override
-            public void callback(String url, JSONObject object, AjaxStatus status) {
+            public void callback(String url, String result, AjaxStatus status) {
                 Log.e(TAG, "reportCrash result code: " + status.getCode());
                 Log.e(TAG, "reportCrash result message: " + status.getMessage());
                 Log.e(TAG, "reportCrash ERROR: " + status.getError());
@@ -318,7 +318,7 @@ public class ServerApi {
         };
 
         cb.header("authorizationtoken", authorizationToken);
-        aq.post(url, JSONdata, JSONObject.class, cb);
+        aq.post(url, JSONdata, String.class, cb);
     }
 
 
@@ -374,7 +374,7 @@ public class ServerApi {
         aq.post(url, JSONdata, JSONObject.class, cb);
     }
 
-    public static void removePlace(final Context context, final String placeId) throws JSONException {
+    public static void removePlace(final Context context, final String placeId) {
 
         Log.e(TAG, "removePlace");
         AQuery aq = new AQuery(context);
@@ -383,9 +383,9 @@ public class ServerApi {
         String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
         String url = ApiUrl + "user/" + userId + "/place/" + placeId;
 
-        AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>() {
+        AjaxCallback<String> cb = new AjaxCallback<String>() {
             @Override
-            public void callback(String url, JSONObject object, AjaxStatus status) {
+            public void callback(String url, String result, AjaxStatus status) {
                 Log.e(TAG, "removePlace result code: " + status.getCode());
                 Log.e(TAG, "removePlace result message: " + status.getMessage());
                 Log.e(TAG, "removePlace ERROR: " + status.getError());
@@ -400,7 +400,7 @@ public class ServerApi {
         };
 
         cb.header("authorizationtoken", authorizationToken);
-        aq.delete(url, JSONObject.class, cb);
+        aq.delete(url, String.class, cb);
     }
 
     public static void renamePlace(final Context context, final String placeId,
@@ -432,9 +432,9 @@ public class ServerApi {
                 .put("img", placeObj.getString("img"))
                 .put("name", cleanName);
 
-        AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>() {
+        AjaxCallback<String> cb = new AjaxCallback<String>() {
             @Override
-            public void callback(String url, JSONObject object, AjaxStatus status) {
+            public void callback(String url, String result, AjaxStatus status) {
                 Log.e(TAG, "renamePlace result code: " + status.getCode());
                 Log.e(TAG, "renamePlace result message: " + status.getMessage());
                 Log.e(TAG, "renamePlace ERROR: " + status.getError());
@@ -450,7 +450,7 @@ public class ServerApi {
         };
 
         cb.header("authorizationtoken", authorizationToken);
-        aq.put(url, JSONdata, JSONObject.class, cb);
+        aq.put(url, JSONdata, String.class, cb);
     }
 
 

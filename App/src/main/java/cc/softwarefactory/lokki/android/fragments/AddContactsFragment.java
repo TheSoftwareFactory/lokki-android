@@ -4,12 +4,13 @@ See LICENSE for details
 */
 package cc.softwarefactory.lokki.android.fragments;
 
-import android.support.v7.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -32,15 +33,14 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.avatar.AvatarLoader;
 import cc.softwarefactory.lokki.android.datasources.contacts.ContactDataSource;
 import cc.softwarefactory.lokki.android.datasources.contacts.DefaultContactDataSource;
+import cc.softwarefactory.lokki.android.utilities.ContactUtils;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
 
@@ -48,7 +48,6 @@ import cc.softwarefactory.lokki.android.utilities.ServerApi;
 public class AddContactsFragment extends Fragment {
 
     private static final String TAG = "AddContacts";
-    public static Set<String> emailsSelected;
     private ContactDataSource mContactDataSource;
     private ArrayList<String> contactList;
     private AQuery aq;
@@ -60,7 +59,6 @@ public class AddContactsFragment extends Fragment {
     private ArrayAdapter<String> adapter;
 
     public AddContactsFragment() {
-        emailsSelected = new HashSet<>();
         contactList = new ArrayList<>();
         mContactDataSource = new DefaultContactDataSource();
     }
@@ -82,7 +80,10 @@ public class AddContactsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(R.string.add_contacts);
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setTitle(R.string.add_contacts);
+        }
         loadContacts();
         enableSearchFilter();
     }
@@ -131,7 +132,7 @@ public class AddContactsFragment extends Fragment {
         this.mContactDataSource = contactDataSource;
     }
 
-    class prepareAdapterAsync extends AsyncTask<Void, Void, Boolean> {
+    private class prepareAdapterAsync extends AsyncTask<Void, Void, Boolean> {
 
         @Override
         protected Boolean doInBackground(Void... params) {
@@ -152,7 +153,7 @@ public class AddContactsFragment extends Fragment {
         }
     }
 
-    class getAllEmailAddressesAsync extends AsyncTask<Void, Void, JSONObject> {
+    private class getAllEmailAddressesAsync extends AsyncTask<Void, Void, JSONObject> {
 
         @Override
         protected JSONObject doInBackground(Void... params) {
@@ -272,6 +273,7 @@ public class AddContactsFragment extends Fragment {
                                         public void onClick(DialogInterface dialog, int which) {
                                             try {
                                                 ServerApi.allowPeople(context, email);
+                                                ContactUtils.addLocalContact(context, email);
                                                 contactList.remove(position);
                                                 notifyDataSetChanged();
                                                 Toast.makeText(context, R.string.contact_added, Toast.LENGTH_SHORT).show();

@@ -40,6 +40,7 @@ public class MockDispatcher extends Dispatcher {
         setPostLocationResponse(new MockResponse().setResponseCode(200));
         setAllowPostResponse(new MockResponse().setResponseCode(200));
         setGcmTokenResponse(new MockResponse().setResponseCode(200));
+        setVisibilityResponse(new MockResponse().setResponseCode(200));
     }
 
     @Override
@@ -71,6 +72,10 @@ public class MockDispatcher extends Dispatcher {
         return installResponse(METHOD_POST, DEFAULT_USER_BASE_PATH + "allow", response);
     }
 
+    public RequestsHandle setAllowDeleteResponse(MockResponse response, String idToDelete) {
+        return installResponse(METHOD_DELETE, DEFAULT_USER_BASE_PATH + "allow/" + idToDelete, response);
+    }
+
     public RequestsHandle setGcmTokenResponse(MockResponse response) {
         return installResponse(METHOD_POST, DEFAULT_USER_BASE_PATH + "gcmToken", response);
     }
@@ -84,15 +89,19 @@ public class MockDispatcher extends Dispatcher {
     }
 
     public RequestsHandle setPlacesDeleteResponse(MockResponse response, String placeId) {
-        return installResponse(METHOD_DELETE, DEFAULT_USER_BASE_PATH + "places" + "/" + placeId, response);
+        return installResponse(METHOD_DELETE, DEFAULT_USER_BASE_PATH + "places/" + placeId, response);
     }
 
     public RequestsHandle setPlacesRenameResponse(MockResponse response, String placeId) {
-        return installResponse(METHOD_PUT, DEFAULT_USER_BASE_PATH + "places" + "/" + placeId, response);
+        return installResponse(METHOD_PUT, DEFAULT_USER_BASE_PATH + "places/" + placeId, response);
     }
 
     public RequestsHandle setSignUpResponse(MockResponse response) {
         return installResponse(METHOD_POST, "/signup", response);
+    }
+
+    public RequestsHandle setVisibilityResponse(MockResponse response) {
+        return installResponse(METHOD_PUT, DEFAULT_USER_BASE_PATH + "visibility", response);
     }
 
     public RequestsHandle installResponse(String method, String path, MockResponse response) {

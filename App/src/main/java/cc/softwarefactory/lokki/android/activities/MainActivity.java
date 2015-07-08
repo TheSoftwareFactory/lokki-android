@@ -85,8 +85,10 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_layout);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(mTitle);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        if (actionBar != null) {
+            actionBar.setTitle(mTitle);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
 
 
@@ -180,7 +182,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
             }
         } else { // User already logged-in
             MainApplication.userAccount = userAccount;
-            MainApplication.userId = userId;
             GcmHelper.start(getApplicationContext()); // Register to GCM
 
             Log.e(TAG, "User email: " + userAccount);
@@ -249,9 +250,9 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                 if (menuItem != null) {
                     Log.e(TAG, "onPrepareOptionsMenu - Visible: " + MainApplication.visible);
                     if (MainApplication.visible) {
-                        menuItem.setIcon(R.drawable.ic_visible);
+                        menuItem.setIcon(R.drawable.ic_visibility_white_48dp);
                     } else {
-                        menuItem.setIcon(R.drawable.ic_invisible);
+                        menuItem.setIcon(R.drawable.ic_visibility_off_white_48dp);
                     }
                 }
             } else if (selectedOption == 2) { // Contacts screen
@@ -269,7 +270,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         int id = item.getItemId();
         switch (id) {
 
-            case R.id.add_people: // In Contacts (to add new ones)
+            case R.id.add_contacts: // In Contacts (to add new ones)
                 FragmentManager fragmentManager = getSupportFragmentManager();
 
                 AddContactsFragment acf = new AddContactsFragment();
@@ -280,7 +281,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                 supportInvalidateOptionsMenu();
                 break;
 
-            case R.id.allow_people: // In list of ALL contacts, when adding new ones.
+            case R.id.add_email: // In list of ALL contacts, when adding new ones.
                 DialogUtils.addContact(this);
                 break;
 
@@ -365,11 +366,10 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         showUserInMap(email);
     }
 
-    public void showUserInMap(String email) { // Used in Contacts
+    private void showUserInMap(String email) { // Used in Contacts
 
         Log.e(TAG, "showUserInMap: " + email);
         MainApplication.emailBeingTracked = email;
-        MainApplication.showPlaces = false;
         mNavigationDrawerFragment.selectNavDrawerItem(1); // Position 1 is the Map
     }
 
@@ -403,11 +403,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
             String email = (String) checkBox.getTag();
             Log.e(TAG, "toggleUserCanSeeMe: " + email + ", Checkbox is: " + allow);
             if (!allow) {
-                try {
-                    ServerApi.disallowUser(this, email);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                ServerApi.disallowUser(this, email);
             } else {
                 try {
                     ServerApi.allowPeople(this, email);

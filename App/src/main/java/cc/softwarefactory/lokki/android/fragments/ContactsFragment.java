@@ -16,6 +16,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.androidquery.AQuery;
 
@@ -33,6 +34,7 @@ import java.util.Set;
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.avatar.AvatarLoader;
+import cc.softwarefactory.lokki.android.utilities.ContactUtils;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 import cc.softwarefactory.lokki.android.utilities.Utils;
 
@@ -40,9 +42,9 @@ import cc.softwarefactory.lokki.android.utilities.Utils;
 public class ContactsFragment extends Fragment {
 
     private static final String TAG = "Contacts";
-    ArrayList<String> peopleList;
-    Set<String> iCanSee;
-    Set<String> canSeeMe;
+    private ArrayList<String> peopleList;
+    private Set<String> iCanSee;
+    private Set<String> canSeeMe;
     private HashMap<String, String> mapping;
     private HashMap<String, Long> timestamps;
     private AQuery aq;
@@ -83,7 +85,7 @@ public class ContactsFragment extends Fragment {
             }
 
             JSONObject iCanSeeObj = MainApplication.dashboard.getJSONObject("icansee");
-            JSONArray canSeeMeObj = MainApplication.dashboard.getJSONArray("canseeme");
+            JSONArray canSeeMeArray = MainApplication.dashboard.getJSONArray("canseeme");
             JSONObject idMappingObj = MainApplication.dashboard.getJSONObject("idmapping");
 
             
@@ -100,26 +102,36 @@ public class ContactsFragment extends Fragment {
                 Log.e(TAG, "I can see: " + email);
             }
 
-            for (int i = 0; i < canSeeMeObj.length(); i++) {
-                String key = canSeeMeObj.getString(i);
+            for (int i = 0; i < canSeeMeArray.length(); i++) {
+                String key = canSeeMeArray.getString(i);
                 String email = (String) idMappingObj.get(key);
                 String name = Utils.getNameFromEmail(context, email);
-                //peopleSet.add(name);
                 canSeeMe.add(email);
                 mapping.put(name, email);
                 Log.e(TAG, "Can see me: " + email);
+            }
+
+            // Add local contacts to mapping
+            JSONArray localContacts = ContactUtils.getLocalContactsJsonArray(context);
+            for (int i = 0; i < localContacts.length(); i++) {
+                String email = localContacts.getString(i);
+                String name = Utils.getNameFromEmail(context, email);
+                mapping.put(name, email);
+                Log.e(TAG, "Local contact: " + email);
             }
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        //Log.e(TAG, "People set: " + peopleSet);
         peopleList.addAll(mapping.keySet());
-        Log.e(TAG, "People list: " + peopleList);
+        Log.e(TAG, "Contact list: " + peopleList);
+
+//        peopleList.addAll(ContactUtils.getLocalContactsAndExclude(context, peopleList));
+//        Log.e(TAG, "Contact list after extra contacts: " + peopleList);
+
         Collections.sort(peopleList);
         Log.e(TAG, "After sorting");
-        //setListAdapter();
     }
 
     private void setListAdapter() {
@@ -144,7 +156,6 @@ public class ContactsFragment extends Fragment {
 
                 } else {
                     holder = (ViewHolder) convertView.getTag();
-                    //holder.imageLoader.cancel();
                 }
 
                 String contactName = getItem(position);
@@ -154,8 +165,6 @@ public class ContactsFragment extends Fragment {
                 aq.id(holder.name).text(contactName);
                 aq.id(holder.email).text(email);
 
-                //aq.id(holder.photo).image(R.drawable.default_avatar);
-                //aq.id(holder.photo).image(Utils.getDefaultAvatarInitials(contactName.substring(0, 1).toUpperCase() + contactName.substring(1, 2)));
                 avatarLoader.load(email, holder.photo);
 
                 aq.id(holder.lastReport).text(Utils.timestampText(timestamps.get(contactName)));
@@ -172,13 +181,20 @@ public class ContactsFragment extends Fragment {
                 }
 
                 holder.position = position;
-                //holder.imageLoader = new LoadPhotoAsync(position, holder);
-                //holder.imageLoader.execute(contactName);
 
                 if (!iCanSee.contains(email)) {
-                    aq.id(holder.checkICanSee).invisible();
+                    aq.id(holder.checkICanSee).enabled(true);
+                    aq.id(holder.checkICanSee).checked(false);
+                    aq.id(holder.checkICanSee).getView().setAlpha(0.1f);
+                    aq.id(holder.checkICanSee).clicked(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Toast.makeText(context, R.string.seeing_contact_not_allowed, Toast.LENGTH_LONG).show();
+                            holder.checkICanSee.setChecked(false);
+                        }
+                    });
                 } else {
-                    aq.id(holder.checkICanSee).visible();
+                    aq.id(holder.checkICanSee).enabled(true);
                 }
 
                 return convertView;
@@ -199,7 +215,7 @@ public class ContactsFragment extends Fragment {
         int position;
     }
 
-    class GetPeopleThatCanSeeMe extends AsyncTask<Void, Void, Void> {
+    private class GetPeopleThatCanSeeMe extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... params) {

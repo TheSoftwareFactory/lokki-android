@@ -17,7 +17,7 @@ public class PreferenceUtils {
     public static final String KEY_DASHBOARD = "dashboard";
     public static final String KEY_PLACES = "places";
     public static final String KEY_SETTING_MAP_MODE = "settingMapMode";
-    private static final String TAG = "PreferenceUtils";
+    public static final String KEY_LOCAL_CONTACTS = "localContacts";
 
     /**
      * Get a string value from default shared preferences

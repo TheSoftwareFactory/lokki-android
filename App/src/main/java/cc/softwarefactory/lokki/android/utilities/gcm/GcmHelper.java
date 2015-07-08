@@ -22,7 +22,7 @@ import cc.softwarefactory.lokki.android.utilities.Utils;
 
 public class GcmHelper {
 
-    public static final String PROPERTY_REG_ID = "registration_id";
+    private static final String PROPERTY_REG_ID = "registration_id";
     private static final String PROPERTY_APP_VERSION = "appVersion";
 
     private static String SENDER_ID = "229584256615";
@@ -51,7 +51,7 @@ public class GcmHelper {
 
         final SharedPreferences prefs = getGCMPreferences(context);
         String registrationId = prefs.getString(PROPERTY_REG_ID, "");
-        if (registrationId.isEmpty()) {
+        if (registrationId == null || registrationId.isEmpty()) {
             Log.e(TAG, "Registration not found.");
             return "";
         }

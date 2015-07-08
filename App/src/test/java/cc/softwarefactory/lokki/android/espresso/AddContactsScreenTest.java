@@ -13,6 +13,7 @@ import cc.softwarefactory.lokki.android.espresso.utilities.MockJsonUtils;
 import cc.softwarefactory.lokki.android.espresso.utilities.TestUtils;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
@@ -22,6 +23,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.isRoot;
 import static android.support.test.espresso.matcher.ViewMatchers.withHint;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.allOf;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
@@ -49,11 +51,11 @@ public class AddContactsScreenTest extends LoggedInBaseTest {
     }
 
     private void enterAddContactsScreen() {
-        onView(withId(R.id.add_people)).perform(click());
+        onView(withId(R.id.add_contacts)).perform(click());
     }
 
     private void openAddContactDialog() {
-        onView(withId(R.id.allow_people)).perform(click());
+        onView(withId(R.id.add_email)).perform(click());
     }
 
     private void addContactFromContactListScreen(String clickableText, String email) {
@@ -84,7 +86,7 @@ public class AddContactsScreenTest extends LoggedInBaseTest {
     }
 
     public void testSeeAnyContactOnAddScreen() {
-        onView(withId(R.id.add_people)).perform(click());
+        onView(withId(R.id.add_contacts)).perform(click());
         onView(withText("Family Member")).check(matches(isDisplayed()));
     }
 
@@ -145,10 +147,36 @@ public class AddContactsScreenTest extends LoggedInBaseTest {
     }
 
     public void testBackButtonToContactsScreen() {
-        onView(withId(R.id.add_people)).perform(click());
+        onView(withId(R.id.add_contacts)).perform(click());
         onView(isRoot()).perform(ViewActions.pressBack());
 
         onView(withText(R.string.can_see_me)).check(matches(isDisplayed()));
         onView(withText(R.string.i_can_see)).check(matches(isDisplayed()));
+    }
+
+    public void testAddingCustomContactAddsToLocalContacts() {
+        String contactEmail = "family.member@example.com";
+        enterAddContactsScreen();
+        openAddContactDialog();
+        onView(withHint(R.string.contact_email_address)).perform(typeText(contactEmail));
+        onView(withText(R.string.ok)).perform(click());
+
+        // Go to Contacts screen
+        pressBack();
+
+        // Mock dispatcher sends a dashboard without any contacts by default, so this checks if the contact is added locally
+        onView(allOf(withText(contactEmail), withId(R.id.contact_email))).check(matches(isDisplayed()));
+    }
+
+    public void testAddingContactFromListAddsToLocalContacts() {
+        String contactEmail = "family.member@example.com";
+        enterAddContactsScreen();
+        addContactFromContactListScreen(contactEmail, contactEmail);
+
+        // Go to Contacts screen
+        pressBack();
+
+        // Mock dispatcher sends a dashboard without any contacts by default, so this checks if the contact is added locally
+        onView(allOf(withText(contactEmail), withId(R.id.contact_email))).check(matches(isDisplayed()));
     }
 }

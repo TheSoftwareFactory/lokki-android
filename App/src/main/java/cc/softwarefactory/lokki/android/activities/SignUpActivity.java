@@ -136,7 +136,6 @@ public class SignUpActivity extends AppCompatActivity {
             PreferenceUtils.setString(SignUpActivity.this, PreferenceUtils.KEY_USER_ID, id);
             PreferenceUtils.setString(SignUpActivity.this, PreferenceUtils.KEY_AUTH_TOKEN, authorizationToken);
 
-            MainApplication.userId = id;
             Log.e(TAG, "User id: " + id);
             Log.e(TAG, "authorizationToken: " + authorizationToken);
 

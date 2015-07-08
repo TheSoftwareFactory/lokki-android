@@ -254,7 +254,7 @@ public class MapViewFragment extends Fragment {
         });
     }
 
-    public void setAddPlacesVisible(boolean visible) {
+    private void setAddPlacesVisible(boolean visible) {
         if (visible) {
             ((ImageView) getView().findViewById(R.id.addPlaceCircle)).setImageDrawable(new AddPlaceCircleDrawable());
             showAddPlaceButtons();
@@ -368,7 +368,7 @@ public class MapViewFragment extends Fragment {
         placesOverlay.clear();
     }
 
-    class UpdateMap extends AsyncTask<MapUserTypes, Void, HashMap<String, Location>> {
+    private class UpdateMap extends AsyncTask<MapUserTypes, Void, HashMap<String, Location>> {
 
         @Override
         protected HashMap<String, Location> doInBackground(MapUserTypes... params) {
@@ -455,7 +455,7 @@ public class MapViewFragment extends Fragment {
         return null;
     }
 
-    class MyInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
+    private class MyInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
         @Override
         public View getInfoWindow(Marker marker) {
@@ -480,7 +480,7 @@ public class MapViewFragment extends Fragment {
         }
     }
 
-    public Bitmap getMarkerBitmap(String email, Boolean accurate, Boolean recent) {
+    private Bitmap getMarkerBitmap(String email, Boolean accurate, Boolean recent) {
 
         Log.e(TAG, "getMarkerBitmap");
 
@@ -524,7 +524,7 @@ public class MapViewFragment extends Fragment {
     }
 
     // Convert a view to bitmap
-    public Bitmap createDrawableFromView(View view) {
+    private Bitmap createDrawableFromView(View view) {
 
         Log.e(TAG, "createDrawableFromView");
         DisplayMetrics displayMetrics = new DisplayMetrics();
