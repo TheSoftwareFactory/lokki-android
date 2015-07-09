@@ -18,6 +18,9 @@ import cc.softwarefactory.lokki.android.services.LocationService;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
 import cc.softwarefactory.lokki.android.utilities.Utils;
+
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.maps.GoogleMap;
 
 import org.json.JSONException;
@@ -42,12 +45,16 @@ public class MainApplication extends Application {
     public static LruCache<String, Bitmap> avatarCache;
     public static JSONObject places;
     public static boolean locationDisabledPromptShown;
+    public static GoogleAnalytics analytics;
+    public static Tracker tracker;
 
 
     @Override
     public void onCreate() {
 
         Log.e(TAG, "Lokki started component");
+
+        initAnalytics();
 
         loadSetting();
 
@@ -92,6 +99,12 @@ public class MainApplication extends Application {
         }
 
         super.onCreate();
+    }
+
+    private void initAnalytics() {
+        analytics = GoogleAnalytics.getInstance(this);
+        tracker = analytics.newTracker(R.xml.analytics_global_tracker_config);
+        tracker.set("&uid", Utils.getDeviceId());
     }
 
     private void loadSetting() {

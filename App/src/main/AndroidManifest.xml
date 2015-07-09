@@ -30,6 +30,17 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/LokkiTheme">
+
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyCmHGAOJLyg_cMw-SuDD-Jfh4yiZZ-XI3E" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.gms.analytics.globalConfigResource"
+            android:resource="@xml/analytics_global_config" />
+
         <activity
             android:name=".activities.MainActivity"
             android:configChanges="orientation|screenSize|locale"
@@ -51,9 +62,18 @@
                 android:name="android.support.UI_OPTIONS"
                 android:value="splitActionBarWhenNarrow" />
         </activity>
+        <activity
+            android:name=".activities.SignUpActivity"
+            android:label="@string/title_activity_sign_up"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
+        </activity>
 
         <service android:name=".services.LocationService" />
         <service android:name=".services.DataService" />
+        <service android:name="com.google.android.gms.analytics.AnalyticsService"
+            android:enabled="true"
+            android:exported="false"/>
 
         <receiver
             android:name=".utilities.gcm.GcmBroadcastReceiver"
@@ -64,20 +84,12 @@
                 <category android:name="cc.softwarefactory.lokki.android" />
             </intent-filter>
         </receiver>
-
-        <meta-data
-            android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyCmHGAOJLyg_cMw-SuDD-Jfh4yiZZ-XI3E" />
-        <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
-
-        <activity
-            android:name=".activities.SignUpActivity"
-            android:label="@string/title_activity_sign_up"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait">
-        </activity>
+        <receiver android:name="com.google.android.gms.analytics.AnalyticsReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH" />
+            </intent-filter>
+        </receiver>
 
     </application>
 
