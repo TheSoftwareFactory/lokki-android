@@ -192,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
-        String[] menuOptions = getResources().getStringArray(R.array.menuOptions);
+        String[] menuOptions = getResources().getStringArray(R.array.nav_drawer_options);
         FragmentManager fragmentManager = getSupportFragmentManager();
         mTitle = menuOptions[position];
         selectedOption = position;

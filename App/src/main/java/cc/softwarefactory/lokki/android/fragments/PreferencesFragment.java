@@ -6,8 +6,11 @@ import android.support.v4.preference.PreferenceFragment;
 import android.preference.ListPreference;
 import android.util.Log;
 
+import com.google.android.gms.analytics.HitBuilders;
+
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
+import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 import cc.softwarefactory.lokki.android.utilities.Utils;
 
@@ -26,6 +29,7 @@ public class PreferencesFragment extends PreferenceFragment implements SharedPre
     public void onResume() {
         super.onResume();
         getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+        AnalyticsUtils.screenHit(getResources().getString(R.string.settings));
     }
 
     @Override

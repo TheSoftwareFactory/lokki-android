@@ -17,8 +17,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
 import com.androidquery.AQuery;
+import com.google.android.gms.analytics.HitBuilders;
 
+import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
+import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 import cc.softwarefactory.lokki.android.utilities.Utils;
 
 
@@ -46,6 +49,12 @@ public class AboutFragment extends Fragment {
         aq.id(R.id.listView1).adapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, aboutLinks));
         aq.id(R.id.listView1).itemClicked(new AboutItemClickListener());
         aq.id(R.id.version).text(R.string.version, Utils.getAppVersion(getActivity()));
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        AnalyticsUtils.screenHit(getResources().getString(R.string.about));
     }
 
     private void openTellAFriendActivity() {

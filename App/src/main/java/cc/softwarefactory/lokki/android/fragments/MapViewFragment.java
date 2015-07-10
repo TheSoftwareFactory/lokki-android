@@ -37,6 +37,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.androidquery.AQuery;
+import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -57,6 +58,7 @@ import java.util.Iterator;
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.activities.FirstTimeActivity;
+import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 import cc.softwarefactory.lokki.android.utilities.DialogUtils;
 import cc.softwarefactory.lokki.android.utilities.Utils;
 import cc.softwarefactory.lokki.android.utilities.map.MapUserTypes;
@@ -141,6 +143,7 @@ public class MapViewFragment extends Fragment {
         if (MainApplication.places != null) {
             updatePlaces();
         }
+        AnalyticsUtils.screenHit(getResources().getString(R.string.map));
     }
 
     private void checkLocationServiceStatus() {

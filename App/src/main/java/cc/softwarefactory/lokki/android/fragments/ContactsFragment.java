@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androidquery.AQuery;
+import com.google.android.gms.analytics.HitBuilders;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,6 +35,7 @@ import java.util.Set;
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.avatar.AvatarLoader;
+import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 import cc.softwarefactory.lokki.android.utilities.ContactUtils;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 import cc.softwarefactory.lokki.android.utilities.Utils;
@@ -71,6 +73,12 @@ public class ContactsFragment extends Fragment {
         avatarLoader = new AvatarLoader(context);
         new GetPeopleThatCanSeeMe().execute();
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        AnalyticsUtils.screenHit(getResources().getString(R.string.contacts));
     }
 
     private void getPeopleThatCanSeeMe() {

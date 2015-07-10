@@ -30,12 +30,14 @@ import android.widget.ListView;
 
 import com.androidquery.AQuery;
 
+import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
 import cc.softwarefactory.lokki.android.services.DataService;
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 
+import com.google.android.gms.analytics.HitBuilders;
 import com.makeramen.roundedimageview.RoundedImageView;
 
 import org.json.JSONArray;
@@ -80,6 +82,7 @@ public class PlacesFragment extends Fragment {
         super.onResume();
         LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver, new IntentFilter("PLACES-UPDATE"));
         LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver, new IntentFilter("LOCATION-UPDATE"));
+        AnalyticsUtils.screenHit(getResources().getString(R.string.places));
     }
 
     @Override

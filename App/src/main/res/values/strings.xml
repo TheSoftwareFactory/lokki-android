@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!--TODO: organize strings better-->
-
     <string name="app_name">Lokki</string>
     <string name="app_long_name">Lokki</string>
 
@@ -20,6 +18,9 @@
     <string name="settings">Settings</string>
     <string name="delete">Delete</string>
     <string name="rename">Rename</string>
+    <string name="navigation_drawer">Navigation Drawer</string>
+    <string name="welcome">Welcome</string>
+    <string name="sign_up">Sign Up</string>
 
     <string name="loading">Loading…</string>
 

@@ -14,7 +14,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,9 +26,12 @@ import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.androidquery.AQuery;
+import com.google.android.gms.analytics.HitBuilders;
 
+import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.avatar.AvatarLoader;
+import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 
 /**
@@ -86,7 +88,7 @@ public class NavigationDrawerFragment extends Fragment {
         mDrawerListView.addHeaderView(mListViewHeader, null, false);
         setUserInfo();
 
-        String[] menuOptions = getResources().getStringArray(R.array.menuOptions);
+        String[] menuOptions = getResources().getStringArray(R.array.nav_drawer_options);
         mDrawerListView.setAdapter(new ArrayAdapter<String>(getActivity().getApplicationContext(), R.layout.drawer_list_item, R.id.nav_drawer_menu_item_text, menuOptions) {
 
             @Override
@@ -124,9 +126,9 @@ public class NavigationDrawerFragment extends Fragment {
     public void toggleDrawer() {
 
         if (isDrawerOpen()) {
-            mDrawerLayout.closeDrawer(Gravity.START);
+            mDrawerLayout.closeDrawer(GravityCompat.START);
         } else {
-            mDrawerLayout.openDrawer(Gravity.START);
+            mDrawerLayout.openDrawer(GravityCompat.START);
         }
     }
 

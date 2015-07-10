@@ -12,19 +12,17 @@ import android.preference.PreferenceManager;
 import android.support.v4.util.LruCache;
 import android.util.Log;
 
-
-import cc.softwarefactory.lokki.android.services.DataService;
-import cc.softwarefactory.lokki.android.services.LocationService;
-import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
-import cc.softwarefactory.lokki.android.utilities.ServerApi;
-import cc.softwarefactory.lokki.android.utilities.Utils;
-
-import com.google.android.gms.analytics.GoogleAnalytics;
-import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.maps.GoogleMap;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import cc.softwarefactory.lokki.android.services.DataService;
+import cc.softwarefactory.lokki.android.services.LocationService;
+import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
+import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
+import cc.softwarefactory.lokki.android.utilities.ServerApi;
+import cc.softwarefactory.lokki.android.utilities.Utils;
 
 public class MainApplication extends Application {
 
@@ -45,8 +43,6 @@ public class MainApplication extends Application {
     public static LruCache<String, Bitmap> avatarCache;
     public static JSONObject places;
     public static boolean locationDisabledPromptShown;
-    public static GoogleAnalytics analytics;
-    public static Tracker tracker;
 
 
     @Override
@@ -54,7 +50,7 @@ public class MainApplication extends Application {
 
         Log.e(TAG, "Lokki started component");
 
-        initAnalytics();
+        AnalyticsUtils.initAnalytics(getApplicationContext());
 
         loadSetting();
 
@@ -99,12 +95,6 @@ public class MainApplication extends Application {
         }
 
         super.onCreate();
-    }
-
-    private void initAnalytics() {
-        analytics = GoogleAnalytics.getInstance(this);
-        tracker = analytics.newTracker(R.xml.analytics_global_tracker_config);
-        tracker.set("&uid", Utils.getDeviceId());
     }
 
     private void loadSetting() {
