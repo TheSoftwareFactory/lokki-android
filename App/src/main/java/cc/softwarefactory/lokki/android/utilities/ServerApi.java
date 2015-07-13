@@ -292,36 +292,6 @@ public class ServerApi {
         aq.put(url, JSONdata, String.class, cb);
     }
 
-    public static void reportCrash(Context context, String osVersion, String lokkiVersion, String reportTitle, String reportData) throws JSONException {
-
-        Log.e(TAG, "reportCrash");
-        AQuery aq = new AQuery(context);
-
-        String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
-        String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
-        String url = ApiUrl + "crashReport/" + userId;
-
-        JSONObject JSONdata = new JSONObject()
-                .put("osType", "android")
-                .put("osVersion", osVersion)
-                .put("lokkiVersion", lokkiVersion)
-                .put("reportTitle", reportTitle)
-                .put("reportData", reportData);
-
-        AjaxCallback<String> cb = new AjaxCallback<String>() {
-            @Override
-            public void callback(String url, String result, AjaxStatus status) {
-                Log.e(TAG, "reportCrash result code: " + status.getCode());
-                Log.e(TAG, "reportCrash result message: " + status.getMessage());
-                Log.e(TAG, "reportCrash ERROR: " + status.getError());
-            }
-        };
-
-        cb.header("authorizationtoken", authorizationToken);
-        aq.post(url, JSONdata, String.class, cb);
-    }
-
-
     public static void addPlace(final Context context, String name, LatLng latLng, int radius) throws JSONException {
 
         Log.e(TAG, "addPlace");
@@ -354,7 +324,7 @@ public class ServerApi {
                 }
 
                 Log.e(TAG, "No error, place created.");
-                Toast.makeText(context, context.getResources().getString(R.string.place_created), Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, context.getString(R.string.place_created), Toast.LENGTH_SHORT).show();
                 DataService.getPlaces(context);
             }
 
@@ -365,7 +335,7 @@ public class ServerApi {
                     return;
                 }
 
-                String toastMessage = context.getResources().getString(ape.getErrorMessage());
+                String toastMessage = context.getString(ape.getErrorMessage());
                 Toast.makeText(context, toastMessage, Toast.LENGTH_SHORT).show();
             }
         };
@@ -392,7 +362,7 @@ public class ServerApi {
                 if (status.getError() == null) {
                     Log.e(TAG, "No error, continuing deletion.");
                     MainApplication.places.remove(placeId);
-                    Toast.makeText(context, context.getResources().getString(R.string.place_removed), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, context.getString(R.string.place_removed), Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent("PLACES-UPDATE");
                     LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                 }

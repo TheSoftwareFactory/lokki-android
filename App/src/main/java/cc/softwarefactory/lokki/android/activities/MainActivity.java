@@ -43,7 +43,7 @@ import cc.softwarefactory.lokki.android.fragments.PlacesFragment;
 import cc.softwarefactory.lokki.android.fragments.PreferencesFragment;
 import cc.softwarefactory.lokki.android.services.DataService;
 import cc.softwarefactory.lokki.android.services.LocationService;
-import cc.softwarefactory.lokki.android.utilities.DialogUtils;
+import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
 import cc.softwarefactory.lokki.android.utilities.Utils;
@@ -159,11 +159,13 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
     @Override
     protected void onPause() {
-        super.onPause();
+        // Fixes buggy avatars after leaving the app from the "Map" screen
+        MainApplication.avatarCache.evictAll();
         LocationService.stop(this.getApplicationContext());
         DataService.stop(this.getApplicationContext());
         LocalBroadcastManager.getInstance(this).unregisterReceiver(switchToMapReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(exitMessageReceiver);
+        super.onPause();
     }
 
     private void checkIfUserIsLoggedIn() {
@@ -177,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
             try {
                 startActivityForResult(new Intent(this, SignUpActivity.class), REQUEST_CODE_EMAIL);
             } catch (ActivityNotFoundException e) {
-                Toast.makeText(this, getResources().getString(R.string.general_error), Toast.LENGTH_LONG).show();
+                Toast.makeText(this, getString(R.string.general_error), Toast.LENGTH_LONG).show();
                 finish();
             }
         } else { // User already logged-in
@@ -282,10 +284,16 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                 break;
 
             case R.id.add_email: // In list of ALL contacts, when adding new ones.
-                DialogUtils.addContact(this);
+                AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                        getString(R.string.analytics_action_click),
+                        getString(R.string.analytics_label_add_email_button));
+                AddContactsFragment.addContactFromEmail(this);
                 break;
 
             case R.id.action_visibility:
+                AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                        getString(R.string.analytics_action_click),
+                        getString(R.string.analytics_label_visibility_toggle));
                 toggleVisibility();
                 break;
 
@@ -294,14 +302,13 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     }
 
     private void toggleVisibility() {
-
         Utils.setVisibility(!MainApplication.visible, MainActivity.this);
         PreferenceUtils.setBoolean(getApplicationContext(),PreferenceUtils.KEY_SETTING_VISIBILITY, MainApplication.visible);
 
         if (MainApplication.visible) {
-            Toast.makeText(this, getResources().getString(R.string.you_are_visible), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.you_are_visible), Toast.LENGTH_LONG).show();
         } else {
-            Toast.makeText(this, getResources().getString(R.string.you_are_invisible), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.you_are_invisible), Toast.LENGTH_LONG).show();
         }
 
         supportInvalidateOptionsMenu();
@@ -357,7 +364,9 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     }
 
     public void showUserInMap(View view) { // Used in Contacts
-
+        AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                getString(R.string.analytics_action_click),
+                getString(R.string.analytics_label_avatar_show_user));
         if (view == null) {
             return;
         }
@@ -374,7 +383,9 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     }
 
     public void toggleIDontWantToSee(View view) {
-
+        AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                getString(R.string.analytics_action_click),
+                getString(R.string.analytics_label_show_on_map_checkbox));
         if (view == null) {
             return;
         }
@@ -396,7 +407,9 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     }
 
     public void toggleUserCanSeeMe(View view) { // Used in Contacts
-
+        AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                getString(R.string.analytics_action_click),
+                getString(R.string.analytics_label_can_see_me_checkbox));
         if (view != null) {
             CheckBox checkBox = (CheckBox) view;
             Boolean allow = checkBox.isChecked();
@@ -424,8 +437,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
             DataService.stop(MainActivity.this.getApplicationContext());
 
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
-            alertDialog.setTitle(context.getResources().getString(R.string.app_name));
-            String message = context.getResources().getString(R.string.security_sign_up, MainApplication.userAccount);
+            alertDialog.setTitle(getString(R.string.app_name));
+            String message = getString(R.string.security_sign_up, MainApplication.userAccount);
             alertDialog.setMessage(message)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override

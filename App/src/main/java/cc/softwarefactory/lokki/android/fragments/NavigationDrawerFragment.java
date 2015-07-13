@@ -26,12 +26,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.androidquery.AQuery;
-import com.google.android.gms.analytics.HitBuilders;
 
-import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.avatar.AvatarLoader;
-import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 
 /**

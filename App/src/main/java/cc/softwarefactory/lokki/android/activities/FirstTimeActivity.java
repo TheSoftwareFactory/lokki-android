@@ -47,7 +47,7 @@ public class FirstTimeActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        AnalyticsUtils.screenHit(getResources().getString(R.string.welcome));
+        AnalyticsUtils.screenHit(getString(R.string.welcome));
     }
 
     @Override

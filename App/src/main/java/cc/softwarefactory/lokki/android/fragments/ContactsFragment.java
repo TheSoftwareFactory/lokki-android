@@ -19,7 +19,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androidquery.AQuery;
-import com.google.android.gms.analytics.HitBuilders;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -78,7 +77,7 @@ public class ContactsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        AnalyticsUtils.screenHit(getResources().getString(R.string.contacts));
+        AnalyticsUtils.screenHit(getString(R.string.contacts));
     }
 
     private void getPeopleThatCanSeeMe() {
@@ -133,13 +132,8 @@ public class ContactsFragment extends Fragment {
         }
 
         peopleList.addAll(mapping.keySet());
-        Log.e(TAG, "Contact list: " + peopleList);
-
-//        peopleList.addAll(ContactUtils.getLocalContactsAndExclude(context, peopleList));
-//        Log.e(TAG, "Contact list after extra contacts: " + peopleList);
-
         Collections.sort(peopleList);
-        Log.e(TAG, "After sorting");
+        Log.e(TAG, "Contact list: " + peopleList);
     }
 
     private void setListAdapter() {
@@ -197,6 +191,9 @@ public class ContactsFragment extends Fragment {
                     aq.id(holder.checkICanSee).clicked(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
+                            AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                                    getString(R.string.analytics_action_click),
+                                    getString(R.string.analytics_label_disabled_show_on_map_checkbox));
                             Toast.makeText(context, R.string.seeing_contact_not_allowed, Toast.LENGTH_LONG).show();
                             holder.checkICanSee.setChecked(false);
                         }

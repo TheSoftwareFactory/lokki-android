@@ -93,6 +93,8 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void doSignUp() {
+        AnalyticsUtils.eventHit(getString(R.string.analytics_category_signup),
+                getString(R.string.analytics_action_started_by_client));
         Log.e(TAG, "Sign up started");
         CharSequence email = aq.id(R.id.email).getText();
         if (email == null) {
@@ -101,7 +103,7 @@ public class SignUpActivity extends AppCompatActivity {
         String accountName = email.toString();
         Log.e(TAG, "Email: " + accountName);
         if (accountName.isEmpty()) {
-            String errorMessage = getResources().getString(R.string.email_required);
+            String errorMessage = getString(R.string.email_required);
             aq.id(R.id.email).getEditText().setError(errorMessage);
             return;
         }
@@ -125,9 +127,17 @@ public class SignUpActivity extends AppCompatActivity {
                 Log.e(TAG, "status code: " + status.getCode());
 
                 if (status.getCode() == 401) {
+                    AnalyticsUtils.eventHit(getString(R.string.analytics_category_signup),
+                            getString(R.string.analytics_action_backend_response),
+                            getString(R.string.analytics_label_unauthorized_error),
+                            (long) status.getCode());
                     Log.e(TAG, "401 Error");
                     DialogUtils.securitySignUp(SignUpActivity.this);
                 } else {
+                    AnalyticsUtils.eventHit(getString(R.string.analytics_category_signup),
+                            getString(R.string.analytics_action_backend_response),
+                            getString(R.string.analytics_label_general_error),
+                            (long) status.getCode());
                     Log.e(TAG, "General Error");
                     DialogUtils.generalError(SignUpActivity.this);
                 }
@@ -135,7 +145,9 @@ public class SignUpActivity extends AppCompatActivity {
                 toggleLoading(false);
                 return;
             }
-
+            AnalyticsUtils.eventHit(getString(R.string.analytics_category_signup),
+                    getString(R.string.analytics_action_backend_response),
+                    getString(R.string.analytics_label_successful));
             Log.e(TAG, "json response: " + json);
             String id = json.optString("id");
             String authorizationToken = json.optString("authorizationtoken");

@@ -13,6 +13,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,7 +27,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androidquery.AQuery;
-import com.google.android.gms.analytics.HitBuilders;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -88,11 +88,11 @@ public class AddContactsFragment extends Fragment {
         }
         loadContacts();
         enableSearchFilter();
-        AnalyticsUtils.screenHit(getResources().getString(R.string.add_contacts));
+        AnalyticsUtils.screenHit(getString(R.string.add_contacts));
     }
 
     private void loadContacts() {
-        String[] loadingList = {getResources().getString(R.string.loading)};
+        String[] loadingList = {getString(R.string.loading)};
         aq.id(R.id.add_contacts_list_view).adapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, loadingList));
         new getAllEmailAddressesAsync().execute();
     }
@@ -122,9 +122,21 @@ public class AddContactsFragment extends Fragment {
             }
         });
 
+        inputSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                        getString(R.string.analytics_action_click),
+                        getString(R.string.analytics_label_search_contacts_textbox));
+            }
+        });
+
         clearFilter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                        getString(R.string.analytics_action_click),
+                        getString(R.string.analytics_label_clear_search_contacts_textbox_button));
                 inputSearch.setText("");
             }
         });
@@ -265,9 +277,12 @@ public class AddContactsFragment extends Fragment {
                     convertView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                                    getString(R.string.analytics_action_click),
+                                    getString(R.string.analytics_label_contact_in_list));
                             final Context context = getContext();
-                            String title = context.getResources().getString(R.string.add_contact);
-                            String message = context.getResources().getString(R.string.add_contact_dialog_save, email);
+                            String title = getString(R.string.add_contact);
+                            String message = getString(R.string.add_contact_dialog_save, email);
                             new AlertDialog.Builder(context)
                                     .setTitle(title)
                                     .setMessage(message)
@@ -275,6 +290,9 @@ public class AddContactsFragment extends Fragment {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             try {
+                                                AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                                                        getString(R.string.analytics_action_click),
+                                                        getString(R.string.analytics_label_confirm_contact_add_from_list_dialog));
                                                 ServerApi.allowPeople(context, email);
                                                 ContactUtils.addLocalContact(context, email);
                                                 contactList.remove(position);
@@ -285,7 +303,15 @@ public class AddContactsFragment extends Fragment {
                                             }
                                         }
                                     })
-                                    .setNegativeButton(R.string.cancel, null)
+                                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                                                    getString(R.string.analytics_action_click),
+                                                    getString(R.string.analytics_label_cancel_contact_add_from_list_dialog));
+
+                                        }
+                                    })
                                     .show();
                         }
                     });
@@ -298,6 +324,62 @@ public class AddContactsFragment extends Fragment {
         };
 
         aq.id(R.id.add_contacts_list_view).adapter(adapter);
+    }
+
+    public static void addContactFromEmail(final Context context) {
+
+        final EditText input = new EditText(context); // Set an EditText view to get user input
+        input.setSingleLine(true);
+        input.setHint(R.string.contact_email_address);
+        input.setInputType(InputType.TYPE_TEXT_VARIATION_WEB_EMAIL_ADDRESS);
+
+        final AlertDialog addContactDialog = new AlertDialog.Builder(context)
+                .setTitle(context.getString(R.string.add_contact))
+                .setView(input)
+                .setPositiveButton(R.string.ok, null)
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        AnalyticsUtils.eventHit(context.getString(R.string.analytics_category_ux),
+                                context.getString(R.string.analytics_action_click),
+                                context.getString(R.string.analytics_label_cancel_contact_add_from_email_dialog));
+                    }
+                })
+                .create();
+
+        addContactDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+
+            @Override
+            public void onShow(DialogInterface dialog) {
+                addContactDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+                        Editable value = input.getText();
+                        if (value == null || value.toString().isEmpty()) {
+                            input.setError(context.getResources().getString(R.string.required));
+                            return;
+                        }
+
+                        AnalyticsUtils.eventHit(context.getString(R.string.analytics_category_ux),
+                                context.getString(R.string.analytics_action_click),
+                                context.getString(R.string.analytics_label_confirm_contact_add_from_email_dialog_successful));
+                        String email = value.toString();
+                        try {
+                            ServerApi.allowPeople(context, email);
+                            ContactUtils.addLocalContact(context, email);
+                            Toast.makeText(context, R.string.contact_added, Toast.LENGTH_SHORT).show();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        addContactDialog.dismiss();
+                    }
+                });
+            }
+        });
+
+        addContactDialog.show();
     }
 
     static class ViewHolder {
