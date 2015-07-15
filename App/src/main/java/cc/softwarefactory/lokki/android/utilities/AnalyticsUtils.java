@@ -13,17 +13,28 @@ public class AnalyticsUtils {
     private static Tracker tracker;
 
     public static void initAnalytics(Context context) {
-        tracker = GoogleAnalytics.getInstance(context).newTracker(R.xml.analytics_global_tracker_config);
+        int globalTrackerConfigXmlId = context.getResources().getIdentifier("analytics_global_tracker_config", "xml", context.getPackageName());
+        if (globalTrackerConfigXmlId == 0) {
+            tracker = null;
+            return;
+        }
+        tracker = GoogleAnalytics.getInstance(context).newTracker(globalTrackerConfigXmlId);
         tracker.set("&uid", Utils.getDeviceId());
     }
 
     public static void screenHit(String screenName) {
+        if (tracker == null) {
+            return;
+        }
         tracker.setScreenName(screenName);
         tracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
 
     public static void eventHit(String category, String action, String label, long value) {
+        if (tracker == null) {
+            return;
+        }
         HitBuilders.EventBuilder eventBuilder = new HitBuilders.EventBuilder()
                 .setCategory(category)
                 .setAction(action);
