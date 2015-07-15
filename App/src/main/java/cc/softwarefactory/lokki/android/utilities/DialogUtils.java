@@ -4,16 +4,14 @@ See LICENSE for details
 */
 package cc.softwarefactory.lokki.android.utilities;
 
-import android.support.v7.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
-import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -23,68 +21,15 @@ import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 
 public class DialogUtils {
-
     private static final String TAG = "DialogUtils";
 
-    // TODO: Move this method to the class that calls it
-    public static void addContact(final Context context) {
-
-        final EditText input = new EditText(context); // Set an EditText view to get user input
-        input.setSingleLine(true);
-        input.setHint(R.string.contact_email_address);
-        input.setInputType(InputType.TYPE_TEXT_VARIATION_WEB_EMAIL_ADDRESS);
-
-        final AlertDialog addContactDialog = new AlertDialog.Builder(context)
-                .setTitle(context.getResources().getString(R.string.add_contact))
-                .setView(input)
-                .setPositiveButton(R.string.ok, null)
-                .setNegativeButton(R.string.cancel, null)
-                .create();
-
-        addContactDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-
-            @Override
-            public void onShow(DialogInterface dialog) {
-
-                addContactDialog.getButton(AlertDialog.BUTTON_POSITIVE)
-                        .setOnClickListener(new View.OnClickListener() {
-
-                            @Override
-                            public void onClick(View view) {
-                                Editable value = input.getText();
-                                if (value == null || value.toString().isEmpty()) {
-                                    input.setError(context.getResources().getString(R.string.required));
-                                    return;
-                                }
-
-                                String email = value.toString();
-
-                                try {
-                                    ServerApi.allowPeople(context, email);
-                                    ContactUtils.addLocalContact(context, email);
-                                    Toast.makeText(context, R.string.contact_added, Toast.LENGTH_SHORT).show();
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-
-                                addContactDialog.dismiss();
-                            }
-                        });
-            }
-        });
-
-        addContactDialog.show();
-    }
-
-    // TODO: Move this method to the class that calls it
     public static void securitySignUp(final Context context) {
 
         Log.e(TAG, "securitySignUp");
-        String title = context.getResources().getString(R.string.app_name);
-        String message = context.getResources().getString(R.string.security_sign_up, MainApplication.userAccount);
+        String title = context.getString(R.string.app_name);
+        String message = context.getString(R.string.security_sign_up, MainApplication.userAccount);
         showDialog(context, title, message);
     }
-
 
     public static void generalError(final Context context) {
 
@@ -93,7 +38,7 @@ public class DialogUtils {
     }
 
     private static void showDialog(final Context context, int title, int message) {
-        showDialog(context,context.getResources().getString(title), context.getResources().getString(message));
+        showDialog(context, context.getString(title), context.getString(message));
     }
 
     private static void showDialog(final Context context, String title, String message) {
@@ -109,10 +54,17 @@ public class DialogUtils {
         final EditText input = new EditText(context); // Set an EditText view to get user input
         input.setSingleLine(true);
         final AlertDialog addPlaceDialog = new AlertDialog.Builder(context)
-                .setTitle(context.getResources().getString(R.string.write_place_name))
+                .setTitle(context.getString(R.string.write_place_name))
                 .setView(input)
                 .setPositiveButton(R.string.ok, null)
-                .setNegativeButton(R.string.cancel, null)
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        AnalyticsUtils.eventHit(context.getString(R.string.analytics_category_ux),
+                                context.getString(R.string.analytics_action_click),
+                                context.getString(R.string.analytics_label_cancel_name_new_place_dialog));
+                    }
+                })
                 .create();
 
         addPlaceDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -133,10 +85,12 @@ public class DialogUtils {
                             public void onClick(View view) {
                                 Editable value = input.getText();
                                 if (value == null || value.toString().isEmpty()) {
-                                    input.setError(context.getResources().getString(R.string.required));
+                                    input.setError(context.getString(R.string.required));
                                     return;
                                 }
-
+                                AnalyticsUtils.eventHit(context.getString(R.string.analytics_category_ux),
+                                        context.getString(R.string.analytics_action_click),
+                                        context.getString(R.string.analytics_label_confirm_name_new_place_dialog_successful));
                                 try {
                                     ServerApi.addPlace(context, value.toString(), latLng, radius);
                                 } catch (JSONException e) {

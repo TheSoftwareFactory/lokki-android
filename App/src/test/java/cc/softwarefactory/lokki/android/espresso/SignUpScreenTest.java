@@ -6,7 +6,6 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URLEncodedUtilsHC4;
 import org.apache.http.message.BasicNameValuePair;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.HashSet;

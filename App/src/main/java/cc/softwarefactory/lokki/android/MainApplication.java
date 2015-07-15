@@ -6,22 +6,18 @@ package cc.softwarefactory.lokki.android;
 
 import android.app.Application;
 import android.graphics.Bitmap;
-import android.os.Build;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.support.v4.util.LruCache;
 import android.util.Log;
 
-
-import cc.softwarefactory.lokki.android.services.DataService;
-import cc.softwarefactory.lokki.android.services.LocationService;
-import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
-import cc.softwarefactory.lokki.android.utilities.ServerApi;
-import cc.softwarefactory.lokki.android.utilities.Utils;
 import com.google.android.gms.maps.GoogleMap;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
+import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 
 public class MainApplication extends Application {
 
@@ -48,6 +44,8 @@ public class MainApplication extends Application {
     public void onCreate() {
 
         Log.e(TAG, "Lokki started component");
+
+        AnalyticsUtils.initAnalytics(getApplicationContext());
 
         loadSetting();
 
@@ -85,7 +83,6 @@ public class MainApplication extends Application {
 
             StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
                     .detectLeakedSqlLiteObjects()
-                            //.detectLeakedClosableObjects()
                     .penaltyLog()
                     .penaltyDeath()
                     .build());
@@ -100,48 +97,4 @@ public class MainApplication extends Application {
         Log.e(TAG, "Visible: " + visible);
     }
 
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-        Log.e(TAG, "---------------------------------------------------------");
-        Log.e(TAG, "onLowMemory");
-        Log.e(TAG, "---------------------------------------------------------");
-    }
-
-    private class ErrorHandler implements Thread.UncaughtExceptionHandler {
-
-        public ErrorHandler() {
-
-            Log.e(TAG, "ErrorHandler created");
-        }
-
-        @Override
-        public void uncaughtException(Thread thread, Throwable ex) {
-
-            Log.e(TAG, "---------------------------------------------------------");
-            Log.e(TAG, "uncaughtException: " + ex.getMessage());
-            Log.e(TAG, "---------------------------------------------------------");
-
-            LocationService.stop(MainApplication.this);
-            DataService.stop(MainApplication.this);
-
-            try {
-                String osType = "Android " + Build.VERSION.SDK_INT;
-                String appVersion = Utils.getAppVersion(MainApplication.this);
-                String reportData = ex.getMessage();
-                String reportTitle = ex.getCause().getMessage();
-                Log.e(TAG, "CRASH - OS: " + osType + ", appVersion: " + appVersion + ", Title: " + reportTitle + ", Data: " + reportData);
-
-                ServerApi.reportCrash(MainApplication.this, osType, appVersion, reportTitle, reportData);
-                Log.e(TAG, "Data sent to server");
-
-            } catch (Exception exception) {
-                Log.e(TAG, "Exception during the error reporting: " + exception.getMessage());
-                exception.printStackTrace();
-            }
-
-            LocationService.stop(MainApplication.this);
-            DataService.stop(MainApplication.this);
-        }
-    }
 }

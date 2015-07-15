@@ -6,3 +6,4 @@ App/build
 *.iml
 .gradle
 build
+analytics_global_tracker_config.xml

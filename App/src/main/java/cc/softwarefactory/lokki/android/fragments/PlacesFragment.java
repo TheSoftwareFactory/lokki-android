@@ -30,6 +30,7 @@ import android.widget.ListView;
 
 import com.androidquery.AQuery;
 
+import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
 import cc.softwarefactory.lokki.android.services.DataService;
 import cc.softwarefactory.lokki.android.MainApplication;
@@ -80,6 +81,7 @@ public class PlacesFragment extends Fragment {
         super.onResume();
         LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver, new IntentFilter("PLACES-UPDATE"));
         LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver, new IntentFilter("LOCATION-UPDATE"));
+        AnalyticsUtils.screenHit(getString(R.string.places));
     }
 
     @Override
@@ -177,11 +179,18 @@ public class PlacesFragment extends Fragment {
         String placeName = placesList.get(position);
 
         switch(item.getItemId()) {
+            case R.id.places_context_menu_rename:
+                AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                        getString(R.string.analytics_action_click),
+                        getString(R.string.analytics_label_rename_place));
+                renamePlaceDialog(placeName);
+                return true;
             case R.id.places_context_menu_delete:
+                AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                        getString(R.string.analytics_action_click),
+                        getString(R.string.analytics_label_delete_place));
                 deletePlaceDialog(placeName);
                 return true;
-            case R.id.places_context_menu_rename:
-                renamePlaceDialog(placeName);
         }
 
         return super.onContextItemSelected(item);
@@ -190,24 +199,27 @@ public class PlacesFragment extends Fragment {
     private void deletePlaceDialog(final String name) {
 
         Log.d(TAG, "deletePlaceDialog");
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity())
-                .setTitle(context.getResources().getString(R.string.delete_place))
-                .setMessage(name + " " + context.getResources().getString(R.string.will_be_deleted_from_places))
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        new AlertDialog.Builder(getActivity())
+                .setTitle(getString(R.string.delete_place))
+                .setMessage(name + " " + getString(R.string.will_be_deleted_from_places))
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                                getString(R.string.analytics_action_click),
+                                getString(R.string.analytics_label_confirm_delete_place_dialog));
                         deletePlace(name);
-                        dialog.dismiss();
                     }
                 })
-                .setNegativeButton("Not now", new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
+                        AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                                getString(R.string.analytics_action_click),
+                                getString(R.string.analytics_label_cancel_delete_place_dialog));
                     }
-                });
-
-        alertDialog.show();
+                })
+                .show();
 
     }
 
@@ -233,29 +245,33 @@ public class PlacesFragment extends Fragment {
     private void renamePlaceDialog(final String placeName) {
 
         Log.d(TAG, "renamePlaceDialog");
-        AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
         final EditText input = new EditText(getActivity());
-        String titleFormat = getResources().getString(R.string.rename_place);
+        String titleFormat = getString(R.string.rename_place);
         String title = String.format(titleFormat, placeName);
 
-        dialog.setTitle(title)
+        new AlertDialog.Builder(getActivity())
+                .setTitle(title)
                 .setMessage(R.string.write_place_name)
                 .setView(input)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                                getString(R.string.analytics_action_click),
+                                getString(R.string.analytics_label_confirm_rename_place_dialog));
                         String newName = input.getText().toString();
                         renamePlace(placeName, newName);
-                        dialog.dismiss();
                     }
                 })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
+                        AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                                getString(R.string.analytics_action_click),
+                                getString(R.string.analytics_label_cancel_rename_place_dialog));
                     }
-                });
-        dialog.show();
+                })
+                .show();
     }
 
     private void renamePlace(String oldName, String newName) {
@@ -290,7 +306,9 @@ public class PlacesFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-
+                AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                        getString(R.string.analytics_action_click),
+                        getString(R.string.analytics_label_avatar_show_user));
                 MainApplication.emailBeingTracked = email;
                 LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(new Intent("LOCATION-UPDATE"));
                 LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(new Intent("GO-TO-MAP"));

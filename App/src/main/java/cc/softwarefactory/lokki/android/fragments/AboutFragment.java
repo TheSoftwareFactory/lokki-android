@@ -19,6 +19,7 @@ import android.widget.ArrayAdapter;
 import com.androidquery.AQuery;
 
 import cc.softwarefactory.lokki.android.R;
+import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 import cc.softwarefactory.lokki.android.utilities.Utils;
 
 
@@ -48,13 +49,19 @@ public class AboutFragment extends Fragment {
         aq.id(R.id.version).text(R.string.version, Utils.getAppVersion(getActivity()));
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        AnalyticsUtils.screenHit(getString(R.string.about));
+    }
+
     private void openTellAFriendActivity() {
         try {
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("text/plain");
-            intent.putExtra(Intent.EXTRA_SUBJECT, getResources().getString(R.string.share_subject));
-            intent.putExtra(Intent.EXTRA_TEXT, getResources().getString(R.string.share_text));
-            startActivity(Intent.createChooser(intent, getResources().getString(R.string.share)));
+            intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.share_subject));
+            intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_text));
+            startActivity(Intent.createChooser(intent, getString(R.string.share)));
         } catch (ActivityNotFoundException e) {
             Log.e(TAG, "Couldn't open 'tell a friend about lokki' activity");
         }

@@ -17,6 +17,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import cc.softwarefactory.lokki.android.R;
+import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 
 public class FirstTimeActivity extends AppCompatActivity {
 
@@ -43,10 +44,14 @@ public class FirstTimeActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        AnalyticsUtils.screenHit(getString(R.string.welcome));
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         return true;
     }
 

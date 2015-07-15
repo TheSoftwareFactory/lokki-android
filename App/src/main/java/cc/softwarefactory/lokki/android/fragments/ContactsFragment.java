@@ -34,6 +34,7 @@ import java.util.Set;
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.avatar.AvatarLoader;
+import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 import cc.softwarefactory.lokki.android.utilities.ContactUtils;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 import cc.softwarefactory.lokki.android.utilities.Utils;
@@ -71,6 +72,12 @@ public class ContactsFragment extends Fragment {
         avatarLoader = new AvatarLoader(context);
         new GetPeopleThatCanSeeMe().execute();
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        AnalyticsUtils.screenHit(getString(R.string.contacts));
     }
 
     private void getPeopleThatCanSeeMe() {
@@ -125,13 +132,8 @@ public class ContactsFragment extends Fragment {
         }
 
         peopleList.addAll(mapping.keySet());
-        Log.e(TAG, "Contact list: " + peopleList);
-
-//        peopleList.addAll(ContactUtils.getLocalContactsAndExclude(context, peopleList));
-//        Log.e(TAG, "Contact list after extra contacts: " + peopleList);
-
         Collections.sort(peopleList);
-        Log.e(TAG, "After sorting");
+        Log.e(TAG, "Contact list: " + peopleList);
     }
 
     private void setListAdapter() {
@@ -189,6 +191,9 @@ public class ContactsFragment extends Fragment {
                     aq.id(holder.checkICanSee).clicked(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
+                            AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                                    getString(R.string.analytics_action_click),
+                                    getString(R.string.analytics_label_disabled_show_on_map_checkbox));
                             Toast.makeText(context, R.string.seeing_contact_not_allowed, Toast.LENGTH_LONG).show();
                             holder.checkICanSee.setChecked(false);
                         }

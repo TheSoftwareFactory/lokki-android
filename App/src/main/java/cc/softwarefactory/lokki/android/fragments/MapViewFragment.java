@@ -57,6 +57,7 @@ import java.util.Iterator;
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.activities.FirstTimeActivity;
+import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 import cc.softwarefactory.lokki.android.utilities.DialogUtils;
 import cc.softwarefactory.lokki.android.utilities.Utils;
 import cc.softwarefactory.lokki.android.utilities.map.MapUserTypes;
@@ -91,13 +92,15 @@ public class MapViewFragment extends Fragment {
 
     }
 
+
+
     @Override
     public void onDestroyView() {
         // Trying to clean up properties (not to hold anything coming from the map (and avoid mem leaks).
-        super.onDestroyView();
         fragment = null;
         map = null;
         aq = null;
+        super.onDestroyView();
     }
 
     @Override
@@ -110,11 +113,8 @@ public class MapViewFragment extends Fragment {
         fragment = (SupportMapFragment) fm.findFragmentById(R.id.map);
         if (fragment == null) {
             fragment = SupportMapFragment.newInstance();
-            //fragment = SupportMapFragment.newInstance(new GoogleMapOptions().useViewLifecycleInFragment(true)); // The map is destroyed when fragment is destroyed. Releasing memory
             fm.beginTransaction().replace(R.id.map, fragment).commit();
         }
-
-        //setHasOptionsMenu(true);
     }
 
 
@@ -141,6 +141,7 @@ public class MapViewFragment extends Fragment {
         if (MainApplication.places != null) {
             updatePlaces();
         }
+        AnalyticsUtils.screenHit(getString(R.string.map));
     }
 
     private void checkLocationServiceStatus() {
@@ -161,10 +162,20 @@ public class MapViewFragment extends Fragment {
                 .setCancelable(true)
                 .setPositiveButton(R.string.settings, new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, final int id) {
+                        AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                                getString(R.string.analytics_action_click),
+                                getString(R.string.analytics_label_open_settings_from_location_disabled_dialog));
                         startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
                     }
                 })
-                .setNegativeButton(R.string.ignore, null)
+                .setNegativeButton(R.string.ignore, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                                getString(R.string.analytics_action_click),
+                                getString(R.string.analytics_label_ignore_location_disabled_dialog));
+                    }
+                })
                 .show();
     }
 
@@ -208,7 +219,9 @@ public class MapViewFragment extends Fragment {
         map.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
-
+                AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                        getString(R.string.analytics_action_long_click),
+                        getString(R.string.analytics_label_add_place_overlay_activated));
                 setAddPlacesVisible(true);
             }
         });
@@ -216,6 +229,9 @@ public class MapViewFragment extends Fragment {
         map.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
             @Override
             public boolean onMyLocationButtonClick() {
+                AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                        getString(R.string.analytics_action_click),
+                        getString(R.string.analytics_label_my_location_button));
                 MainApplication.locationDisabledPromptShown = false;
                 checkLocationServiceStatus();
                 return false;
@@ -229,6 +245,9 @@ public class MapViewFragment extends Fragment {
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                        getString(R.string.analytics_action_click),
+                        getString(R.string.analytics_label_cancel_add_place_button));
                 setAddPlacesVisible(false);
             }
         });
@@ -237,6 +256,9 @@ public class MapViewFragment extends Fragment {
         addPlaceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                        getString(R.string.analytics_action_click),
+                        getString(R.string.analytics_label_confirm_add_place_button));
                 int mapWidth = fragment.getView().getWidth();
                 int mapHeight = fragment.getView().getHeight() - getView().findViewById(R.id.add_place_buttons).getHeight();
 

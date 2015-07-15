@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!--TODO: organize strings better-->
-
     <string name="app_name">Lokki</string>
     <string name="app_long_name">Lokki</string>
 
@@ -20,6 +18,9 @@
     <string name="settings">Settings</string>
     <string name="delete">Delete</string>
     <string name="rename">Rename</string>
+    <string name="navigation_drawer">Navigation Drawer</string>
+    <string name="welcome">Welcome</string>
+    <string name="sign_up">Sign Up</string>
 
     <string name="loading">Loading…</string>
 
@@ -85,5 +86,44 @@
     <string name="add_email">Add email</string>
     <string name="place_name">Place Name</string>
     <string name="seeing_contact_not_allowed">The contact has not allowed you to see their location.</string>
+
+    <string name="analytics_category_ux">UX</string>
+    <string name="analytics_category_signup">Signup</string>
+
+    <string name="analytics_action_click">Click</string>
+    <string name="analytics_action_long_click">Long click</string>
+    <string name="analytics_action_started_by_client">Started by client</string>
+    <string name="analytics_action_backend_response">Backend response</string>
+
+    <string name="analytics_label_avatar_show_user">Avatar (show user in map)</string>
+    <string name="analytics_label_show_on_map_checkbox">\"Show on map\" contact checkbox</string>
+    <string name="analytics_label_can_see_me_checkbox">\"Can see me\" contact checkbox</string>
+    <string name="analytics_label_disabled_show_on_map_checkbox">Disabled \"Show on map\" contact checkbox</string>
+    <string name="analytics_label_contact_in_list">Contact in list</string>
+    <string name="analytics_label_confirm_contact_add_from_list_dialog">Confirm contact add from list dialog</string>
+    <string name="analytics_label_cancel_contact_add_from_list_dialog">Cancel contact add from list dialog</string>
+    <string name="analytics_label_search_contacts_textbox">\"Search contacts\" textbox</string>
+    <string name="analytics_label_clear_search_contacts_textbox_button">Clear \"Search contacts\" textbox button</string>
+    <string name="analytics_label_add_email_button">Add email button</string>
+    <string name="analytics_label_confirm_contact_add_from_email_dialog_successful">Confirm contact add from email dialog (checks successful)</string>
+    <string name="analytics_label_cancel_contact_add_from_email_dialog">Cancel contact add from email dialog</string>
+    <string name="analytics_label_successful">Successful</string>
+    <string name="analytics_label_unauthorized_error">Unauthorized error</string>
+    <string name="analytics_label_general_error">General error</string>
+    <string name="analytics_label_visibility_toggle">Visibility toggle</string>
+    <string name="analytics_label_add_place_overlay_activated">\"Add place\" overlay activated</string>
+    <string name="analytics_label_cancel_add_place_button">Cancel \"Add place\" button</string>
+    <string name="analytics_label_confirm_add_place_button">Confirm \"Add place\" button</string>
+    <string name="analytics_label_my_location_button">My location button</string>
+    <string name="analytics_label_cancel_name_new_place_dialog">Cancel name new place dialog</string>
+    <string name="analytics_label_confirm_name_new_place_dialog_successful">Confirm name new place dialog (checks successful)</string>
+    <string name="analytics_label_open_settings_from_location_disabled_dialog">Opened location settings from location disabled dialog</string>
+    <string name="analytics_label_ignore_location_disabled_dialog">Ignored location settings disabled dialog</string>
+    <string name="analytics_label_rename_place">Rename place</string>
+    <string name="analytics_label_delete_place">Delete place</string>
+    <string name="analytics_label_confirm_rename_place_dialog">Confirm rename place dialog</string>
+    <string name="analytics_label_cancel_rename_place_dialog">Cancel rename place dialog</string>
+    <string name="analytics_label_confirm_delete_place_dialog">Confirm delete place dialog</string>
+    <string name="analytics_label_cancel_delete_place_dialog">Cancel delete place dialog</string>
 
 </resources>
