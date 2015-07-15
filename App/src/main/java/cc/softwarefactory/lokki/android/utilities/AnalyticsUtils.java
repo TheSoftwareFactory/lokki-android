@@ -7,8 +7,6 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
-import cc.softwarefactory.lokki.android.R;
-
 public class AnalyticsUtils {
     private static Tracker tracker;
 
