@@ -15,10 +15,28 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        release {
+            storeFile file("lokki-release.keystore")
+            keyAlias "lokki-release"
+            def console = System.console()
+            if (console != null) {
+                storePassword new String(console.readPassword("\nkstorepwd:"))
+                keyPassword new String(console.readPassword("kpwd:"))
+            } else {
+                storePassword ""
+                keyPassword ""
+            }
+        }
+    }
+
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            if (file("lokki-release.keystore").exists()) {
+                signingConfig signingConfigs.release
+            }
         }
     }
 

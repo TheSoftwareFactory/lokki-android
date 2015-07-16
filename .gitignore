@@ -7,3 +7,4 @@ App/build
 .gradle
 build
 analytics_global_tracker_config.xml
+*.keystore
