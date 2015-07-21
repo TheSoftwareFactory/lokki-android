@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Lokki</string>
+    <string name="app_long_name">Lokki</string>
+
+    <string name="ok">OK</string>
+    <string name="cancel">Peruuta</string>
+    <string name="yes">Kyllä</string>
+    <string name="no">Ei</string>
+    <string name="map">Kartta</string>
+    <string name="places">Paikat</string>
+    <string name="contacts">Henkilöt</string>
+    <string name="about">Tiedot</string>
+    <string name="visibility">Näkyvyys</string>
+    <string name="map_mode">Karttanäkymä</string>
+    <string name="help">Ohjeita</string>
+    <string name="settings">Asetukset</string>
+    <string name="delete">Poista</string>
+    <string name="rename">Nimeä uudelleen</string>
+    <string name="welcome">Tervetuloa</string>
+    <string name="sign_up">Luo tili</string>
+
+    <string name="loading">Ladataan…</string>
+
+    <string name="send_feedback">Lähetä palautetta</string>
+    <string name="share">Kerro ystävillesi tästä sovelluksesta!</string>
+    <string name="share_subject">Liity seuraani Lokkiin!</string>
+    <string name="share_text">Hei! Käytän Lokkia. Sen avulla voin kertoa yksityisesti, helposti, turvallisesti ja ilmaiseksi, missä olen menossa. Voit asentaa sovelluksen osoitteesta https://github.com/TheSoftwareFactory/lokki-android/</string>
+    <string name="add_contacts">Lisää henkilöitä</string>
+    <string name="add_contact">Lisää henkilö</string>
+    <string name="add_contact_dialog_save">Haluatko lisätä %1$s?</string>
+    <string name="i_can_see">Näytä kartalla</string>
+    <string name="can_see_me">Saa nähdä minut</string>
+    <string name="your_lokki_id">Sinun Lokki ID on:</string>
+    <string name="version">Versio: %1$s</string>
+    <string name="i_agree">Olen lukenut ja hyväksyn</string>
+    <string name="continue_with_terms">Jatka</string>
+    <string name="welcome_title">Tervetuloa Lokkiin</string>
+    <string name="welcome_text"><![CDATA[ <b>Tervetuloa Lokkiin!</b><br/>Nyt voit nähdä missä ystäväsi ja perheenjäsenesi ovat kartalla! Voit valita ketkä näkevät missä olet ja piilottaa sijaintisi milloin tahansa.]]></string>
+
+    <string name="terms_text">
+                                <![CDATA[ Ennen kuin aloitat, sinun pitää hyväksyä seuraavat käyttöehdot:<br/><br/><br/>
+                              1. Olen lukenut palveluehdot ja hyväksyn ne.<br/><br/>
+                              2. Annan luvan henkilötietojeni keräämiseen ja käsittelemiseen.<br/><br/>
+                              3. Annan palvelulle luvan käsitellä ja näyttää tietoja sijainnistani.<br/><br/>
+                              4. Jos olen alle 15-vuotias, olen hankkinut vanhempieni luvan käyttää Lokkia näiden ehtojen mukaisesti.<br/><br/>
+                              5. Jos olen alle 13-vuotias ja asun Yhdysvalloissa, en saa käyttää Lokkia.<br/><br/><br/>]]>
+    </string>
+
+    <string name="terms_title">Käyttöehdot</string>
+    <string name="security_sign_up">Meidän täytyy valtuuttaa tilinne ennen rekisteröintiä. Seuraa ohjeita, jotka olemme lähettäneet osoitteeseen: %1$s</string>
+    <string name="title_activity_sign_up">Rekisteröidy</string>
+    <string name="sign_up_explanation">Kirjoita sähköpostiosoitteesi - muut Lokki käyttäjät löytävät sinut tällä osoitteella.</string>
+    <string name="type_your_email_address">Sinun sähköpostiosoite</string>
+    <string name="general_error">Tapahtui virhe. Yritä uudelleen myöhemmin.</string>
+    <string name="write_place_name">Anna paikalle nimi</string>
+    <string name="delete_place">Haluatko varmasti poistaa tämän paikan?</string>
+    <string name="will_be_deleted_from_places">poistetaan paikoistasi</string>
+    <string name="rename_place">Nimeä uudelleen %1$s?</string>
+    <string name="place_created">Paikka luotu</string>
+    <string name="place_removed">Paikka poistettu</string>
+    <string name="place_renamed">Paikka nimetty uudelleen</string>
+    <string name="place_limit_reached">Et voi luoda enempää paikkoja. Maksimiraja saavutettu.</string>
+    <string name="you_are_visible">Olet nyt NÄKYVISSÄ</string>
+    <string name="you_are_invisible">Olet nyt NÄKYMÄTÖN</string>
+    <string name="places_how_to_create">Luo uusi paikka painamalla haluamaasi sijaintia kartalla pitkään. Zoomaa karttaa paikan koon muuttamiseksi, syötä sitten paikan nimi ja paina OK.</string>
+    <string name="search_contacts">Etsi henkilöitä…</string>
+
+    <string name="map_mode_default">Oletus</string>
+    <string name="map_mode_satellite">Satelliitti</string>
+    <string name="map_mode_hybrid">Hybridi</string>
+
+    <string name="about_link_tell_a_friend">Kerro kaverille Lokista</string>
+    <string name="lokki_github_repo_link">https://github.com/TheSoftwareFactory/lokki-android/</string>
+    <string name="email_required">Sähköpostiosoite on pakollinen.</string>
+    <string name="required">Pakollinen</string>
+    <string name="place_name_already_in_use">Nimi on jo käytössä</string>
+    <string name="add_place">Lisää paikka</string>
+    <string name="gps_disabled">Lokki haluaa käyttää sijainiasi. Ota sijaintipalvelut käyttöön.</string>
+    <string name="ignore">Ohita</string>
+    <string name="location_services_disabled">Sijaintipalvelut poistettu käytöstä</string>
+    <string name="contact_added">Henkilö lisätty</string>
+    <string name="contact_email_address">Henkilön sähköpostiosoite</string>
+    <string name="add_email">Lisää email</string>
+    <string name="place_name">Paikan nimi</string>
+    <string name="seeing_contact_not_allowed">Henkilö ei ole antanut sinulle lupaa nähdä heidän sijaintiaan.</string>
+
+    <string name="analytics_category_ux">UX</string>
+    <string name="analytics_category_signup">Signup</string>
+
+    <string name="analytics_action_click">Click</string>
+    <string name="analytics_action_long_click">Long click</string>
+    <string name="analytics_action_started_by_client">Started by client</string>
+    <string name="analytics_action_backend_response">Backend response</string>
+
+    <string name="analytics_label_avatar_show_user">Avatar (show user in map)</string>
+    <string name="analytics_label_show_on_map_checkbox">\"Show on map\" contact checkbox</string>
+    <string name="analytics_label_can_see_me_checkbox">\"Can see me\" contact checkbox</string>
+    <string name="analytics_label_disabled_show_on_map_checkbox">Disabled \"Show on map\" contact checkbox</string>
+    <string name="analytics_label_contact_in_list">Contact in list</string>
+    <string name="analytics_label_confirm_contact_add_from_list_dialog">Confirm contact add from list dialog</string>
+    <string name="analytics_label_cancel_contact_add_from_list_dialog">Cancel contact add from list dialog</string>
+    <string name="analytics_label_search_contacts_textbox">\"Search contacts\" textbox</string>
+    <string name="analytics_label_clear_search_contacts_textbox_button">Clear \"Search contacts\" textbox button</string>
+    <string name="analytics_label_add_email_button">Add email button</string>
+    <string name="analytics_label_confirm_contact_add_from_email_dialog_successful">Confirm contact add from email dialog (checks successful)</string>
+    <string name="analytics_label_cancel_contact_add_from_email_dialog">Cancel contact add from email dialog</string>
+    <string name="analytics_label_successful">Successful</string>
+    <string name="analytics_label_unauthorized_error">Unauthorized error</string>
+    <string name="analytics_label_general_error">General error</string>
+    <string name="analytics_label_visibility_toggle">Visibility toggle</string>
+    <string name="analytics_label_add_place_overlay_activated">\"Add place\" overlay activated</string>
+    <string name="analytics_label_cancel_add_place_button">Cancel \"Add place\" button</string>
+    <string name="analytics_label_confirm_add_place_button">Confirm \"Add place\" button</string>
+    <string name="analytics_label_my_location_button">My location button</string>
+    <string name="analytics_label_cancel_name_new_place_dialog">Cancel name new place dialog</string>
+    <string name="analytics_label_confirm_name_new_place_dialog_successful">Confirm name new place dialog (checks successful)</string>
+    <string name="analytics_label_open_settings_from_location_disabled_dialog">Opened location settings from location disabled dialog</string>
+    <string name="analytics_label_ignore_location_disabled_dialog">Ignored location settings disabled dialog</string>
+    <string name="analytics_label_rename_place">Rename place</string>
+    <string name="analytics_label_delete_place">Delete place</string>
+    <string name="analytics_label_confirm_rename_place_dialog">Confirm rename place dialog</string>
+    <string name="analytics_label_cancel_rename_place_dialog">Cancel rename place dialog</string>
+    <string name="analytics_label_confirm_delete_place_dialog">Confirm delete place dialog</string>
+    <string name="analytics_label_cancel_delete_place_dialog">Cancel delete place dialog</string>
+
+</resources>

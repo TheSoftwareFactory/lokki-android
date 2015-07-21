@@ -18,7 +18,6 @@
     <string name="settings">Settings</string>
     <string name="delete">Delete</string>
     <string name="rename">Rename</string>
-    <string name="navigation_drawer">Navigation Drawer</string>
     <string name="welcome">Welcome</string>
     <string name="sign_up">Sign Up</string>
 
@@ -65,7 +64,7 @@
     <string name="place_limit_reached">You cannot create more places. Maximum limit reached.</string>
     <string name="you_are_visible">You are now VISIBLE</string>
     <string name="you_are_invisible">You are now INVISIBLE</string>
-    <string name="places_how_to_create">To create a new place go to the map and long press the location where to place is located. Then type a name and click OK.</string>
+    <string name="places_how_to_create">To create a new place go to the map and long press the location where to place is located. Zoom the map to change the locations size, type a name and click OK.</string>
     <string name="search_contacts">Search contacts…</string>
 
     <string name="map_mode_default">Default</string>
@@ -75,7 +74,7 @@
     <string name="about_link_tell_a_friend">Tell a friend about Lokki</string>
     <string name="lokki_github_repo_link">https://github.com/TheSoftwareFactory/lokki-android/</string>
     <string name="email_required">An email address is required.</string>
-    <string name="required">Required.</string>
+    <string name="required">Required</string>
     <string name="place_name_already_in_use">Name is already in use</string>
     <string name="add_place">Add place</string>
     <string name="gps_disabled">Lokki needs access to your location. Please turn on location access.</string>
