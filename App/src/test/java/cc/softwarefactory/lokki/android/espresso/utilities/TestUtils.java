@@ -22,6 +22,7 @@ public class TestUtils {
     public final static String VALUE_TEST_USER_ID = "a1b2c3d4e5f6g7h8i9j10k11l12m13n14o15p16q";
     public final static String VALUE_TEST_AUTH_TOKEN = "ABCDEFGHIJ";
     private static final String TAG = "TestUtils";
+    private static boolean value = true;
 
     public static void clearAppData(Context targetContext) {
         MainActivity.firstTimeLaunch = null;
@@ -36,6 +37,13 @@ public class TestUtils {
         PreferenceUtils.setString(targetContext, PreferenceUtils.KEY_USER_ACCOUNT, VALUE_TEST_USER_ACCOUNT);
         PreferenceUtils.setString(targetContext, PreferenceUtils.KEY_USER_ID, VALUE_TEST_USER_ID);
         PreferenceUtils.setString(targetContext, PreferenceUtils.KEY_AUTH_TOKEN, VALUE_TEST_AUTH_TOKEN);
+    }
+
+
+    public static boolean getLogoutValue(){
+        if(MainActivity.flag != null)
+            value = MainActivity.flag;
+        return value;
     }
 
     public static void toggleNavigationDrawer() {

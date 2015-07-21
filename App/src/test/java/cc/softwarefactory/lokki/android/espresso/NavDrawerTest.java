@@ -1,9 +1,12 @@
 package cc.softwarefactory.lokki.android.espresso;
 
+import android.support.test.espresso.action.ViewActions;
+
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.espresso.utilities.TestUtils;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.PositionAssertions.isLeftOf;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -50,6 +53,14 @@ public class NavDrawerTest extends LoggedInBaseTest {
         onView(allOf(withContentDescription("Lokki"), withParent(withId(R.id.toolbar_layout)), not(withText("Lokki"))))
                 .perform(click());
         onView(withId(R.id.drawer_layout)).check(matches(not(isClosed())));
+    }
+
+    public void testIfLogoutButtonWork() {
+        getActivity();
+        openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
+        onView(withText("logout")).perform(ViewActions.click());
+        boolean value = TestUtils.getLogoutValue();
+        assertEquals(true, value);
     }
 
 }

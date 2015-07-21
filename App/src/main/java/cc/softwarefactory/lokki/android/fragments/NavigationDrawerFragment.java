@@ -24,8 +24,12 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.androidquery.AQuery;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.avatar.AvatarLoader;
@@ -56,6 +60,9 @@ public class NavigationDrawerFragment extends Fragment {
 
     private int mCurrentSelectedNavDrawerListPosition = 1;
 
+    private TextView text;
+    private Timer t;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +78,24 @@ public class NavigationDrawerFragment extends Fragment {
         setHasOptionsMenu(true);
     }
 
+    //update the user name in textview
+    TimerTask timer= new TimerTask(){
+        @Override
+        public void run(){
+            if(getActivity() != null){
+                getActivity().runOnUiThread(new Runnable(){
+                    @Override
+                    public void run(){
+                        String s = PreferenceUtils.getString(getActivity(), PreferenceUtils.KEY_USER_ACCOUNT);
+                        text.setText(s);
+                    }
+                });
+            }
+        }
+
+    };
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mDrawerListView = (ListView) inflater.inflate(R.layout.fragment_navigation_drawer, container, false);
@@ -82,6 +107,11 @@ public class NavigationDrawerFragment extends Fragment {
         });
 
         mListViewHeader = inflater.inflate(R.layout.fragment_drawer_header, mDrawerListView, false);
+        //find the textview and updata
+        text = (TextView) mListViewHeader.findViewById(R.id.user_name);
+        t = new Timer();
+        t.scheduleAtFixedRate(timer, 0, 2000);
+
         mDrawerListView.addHeaderView(mListViewHeader, null, false);
         setUserInfo();
 

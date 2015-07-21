@@ -67,6 +67,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     // TODO: make non static, put in shared prefs
     public static Boolean firstTimeLaunch;
 
+    //used in test case
+    public static Boolean flag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -262,6 +264,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
             } else if (selectedOption == -10) { // Add contacts screen
                 getMenuInflater().inflate(R.menu.add_contact, menu);
             }
+            getMenuInflater().inflate(R.menu.main_activity_actions, menu);
+            menu.findItem(R.id.action_logout).setVisible(true);
         }
         return super.onPrepareOptionsMenu(menu);
     }
@@ -297,8 +301,28 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                 toggleVisibility();
                 break;
 
+            case R.id.action_logout:
+                logout();
+                break;
+
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void logout(){
+
+        PreferenceUtils pu = new PreferenceUtils();
+        pu.setString(this, PreferenceUtils.KEY_USER_ACCOUNT, null);
+        String uid = pu.getString(this, PreferenceUtils.KEY_USER_ACCOUNT);
+        if(uid == ""){
+            flag = true;}
+        else{
+            flag = false;}
+        Log.e(TAG, "test: " + flag);
+        Intent intent = new Intent(this, SignUpActivity.class);
+        startActivity(intent);
+
+
     }
 
     private void toggleVisibility() {

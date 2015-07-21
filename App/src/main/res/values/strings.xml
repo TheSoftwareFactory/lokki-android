@@ -124,5 +124,7 @@
     <string name="analytics_label_cancel_rename_place_dialog">Cancel rename place dialog</string>
     <string name="analytics_label_confirm_delete_place_dialog">Confirm delete place dialog</string>
     <string name="analytics_label_cancel_delete_place_dialog">Cancel delete place dialog</string>
+    <string name="logout">logout</string>
+
 
 </resources>
