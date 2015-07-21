@@ -1,0 +1,11 @@
+set timeout 20
+set kstorepwd [lindex $argv 0]
+set kpwd [lindex $argv 1]
+
+spawn ./gradlew clean assembleProductionRelease
+
+expect "kstorepwd:"
+send "$kstorepwd\n"
+expect "kpwd:"
+send "$kpwd\n"
+interact

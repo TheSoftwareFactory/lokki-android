@@ -103,3 +103,6 @@
 # Ignore invalid constant ref.  See
 # https://groups.google.com/d/topic/guava-discuss/YCZzeCiIVoI/discussion
 -dontwarn com.google.common.collect.MinMaxPriorityQueue
+
+# Unused RoundedImageView dependancies
+-dontwarn com.squareup.picasso.Transformation
