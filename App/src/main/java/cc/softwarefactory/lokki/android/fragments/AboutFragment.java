@@ -9,7 +9,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+//import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,7 +63,7 @@ public class AboutFragment extends Fragment {
             intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_text));
             startActivity(Intent.createChooser(intent, getString(R.string.share)));
         } catch (ActivityNotFoundException e) {
-            Log.e(TAG, "Couldn't open 'tell a friend about lokki' activity");
+            //Log.e(TAG, "Couldn't open 'tell a friend about lokki' activity");
         }
     }
 
@@ -71,7 +71,7 @@ public class AboutFragment extends Fragment {
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            Log.e(TAG, "onItemSelected: " + position + ", tag:" + parent.getTag());
+            //Log.e(TAG, "onItemSelected: " + position + ", tag:" + parent.getTag());
             String url = aboutLinksUrls[position];
 
             switch (position) {

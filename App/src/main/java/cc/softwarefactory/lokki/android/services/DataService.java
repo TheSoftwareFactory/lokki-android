@@ -12,7 +12,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
+//import android.util.Log;
 
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
@@ -35,9 +35,9 @@ public class DataService extends Service {
 
     public static void start(Context context) {
 
-        Log.e(TAG, "start Service called");
+        //Log.e(TAG, "start Service called");
         if (serviceRunning) { // If service is running, no need to start it again.
-            Log.e(TAG, "Service already running...");
+            //Log.e(TAG, "Service already running...");
             return;
         }
         context.startService(new Intent(context, DataService.class));
@@ -45,13 +45,13 @@ public class DataService extends Service {
 
     public static void stop(Context context) {
 
-        Log.e(TAG, "stop Service called");
+        //Log.e(TAG, "stop Service called");
         context.stopService(new Intent(context, DataService.class));
     }
 
     public static void getPlaces(Context context) {
 
-        Log.e(TAG, "getPlaces");
+        //Log.e(TAG, "getPlaces");
         Intent placesIntent = new Intent(context, DataService.class);
         placesIntent.putExtra(GET_PLACES, 1);
         context.startService(placesIntent);
@@ -59,7 +59,7 @@ public class DataService extends Service {
 
     public static void getDashboard(Context context) {
 
-        Log.e(TAG, "getDashboard");
+        //Log.e(TAG, "getDashboard");
         Intent placesIntent = new Intent(context, DataService.class);
         placesIntent.putExtra(ALARM_TIMER, 1);
         context.startService(placesIntent);
@@ -67,7 +67,7 @@ public class DataService extends Service {
 
     public static void updateDashboard(Location location) {
 
-        Log.e(TAG, "updateDashboard");
+        //Log.e(TAG, "updateDashboard");
         if (MainApplication.dashboard == null) {
             return;
         }
@@ -79,7 +79,7 @@ public class DataService extends Service {
             dashboardLocation.put("acc", location.getAccuracy());
             dashboardLocation.put("time", location.getTime());
             MainApplication.dashboard.put("location", dashboardLocation);
-            Log.e(TAG, "new Dashboard: " + MainApplication.dashboard);
+            //Log.e(TAG, "new Dashboard: " + MainApplication.dashboard);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -93,7 +93,7 @@ public class DataService extends Service {
     @Override
     public void onCreate() {
 
-        Log.e(TAG, "onCreate");
+        //Log.e(TAG, "onCreate");
         super.onCreate();
         setTimer();
         serviceRunning = true;
@@ -112,13 +112,13 @@ public class DataService extends Service {
         alarmIntent.putExtra(ALARM_TIMER, 1);
         alarmCallback = PendingIntent.getService(this, 0, alarmIntent, 0);
         alarm.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 0, 30 * 1000, alarmCallback);
-        Log.e(TAG, "Timer created.");
+        //Log.e(TAG, "Timer created.");
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        Log.e(TAG, "onStartCommand invoked");
+        //Log.e(TAG, "onStartCommand invoked");
 
         if (intent == null) {
             return START_STICKY;
@@ -140,20 +140,20 @@ public class DataService extends Service {
 
     private void getPlaces() {
 
-        Log.e(TAG, "getPlaces");
+        //Log.e(TAG, "getPlaces");
         ServerApi.getPlaces(this);
     }
 
     private void fetchDashboard() {
 
-        Log.e(TAG, "alarmCallback");
+        //Log.e(TAG, "alarmCallback");
         ServerApi.getDashboard(this);
     }
 
     @Override
     public void onDestroy() {
 
-        Log.e(TAG, "onDestroy");
+        //Log.e(TAG, "onDestroy");
         alarm.cancel(alarmCallback);
         serviceRunning = false;
         super.onDestroy();
