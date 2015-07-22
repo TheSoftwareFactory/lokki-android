@@ -9,7 +9,7 @@ import android.content.DialogInterface;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
-import android.util.Log;
+//import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
@@ -25,7 +25,7 @@ public class DialogUtils {
 
     public static void securitySignUp(final Context context) {
 
-        Log.e(TAG, "securitySignUp");
+        //Log.e(TAG, "securitySignUp");
         String title = context.getString(R.string.app_name);
         String message = context.getString(R.string.security_sign_up, MainApplication.userAccount);
         showDialog(context, title, message);
@@ -33,7 +33,7 @@ public class DialogUtils {
 
     public static void generalError(final Context context) {
 
-        Log.e(TAG, "generalError");
+        //Log.e(TAG, "generalError");
         showDialog(context, R.string.app_name, R.string.general_error);
     }
 

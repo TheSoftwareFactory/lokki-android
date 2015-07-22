@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.test.espresso.NoMatchingViewException;
-import android.util.Log;
+//import android.util.Log;
 
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.activities.MainActivity;
@@ -47,7 +47,7 @@ public class TestUtils {
         try {
             onView(withText(R.string.ignore)).perform(click());
         } catch (NoMatchingViewException e) {
-            Log.e(TAG, "No location disabled dialog");
+            //Log.e(TAG, "No location disabled dialog");
         }
     }
 

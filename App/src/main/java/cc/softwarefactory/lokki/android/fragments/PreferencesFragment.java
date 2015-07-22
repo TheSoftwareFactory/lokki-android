@@ -4,7 +4,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.preference.PreferenceFragment;
 import android.preference.ListPreference;
-import android.util.Log;
+//import android.util.Log;
 
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
@@ -38,7 +38,7 @@ public class PreferencesFragment extends PreferenceFragment implements SharedPre
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        Log.e(TAG, "onSharedPreferenceChanged key: " + key);
+        //Log.e(TAG, "onSharedPreferenceChanged key: " + key);
         if (key.equals(PreferenceUtils.KEY_SETTING_MAP_MODE)) {
             AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
                     getString(R.string.analytics_action_click),
