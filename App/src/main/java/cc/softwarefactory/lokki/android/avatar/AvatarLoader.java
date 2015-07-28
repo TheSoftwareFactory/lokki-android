@@ -8,7 +8,7 @@ package cc.softwarefactory.lokki.android.avatar;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
-import android.util.Log;
+//import android.util.Log;
 import android.widget.ImageView;
 
 import cc.softwarefactory.lokki.android.utilities.Utils;
@@ -26,12 +26,12 @@ public class AvatarLoader {
     }
 
     public void load(String email, ImageView imageView) {
-        Log.e(TAG, "1) load: " + email);
+        //Log.e(TAG, "1) load: " + email);
         if (!cancelPotentialWork(email, imageView)) {
             return;
         }
 
-        Log.e(TAG, "load: Creating new task");
+        //Log.e(TAG, "load: Creating new task");
         final BitmapWorkerTask task = new BitmapWorkerTask(imageView);
         final WeakReference<BitmapWorkerTask> taskReference = new WeakReference<>(task);
         imageView.setTag(taskReference);
@@ -52,7 +52,7 @@ public class AvatarLoader {
         @Override
         protected Bitmap doInBackground(String... params) {
 
-            Log.e(TAG, "BitmapWorkerTask: doInBackground: " + params[0]);
+            //Log.e(TAG, "BitmapWorkerTask: doInBackground: " + params[0]);
             data = params[0];
             return processData(data);
         }
@@ -61,7 +61,7 @@ public class AvatarLoader {
         @Override
         protected void onPostExecute(Bitmap bitmap) {
 
-            Log.e(TAG, "BitmapWorkerTask: onPostExecute");
+            //Log.e(TAG, "BitmapWorkerTask: onPostExecute");
             if (isCancelled()) {
                 return;
             }
@@ -82,7 +82,7 @@ public class AvatarLoader {
 
     private Bitmap processData(String email) {
 
-        Log.e(TAG, "processData");
+        //Log.e(TAG, "processData");
         return Utils.getPhotoFromEmail(context, email);
     }
 
@@ -91,16 +91,16 @@ public class AvatarLoader {
         BitmapWorkerTask task = getTaskFromView(imageView);
 
         if (task == null) {
-            Log.e(TAG, "cancelPotentialWork: No task associated with the ImageView, or an existing task was cancelled"); // No task associated with the ImageView, or an existing task was cancelled
+            //Log.e(TAG, "cancelPotentialWork: No task associated with the ImageView, or an existing task was cancelled"); // No task associated with the ImageView, or an existing task was cancelled
             return true;
         }
 
         if (!task.data.equals(data)) {
-            Log.e(TAG, "cancelPotentialWork: Cancel previous task"); // Cancel previous task
+            //Log.e(TAG, "cancelPotentialWork: Cancel previous task"); // Cancel previous task
             task.cancel(true);
             return true;
         }
-        Log.e(TAG, "cancelPotentialWork: The same work is already in progress"); // The same work is already in progress
+        //Log.e(TAG, "cancelPotentialWork: The same work is already in progress"); // The same work is already in progress
         return false;
     }
 

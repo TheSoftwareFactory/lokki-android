@@ -26,7 +26,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.util.DisplayMetrics;
-import android.util.Log;
+//import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -106,7 +106,7 @@ public class MapViewFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) { // This method guarantees that the fragment is loaded in the parent activity!
 
-        Log.e(TAG, "onActivityCreated");
+        //Log.e(TAG, "onActivityCreated");
         super.onActivityCreated(savedInstanceState);
 
         FragmentManager fm = getChildFragmentManager();
@@ -121,14 +121,14 @@ public class MapViewFragment extends Fragment {
     @Override
     public void onResume() { // onResume is called after onActivityCreated, when the fragment is loaded 100%
 
-        Log.e(TAG, "onResume");
+        //Log.e(TAG, "onResume");
         super.onResume();
         if (map == null) {
-            Log.e(TAG, "Map null. creating it.");
+            //Log.e(TAG, "Map null. creating it.");
             setUpMap();
             setupAddPlacesOverlay();
         } else {
-            Log.e(TAG, "Map already exists. Nothing to do.");
+            //Log.e(TAG, "Map already exists. Nothing to do.");
         }
 
         LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver, new IntentFilter("LOCATION-UPDATE"));
@@ -322,7 +322,7 @@ public class MapViewFragment extends Fragment {
 
     private void removeMarkers() {
 
-        Log.e(TAG, "removeMarkers");
+        //Log.e(TAG, "removeMarkers");
         for (Marker m : markerMap.values()) {
             m.remove();
         }
@@ -339,7 +339,7 @@ public class MapViewFragment extends Fragment {
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.e(TAG, "BroadcastReceiver onReceive");
+            //Log.e(TAG, "BroadcastReceiver onReceive");
             Bundle extras = intent.getExtras();
             if (extras == null || !extras.containsKey("current-location")) {
                 new UpdateMap().execute(MapUserTypes.All);
@@ -350,14 +350,14 @@ public class MapViewFragment extends Fragment {
     private BroadcastReceiver placesUpdateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.e(TAG, "placesUpdateReceiver onReceive");
+            //Log.e(TAG, "placesUpdateReceiver onReceive");
             updatePlaces();
         }
     };
 
     private void updatePlaces() {
 
-        Log.e(TAG, "updatePlaces");
+        //Log.e(TAG, "updatePlaces");
         if (map == null) {
             return;
         }
@@ -383,7 +383,7 @@ public class MapViewFragment extends Fragment {
 
     private void removePlaces() {
 
-        Log.e(TAG, "removePlaces");
+        //Log.e(TAG, "removePlaces");
         for (Circle circle : placesOverlay) {
             circle.remove();
         }
@@ -400,7 +400,7 @@ public class MapViewFragment extends Fragment {
             }
 
             MapUserTypes who = params[0];
-            Log.e(TAG, "UpdateMap update for all users: " + who);
+            //Log.e(TAG, "UpdateMap update for all users: " + who);
 
             try {
                 JSONObject iCanSee = MainApplication.dashboard.getJSONObject("icansee");
@@ -418,14 +418,14 @@ public class MapViewFragment extends Fragment {
                         JSONObject data = iCanSee.getJSONObject(key);
                         JSONObject location = data.getJSONObject("location");
                         String email = (String) idMapping.get(key);
-                        Log.e(TAG, "I can see: " + email + " => " + data);
+                        //Log.e(TAG, "I can see: " + email + " => " + data);
 
                         if (MainApplication.iDontWantToSee != null && MainApplication.iDontWantToSee.has(email)) {
-                            Log.e(TAG, "I dont want to see: " + email);
+                            //Log.e(TAG, "I dont want to see: " + email);
                         } else {
                             Location loc = convertToLocation(location);
                             if (loc == null) {
-                                Log.e(TAG, "No location could be parsed for: " + email);
+                                //Log.e(TAG, "No location could be parsed for: " + email);
                             }
                             markerData.put(email, loc);
                         }
@@ -442,11 +442,11 @@ public class MapViewFragment extends Fragment {
         @Override
         protected void onPostExecute(HashMap<String, Location> markerDataResult) {
 
-            Log.e(TAG, "cancelAsyncTasks: " + cancelAsyncTasks);
+            //Log.e(TAG, "cancelAsyncTasks: " + cancelAsyncTasks);
             super.onPostExecute(markerDataResult);
             if (markerDataResult != null && !cancelAsyncTasks && isAdded()) {
                 for (String email : markerDataResult.keySet()) {
-                    Log.e(TAG, "marker to update: " + email);
+                    //Log.e(TAG, "marker to update: " + email);
                     if (markerDataResult.get(email) != null) {
                         new LoadMarkerAsync(markerDataResult.get(email), email).execute();
                     }
@@ -504,18 +504,18 @@ public class MapViewFragment extends Fragment {
 
     private Bitmap getMarkerBitmap(String email, Boolean accurate, Boolean recent) {
 
-        Log.e(TAG, "getMarkerBitmap");
+        //Log.e(TAG, "getMarkerBitmap");
 
         // Add cache checking logic
         Bitmap markerImage = MainApplication.avatarCache.get(email + ":" + accurate + ":" + recent);
         if (markerImage != null) {
-            Log.e(TAG, "Marker IN cache: " + email + ":" + accurate + ":" + recent);
+            //Log.e(TAG, "Marker IN cache: " + email + ":" + accurate + ":" + recent);
             return markerImage;
         } else {
-            Log.e(TAG, "Marker NOT in cache. Processing: " + email + ":" + accurate + ":" + recent);
+            //Log.e(TAG, "Marker NOT in cache. Processing: " + email + ":" + accurate + ":" + recent);
         }
 
-        Log.e(TAG, "AvatarLoader not in cache. Fetching it. Email: " + email);
+        //Log.e(TAG, "AvatarLoader not in cache. Fetching it. Email: " + email);
         // Get avatars
         Bitmap userImage = Utils.getPhotoFromEmail(context, email);
         if (userImage == null) {
@@ -525,12 +525,12 @@ public class MapViewFragment extends Fragment {
         }
 
         // Marker colors, etc.
-        Log.e(TAG, "userImage size: " + userImage);
+        //Log.e(TAG, "userImage size: " + userImage);
         View markerView = ((LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.map_marker, null);
 
         aq = new AQuery(markerView);
         aq.id(R.id.user_image).image(userImage);
-        Log.e(TAG, "aq in place");
+        //Log.e(TAG, "aq in place");
 
         if (email.equals(MainApplication.userAccount)) {
             aq.id(R.id.marker_frame).image(R.drawable.pointers_android_pointer_green);
@@ -538,7 +538,7 @@ public class MapViewFragment extends Fragment {
             aq.id(R.id.marker_frame).image(R.drawable.pointers_android_pointer_orange);
         }
 
-        Log.e(TAG, "Image set. Calling createDrawableFromView");
+        //Log.e(TAG, "Image set. Calling createDrawableFromView");
 
         markerImage = createDrawableFromView(markerView);
         MainApplication.avatarCache.put(email + ":" + accurate + ":" + recent, markerImage);
@@ -548,7 +548,7 @@ public class MapViewFragment extends Fragment {
     // Convert a view to bitmap
     private Bitmap createDrawableFromView(View view) {
 
-        Log.e(TAG, "createDrawableFromView");
+        //Log.e(TAG, "createDrawableFromView");
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         view.setLayoutParams(new WindowManager.LayoutParams(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT));
@@ -585,7 +585,7 @@ public class MapViewFragment extends Fragment {
             if (position == null || email == null) {
                 return null;
             }
-            Log.e(TAG, "LoadMarkerAsync - Email: " + email + ", Position: " + position);
+            //Log.e(TAG, "LoadMarkerAsync - Email: " + email + ", Position: " + position);
             latLng = new LatLng(position.getLatitude(), position.getLongitude());
             time = String.valueOf(position.getTime());
             accurate = Math.round(position.getAccuracy()) < 100;
@@ -609,23 +609,23 @@ public class MapViewFragment extends Fragment {
             Marker marker = markerMap.get(email);
             Boolean isNew = false;
             if (marker != null) {
-                Log.e(TAG, "onPostExecute - updating marker: " + email);
+                //Log.e(TAG, "onPostExecute - updating marker: " + email);
                 marker.setPosition(latLng);
                 marker.setSnippet(time);
                 marker.setIcon(BitmapDescriptorFactory.fromBitmap(bitmapResult));
 
             } else {
-                Log.e(TAG, "onPostExecute - creating marker: " + email);
+                //Log.e(TAG, "onPostExecute - creating marker: " + email);
                 marker = map.addMarker(new MarkerOptions().position(latLng).title(email).snippet(time).icon(BitmapDescriptorFactory.fromBitmap(bitmapResult)));
-                Log.e(TAG, "onPostExecute - marker created");
+                //Log.e(TAG, "onPostExecute - marker created");
                 markerMap.put(email, marker);
-                Log.e(TAG, "onPostExecute - marker in map stored. markerMap: " + markerMap.size());
+                //Log.e(TAG, "onPostExecute - marker in map stored. markerMap: " + markerMap.size());
                 isNew = true;
             }
 
             if (marker.getTitle().equals(MainApplication.emailBeingTracked)) {
                 marker.showInfoWindow();
-                Log.e(TAG, "onPostExecute - showInfoWindow open");
+                //Log.e(TAG, "onPostExecute - showInfoWindow open");
                 if (isNew) {
                     map.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 16));
                 } else {
@@ -650,9 +650,9 @@ public class MapViewFragment extends Fragment {
     @Override
     public void onLowMemory() {
         super.onLowMemory();
-        Log.e(TAG, "---------------------------------------------------------");
-        Log.e(TAG, "onLowMemory");
-        Log.e(TAG, "---------------------------------------------------------");
+        //Log.e(TAG, "---------------------------------------------------------");
+        //Log.e(TAG, "onLowMemory");
+        //Log.e(TAG, "---------------------------------------------------------");
         startActivityForResult(new Intent(context, FirstTimeActivity.class), -1);
     }
 
