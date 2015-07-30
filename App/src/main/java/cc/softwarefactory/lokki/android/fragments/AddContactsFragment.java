@@ -88,7 +88,7 @@ public class AddContactsFragment extends Fragment {
         }
         loadContacts();
         enableSearchFilter();
-        AnalyticsUtils.screenHit(getString(R.string.add_contacts));
+        AnalyticsUtils.screenHit(getString(R.string.analytics_screen_add_contacts));
     }
 
     private void loadContacts() {

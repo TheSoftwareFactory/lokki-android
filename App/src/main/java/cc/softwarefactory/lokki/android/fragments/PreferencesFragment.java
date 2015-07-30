@@ -27,7 +27,7 @@ public class PreferencesFragment extends PreferenceFragment implements SharedPre
     public void onResume() {
         super.onResume();
         getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
-        AnalyticsUtils.screenHit(getString(R.string.settings));
+        AnalyticsUtils.screenHit(getString(R.string.analytics_screen_settings));
     }
 
     @Override

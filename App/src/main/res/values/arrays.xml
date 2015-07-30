@@ -28,8 +28,8 @@
     </string-array>
 
     <string-array name="about_links_url">
-        <item>@string/lokki_github_repo_link</item>
-        <item>@string/lokki_github_repo_link</item>
+        <item>@string/lokki_github_io_link</item>
+        <item>@string/lokki_play_store_link</item>
         <item>@string/about_link_tell_a_friend</item>
     </string-array>
 

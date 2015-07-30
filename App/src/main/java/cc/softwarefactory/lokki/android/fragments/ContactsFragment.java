@@ -77,7 +77,7 @@ public class ContactsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        AnalyticsUtils.screenHit(getString(R.string.contacts));
+        AnalyticsUtils.screenHit(getString(R.string.analytics_screen_contacts));
     }
 
     private void getPeopleThatCanSeeMe() {
