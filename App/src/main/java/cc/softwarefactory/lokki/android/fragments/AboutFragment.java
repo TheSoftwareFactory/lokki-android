@@ -52,7 +52,7 @@ public class AboutFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        AnalyticsUtils.screenHit(getString(R.string.about));
+        AnalyticsUtils.screenHit(getString(R.string.analytics_screen_about));
     }
 
     private void openTellAFriendActivity() {

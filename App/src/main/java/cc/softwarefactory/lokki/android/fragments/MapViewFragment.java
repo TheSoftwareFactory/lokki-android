@@ -141,7 +141,7 @@ public class MapViewFragment extends Fragment {
         if (MainApplication.places != null) {
             updatePlaces();
         }
-        AnalyticsUtils.screenHit(getString(R.string.map));
+        AnalyticsUtils.screenHit(getString(R.string.analytics_screen_map));
     }
 
     private void checkLocationServiceStatus() {

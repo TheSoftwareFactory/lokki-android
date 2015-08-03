@@ -81,7 +81,7 @@ public class PlacesFragment extends Fragment {
         super.onResume();
         LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver, new IntentFilter("PLACES-UPDATE"));
         LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver, new IntentFilter("LOCATION-UPDATE"));
-        AnalyticsUtils.screenHit(getString(R.string.places));
+        AnalyticsUtils.screenHit(getString(R.string.analytics_screen_places));
     }
 
     @Override

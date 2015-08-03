@@ -68,7 +68,7 @@ public class SignUpActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        AnalyticsUtils.screenHit(getResources().getString(R.string.sign_up));
+        AnalyticsUtils.screenHit(getResources().getString(R.string.analytics_screen_sign_up));
     }
 
     @Override

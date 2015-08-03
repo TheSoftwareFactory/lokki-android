@@ -26,7 +26,7 @@
     <string name="send_feedback">Send feedback</string>
     <string name="share">Tell your friends about this app</string>
     <string name="share_subject">Join me on Lokki!</string>
-    <string name="share_text">Hi! I\'m using Lokki, the private location sharing app that\'s easy, secure, and free. Go to https://github.com/TheSoftwareFactory/lokki-android/ to install it.</string>
+    <string name="share_text">Hi! I\'m using Lokki, the private location sharing app that\'s easy, secure, and free. Go to https://play.google.com/store/apps/details?id=cc.softwarefactory.lokki.android to install it.</string>
     <string name="add_contacts">Add contacts</string>
     <string name="add_contact">Add contact</string>
     <string name="add_contact_dialog_save">Do you want to add %1$s?</string>
@@ -37,7 +37,7 @@
     <string name="i_agree">I have read and I agree</string>
     <string name="continue_with_terms">Continue</string>
     <string name="welcome_title">Welcome to Lokki</string>
-    <string name="welcome_text"><![CDATA[ <b>Welcome to Lokki 4.0!</b><br/>Now you can see where your friends and family members are on a map. You choose who can see where you are, and you can hide your location whenever you want.]]></string>
+    <string name="welcome_text"><![CDATA[ <b>Welcome to Lokki!</b><br/>Now you can see where your friends and family members are on a map. You choose who can see where you are, and you can hide your location whenever you want.]]></string>
 
     <string name="terms_text">
                                 <![CDATA[ Before you get started, you need to agree to the following terms:<br/><br/><br/>
@@ -72,7 +72,6 @@
     <string name="map_mode_hybrid">Hybrid</string>
 
     <string name="about_link_tell_a_friend">Tell a friend about Lokki</string>
-    <string name="lokki_github_repo_link">https://github.com/TheSoftwareFactory/lokki-android/</string>
     <string name="email_required">An email address is required.</string>
     <string name="required">Required</string>
     <string name="place_name_already_in_use">Name is already in use</string>
@@ -85,6 +84,19 @@
     <string name="add_email">Add email</string>
     <string name="place_name">Place Name</string>
     <string name="seeing_contact_not_allowed">The contact has not allowed you to see their location.</string>
+
+    <string translatable="false" name="lokki_github_repo_link">https://github.com/TheSoftwareFactory/lokki-android/</string>
+    <string translatable="false" name="lokki_github_io_link">https://thesoftwarefactory.github.io/lokki/</string>
+    <string translatable="false" name="lokki_play_store_link">market://details?id=cc.softwarefactory.lokki.android</string>
+
+    <string translatable="false" name="analytics_screen_welcome">Welcome</string>
+    <string translatable="false" name="analytics_screen_sign_up">Sign Up</string>
+    <string translatable="false" name="analytics_screen_map">Map</string>
+    <string translatable="false" name="analytics_screen_places">Places</string>
+    <string translatable="false" name="analytics_screen_contacts">Contacts</string>
+    <string translatable="false" name="analytics_screen_add_contacts">Add contacts</string>
+    <string translatable="false" name="analytics_screen_about">About</string>
+    <string translatable="false" name="analytics_screen_settings">Settings</string>
 
     <string translatable="false" name="analytics_category_ux">UX</string>
     <string translatable="false" name="analytics_category_signup">Signup</string>

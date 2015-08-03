@@ -31,6 +31,7 @@ public class DefaultContactDataSource implements ContactDataSource {
                 continue;
             }
 
+            email = email.toLowerCase();
             try {
                 int i = 2;
                 String newName = name = name.substring(0, 1).toUpperCase() + name.substring(1);

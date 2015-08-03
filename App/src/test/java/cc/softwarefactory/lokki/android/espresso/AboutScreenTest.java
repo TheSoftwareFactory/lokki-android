@@ -45,7 +45,7 @@ public class AboutScreenTest extends LoggedInBaseTest {
 
     public void testHelpPageIsLoadedWhenHelpButtonIsClicked() {
         enterAboutScreen();
-        String urlString = getResources().getString(R.string.lokki_github_repo_link);
+        String urlString = getResources().getString(R.string.lokki_github_io_link);
         IntentFilter filter = getIntentFilterFromUri(urlString);
         Instrumentation.ActivityMonitor monitor = getInstrumentation().addMonitor(filter, null, true);
         assertEquals(0, monitor.getHits());
@@ -56,7 +56,7 @@ public class AboutScreenTest extends LoggedInBaseTest {
 
     public void testFeedbackPageIsLoadedWhenFeedbackButtonIsClicked() {
         enterAboutScreen();
-        String urlString = getResources().getString(R.string.lokki_github_repo_link);
+        String urlString = getResources().getString(R.string.lokki_play_store_link);
         IntentFilter filter = getIntentFilterFromUri(urlString);
         Instrumentation.ActivityMonitor monitor = getInstrumentation().addMonitor(filter, null, true);
         assertEquals(0, monitor.getHits());

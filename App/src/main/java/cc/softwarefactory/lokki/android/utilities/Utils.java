@@ -124,7 +124,7 @@ public class Utils {
         }
 
         Log.e(TAG, "getNameFromEmail - Name queried: " + email);
-        Cursor emailCursor = context.getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null, ContactsContract.CommonDataKinds.Email.DATA + "='" + email + "'", null, null);
+        Cursor emailCursor = context.getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null, "lower(" + ContactsContract.CommonDataKinds.Email.DATA + ")=lower('" + email + "')", null, null);
         if (emailCursor == null) {
             return "???";
         }
@@ -159,7 +159,7 @@ public class Utils {
             }
         } else {
             Log.e(TAG, "getPhotoFromEmail - id queried: " + email);
-            Cursor emailCursor = context.getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null, ContactsContract.CommonDataKinds.Email.DATA + "='" + email + "'", null, null);
+            Cursor emailCursor = context.getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null, "lower(" + ContactsContract.CommonDataKinds.Email.DATA + ")=lower('" + email + "')", null, null);
             while (emailCursor != null && emailCursor.moveToNext()) {
                 Long contactId = Long.valueOf(emailCursor.getString(emailCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.CONTACT_ID)));
                 result = openPhoto(context, contactId);

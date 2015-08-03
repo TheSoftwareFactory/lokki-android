@@ -26,7 +26,7 @@
     <string name="send_feedback">Lähetä palautetta</string>
     <string name="share">Kerro ystävillesi tästä sovelluksesta!</string>
     <string name="share_subject">Liity seuraani Lokkiin!</string>
-    <string name="share_text">Hei! Käytän Lokkia. Sen avulla voin kertoa yksityisesti, helposti, turvallisesti ja ilmaiseksi, missä olen menossa. Voit asentaa sovelluksen osoitteesta https://github.com/TheSoftwareFactory/lokki-android/</string>
+    <string name="share_text">Hei! Käytän Lokkia. Sen avulla voin kertoa yksityisesti, helposti, turvallisesti ja ilmaiseksi, missä olen menossa. Voit asentaa sovelluksen osoitteesta https://play.google.com/store/apps/details?id=cc.softwarefactory.lokki.android</string>
     <string name="add_contacts">Lisää henkilöitä</string>
     <string name="add_contact">Lisää henkilö</string>
     <string name="add_contact_dialog_save">Haluatko lisätä %1$s?</string>
@@ -72,12 +72,11 @@
     <string name="map_mode_hybrid">Hybridi</string>
 
     <string name="about_link_tell_a_friend">Kerro kaverille Lokista</string>
-    <string name="lokki_github_repo_link">https://github.com/TheSoftwareFactory/lokki-android/</string>
     <string name="email_required">Sähköpostiosoite on pakollinen.</string>
     <string name="required">Pakollinen</string>
     <string name="place_name_already_in_use">Nimi on jo käytössä</string>
     <string name="add_place">Lisää paikka</string>
-    <string name="gps_disabled">Lokki haluaa käyttää sijainiasi. Ota sijaintipalvelut käyttöön.</string>
+    <string name="gps_disabled">Lokki haluaa käyttää sijaintiasi. Ota sijaintipalvelut käyttöön.</string>
     <string name="ignore">Ohita</string>
     <string name="location_services_disabled">Sijaintipalvelut poistettu käytöstä</string>
     <string name="contact_added">Henkilö lisätty</string>
