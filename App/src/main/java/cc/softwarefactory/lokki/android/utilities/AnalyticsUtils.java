@@ -9,6 +9,7 @@ import com.google.android.gms.analytics.Tracker;
 
 public class AnalyticsUtils {
     private static Tracker tracker;
+    private static GoogleAnalytics analytics;
 
     public static void initAnalytics(Context context) {
         int globalTrackerConfigXmlId = context.getResources().getIdentifier("analytics_global_tracker_config", "xml", context.getPackageName());
@@ -16,7 +17,11 @@ public class AnalyticsUtils {
             tracker = null;
             return;
         }
-        tracker = GoogleAnalytics.getInstance(context).newTracker(globalTrackerConfigXmlId);
+        analytics = GoogleAnalytics.getInstance(context);
+        // Google Analytics uses "true" value to disable analytics,
+        // whereas Lokki uses "true" to enable analytics (to work well with CheckBoxes)
+        analytics.setAppOptOut(!PreferenceUtils.getBoolean(context, PreferenceUtils.KEY_SETTING_ANALYTICS_OPT_IN));
+        tracker = analytics.newTracker(globalTrackerConfigXmlId);
         tracker.set("&uid", Utils.getDeviceId());
     }
 
@@ -55,6 +60,12 @@ public class AnalyticsUtils {
 
     public static void eventHit(String category, String action) {
         eventHit(category, action, null, -1);
+    }
+
+    public static void setAnalyticsOptIn(boolean optInState) {
+        // Google Analytics uses "true" value to disable analytics,
+        // whereas Lokki uses "true" to enable analytics (to work well with CheckBoxes)
+        analytics.setAppOptOut(!optInState);
     }
 
 }

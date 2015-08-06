@@ -45,9 +45,9 @@ public class MainApplication extends Application {
 
         Log.e(TAG, "Lokki started component");
 
-        AnalyticsUtils.initAnalytics(getApplicationContext());
-
         loadSetting();
+
+        AnalyticsUtils.initAnalytics(getApplicationContext());
 
         locationDisabledPromptShown = false;
 

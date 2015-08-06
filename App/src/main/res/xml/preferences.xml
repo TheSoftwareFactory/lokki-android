@@ -1,20 +1,30 @@
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-        <SwitchPreference
-            android:key="settingVisibility"
-            android:title="@string/visibility"
-            android:defaultValue="true"
-            android:summaryOn="@string/you_are_visible"
-            android:summaryOff="@string/you_are_invisible" />
+    <SwitchPreference
+        android:key="settingVisibility"
+        android:title="@string/visibility"
+        android:defaultValue="true"
+        android:summaryOn="@string/you_are_visible"
+        android:summaryOff="@string/you_are_invisible" />
 
-        <ListPreference
-            android:key="settingMapMode"
-            android:title="@string/map_mode"
-            android:summary="%s"
-            android:entries="@array/map_modes"
-            android:entryValues="@array/map_mode_values"
-            android:defaultValue="0"
-            android:dialogTitle="@string/map_mode" />
+    <ListPreference
+        android:key="settingMapMode"
+        android:title="@string/map_mode"
+        android:summary="%s"
+        android:entries="@array/map_modes"
+        android:entryValues="@array/map_mode_values"
+        android:defaultValue="0"
+        android:dialogTitle="@string/map_mode" />
+
+    <CheckBoxPreference
+        android:key="settingAnalyticsOptIn"
+        android:title="@string/send_anonymous_usage_data"
+        android:defaultValue="true" />
+
+    <CheckBoxPreference
+        android:key="settingExperimentsOptIn"
+        android:title="@string/receive_experimental_features"
+        android:defaultValue="true" />
 
 </PreferenceScreen>
