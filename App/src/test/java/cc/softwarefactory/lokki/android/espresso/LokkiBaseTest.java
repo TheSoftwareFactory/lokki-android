@@ -1,10 +1,12 @@
 package cc.softwarefactory.lokki.android.espresso;
 
 import android.content.res.Resources;
+import android.preference.PreferenceManager;
 import android.test.ActivityInstrumentationTestCase2;
 
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 
+import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.activities.MainActivity;
 import cc.softwarefactory.lokki.android.espresso.utilities.MockDispatcher;
 import cc.softwarefactory.lokki.android.espresso.utilities.TestUtils;
@@ -31,6 +33,7 @@ public abstract class LokkiBaseTest extends ActivityInstrumentationTestCase2<Mai
     public void setUp() throws Exception {
         super.setUp();
         TestUtils.clearAppData(getInstrumentation().getTargetContext());
+        PreferenceManager.setDefaultValues(getInstrumentation().getTargetContext(), R.xml.preferences, true);
 
         mockWebServer = new MockWebServer();
         mockDispatcher = new MockDispatcher();

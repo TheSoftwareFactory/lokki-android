@@ -12,12 +12,12 @@ public class AnalyticsUtils {
     private static GoogleAnalytics analytics;
 
     public static void initAnalytics(Context context) {
+        analytics = GoogleAnalytics.getInstance(context);
         int globalTrackerConfigXmlId = context.getResources().getIdentifier("analytics_global_tracker_config", "xml", context.getPackageName());
         if (globalTrackerConfigXmlId == 0) {
             tracker = null;
             return;
         }
-        analytics = GoogleAnalytics.getInstance(context);
         // Google Analytics uses "true" value to disable analytics,
         // whereas Lokki uses "true" to enable analytics (to work well with CheckBoxes)
         analytics.setAppOptOut(!PreferenceUtils.getBoolean(context, PreferenceUtils.KEY_SETTING_ANALYTICS_OPT_IN));
