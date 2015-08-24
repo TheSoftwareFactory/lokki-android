@@ -11,13 +11,15 @@ public class PreferenceUtils {
     public static final String KEY_USER_ACCOUNT = "userAccount";
     public static final String KEY_USER_ID = "userId";
     public static final String KEY_CONTACTS = "contacts";
-    public static final String KEY_SETTING_VISIBILITY = "settingVisibility";
     public static final String KEY_I_DONT_WANT_TO_SEE = "iDontWantToSee";
     public static final String KEY_DEVICE_ID = "deviceId";
     public static final String KEY_DASHBOARD = "dashboard";
     public static final String KEY_PLACES = "places";
-    public static final String KEY_SETTING_MAP_MODE = "settingMapMode";
     public static final String KEY_LOCAL_CONTACTS = "localContacts";
+    public static final String KEY_SETTING_VISIBILITY = "settingVisibility";
+    public static final String KEY_SETTING_MAP_MODE = "settingMapMode";
+    public static final String KEY_SETTING_ANALYTICS_OPT_IN = "settingAnalyticsOptIn";
+    public static final String KEY_SETTING_EXPERIMENTS_OPT_IN = "settingExperimentsOptIn";
 
     /**
      * Get a string value from default shared preferences

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string translatable="false" name="analytics_screen_welcome">Welcome</string>
+    <string translatable="false" name="analytics_screen_sign_up">Sign Up</string>
+    <string translatable="false" name="analytics_screen_map">Map</string>
+    <string translatable="false" name="analytics_screen_places">Places</string>
+    <string translatable="false" name="analytics_screen_contacts">Contacts</string>
+    <string translatable="false" name="analytics_screen_add_contacts">Add contacts</string>
+    <string translatable="false" name="analytics_screen_about">About</string>
+    <string translatable="false" name="analytics_screen_settings">Settings</string>
+
+    <string translatable="false" name="analytics_category_ux">UX</string>
+    <string translatable="false" name="analytics_category_signup">Signup</string>
+    <string translatable="false" name="analytics_category_settings">Settings</string>
+
+    <string translatable="false" name="analytics_action_click">Click</string>
+    <string translatable="false" name="analytics_action_long_click">Long click</string>
+    <string translatable="false" name="analytics_action_started_by_client">Started by client</string>
+    <string translatable="false" name="analytics_action_backend_response">Backend response</string>
+    <string translatable="false" name="analytics_action_change">Change</string>
+
+    <string translatable="false" name="analytics_label_avatar_show_user">Avatar (show user in map)</string>
+    <string translatable="false" name="analytics_label_show_on_map_checkbox">\"Show on map\" contact checkbox</string>
+    <string translatable="false" name="analytics_label_can_see_me_checkbox">\"Can see me\" contact checkbox</string>
+    <string translatable="false" name="analytics_label_disabled_show_on_map_checkbox">Disabled \"Show on map\" contact checkbox</string>
+    <string translatable="false" name="analytics_label_contact_in_list">Contact in list</string>
+    <string translatable="false" name="analytics_label_confirm_contact_add_from_list_dialog">Confirm contact add from list dialog</string>
+    <string translatable="false" name="analytics_label_cancel_contact_add_from_list_dialog">Cancel contact add from list dialog</string>
+    <string translatable="false" name="analytics_label_search_contacts_textbox">\"Search contacts\" textbox</string>
+    <string translatable="false" name="analytics_label_clear_search_contacts_textbox_button">Clear \"Search contacts\" textbox button</string>
+    <string translatable="false" name="analytics_label_add_email_button">Add email button</string>
+    <string translatable="false" name="analytics_label_confirm_contact_add_from_email_dialog_successful">Confirm contact add from email dialog (checks successful)</string>
+    <string translatable="false" name="analytics_label_cancel_contact_add_from_email_dialog">Cancel contact add from email dialog</string>
+    <string translatable="false" name="analytics_label_successful">Successful</string>
+    <string translatable="false" name="analytics_label_unauthorized_error">Unauthorized error</string>
+    <string translatable="false" name="analytics_label_general_error">General error</string>
+    <string translatable="false" name="analytics_label_map_mode">Map mode</string>
+    <string translatable="false" name="analytics_label_visibility_toggle">Visibility toggle</string>
+    <string translatable="false" name="analytics_label_add_place_overlay_activated">\"Add place\" overlay activated</string>
+    <string translatable="false" name="analytics_label_cancel_add_place_button">Cancel \"Add place\" button</string>
+    <string translatable="false" name="analytics_label_confirm_add_place_button">Confirm \"Add place\" button</string>
+    <string translatable="false" name="analytics_label_my_location_button">My location button</string>
+    <string translatable="false" name="analytics_label_cancel_name_new_place_dialog">Cancel name new place dialog</string>
+    <string translatable="false" name="analytics_label_confirm_name_new_place_dialog_successful">Confirm name new place dialog (checks successful)</string>
+    <string translatable="false" name="analytics_label_open_settings_from_location_disabled_dialog">Opened location settings from location disabled dialog</string>
+    <string translatable="false" name="analytics_label_ignore_location_disabled_dialog">Ignored location settings disabled dialog</string>
+    <string translatable="false" name="analytics_label_rename_place">Rename place</string>
+    <string translatable="false" name="analytics_label_delete_place">Delete place</string>
+    <string translatable="false" name="analytics_label_confirm_rename_place_dialog">Confirm rename place dialog</string>
+    <string translatable="false" name="analytics_label_cancel_rename_place_dialog">Cancel rename place dialog</string>
+    <string translatable="false" name="analytics_label_confirm_delete_place_dialog">Confirm delete place dialog</string>
+    <string translatable="false" name="analytics_label_cancel_delete_place_dialog">Cancel delete place dialog</string>
+    <string translatable="false" name="analytics_label_analytics_opt_in_toggle">Analytics opt-in toggle</string>
+    <string translatable="false" name="analytics_label_experiments_opt_in_toggle">Experiments opt-in toggle</string>
+
+</resources>

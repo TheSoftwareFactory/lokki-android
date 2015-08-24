@@ -13,11 +13,13 @@ import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ScrollView;
+import android.view.View;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
+import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 
 public class FirstTimeActivity extends AppCompatActivity {
 
@@ -27,18 +29,16 @@ public class FirstTimeActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         Log.e(TAG, "onCreate");
+        setContentView(R.layout.first_time_activity_layout);
 
-        textView = new TextView(this);
-        textView.setPadding(15, 15, 15, 15);
+        textView = (TextView) findViewById(R.id.first_time_text_box);
         textView.setText(Html.fromHtml(getString(R.string.welcome_text)));
         textView.setMovementMethod(LinkMovementMethod.getInstance());
 
-        setContentView(R.layout.first_time_activity_layout);
-        ScrollView scroller = (ScrollView) findViewById(R.id.first_time_text_scrollview);
-        scroller.addView(textView);
+        setUpAnalyticsOptInCheckBox();
+        setUpExperimentsOptInCheckBox();
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_layout);
         setSupportActionBar(toolbar);
@@ -81,6 +81,8 @@ public class FirstTimeActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.continue_with_terms) {
             textView.setText(Html.fromHtml(getString(R.string.terms_text)));
+            findViewById(R.id.analytics_opt_in).setVisibility(View.VISIBLE);
+            findViewById(R.id.experiments_opt_in).setVisibility(View.VISIBLE);
             next = true;
             supportInvalidateOptionsMenu();
             return true;
@@ -92,6 +94,66 @@ public class FirstTimeActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void setUpAnalyticsOptInCheckBox() {
+        CheckBox analyticsCheckBox = (CheckBox) findViewById(R.id.analytics_opt_in);
+        analyticsCheckBox.setChecked(PreferenceUtils.getBoolean(getApplicationContext(), PreferenceUtils.KEY_SETTING_ANALYTICS_OPT_IN));
+        analyticsCheckBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                long analytics_checkbox_state = 0;
+                boolean optedIn = ((CheckBox) findViewById(R.id.analytics_opt_in)).isChecked();
+                if (optedIn) {
+                    PreferenceUtils.setBoolean(getApplicationContext(), PreferenceUtils.KEY_SETTING_ANALYTICS_OPT_IN, true);
+                    AnalyticsUtils.setAnalyticsOptIn(true);
+                    analytics_checkbox_state = 1;
+                    setExperimentsOptInState(true);
+                }
+
+                // Event hit is here so analytics gets the last moment before user opts out and first moment they opt in
+                AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                        getString(R.string.analytics_action_click),
+                        getString(R.string.analytics_label_analytics_opt_in_toggle),
+                        analytics_checkbox_state);
+
+                if (!optedIn) {
+                    PreferenceUtils.setBoolean(getApplicationContext(), PreferenceUtils.KEY_SETTING_ANALYTICS_OPT_IN, false);
+                    AnalyticsUtils.setAnalyticsOptIn(false);
+                    setExperimentsOptInState(false);
+                }
+            }
+        });
+    }
+
+    private void setUpExperimentsOptInCheckBox() {
+        CheckBox experimentsCheckBox = (CheckBox) findViewById(R.id.experiments_opt_in);
+        experimentsCheckBox.setChecked(PreferenceUtils.getBoolean(getApplicationContext(), PreferenceUtils.KEY_SETTING_EXPERIMENTS_OPT_IN));
+        experimentsCheckBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                long experiments_checkbox_state;
+                // TODO: Opt into/out of experiments here
+                if (((CheckBox) findViewById(R.id.experiments_opt_in)).isChecked()) {
+                    PreferenceUtils.setBoolean(getApplicationContext(), PreferenceUtils.KEY_SETTING_EXPERIMENTS_OPT_IN, true);
+                    experiments_checkbox_state = 1;
+                } else {
+                    PreferenceUtils.setBoolean(getApplicationContext(), PreferenceUtils.KEY_SETTING_EXPERIMENTS_OPT_IN, false);
+                    experiments_checkbox_state = 0;
+                }
+                AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                        getString(R.string.analytics_action_click),
+                        getString(R.string.analytics_label_experiments_opt_in_toggle),
+                        experiments_checkbox_state);
+            }
+        });
+    }
+
+    private void setExperimentsOptInState(boolean state) {
+        CheckBox experimentsCheckBox = (CheckBox) findViewById(R.id.experiments_opt_in);
+        experimentsCheckBox.setChecked(state);
+        experimentsCheckBox.setEnabled(state);
+        PreferenceUtils.setBoolean(getApplicationContext(), PreferenceUtils.KEY_SETTING_EXPERIMENTS_OPT_IN, state);
     }
 
 

@@ -6,8 +6,6 @@
 
     <string name="ok">OK</string>
     <string name="cancel">Peruuta</string>
-    <string name="yes">Kyllä</string>
-    <string name="no">Ei</string>
     <string name="map">Kartta</string>
     <string name="places">Paikat</string>
     <string name="contacts">Henkilöt</string>
@@ -18,8 +16,6 @@
     <string name="settings">Asetukset</string>
     <string name="delete">Poista</string>
     <string name="rename">Nimeä uudelleen</string>
-    <string name="welcome">Tervetuloa</string>
-    <string name="sign_up">Luo tili</string>
 
     <string name="loading">Ladataan…</string>
 
@@ -45,7 +41,7 @@
                               2. Annan luvan henkilötietojeni keräämiseen ja käsittelemiseen.<br/><br/>
                               3. Annan palvelulle luvan käsitellä ja näyttää tietoja sijainnistani.<br/><br/>
                               4. Jos olen alle 15-vuotias, olen hankkinut vanhempieni luvan käyttää Lokkia näiden ehtojen mukaisesti.<br/><br/>
-                              5. Jos olen alle 13-vuotias ja asun Yhdysvalloissa, en saa käyttää Lokkia.<br/><br/><br/>]]>
+                              5. Jos olen alle 13-vuotias ja asun Yhdysvalloissa, en saa käyttää Lokkia.<br/><br/>]]>
     </string>
 
     <string name="terms_title">Käyttöehdot</string>
@@ -84,5 +80,9 @@
     <string name="add_email">Lisää email</string>
     <string name="place_name">Paikan nimi</string>
     <string name="seeing_contact_not_allowed">Henkilö ei ole antanut sinulle lupaa nähdä heidän sijaintiaan.</string>
+    <string name="opt_in_text_analytics">Autan parantamaan Lokkia lähettämällä anonyymiä käyttödataa</string>
+    <string name="opt_in_text_experiments">Haluan saada Lokin uusimmat kokeelliset ominaisuudet käyttööni</string>
+    <string name="send_anonymous_usage_data">Lähetä anonyymiä käyttödataa</string>
+    <string name="receive_experimental_features">Vastaanota kokeellisia ominaisuuksia</string>
 
 </resources>

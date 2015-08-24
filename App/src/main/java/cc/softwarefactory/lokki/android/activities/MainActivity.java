@@ -58,6 +58,13 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     private static final int REQUEST_CODE_EMAIL = 1001;
     private static final int REQUEST_TERMS = 1002;
 
+    public static final String TAG_MAP_FRAGMENT = "mapFragment";
+    public static final String TAG_PLACES_FRAGMENT = "placesFragment";
+    public static final String TAG_CONTACTS_FRAGMENT = "contactsFragment";
+    public static final String TAG_ADD_CONTACTS_FRAGMENT = "addContactsFragment";
+    public static final String TAG_PREFERENCES_FRAGMENT = "preferencesFragment";
+    public static final String TAG_ABOUT_FRAGMENT = "aboutFragment";
+
     private NavigationDrawerFragment mNavigationDrawerFragment;
     private CharSequence mTitle;
     private int selectedOption = 0;
@@ -206,27 +213,27 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         switch (position) {
 
             case 0: // Map
-                fragmentManager.beginTransaction().replace(R.id.container, new MapViewFragment()).commit();
+                fragmentManager.beginTransaction().replace(R.id.container, new MapViewFragment(), TAG_MAP_FRAGMENT).commit();
                 break;
 
             case 1: // Places
-                fragmentManager.beginTransaction().replace(R.id.container, new PlacesFragment()).commit();
+                fragmentManager.beginTransaction().replace(R.id.container, new PlacesFragment(), TAG_PLACES_FRAGMENT).commit();
                 break;
 
             case 2: // Contacts
-                fragmentManager.beginTransaction().replace(R.id.container, new ContactsFragment()).commit();
+                fragmentManager.beginTransaction().replace(R.id.container, new ContactsFragment(), TAG_CONTACTS_FRAGMENT).commit();
                 break;
 
             case 3: // Settings
-                fragmentManager.beginTransaction().replace(R.id.container, new PreferencesFragment()).commit();
+                fragmentManager.beginTransaction().replace(R.id.container, new PreferencesFragment(), TAG_PREFERENCES_FRAGMENT).commit();
                 break;
 
             case 4: // About
-                fragmentManager.beginTransaction().replace(R.id.container, new AboutFragment()).commit();
+                fragmentManager.beginTransaction().replace(R.id.container, new AboutFragment(), TAG_ABOUT_FRAGMENT).commit();
                 break;
 
             default:
-                fragmentManager.beginTransaction().replace(R.id.container, new MapViewFragment()).commit();
+                fragmentManager.beginTransaction().replace(R.id.container, new MapViewFragment(), TAG_MAP_FRAGMENT).commit();
                 break;
         }
         supportInvalidateOptionsMenu();
@@ -278,7 +285,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                 AddContactsFragment acf = new AddContactsFragment();
                 acf.setContactUtils(mContactDataSource);
 
-                fragmentManager.beginTransaction().replace(R.id.container, acf).commit();
+                fragmentManager.beginTransaction().replace(R.id.container, acf, TAG_ADD_CONTACTS_FRAGMENT).commit();
                 selectedOption = -10;
                 supportInvalidateOptionsMenu();
                 break;
@@ -457,7 +464,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         @Override
         public void onReceive(Context context, Intent intent) {
             FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.container, new MapViewFragment()).commit();
+            fragmentManager.beginTransaction().replace(R.id.container, new MapViewFragment(), TAG_MAP_FRAGMENT).commit();
             mNavigationDrawerFragment.selectNavDrawerItem(1);    // Index 1 because index 0 is the list view header...
         }
     };
