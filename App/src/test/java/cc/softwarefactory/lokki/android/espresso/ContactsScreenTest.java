@@ -161,4 +161,36 @@ public class ContactsScreenTest extends LoggedInBaseTest {
         onView(allOf(withId(R.id.i_can_see), hasSibling(withText(firstContactEmail)))).check(matches(isNotChecked()));
     }
 
+
+    public void testShowOnMapCheckboxIsDisabledWhenTwoContacts() throws InterruptedException, JSONException, TimeoutException {
+        String firstContactEmail = "family.member@example.com";
+        String secondContactEmail = "work.buddy@example.com";
+        String dashboardJsonString = MockJsonUtils.getDashboardJsonWithContacts(firstContactEmail, secondContactEmail);
+        JSONObject dashboardJson = new JSONObject(dashboardJsonString);
+        JSONObject icanseeJO = dashboardJson.getJSONObject("icansee");
+        String contactHash = icanseeJO.names().getString(0);
+        icanseeJO.remove(contactHash);
+        getMockDispatcher().setDashboardResponse(new MockResponse().setBody(dashboardJson.toString()));
+
+        enterContactsScreen();
+        onView(allOf(withId(R.id.i_can_see), hasSibling(withText(firstContactEmail)))).check(matches(isNotChecked())).perform(click());
+        onView(allOf(withId(R.id.i_can_see), hasSibling(withText(firstContactEmail)))).check(matches(isNotChecked()));
+    }
+
+    public void testFirstShowOnMapCheckboxDoesNotEffectOtherContactCheckbox() throws InterruptedException, JSONException, TimeoutException {
+        String firstContactEmail = "family.member@example.com";
+        String secondContactEmail = "work.buddy@example.com";
+        String dashboardJsonString = MockJsonUtils.getDashboardJsonWithContacts(firstContactEmail, secondContactEmail);
+        JSONObject dashboardJson = new JSONObject(dashboardJsonString);
+        JSONObject icanseeJO = dashboardJson.getJSONObject("icansee");
+        String contactHash = icanseeJO.names().getString(0);
+        icanseeJO.remove(contactHash);
+        getMockDispatcher().setDashboardResponse(new MockResponse().setBody(dashboardJson.toString()));
+
+        enterContactsScreen();
+        onView(allOf(withId(R.id.i_can_see), hasSibling(withText(secondContactEmail)))).check(matches(isChecked()));
+        onView(allOf(withId(R.id.i_can_see), hasSibling(withText(firstContactEmail)))).perform(click());
+        onView(allOf(withId(R.id.i_can_see), hasSibling(withText(secondContactEmail)))).check(matches(isChecked()));
+    }
+
 }
