@@ -195,7 +195,8 @@ public class ContactsFragment extends Fragment {
                                     getString(R.string.analytics_action_click),
                                     getString(R.string.analytics_label_disabled_show_on_map_checkbox));
                             Toast.makeText(context, R.string.seeing_contact_not_allowed, Toast.LENGTH_LONG).show();
-                            holder.checkICanSee.setChecked(false);
+                            CheckBox cb = (CheckBox) view;
+                            cb.setChecked(false);
                         }
                     });
                 } else {
