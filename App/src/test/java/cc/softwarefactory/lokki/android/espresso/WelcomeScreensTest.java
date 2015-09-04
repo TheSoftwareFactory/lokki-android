@@ -1,8 +1,7 @@
+package cc.softwarefactory.lokki.android.espresso;
 //testing the push
 //testing Build on Jenkins build before Merge
 //add github account to Jenkins configuration
-
-package cc.softwarefactory.lokki.android.espresso;
 
 import cc.softwarefactory.lokki.android.R;
 
