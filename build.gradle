@@ -1,6 +1,6 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 //test for pushing
-//test for pushing -ivanatarah
+//test for pushing -iaa
 buildscript {
     repositories {
         jcenter()
