@@ -74,7 +74,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     // TODO: make non static, put in shared prefs
     public static Boolean firstTimeLaunch;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
