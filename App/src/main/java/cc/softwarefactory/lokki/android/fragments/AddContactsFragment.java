@@ -15,7 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.Log;
+//import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -152,7 +152,7 @@ public class AddContactsFragment extends Fragment {
         @Override
         protected Boolean doInBackground(Void... params) {
 
-            Log.e(TAG, "prepareAdapterAsync");
+            //Log.e(TAG, "prepareAdapterAsync");
             getContactList();
             return true;
         }
@@ -161,7 +161,7 @@ public class AddContactsFragment extends Fragment {
         protected void onPostExecute(Boolean contactsExist) {
 
             if (isAdded()) {
-                Log.e(TAG, "prepareAdapterAsync - ContactList: " + contactList);
+                //Log.e(TAG, "prepareAdapterAsync - ContactList: " + contactList);
                 setListAdapter();
             }
             super.onPostExecute(contactsExist);
@@ -182,14 +182,14 @@ public class AddContactsFragment extends Fragment {
                 super.onPostExecute(MainApplication.contacts);
                 return;
             }
-            Log.e(TAG, "Number of contacts: " + (contactsResult.length() - 1));
+            //Log.e(TAG, "Number of contacts: " + (contactsResult.length() - 1));
             try {
                 MainApplication.contacts = contactsResult;
                 MainApplication.mapping = MainApplication.contacts.getJSONObject("mapping");
                 PreferenceUtils.setString(context, PreferenceUtils.KEY_CONTACTS, MainApplication.contacts.toString());
 
             } catch (JSONException e) {
-                Log.e(TAG, e.getMessage());
+                //Log.e(TAG, e.getMessage());
             }
             new prepareAdapterAsync().execute();
             super.onPostExecute(MainApplication.contacts);
@@ -215,11 +215,11 @@ public class AddContactsFragment extends Fragment {
                 }
                 contactList.add(name);
             } catch (JSONException e) {
-                Log.e(TAG, e.getMessage());
+                //Log.e(TAG, e.getMessage());
             }
         }
         Collections.sort(contactList);
-        Log.e(TAG, "Adapter ContactList: " + contactList);
+        //Log.e(TAG, "Adapter ContactList: " + contactList);
     }
 
     private boolean alreadyAdded(String email) {
@@ -317,7 +317,7 @@ public class AddContactsFragment extends Fragment {
                     });
 
                 } catch (JSONException e) {
-                    Log.e(TAG, e.getMessage());
+                    //Log.e(TAG, e.getMessage());
                 }
                 return convertView;
             }

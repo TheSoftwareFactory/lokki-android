@@ -3,7 +3,7 @@ package cc.softwarefactory.lokki.android.datasources.contacts;
 import android.content.Context;
 import android.database.Cursor;
 import android.provider.ContactsContract;
-import android.util.Log;
+//import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -48,14 +48,14 @@ public class DefaultContactDataSource implements ContactDataSource {
                 mapping.put(newName, email);
 
             } catch (JSONException e) {
-                Log.e(TAG, e.getMessage());
+                //Log.e(TAG, e.getMessage());
             }
         }
 
         try {
             contactsObj.put("mapping", mapping);
         } catch (JSONException e) {
-            Log.e(TAG, e.getMessage());
+            //Log.e(TAG, e.getMessage());
         }
         emailsCursor.close();
 
