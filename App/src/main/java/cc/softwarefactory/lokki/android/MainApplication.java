@@ -1,4 +1,7 @@
 /*
+Dummy update-ivan1
+ */
+/*
 Copyright (c) 2014-2015 F-Secure
 See LICENSE for details
 */
@@ -24,6 +27,8 @@ public class MainApplication extends Application {
     private static final boolean DEVELOPER_MODE = false;
 
     private static final String TAG = "MainApplication";
+
+    //TESTCOMMENT 
 
 
     public static int[] mapTypes = {GoogleMap.MAP_TYPE_NORMAL, GoogleMap.MAP_TYPE_SATELLITE, GoogleMap.MAP_TYPE_HYBRID};
