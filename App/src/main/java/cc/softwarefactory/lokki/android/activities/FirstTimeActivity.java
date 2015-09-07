@@ -10,7 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
-import android.util.Log;
+//import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,7 +30,7 @@ public class FirstTimeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.e(TAG, "onCreate");
+        //Log.e(TAG, "onCreate");
         setContentView(R.layout.first_time_activity_layout);
 
         textView = (TextView) findViewById(R.id.first_time_text_box);
@@ -58,7 +58,7 @@ public class FirstTimeActivity extends AppCompatActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
 
-        Log.e(TAG, "onPrepareOptionsMenu - next: " + next);
+        //Log.e(TAG, "onPrepareOptionsMenu - next: " + next);
         ActionBar actionBar = getSupportActionBar();
         if (!next) {
             getMenuInflater().inflate(R.menu.first_time_welcome, menu);

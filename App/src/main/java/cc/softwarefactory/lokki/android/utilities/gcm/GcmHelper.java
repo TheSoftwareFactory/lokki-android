@@ -9,7 +9,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
-import android.util.Log;
+//import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
@@ -32,7 +32,7 @@ public class GcmHelper {
 
     public static void start(Context context) {
 
-        Log.e(TAG, "start");
+        //Log.e(TAG, "start");
         // Check device for Play Services APK. If check succeeds, proceed with GCM registration.
         if (Utils.checkGooglePlayServices(context)) {
             gcm = GoogleCloudMessaging.getInstance(context);
@@ -52,7 +52,7 @@ public class GcmHelper {
         final SharedPreferences prefs = getGCMPreferences(context);
         String registrationId = prefs.getString(PROPERTY_REG_ID, "");
         if (registrationId == null || registrationId.isEmpty()) {
-            Log.e(TAG, "Registration not found.");
+            //Log.e(TAG, "Registration not found.");
             return "";
         }
         // Check if app was updated; if so, it must clear the registration ID since the existing regID is not guaranteed to work with the new app version.
@@ -61,7 +61,7 @@ public class GcmHelper {
         if (registeredVersion == currentVersion) {
             return registrationId;
         }
-        Log.i(TAG, "App version changed.");
+        //Log.i(TAG, "App version changed.");
         return "";
     }
 
@@ -105,7 +105,7 @@ public class GcmHelper {
             @Override
             protected void onPostExecute(String msg) {
 
-                Log.e(TAG, msg);
+                //Log.e(TAG, msg);
             }
 
         }.execute(null, null, null);
@@ -114,7 +114,7 @@ public class GcmHelper {
 
     private static void sendRegistrationIdToBackend(Context context) {
 
-        Log.e(TAG, "sendRegistrationIdToBackend");
+        //Log.e(TAG, "sendRegistrationIdToBackend");
         try {
             ServerApi.sendGCMToken(context, regid);
 
@@ -128,7 +128,7 @@ public class GcmHelper {
 
         final SharedPreferences prefs = getGCMPreferences(context);
         int appVersion = getAppVersion(context);
-        Log.i(TAG, "Saving regId on app version " + appVersion);
+        //Log.i(TAG, "Saving regId on app version " + appVersion);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(PROPERTY_REG_ID, regId);
         editor.putInt(PROPERTY_APP_VERSION, appVersion);

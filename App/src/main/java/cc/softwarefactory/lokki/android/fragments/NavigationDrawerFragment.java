@@ -13,7 +13,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+//import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -112,7 +112,7 @@ public class NavigationDrawerFragment extends Fragment {
             aq.id(R.id.user_name).text(email);
         }
         else {
-            Log.e(TAG, "Cannot add user info. ListViewHeader not initialized");
+            //Log.e(TAG, "Cannot add user info. ListViewHeader not initialized");
         }
     }
 
