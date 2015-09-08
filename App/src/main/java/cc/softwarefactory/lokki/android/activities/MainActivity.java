@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
         return PreferenceUtils.getString(this, PreferenceUtils.KEY_AUTH_TOKEN).isEmpty();
     }
-
+//kkk
     @Override
     protected void onResume() {
 
