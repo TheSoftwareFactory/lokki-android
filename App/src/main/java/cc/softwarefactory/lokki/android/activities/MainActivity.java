@@ -51,7 +51,6 @@ import cc.softwarefactory.lokki.android.utilities.Utils;
 import cc.softwarefactory.lokki.android.utilities.gcm.GcmHelper;
 
 
-
 public class MainActivity extends AppCompatActivity implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
     private static final String TAG = "MainActivity";
