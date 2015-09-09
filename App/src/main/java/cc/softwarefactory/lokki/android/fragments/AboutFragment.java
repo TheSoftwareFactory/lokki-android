@@ -48,7 +48,7 @@ public class AboutFragment extends Fragment {
         aq.id(R.id.listView1).itemClicked(new AboutItemClickListener());
         aq.id(R.id.version).text(R.string.version, Utils.getAppVersion(getActivity()));
     }
-//jhjkjkklk
+
     @Override
     public void onResume() {
         super.onResume();
