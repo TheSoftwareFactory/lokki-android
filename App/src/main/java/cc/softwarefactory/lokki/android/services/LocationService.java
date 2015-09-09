@@ -39,7 +39,7 @@ public class LocationService extends Service implements LocationListener, Google
     private static final long INTERVAL_30_SECS = 30 * 1000;
     private static final long INTERVAL_1_MIN = 60 * 1000;
 
-    // - SERVICE
+    // m- SERVICE
     private static final int NOTIFICATION_SERVICE = 100;
 
     // OTHER

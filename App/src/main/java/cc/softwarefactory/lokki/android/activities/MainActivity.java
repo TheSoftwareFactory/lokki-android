@@ -2,6 +2,7 @@
 Copyright (c) 2014-2015 F-Secure
 See LICENSE for details
 */
+//shubham
 package cc.softwarefactory.lokki.android.activities;
 
 import android.support.v7.app.AlertDialog;
@@ -121,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
         return PreferenceUtils.getString(this, PreferenceUtils.KEY_AUTH_TOKEN).isEmpty();
     }
-
+//kkk
     @Override
     protected void onResume() {
 
