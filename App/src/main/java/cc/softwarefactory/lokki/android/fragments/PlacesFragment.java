@@ -123,7 +123,7 @@ public class PlacesFragment extends Fragment {
                     }
                 });
 
-                Log.d(TAG, "Plane name: " + placeName);
+                Log.d(TAG, "Place name: " + placeName);
                 Log.d(TAG, "peopleInsidePlace? " + peopleInsidePlace.has(placeName));
 
                 if (peopleInsidePlace.has(placeName)) { // People are inside this place
