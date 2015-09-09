@@ -1,5 +1,5 @@
 package cc.softwarefactory.lokki.android.espresso;
-//testing some change
+
 import android.app.Instrumentation;
 import android.content.Intent;
 import android.content.IntentFilter;
