@@ -28,7 +28,7 @@
     <string name="add_contact_dialog_save">Haluatko lisätä %1$s?</string>
     <string name="i_can_see">Näytä kartalla</string>
     <string name="can_see_me">Saa nähdä minut</string>
-    <string name="your_lokki_id">Sinun Lokki ID on:</string>
+    <string name="your_lokki_id">Sinun Lokki-tunnuksesi on:</string>
     <string name="version">Versio: %1$s</string>
     <string name="i_agree">Olen lukenut ja hyväksyn</string>
     <string name="continue_with_terms">Jatka</string>
