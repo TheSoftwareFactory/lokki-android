@@ -28,13 +28,13 @@ public class FirstTimeActivity extends AppCompatActivity {
     private Boolean next = false;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {        textView.setText(Html.fromHtml(getString(R.string.welcome_text)));
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.e(TAG, "onCreate");
         setContentView(R.layout.first_time_activity_layout);
 
         textView = (TextView) findViewById(R.id.first_time_text_box);
-
+        textView.setText(Html.fromHtml(getString(R.string.welcome_text)));
         textView.setMovementMethod(LinkMovementMethod.getInstance());
 
         setUpAnalyticsOptInCheckBox();
