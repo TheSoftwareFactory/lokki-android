@@ -4,14 +4,14 @@ android {
     compileSdkVersion 22
     buildToolsVersion '22.0.1'
     lintOptions {
-        abortOnError false
+        abortOnError true
     }
 
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 22
-        versionCode 403
-        versionName "4.0.3"
+        versionCode 407
+        versionName "4.0.7"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
