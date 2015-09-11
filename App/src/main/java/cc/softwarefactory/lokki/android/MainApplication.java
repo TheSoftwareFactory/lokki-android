@@ -43,7 +43,7 @@ public class MainApplication extends Application {
     @Override
     public void onCreate() {
 
-        Log.e(TAG, "Lokki started component");
+        Log.d(TAG, "Lokki started component");
 
         loadSetting();
 
@@ -72,7 +72,7 @@ public class MainApplication extends Application {
         } else {
             MainApplication.iDontWantToSee = new JSONObject();
         }
-        Log.e(TAG, "MainApplication.iDontWantToSee: " + MainApplication.iDontWantToSee);
+        Log.d(TAG, "MainApplication.iDontWantToSee: " + MainApplication.iDontWantToSee);
 
         if (DEVELOPER_MODE) {
 
@@ -94,7 +94,7 @@ public class MainApplication extends Application {
     private void loadSetting() {
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         visible = PreferenceUtils.getBoolean(getApplicationContext(), PreferenceUtils.KEY_SETTING_VISIBILITY);
-        Log.e(TAG, "Visible: " + visible);
+        Log.d(TAG, "Visible: " + visible);
     }
 
 }

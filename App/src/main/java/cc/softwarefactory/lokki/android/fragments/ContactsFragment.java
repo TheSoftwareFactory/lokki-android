@@ -106,7 +106,7 @@ public class ContactsFragment extends Fragment {
                 }
                 iCanSee.add(email);
                 mapping.put(name, email);
-                Log.e(TAG, "I can see: " + email);
+                Log.d(TAG, "I can see: " + email);
             }
 
             for (int i = 0; i < canSeeMeArray.length(); i++) {
@@ -115,7 +115,7 @@ public class ContactsFragment extends Fragment {
                 String name = Utils.getNameFromEmail(context, email);
                 canSeeMe.add(email);
                 mapping.put(name, email);
-                Log.e(TAG, "Can see me: " + email);
+                Log.d(TAG, "Can see me: " + email);
             }
 
             // Add local contacts to mapping
@@ -124,7 +124,7 @@ public class ContactsFragment extends Fragment {
                 String email = localContacts.getString(i);
                 String name = Utils.getNameFromEmail(context, email);
                 mapping.put(name, email);
-                Log.e(TAG, "Local contact: " + email);
+                Log.d(TAG, "Local contact: " + email);
             }
 
         } catch (JSONException e) {
@@ -133,7 +133,7 @@ public class ContactsFragment extends Fragment {
 
         peopleList.addAll(mapping.keySet());
         Collections.sort(peopleList);
-        Log.e(TAG, "Contact list: " + peopleList);
+        Log.d(TAG, "Contact list: " + peopleList);
     }
 
     private void setListAdapter() {

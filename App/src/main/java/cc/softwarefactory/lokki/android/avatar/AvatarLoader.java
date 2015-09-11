@@ -26,12 +26,12 @@ public class AvatarLoader {
     }
 
     public void load(String email, ImageView imageView) {
-        Log.e(TAG, "1) load: " + email);
+        Log.d(TAG, "1) load: " + email);
         if (!cancelPotentialWork(email, imageView)) {
             return;
         }
 
-        Log.e(TAG, "load: Creating new task");
+        Log.d(TAG, "load: Creating new task");
         final BitmapWorkerTask task = new BitmapWorkerTask(imageView);
         final WeakReference<BitmapWorkerTask> taskReference = new WeakReference<>(task);
         imageView.setTag(taskReference);
@@ -52,7 +52,7 @@ public class AvatarLoader {
         @Override
         protected Bitmap doInBackground(String... params) {
 
-            Log.e(TAG, "BitmapWorkerTask: doInBackground: " + params[0]);
+            Log.d(TAG, "BitmapWorkerTask: doInBackground: " + params[0]);
             data = params[0];
             return processData(data);
         }
@@ -61,7 +61,7 @@ public class AvatarLoader {
         @Override
         protected void onPostExecute(Bitmap bitmap) {
 
-            Log.e(TAG, "BitmapWorkerTask: onPostExecute");
+            Log.d(TAG, "BitmapWorkerTask: onPostExecute");
             if (isCancelled()) {
                 return;
             }
@@ -82,7 +82,7 @@ public class AvatarLoader {
 
     private Bitmap processData(String email) {
 
-        Log.e(TAG, "processData");
+        Log.d(TAG, "processData");
         return Utils.getPhotoFromEmail(context, email);
     }
 
