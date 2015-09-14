@@ -106,10 +106,13 @@ public class AvatarLoader {
 
     private static BitmapWorkerTask getTaskFromView(ImageView imageView) {
 
+
         if (imageView == null || !(imageView.getTag() instanceof WeakReference)) {
             return null;
         }
-        return ((WeakReference<BitmapWorkerTask>) imageView.getTag()).get();
+
+
+        return ((WeakReference<BitmapWorkerTask>)(imageView.getTag())).get();
     }
 
 }
