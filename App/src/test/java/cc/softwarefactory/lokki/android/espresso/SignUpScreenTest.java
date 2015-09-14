@@ -57,8 +57,6 @@ public class SignUpScreenTest extends LokkiBaseTest {
     }
 
     private String getRequest(String email) {
-        // TODO: ideal would be to set different device ids and languages and test if they're part
-        // of the request, but let's just do this for now.
         String deviceId = Utils.getDeviceId();
         String language = Utils.getLanguage();
 
@@ -66,7 +64,10 @@ public class SignUpScreenTest extends LokkiBaseTest {
     }
 
     private void assertQueryStringEquals(String first, String second) {
-        assertEquals(first, second);
+        Set<String> set1 = new HashSet<String>(Arrays.asList(first.split("&")));
+        Set<String> set2 = new HashSet<String>(Arrays.asList(second.split("&")));
+
+        assertEquals(set1, set2);
     }
 
     public void testMapIsShownAfterSuccessfulSignUp() throws Exception {
