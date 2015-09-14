@@ -71,7 +71,7 @@ public class AboutFragment extends Fragment {
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            Log.e(TAG, "onItemSelected: " + position + ", tag:" + parent.getTag());
+            Log.d(TAG, "onItemSelected: " + position + ", tag:" + parent.getTag());
             String url = aboutLinksUrls[position];
 
             switch (position) {

@@ -32,7 +32,7 @@ public class GcmHelper {
 
     public static void start(Context context) {
 
-        Log.e(TAG, "start");
+        Log.d(TAG, "start");
         // Check device for Play Services APK. If check succeeds, proceed with GCM registration.
         if (Utils.checkGooglePlayServices(context)) {
             gcm = GoogleCloudMessaging.getInstance(context);
@@ -105,7 +105,7 @@ public class GcmHelper {
             @Override
             protected void onPostExecute(String msg) {
 
-                Log.e(TAG, msg);
+                Log.d(TAG, msg);
             }
 
         }.execute(null, null, null);
@@ -114,7 +114,7 @@ public class GcmHelper {
 
     private static void sendRegistrationIdToBackend(Context context) {
 
-        Log.e(TAG, "sendRegistrationIdToBackend");
+        Log.d(TAG, "sendRegistrationIdToBackend");
         try {
             ServerApi.sendGCMToken(context, regid);
 
