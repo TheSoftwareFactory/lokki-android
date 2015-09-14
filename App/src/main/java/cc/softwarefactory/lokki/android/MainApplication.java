@@ -21,12 +21,24 @@ import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 
 public class MainApplication extends Application {
 
+    /**
+     * Indicates whether this is a development or production build
+     */
     private static final boolean DEVELOPER_MODE = true;
 
+    /**
+     * Debug tag identifying that a log message was caused by the main application
+     */
     private static final String TAG = "MainApplication";
 
-
-    public static int[] mapTypes = {GoogleMap.MAP_TYPE_NORMAL, GoogleMap.MAP_TYPE_SATELLITE, GoogleMap.MAP_TYPE_HYBRID};
+    /**
+     * Int array enumerating the codes used for different Google Maps map view types
+     */
+    public static final int[] mapTypes = {GoogleMap.MAP_TYPE_NORMAL, GoogleMap.MAP_TYPE_SATELLITE, GoogleMap.MAP_TYPE_HYBRID};
+    /**
+     * Currently selected Google Maps map view type.
+     * TODO: make private with proper accessor methods to disallow values not in mapTypes
+     */
     public static int mapType = 0;
     public static String emailBeingTracked;
     public static JSONObject dashboard = null;
