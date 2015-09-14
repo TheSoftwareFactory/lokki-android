@@ -75,10 +75,10 @@ public class SignUpActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (data == null) {
-            Log.e(TAG, "Get default account returned null. Nothing to do.");
+            Log.w(TAG, "Get default account returned null. Nothing to do.");
             return;
         }
-        Log.e(TAG, "onActivityResult. Data: " + data.getExtras());
+        Log.d(TAG, "onActivityResult. Data: " + data.getExtras());
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_EMAIL && resultCode == RESULT_OK) {
             String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
@@ -95,13 +95,13 @@ public class SignUpActivity extends AppCompatActivity {
     private void doSignUp() {
         AnalyticsUtils.eventHit(getString(R.string.analytics_category_signup),
                 getString(R.string.analytics_action_started_by_client));
-        Log.e(TAG, "Sign up started");
+        Log.d(TAG, "Sign up started");
         CharSequence email = aq.id(R.id.email).getText();
         if (email == null) {
             return;
         }
         String accountName = email.toString();
-        Log.e(TAG, "Email: " + accountName);
+        Log.d(TAG, "Email: " + accountName);
         if (accountName.isEmpty()) {
             String errorMessage = getString(R.string.email_required);
             aq.id(R.id.email).getEditText().setError(errorMessage);
@@ -118,7 +118,7 @@ public class SignUpActivity extends AppCompatActivity {
     private class SignUpCallback extends AjaxCallback<JSONObject> {
         @Override
         public void callback(String url, JSONObject json, AjaxStatus status) {
-            Log.e(TAG, "signUpCallback");
+            Log.d(TAG, "signUpCallback");
 
             if (!successfulSignUp(json, status)) {
                 aq.id(R.id.sign_up_button).clickable(true).text(R.string.title_activity_sign_up);
@@ -148,15 +148,15 @@ public class SignUpActivity extends AppCompatActivity {
             AnalyticsUtils.eventHit(getString(R.string.analytics_category_signup),
                     getString(R.string.analytics_action_backend_response),
                     getString(R.string.analytics_label_successful));
-            Log.e(TAG, "json response: " + json);
+            Log.d(TAG, "json response: " + json);
             String id = json.optString("id");
             String authorizationToken = json.optString("authorizationtoken");
 
             PreferenceUtils.setString(SignUpActivity.this, PreferenceUtils.KEY_USER_ID, id);
             PreferenceUtils.setString(SignUpActivity.this, PreferenceUtils.KEY_AUTH_TOKEN, authorizationToken);
 
-            Log.e(TAG, "User id: " + id);
-            Log.e(TAG, "authorizationToken: " + authorizationToken);
+            Log.d(TAG, "User id: " + id);
+            Log.d(TAG, "authorizationToken: " + authorizationToken);
 
             setResult(RESULT_OK);
             finish();

@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        Log.e(TAG, "onCreate");
+        Log.d(TAG, "onCreate");
         mContactDataSource = new DefaultContactDataSource();
 
         super.onCreate(savedInstanceState);
@@ -103,14 +103,14 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     protected void onStart() {
 
         super.onStart();
-        Log.e(TAG, "onStart");
+        Log.d(TAG, "onStart");
 
         if (firstTimeLaunch == null) {
             firstTimeLaunch = firstTimeLaunch();
         }
 
         if (firstTimeLaunch) {
-            Log.e(TAG, "onStart - firstTimeLaunch, so showing terms.");
+            Log.i(TAG, "onStart - firstTimeLaunch, so showing terms.");
             startActivityForResult(new Intent(this, FirstTimeActivity.class), REQUEST_TERMS);
         } else {
             checkIfUserIsLoggedIn(); // Log user In
@@ -126,24 +126,24 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     protected void onResume() {
 
         super.onResume();
-        Log.e(TAG, "onResume");
+        Log.d(TAG, "onResume");
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); // WAKE_LOCK
 
         if (firstTimeLaunch || firstTimeLaunch()) {
-            Log.e(TAG, "onResume - firstTimeLaunch, so avoiding launching services.");
+            Log.i(TAG, "onResume - firstTimeLaunch, so avoiding launching services.");
             return;
         }
 
 
-        Log.e(TAG, "onResume - NOT firstTimeLaunch, so launching services.");
+        Log.i(TAG, "onResume - NOT firstTimeLaunch, so launching services.");
         startServices();
         LocalBroadcastManager.getInstance(this).registerReceiver(exitMessageReceiver, new IntentFilter("EXIT"));
         LocalBroadcastManager.getInstance(this).registerReceiver(switchToMapReceiver, new IntentFilter("GO-TO-MAP"));
 
 
-        Log.e(TAG, "onResume - check if dashboard is null");
+        Log.i(TAG, "onResume - check if dashboard is null");
         if (MainApplication.dashboard == null) {
-            Log.e(TAG, "onResume - dashboard was null, get dashboard from server");
+            Log.w(TAG, "onResume - dashboard was null, get dashboard from server");
             ServerApi.getDashboard(getApplicationContext());
         }
     }
@@ -193,9 +193,9 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
             MainApplication.userAccount = userAccount;
             GcmHelper.start(getApplicationContext()); // Register to GCM
 
-            Log.e(TAG, "User email: " + userAccount);
-            Log.e(TAG, "User id: " + userId);
-            Log.e(TAG, "authorizationToken: " + authorizationToken);
+            Log.i(TAG, "User email: " + userAccount);
+            Log.i(TAG, "User id: " + userId);
+            Log.i(TAG, "authorizationToken: " + authorizationToken);
         }
     }
 
@@ -257,7 +257,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                 getMenuInflater().inflate(R.menu.map, menu);
                 MenuItem menuItem = menu.findItem(R.id.action_visibility);
                 if (menuItem != null) {
-                    Log.e(TAG, "onPrepareOptionsMenu - Visible: " + MainApplication.visible);
+                    Log.d(TAG, "onPrepareOptionsMenu - Visible: " + MainApplication.visible);
                     if (MainApplication.visible) {
                         menuItem.setIcon(R.drawable.ic_visibility_white_48dp);
                     } else {
@@ -331,7 +331,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
             case KeyEvent.KEYCODE_BACK:
                 if (selectedOption == 0) {
-                    Log.e(TAG, "Exiting app because requested by user.");
+                    Log.i(TAG, "Exiting app because requested by user.");
                     finish();
                 } else if (selectedOption == -10) { // -10 is the Add Contacts screen
                     mNavigationDrawerFragment.selectNavDrawerItem(3);    // 3 is the Contacts screen
@@ -346,22 +346,22 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        Log.e(TAG, "onActivityResult");
+        Log.d(TAG, "onActivityResult");
 
         if (requestCode == REQUEST_CODE_EMAIL) {
             if (resultCode == RESULT_OK) {
-                Log.e(TAG, "Returned from sign up. Now we will show the map.");
+                Log.d(TAG, "Returned from sign up. Now we will show the map.");
                 startServices();
                 mNavigationDrawerFragment.setUserInfo();
                 GcmHelper.start(getApplicationContext()); // Register to GCM
 
             } else {
-                Log.e(TAG, "Returned from sign up. Exiting app on request.");
+                Log.w(TAG, "Returned from sign up. Exiting app on request.");
                 finish();
             }
 
         } else if (requestCode == REQUEST_TERMS && resultCode == RESULT_OK) {
-            Log.e(TAG, "Returned from terms. Now we will show sign up form.");
+            Log.d(TAG, "Returned from terms. Now we will show sign up form.");
             // Terms shown and accepted.
 
         } else {
@@ -384,7 +384,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
     private void showUserInMap(String email) { // Used in Contacts
 
-        Log.e(TAG, "showUserInMap: " + email);
+        Log.d(TAG, "showUserInMap: " + email);
         MainApplication.emailBeingTracked = email;
         mNavigationDrawerFragment.selectNavDrawerItem(1); // Position 1 is the Map
     }
@@ -399,7 +399,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         CheckBox checkBox = (CheckBox) view;
         Boolean allow = checkBox.isChecked();
         String email = (String) checkBox.getTag();
-        Log.e(TAG, "toggleIDontWantToSee: " + email + ", Checkbox is: " + allow);
+        Log.d(TAG, "toggleIDontWantToSee: " + email + ", Checkbox is: " + allow);
         if (!allow) {
             try {
                 MainApplication.iDontWantToSee.put(email, 1);
@@ -421,7 +421,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
             CheckBox checkBox = (CheckBox) view;
             Boolean allow = checkBox.isChecked();
             String email = (String) checkBox.getTag();
-            Log.e(TAG, "toggleUserCanSeeMe: " + email + ", Checkbox is: " + allow);
+            Log.d(TAG, "toggleUserCanSeeMe: " + email + ", Checkbox is: " + allow);
             if (!allow) {
                 ServerApi.disallowUser(this, email);
             } else {
@@ -438,7 +438,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     private BroadcastReceiver exitMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.e(TAG, "exitMessageReceiver onReceive");
+            Log.d(TAG, "exitMessageReceiver onReceive");
 
             LocationService.stop(MainActivity.this.getApplicationContext());
             DataService.stop(MainActivity.this.getApplicationContext());
