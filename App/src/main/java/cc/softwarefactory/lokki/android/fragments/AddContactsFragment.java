@@ -152,7 +152,7 @@ public class AddContactsFragment extends Fragment {
         @Override
         protected Boolean doInBackground(Void... params) {
 
-            Log.e(TAG, "prepareAdapterAsync");
+            Log.d(TAG, "prepareAdapterAsync");
             getContactList();
             return true;
         }
@@ -161,7 +161,7 @@ public class AddContactsFragment extends Fragment {
         protected void onPostExecute(Boolean contactsExist) {
 
             if (isAdded()) {
-                Log.e(TAG, "prepareAdapterAsync - ContactList: " + contactList);
+                Log.d(TAG, "prepareAdapterAsync - ContactList: " + contactList);
                 setListAdapter();
             }
             super.onPostExecute(contactsExist);
@@ -182,7 +182,7 @@ public class AddContactsFragment extends Fragment {
                 super.onPostExecute(MainApplication.contacts);
                 return;
             }
-            Log.e(TAG, "Number of contacts: " + (contactsResult.length() - 1));
+            Log.d(TAG, "Number of contacts: " + (contactsResult.length() - 1));
             try {
                 MainApplication.contacts = contactsResult;
                 MainApplication.mapping = MainApplication.contacts.getJSONObject("mapping");
@@ -219,7 +219,7 @@ public class AddContactsFragment extends Fragment {
             }
         }
         Collections.sort(contactList);
-        Log.e(TAG, "Adapter ContactList: " + contactList);
+        Log.d(TAG, "Adapter ContactList: " + contactList);
     }
 
     private boolean alreadyAdded(String email) {

@@ -25,7 +25,7 @@ public class DialogUtils {
 
     public static void securitySignUp(final Context context) {
 
-        Log.e(TAG, "securitySignUp");
+        Log.d(TAG, "securitySignUp");
         String title = context.getString(R.string.app_name);
         String message = context.getString(R.string.security_sign_up, MainApplication.userAccount);
         showDialog(context, title, message);

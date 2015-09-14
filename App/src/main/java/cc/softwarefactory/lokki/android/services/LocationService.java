@@ -54,10 +54,10 @@ public class LocationService extends Service implements LocationListener, Google
 
     public static void start(Context context) {
 
-        Log.e(TAG, "start Service called");
+        Log.d(TAG, "start Service called");
 
         if (serviceRunning || !MainApplication.visible) { // If service is running, no need to start it again.
-            Log.e(TAG, "Service already running...");
+            Log.w(TAG, "Service already running...");
             return;
         }
         context.startService(new Intent(context, LocationService.class));
@@ -65,7 +65,7 @@ public class LocationService extends Service implements LocationListener, Google
 
     public static void stop(Context context) {
 
-        Log.e(TAG, "stop Service called");
+        Log.d(TAG, "stop Service called");
         context.stopService(new Intent(context, LocationService.class));
     }
 
@@ -75,7 +75,7 @@ public class LocationService extends Service implements LocationListener, Google
         if (serviceRunning || !MainApplication.visible) {
             return; // If service is running, stop
         }
-        Log.e(TAG, "run1min called");
+        Log.d(TAG, "run1min called");
         Intent intent = new Intent(context, LocationService.class);
         intent.putExtra(RUN_1_MIN, 1);
         context.startService(intent);
@@ -84,14 +84,14 @@ public class LocationService extends Service implements LocationListener, Google
     @Override
     public void onCreate() {
 
-        Log.e(TAG, "onCreate");
+        Log.d(TAG, "onCreate");
         super.onCreate();
 
         if (PreferenceUtils.getString(this, PreferenceUtils.KEY_AUTH_TOKEN).isEmpty()) {
-            Log.e(TAG, "User disabled reporting in App. Service not started.");
+            Log.d(TAG, "User disabled reporting in App. Service not started.");
             stopSelf();
         } else if (Utils.checkGooglePlayServices(this)) {
-            Log.e(TAG, "Starting Service..");
+            Log.d(TAG, "Starting Service..");
             setLocationClient();
             setNotificationAndForeground();
             serviceRunning = true;
@@ -107,7 +107,7 @@ public class LocationService extends Service implements LocationListener, Google
         alarmIntent.putExtra(ALARM_TIMER, 1);
         PendingIntent alarmCallback = PendingIntent.getService(this, 0, alarmIntent, 0);
         alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + INTERVAL_1_MIN, alarmCallback);
-        Log.e(TAG, "Time created.");
+        Log.d(TAG, "Time created.");
     }
 
     private void setLocationClient() {
@@ -122,7 +122,7 @@ public class LocationService extends Service implements LocationListener, Google
                 .addOnConnectionFailedListener(this)
                 .build();
         mGoogleApiClient.connect();
-        Log.e(TAG, "Location Client created.");
+        Log.d(TAG, "Location Client created.");
     }
 
     private void setNotificationAndForeground() {
@@ -139,7 +139,7 @@ public class LocationService extends Service implements LocationListener, Google
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        Log.e(TAG, "onStartCommand invoked");
+        Log.d(TAG, "onStartCommand invoked");
 
         if (intent == null) {
             return START_STICKY;
@@ -152,10 +152,10 @@ public class LocationService extends Service implements LocationListener, Google
         }
 
         if (extras.containsKey(RUN_1_MIN)) {
-            Log.e(TAG, "onStartCommand RUN_1_MIN");
+            Log.d(TAG, "onStartCommand RUN_1_MIN");
             setTemporalTimer();
         } else if (extras.containsKey(ALARM_TIMER)) {
-            Log.e(TAG, "onStartCommand ALARM_TIMER");
+            Log.d(TAG, "onStartCommand ALARM_TIMER");
             stopSelf();
         }
         return START_STICKY;
@@ -168,7 +168,7 @@ public class LocationService extends Service implements LocationListener, Google
 
     @Override
     public void onConnected(Bundle bundle) {
-        Log.e(TAG, "locationClient connected");
+        Log.d(TAG, "locationClient connected");
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest, this);
         Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLastLocation != null) {
@@ -185,7 +185,7 @@ public class LocationService extends Service implements LocationListener, Google
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.e(TAG, String.format("onLocationChanged - Location: %s", location));
+        Log.d(TAG, String.format("onLocationChanged - Location: %s", location));
         if (serviceRunning && mGoogleApiClient.isConnected() && location != null) {
             updateLokkiLocation(location);
         } else {
@@ -197,11 +197,11 @@ public class LocationService extends Service implements LocationListener, Google
     private void updateLokkiLocation(Location location) {
 
         if (!MapUtils.useNewLocation(location, lastLocation, INTERVAL_30_SECS)) {
-            Log.e(TAG, "New location discarded.");
+            Log.d(TAG, "New location discarded.");
             return;
         }
 
-        Log.e(TAG, "New location taken into use.");
+        Log.d(TAG, "New location taken into use.");
         lastLocation = location;
         DataService.updateDashboard(location);
         Intent intent = new Intent("LOCATION-UPDATE");
@@ -225,12 +225,12 @@ public class LocationService extends Service implements LocationListener, Google
 
     @Override
     public void onDestroy() {
-        Log.e(TAG, "onDestroy called");
+        Log.d(TAG, "onDestroy called");
         stopForeground(true);
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
             mGoogleApiClient.disconnect();
-            Log.e(TAG, "Location Updates removed.");
+            Log.d(TAG, "Location Updates removed.");
 
         } else {
             Log.e(TAG, "locationClient didn't exist.");

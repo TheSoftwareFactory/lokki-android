@@ -96,7 +96,7 @@ public class Utils {
                 String key = (String) keys.next();
                 String emailInObject = (String) idMapping.get(key);
                 if (email.equals(emailInObject)) {
-                    Log.e(TAG, "email: " + email + ", Id from mapping: " + key);
+                    Log.d(TAG, "email: " + email + ", Id from mapping: " + key);
                     return key;
                 }
             }
@@ -116,21 +116,21 @@ public class Utils {
         if (loadContacts(context)) {
             try {
                 String name = MainApplication.contacts.getJSONObject(email).getString("name");
-                Log.e(TAG, "getNameFromEmail - Email: " + email + ", Name: " + name);
+                Log.d(TAG, "getNameFromEmail - Email: " + email + ", Name: " + name);
                 return name;
             } catch (JSONException e) {
                 Log.e(TAG, "getNameFromEmail - failed: " + email);
             }
         }
 
-        Log.e(TAG, "getNameFromEmail - Name queried: " + email);
+        Log.d(TAG, "getNameFromEmail - Name queried: " + email);
         Cursor emailCursor = context.getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null, "lower(" + ContactsContract.CommonDataKinds.Email.DATA + ")=lower('" + email + "')", null, null);
         if (emailCursor == null) {
             return "???";
         }
         if (emailCursor.moveToNext()) {
             String name = emailCursor.getString(emailCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DISPLAY_NAME_PRIMARY));
-            Log.e(TAG, "getNameFromEmail - Email: " + email + ", Name: " + name);
+            Log.d(TAG, "getNameFromEmail - Email: " + email + ", Name: " + name);
             emailCursor.close();
             return name;
         }
@@ -146,19 +146,19 @@ public class Utils {
 
         Bitmap result = MainApplication.avatarCache.get(email);
         if (result != null) {
-            Log.e(TAG, "getPhotoFromEmail IN cache, Email: " + email);
+            Log.d(TAG, "getPhotoFromEmail IN cache, Email: " + email);
             return result;
         }
 
         if (loadContacts(context)) {
             try {
-                Log.e(TAG, "getPhotoFromEmail - Email: " + email + ", id: " + MainApplication.contacts.getJSONObject(email).getLong("id"));
+                Log.d(TAG, "getPhotoFromEmail - Email: " + email + ", id: " + MainApplication.contacts.getJSONObject(email).getLong("id"));
                 result = openPhoto(context, MainApplication.contacts.getJSONObject(email).getLong("id"));
             } catch (JSONException e) {
                 Log.e(TAG, "getPhotoFromEmail - failed: " + email);
             }
         } else {
-            Log.e(TAG, "getPhotoFromEmail - id queried: " + email);
+            Log.d(TAG, "getPhotoFromEmail - id queried: " + email);
             Cursor emailCursor = context.getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null, "lower(" + ContactsContract.CommonDataKinds.Email.DATA + ")=lower('" + email + "')", null, null);
             while (emailCursor != null && emailCursor.moveToNext()) {
                 Long contactId = Long.valueOf(emailCursor.getString(emailCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.CONTACT_ID)));
@@ -180,7 +180,7 @@ public class Utils {
 
     public static Bitmap getRoundedCornerBitmap(Bitmap bitmap, float pixels) {
         if (bitmap == null) {
-            Log.e(TAG, "getRoundedCornerBitmap - null bitmap");
+            Log.w(TAG, "getRoundedCornerBitmap - null bitmap");
             return null;
         }
 
@@ -202,7 +202,7 @@ public class Utils {
 
     private static Bitmap openPhoto(Context context, long contactId) {
 
-        Log.e(TAG, "openPhoto");
+        Log.d(TAG, "openPhoto");
         if (context == null) {
             return null;
         }
@@ -236,7 +236,7 @@ public class Utils {
         int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(context);
 
         if (resultCode == ConnectionResult.SUCCESS) {
-            Log.e(TAG, "Google Play Services is OK.");
+            Log.d(TAG, "Google Play Services is OK.");
             return true;
         }
         if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
@@ -253,7 +253,7 @@ public class Utils {
         PackageManager packageManager = context.getPackageManager();
         try {
             PackageInfo packageInfo = packageManager.getPackageInfo(context.getPackageName(), 0);
-            Log.e(TAG, "getAppVersion: " + packageInfo.versionName);
+            Log.d(TAG, "getAppVersion: " + packageInfo.versionName);
             return packageInfo.versionName;
         } catch (PackageManager.NameNotFoundException e) {
             Log.e(TAG, e.getMessage());
@@ -284,7 +284,7 @@ public class Utils {
 
     private static Bitmap getDefaultAvatarInitials(Context context, String text) {
 
-        Log.e(TAG, "getDefaultAvatarInitials");
+        Log.d(TAG, "getDefaultAvatarInitials");
 
         String initials = getInitials(text);
 

@@ -153,7 +153,7 @@ public class PlacesFragment extends Fragment {
                         }
 
                     } catch (Exception ex) {
-                        Log.d(TAG, "Error in adding avatars");
+                        Log.e(TAG, "Error in adding avatars" + ex.getMessage());
                     }
                 }
 
@@ -348,7 +348,7 @@ public class PlacesFragment extends Fragment {
             setListAdapter();
 
         } catch (Exception ex) {
-            Log.d(TAG, "ERROR: " + ex.getMessage());
+            Log.e(TAG, "ERROR: " + ex.getMessage());
             ex.printStackTrace();
         }
     }
@@ -415,7 +415,7 @@ public class PlacesFragment extends Fragment {
 
 
         } catch (Exception ex) {
-            Log.d(TAG, "Error");
+            Log.e(TAG, "Error" + ex.getMessage());
             ex.printStackTrace();
 
         }
