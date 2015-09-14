@@ -2,17 +2,8 @@ package cc.softwarefactory.lokki.android.espresso;
 
 import com.squareup.okhttp.mockwebserver.MockResponse;
 
-import java.net.*;
-import java.io.*;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtilsHC4;
-import org.apache.http.message.BasicNameValuePair;
-
-import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import cc.softwarefactory.lokki.android.R;
