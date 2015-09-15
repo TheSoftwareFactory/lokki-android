@@ -16,6 +16,7 @@
     <string name="settings">Asetukset</string>
     <string name="delete">Poista</string>
     <string name="rename">Nimeä uudelleen</string>
+    <string name="logout">Kirjaudu ulos</string>
 
     <string name="loading">Ladataan…</string>
 
@@ -46,7 +47,7 @@
 
     <string name="terms_title">Käyttöehdot</string>
     <string name="security_sign_up">Meidän täytyy valtuuttaa tilinne ennen rekisteröintiä. Seuraa ohjeita, jotka olemme lähettäneet osoitteeseen: %1$s</string>
-    <string name="title_activity_sign_up">Rekisteröidy</string>
+    <string name="title_activity_sign_up">Rekisteröidy tai kirjaudu sisään</string>
     <string name="sign_up_explanation">Kirjoita sähköpostiosoitteesi - muut Lokki-käyttäjät löytävät sinut tällä osoitteella.</string>
     <string name="type_your_email_address">Sähköpostiosoitteesi</string>
     <string name="general_error">Tapahtui virhe. Yritä uudelleen myöhemmin.</string>
@@ -84,5 +85,8 @@
     <string name="opt_in_text_experiments">Haluan saada Lokin uusimmat kokeelliset ominaisuudet käyttööni</string>
     <string name="send_anonymous_usage_data">Lähetä anonyymiä käyttödataa</string>
     <string name="receive_experimental_features">Vastaanota kokeellisia ominaisuuksia</string>
+    <string name="confirm_logout">Haluatko varmasti kirjautua ulos?</string>
+    <string name="yes">Kyllä</string>
+    <string name="no">Ei</string>
 
 </resources>
