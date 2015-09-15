@@ -22,7 +22,7 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
-
+@SuppressWarnings("unchecked")
 public class SettingsScreenTest extends LoggedInBaseTest {
     
     @Override

@@ -17,6 +17,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.not;
 
+@SuppressWarnings("unchecked")
 public class NavDrawerTest extends LoggedInBaseTest {
     
     @Override
