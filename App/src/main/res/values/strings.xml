@@ -47,7 +47,7 @@
 
     <string name="terms_title">Terms of use</string>
     <string name="security_sign_up">We need to authorize your account before you sign up. Follow the instructions that we have sent to: %1$s</string>
-    <string name="title_activity_sign_up">Sign up</string>
+    <string name="title_activity_sign_up">Sign up or sign in</string>
     <string name="sign_up_explanation">Enter your email address - other Lokki users will find you with this address.</string>
     <string name="type_your_email_address">Your email address</string>
     <string name="general_error">There was an error. Please try again later.</string>
@@ -85,6 +85,9 @@
     <string name="opt_in_text_experiments">I would like to receive the newest experimental features of Lokki</string>
     <string name="send_anonymous_usage_data">Send anonymous usage data</string>
     <string name="receive_experimental_features">Receive experimental features</string>
+    <string name="confirm_logout">Are you sure you want to log out?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
     <string translatable="false" name="lokki_github_io_link">https://thesoftwarefactory.github.io/lokki/</string>
     <string translatable="false" name="lokki_play_store_link">market://details?id=cc.softwarefactory.lokki.android</string>
