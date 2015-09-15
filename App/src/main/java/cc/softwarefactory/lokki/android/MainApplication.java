@@ -57,6 +57,7 @@ public class MainApplication extends Application {
 
         Log.d(TAG, "Lokki started component");
 
+        //Load user settings
         loadSetting();
 
         AnalyticsUtils.initAnalytics(getApplicationContext());

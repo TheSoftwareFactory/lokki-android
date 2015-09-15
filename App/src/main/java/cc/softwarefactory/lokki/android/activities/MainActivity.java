@@ -232,6 +232,12 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                 fragmentManager.beginTransaction().replace(R.id.container, new AboutFragment(), TAG_ABOUT_FRAGMENT).commit();
                 break;
 
+            case 5: // Log Out
+                Intent intent = new Intent(this, SignUpActivity.class);
+                startActivity(intent);
+                finish();
+                break;
+
             default:
                 fragmentManager.beginTransaction().replace(R.id.container, new MapViewFragment(), TAG_MAP_FRAGMENT).commit();
                 break;
