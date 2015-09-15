@@ -2,14 +2,8 @@ package cc.softwarefactory.lokki.android.espresso;
 
 import com.squareup.okhttp.mockwebserver.MockResponse;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtilsHC4;
-import org.apache.http.message.BasicNameValuePair;
-
-import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import cc.softwarefactory.lokki.android.R;
@@ -54,24 +48,17 @@ public class SignUpScreenTest extends LokkiBaseTest {
     }
 
     private String getRequest(String email) {
-        // TODO: ideal would be to set different device ids and languages and test if they're part
-        // of the request, but let's just do this for now.
         String deviceId = Utils.getDeviceId();
         String language = Utils.getLanguage();
 
-        List<NameValuePair> params = Arrays.<NameValuePair>asList(
-                new BasicNameValuePair("email", email),
-                new BasicNameValuePair("device_id", deviceId),
-                new BasicNameValuePair("language", language)
-        );
-
-        return URLEncodedUtilsHC4.format(params, "utf8");
+        return "email=" + email.replace("@", "%40") + "&language=" + language + "&device_id=" + deviceId;
     }
 
     private void assertQueryStringEquals(String first, String second) {
-        Set<NameValuePair> firstList = new HashSet(URLEncodedUtilsHC4.parse(first, Charset.forName("utf8")));
-        Set<NameValuePair> secondList = new HashSet(URLEncodedUtilsHC4.parse(second, Charset.forName("utf8")));
-        assertEquals(firstList, secondList);
+        Set<String> set1 = new HashSet<String>(Arrays.asList(first.split("&")));
+        Set<String> set2 = new HashSet<String>(Arrays.asList(second.split("&")));
+
+        assertEquals(set1, set2);
     }
 
     public void testMapIsShownAfterSuccessfulSignUp() throws Exception {
@@ -85,7 +72,7 @@ public class SignUpScreenTest extends LokkiBaseTest {
 
     private void assertSignUpIsOk(RequestsHandle requests) throws Exception {
         requests.waitUntilAnyRequests();
-        assertQueryStringEquals(getRequest("email@example.com"), requests.getRequests().get(0).getUtf8Body());
+        assertQueryStringEquals(getRequest("email@example.com"), requests.getRequests().get(0).getBody().readUtf8Line());
         onView(withId(R.id.map)).check(matches(isDisplayed()));
     }
 
@@ -114,7 +101,7 @@ public class SignUpScreenTest extends LokkiBaseTest {
 
         signUpUsingEmail("invalid_email");
         requests.waitUntilAnyRequests();
-        assertQueryStringEquals(getRequest("invalid_email"), requests.getRequests().get(0).getUtf8Body());
+        assertQueryStringEquals(getRequest("invalid_email"), requests.getRequests().get(0).getBody().readUtf8Line());
         onView(withText(R.string.general_error)).check(matches(isDisplayed()));
     }
 
@@ -126,7 +113,7 @@ public class SignUpScreenTest extends LokkiBaseTest {
 
         signUpUsingEmail("test@example.com");
         requests.waitUntilAnyRequests();
-        assertQueryStringEquals(getRequest("test@example.com"), requests.getRequests().get(0).getUtf8Body());
+        assertQueryStringEquals(getRequest("test@example.com"), requests.getRequests().get(0).getBody().readUtf8Line());
         onView(withText(signUpText)).check(matches(isDisplayed()));
     }
 
