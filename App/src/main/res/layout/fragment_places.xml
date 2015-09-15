@@ -7,15 +7,17 @@
     <ListView
         android:id="@+id/listView1"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView1" />
 
     <TextView
         android:id="@+id/textView1"
-        android:layout_below="@id/listView1"
         android:text="@string/places_how_to_create"
-        android:layout_marginTop="30dp"
         android:padding="10dp"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>

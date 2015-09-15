@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-
+//build it !
 android {
     compileSdkVersion 22
     buildToolsVersion '22.0.1'
@@ -10,8 +10,8 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 22
-        versionCode 407
-        versionName "4.0.7"
+        versionCode 408
+        versionName "4.0.8"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
