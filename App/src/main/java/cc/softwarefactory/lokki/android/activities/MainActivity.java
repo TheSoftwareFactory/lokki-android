@@ -115,6 +115,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         } else {
             checkIfUserIsLoggedIn(); // Log user In
         }
+
     }
 
     private boolean firstTimeLaunch() {
@@ -201,13 +202,16 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
+        // Position of the logout button
+        final int logoutPos = 5;
         String[] menuOptions = getResources().getStringArray(R.array.nav_drawer_options);
         FragmentManager fragmentManager = getSupportFragmentManager();
         mTitle = menuOptions[position];
         selectedOption = position;
 
         ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
+        // set action bar title if it exists and the user isn't trying to log off
+        if (actionBar != null && position != logoutPos) {
             actionBar.setTitle(mTitle);
         }
         switch (position) {
@@ -230,6 +234,29 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
             case 4: // About
                 fragmentManager.beginTransaction().replace(R.id.container, new AboutFragment(), TAG_ABOUT_FRAGMENT).commit();
+                break;
+
+            case logoutPos: // Log Out
+                // Keep a reference to this so we can restart the activity from a callback
+                final MainActivity mainActivity = this;
+                // create the logout confirmation dialog
+                new AlertDialog.Builder(this)
+                        .setIcon(R.drawable.ic_power_settings_new_black_48dp)
+                        .setMessage(R.string.confirm_logout)
+                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which){
+                                        //Clear logged in status
+                                        PreferenceUtils.setString(mainActivity, PreferenceUtils.KEY_USER_ACCOUNT, null);
+                                        PreferenceUtils.setString(mainActivity, PreferenceUtils.KEY_USER_ID, null);
+                                        PreferenceUtils.setString(mainActivity, PreferenceUtils.KEY_AUTH_TOKEN, null);
+                                        //Restart main activity to clear state
+                                        mainActivity.recreate();
+                                    }
+                                })
+                        .setNegativeButton(R.string.no, null)
+                        .show();
+
                 break;
 
             default:
