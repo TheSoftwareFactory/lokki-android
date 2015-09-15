@@ -233,9 +233,10 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                 break;
 
             case 5: // Log Out
-                Intent intent = new Intent(this, SignUpActivity.class);
-                startActivity(intent);
-                finish();
+                PreferenceUtils.setString(this, PreferenceUtils.KEY_USER_ACCOUNT, null);
+                PreferenceUtils.setString(this, PreferenceUtils.KEY_USER_ID, null);
+                PreferenceUtils.setString(this, PreferenceUtils.KEY_AUTH_TOKEN, null);
+                this.recreate();
                 break;
 
             default:
