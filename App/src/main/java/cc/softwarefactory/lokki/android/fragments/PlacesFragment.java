@@ -80,7 +80,7 @@ public class PlacesFragment extends Fragment {
         Log.d(TAG, "onResume");
         super.onResume();
         LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver, new IntentFilter("PLACES-UPDATE"));
-        LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver, new IntentFilter("LOCATION-UPDATE"));
+        LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver, new IntentFilter("LOCATION-UPDATEUPDATE"));
         AnalyticsUtils.screenHit(getString(R.string.analytics_screen_places));
     }
 
