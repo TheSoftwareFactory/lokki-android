@@ -55,6 +55,7 @@ public abstract class LokkiBaseTest extends ActivityInstrumentationTestCase2<Mai
 
         super.tearDown();
     }
+    @SuppressWarnings("unchecked")
 
     @SuppressWarnings("unchecked")
     public MockDispatcher getMockDispatcher() {
