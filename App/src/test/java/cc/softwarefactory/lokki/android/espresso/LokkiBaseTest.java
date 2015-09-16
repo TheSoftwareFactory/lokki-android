@@ -45,6 +45,7 @@ public abstract class LokkiBaseTest extends ActivityInstrumentationTestCase2<Mai
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void tearDown() throws Exception {
         mockWebServer.shutdown();
 
@@ -54,7 +55,7 @@ public abstract class LokkiBaseTest extends ActivityInstrumentationTestCase2<Mai
 
         super.tearDown();
     }
-
+    @SuppressWarnings("unchecked")
     public MockDispatcher getMockDispatcher() {
         return mockDispatcher;
     }
