@@ -24,8 +24,8 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:layout_margin="0dp"
-            android:padding="8dp"
+            android:layout_marginBottom="40dp"
+            android:padding="10dp"
             android:background="@drawable/bottom_panel">
 
             <Button
@@ -47,9 +47,31 @@
             />
         </LinearLayout>
 
-        <ImageView
+        <LinearLayout
+
+            android:orientation="horizontal"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:id="@+id/addPlaceCircle" />
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_margin="0dp"
+            android:padding="8dp"
+            android:background="@drawable/bottom_panel">
+
+        <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.0"
+                android:text="@string/add_place_hint"
+                android:layout_gravity="bottom"
+                />
+
+
+        </LinearLayout>
+
+
+        <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:id="@+id/addPlaceCircle" />
     </FrameLayout>
 </RelativeLayout>
