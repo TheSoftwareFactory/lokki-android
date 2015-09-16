@@ -27,6 +27,7 @@ import static org.hamcrest.Matchers.allOf;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
+@SuppressWarnings("unchecked")
 public class AddContactsScreenTest extends LoggedInBaseTest {
 
     @Override
