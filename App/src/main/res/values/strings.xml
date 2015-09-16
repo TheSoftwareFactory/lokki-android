@@ -16,7 +16,7 @@
     <string name="settings">Settings</string>
     <string name="delete">Delete</string>
     <string name="rename">Rename</string>
-    <string name="logout">Log Out</string>
+    <string name="logout">Sign Out</string>
 
     <string name="loading">Loading…</string>
 
@@ -85,11 +85,12 @@
     <string name="opt_in_text_experiments">I would like to receive the newest experimental features of Lokki</string>
     <string name="send_anonymous_usage_data">Send anonymous usage data</string>
     <string name="receive_experimental_features">Receive experimental features</string>
-    <string name="confirm_logout">Are you sure you want to log out?</string>
+    <string name="confirm_logout">Are you sure you want to sign out?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
 
     <string translatable="false" name="lokki_github_io_link">https://thesoftwarefactory.github.io/lokki/</string>
     <string translatable="false" name="lokki_play_store_link">market://details?id=cc.softwarefactory.lokki.android</string>
+    <string translatable="false" name="sign_out_button_key">signOutButton</string>
 
 </resources>
