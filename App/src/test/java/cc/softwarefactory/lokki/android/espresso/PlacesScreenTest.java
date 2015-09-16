@@ -31,7 +31,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.endsWith;
 
-
+@SuppressWarnings("unchecked")
 public class PlacesScreenTest extends LoggedInBaseTest {
 
 
