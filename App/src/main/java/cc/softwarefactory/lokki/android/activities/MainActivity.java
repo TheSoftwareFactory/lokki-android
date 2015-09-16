@@ -26,7 +26,10 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.Toast;
+
+import com.androidquery.AQuery;
 
 import org.json.JSONException;
 
@@ -89,6 +92,15 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout)); // Set up the drawer.
 
+        AQuery aq = new AQuery(findViewById(R.id.drawer_layout));
+        aq.id(R.id.user_popout_menu_button).clicked(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "Clicked user menu button");
+                showUserPopupMenu(v);
+            }
+        });
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_layout);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -96,6 +108,26 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
             actionBar.setTitle(mTitle);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+    }
+
+    public void showUserPopupMenu(View v){
+        PopupMenu menu = new PopupMenu(this, v);
+        menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener(){
+            @Override
+            public boolean onMenuItemClick(MenuItem item){
+                switch (item.getItemId()){
+                    case R.id.signout :
+                        mNavigationDrawerFragment.toggleDrawer();
+                        logout();
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        });
+        menu.inflate(R.menu.user_menu);
+        menu.show();
+
     }
 
 
@@ -203,7 +235,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // Position of the logout button
-        final int logoutPos = 5;
         String[] menuOptions = getResources().getStringArray(R.array.nav_drawer_options);
         FragmentManager fragmentManager = getSupportFragmentManager();
         mTitle = menuOptions[position];
@@ -211,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
         ActionBar actionBar = getSupportActionBar();
         // set action bar title if it exists and the user isn't trying to log off
-        if (actionBar != null && position != logoutPos) {
+        if (actionBar != null) {
             actionBar.setTitle(mTitle);
         }
         switch (position) {
@@ -234,29 +265,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
             case 4: // About
                 fragmentManager.beginTransaction().replace(R.id.container, new AboutFragment(), TAG_ABOUT_FRAGMENT).commit();
-                break;
-
-            case logoutPos: // Log Out
-                // Keep a reference to this so we can restart the activity from a callback
-                final MainActivity mainActivity = this;
-                // create the logout confirmation dialog
-                new AlertDialog.Builder(this)
-                        .setIcon(R.drawable.ic_power_settings_new_black_48dp)
-                        .setMessage(R.string.confirm_logout)
-                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which){
-                                        //Clear logged in status
-                                        PreferenceUtils.setString(mainActivity, PreferenceUtils.KEY_USER_ACCOUNT, null);
-                                        PreferenceUtils.setString(mainActivity, PreferenceUtils.KEY_USER_ID, null);
-                                        PreferenceUtils.setString(mainActivity, PreferenceUtils.KEY_AUTH_TOKEN, null);
-                                        //Restart main activity to clear state
-                                        mainActivity.recreate();
-                                    }
-                                })
-                        .setNegativeButton(R.string.no, null)
-                        .show();
-
                 break;
 
             default:
@@ -499,6 +507,31 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     // For dependency injection
     public void setContactUtils(ContactDataSource contactDataSource) {
         this.mContactDataSource = contactDataSource;
+    }
+
+    public void logout(){
+        final MainActivity main = this;
+        new AlertDialog.Builder(main)
+                .setIcon(R.drawable.ic_power_settings_new_black_48dp)
+                .setMessage(R.string.confirm_logout)
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which){
+                        //Clear logged in status
+                        PreferenceUtils.setString(main, PreferenceUtils.KEY_USER_ACCOUNT, null);
+                        PreferenceUtils.setString(main, PreferenceUtils.KEY_USER_ID, null);
+                        PreferenceUtils.setString(main, PreferenceUtils.KEY_AUTH_TOKEN, null);
+                        MainApplication.userAccount = null;
+                        MainApplication.dashboard = null;
+                        MainApplication.contacts = null;
+                        MainApplication.mapping = null;
+                        MainApplication.places = null;
+                        //Restart main activity to clear state
+                        main.recreate();
+                    }
+                })
+                .setNegativeButton(R.string.no, null)
+                .show();
     }
 
 }
