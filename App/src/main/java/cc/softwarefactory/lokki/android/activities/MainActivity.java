@@ -74,8 +74,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
     private ContactDataSource mContactDataSource;
 
-    // TODO: make non static, put in shared prefs
-    public static Boolean firstTimeLaunch;
+    public boolean firstTimeLaunch;
 
 
     @Override
@@ -137,9 +136,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         super.onStart();
         Log.d(TAG, "onStart");
 
-        if (firstTimeLaunch == null) {
-            firstTimeLaunch = firstTimeLaunch();
-        }
+        firstTimeLaunch = firstTimeLaunch();
 
         if (firstTimeLaunch) {
             Log.i(TAG, "onStart - firstTimeLaunch, so showing terms.");
@@ -152,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
     private boolean firstTimeLaunch() {
 
-        return PreferenceUtils.getString(this, PreferenceUtils.KEY_AUTH_TOKEN).isEmpty();
+        return !PreferenceUtils.getBoolean(this, PreferenceUtils.KEY_NOT_FIRST_TIME_LAUNCH);
     }
 
     @Override
