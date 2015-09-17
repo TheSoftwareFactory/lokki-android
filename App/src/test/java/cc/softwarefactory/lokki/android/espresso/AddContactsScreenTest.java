@@ -37,7 +37,6 @@ public class AddContactsScreenTest extends LoggedInBaseTest {
     }
 
 
-
     private void setMockContacts() throws JSONException {
         ContactDataSource mockContactDataSource = Mockito.mock(ContactDataSource.class);
         JSONObject testJSONObject = new JSONObject(MockJsonUtils.getContactsJson());
@@ -154,6 +153,7 @@ public class AddContactsScreenTest extends LoggedInBaseTest {
         onView(withText(R.string.i_can_see)).check(matches(isDisplayed()));
     }
 
+    @SuppressWarnings("unchecked")
     public void testAddingCustomContactAddsToLocalContacts() {
         String contactEmail = "family.member@example.com";
         enterAddContactsScreen();
@@ -168,6 +168,7 @@ public class AddContactsScreenTest extends LoggedInBaseTest {
         onView(allOf(withText(contactEmail), withId(R.id.contact_email))).check(matches(isDisplayed()));
     }
 
+    @SuppressWarnings("unchecked")
     public void testAddingContactFromListAddsToLocalContacts() {
         String contactEmail = "family.member@example.com";
         enterAddContactsScreen();

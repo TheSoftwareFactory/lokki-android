@@ -34,6 +34,7 @@ public class AboutScreenTest extends LoggedInBaseTest {
         return filter;
     }
 
+    @SuppressWarnings("unchecked")
     public void testAboutScreenOpens() throws PackageManager.NameNotFoundException {
         enterAboutScreen();
         String versionAndCopyright = getResources().getString(R.string.version, Utils.getAppVersion(getActivity()));
