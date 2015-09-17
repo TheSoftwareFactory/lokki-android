@@ -40,7 +40,6 @@
     <string translatable="false" name="analytics_label_add_place_overlay_activated">\"Add place\" overlay activated</string>
     <string translatable="false" name="analytics_label_cancel_add_place_button">Cancel \"Add place\" button</string>
     <string translatable="false" name="analytics_label_confirm_add_place_button">Confirm \"Add place\" button</string>
-    <string translatable="false" name="analytics_label_confirm_add_place_hint">You can try</string>
     <string translatable="false" name="analytics_label_my_location_button">My location button</string>
     <string translatable="false" name="analytics_label_cancel_name_new_place_dialog">Cancel name new place dialog</string>
     <string translatable="false" name="analytics_label_confirm_name_new_place_dialog_successful">Confirm name new place dialog (checks successful)</string>
