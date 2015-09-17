@@ -74,9 +74,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
     private ContactDataSource mContactDataSource;
 
-    public boolean firstTimeLaunch;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -136,9 +133,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         super.onStart();
         Log.d(TAG, "onStart");
 
-        firstTimeLaunch = firstTimeLaunch();
-
-        if (firstTimeLaunch) {
+        if (firstTimeLaunch()) {
             Log.i(TAG, "onStart - firstTimeLaunch, so showing terms.");
             startActivityForResult(new Intent(this, FirstTimeActivity.class), REQUEST_TERMS);
         } else {
@@ -148,8 +143,11 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     }
 
     private boolean firstTimeLaunch() {
-
         return !PreferenceUtils.getBoolean(this, PreferenceUtils.KEY_NOT_FIRST_TIME_LAUNCH);
+    }
+
+    public boolean loggedIn() {
+        return !PreferenceUtils.getString(this, PreferenceUtils.KEY_USER_ID).isEmpty();
     }
 
     @Override
@@ -159,13 +157,13 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         Log.d(TAG, "onResume");
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); // WAKE_LOCK
 
-        if (firstTimeLaunch || firstTimeLaunch()) {
-            Log.i(TAG, "onResume - firstTimeLaunch, so avoiding launching services.");
+        if (!loggedIn()) {
+            Log.i(TAG, "onResume - user NOT logged in, so avoiding launching services.");
             return;
         }
 
 
-        Log.i(TAG, "onResume - NOT firstTimeLaunch, so launching services.");
+        Log.i(TAG, "onResume - user logged in, so launching services.");
         startServices();
         LocalBroadcastManager.getInstance(this).registerReceiver(exitMessageReceiver, new IntentFilter("EXIT"));
         LocalBroadcastManager.getInstance(this).registerReceiver(switchToMapReceiver, new IntentFilter("GO-TO-MAP"));
