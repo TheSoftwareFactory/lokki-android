@@ -7,12 +7,11 @@ import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.isChecked;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.isNotChecked;
-import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import android.support.test.espresso.ViewInteraction;
+
+
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 public class SignOutTest extends LoggedInBaseTest {
@@ -24,7 +23,7 @@ public class SignOutTest extends LoggedInBaseTest {
     }
 
     ViewInteraction getSignOutDialog() {
-        return onView(withText("Are you sure you want to sign out?"));
+        return onView(withText(R.string.confirm_logout));
     }
 
     public void openSignOutDialog() {
@@ -36,7 +35,7 @@ public class SignOutTest extends LoggedInBaseTest {
         i.perform(click());
 
         /* Press the Sign Out button. */
-        i = onView(withText("Sign Out"));
+        i = onView(withText(R.string.logout));
         i.check(matches(isDisplayed()));
         i.perform(click());
 
@@ -44,7 +43,7 @@ public class SignOutTest extends LoggedInBaseTest {
         getSignOutDialog().check(matches(isDisplayed()));
     }
 
-    public void pressButton(String title) {
+    public void pressButton(int title) {
         ViewInteraction button = onView(withText(title));
         button.check(matches(isDisplayed()));
         button.perform(click());
@@ -53,20 +52,17 @@ public class SignOutTest extends LoggedInBaseTest {
         getSignOutDialog().check(doesNotExist());
     }
 
-    /*
-     * Tests
-     */
     public void testCancellingSignOutWorks() {
         openSignOutDialog();
-        pressButton("No");
+        pressButton(R.string.no);
 
         /* We are not back in the login screen */
         onView(withId(R.id.email)).check(doesNotExist());
     }
 
-    public void testSigningOutWorks() {
+    public void testSigningOutWorks() throws Exception {
         openSignOutDialog();
-        pressButton("Yes");
+        pressButton(R.string.yes);
 
         /* We are back in login screen */
         onView(withId(R.id.email)).check(matches(isDisplayed()));
