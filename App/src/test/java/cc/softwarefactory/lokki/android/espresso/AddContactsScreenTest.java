@@ -47,7 +47,7 @@ public class AddContactsScreenTest extends LoggedInBaseTest {
 
     private void enterContactsScreen() {
         TestUtils.toggleNavigationDrawer();
-        onView(withText("Contacts")).perform(click());
+        onView(withText(R.string.contacts)).perform(click());
     }
 
     private void enterAddContactsScreen() {
