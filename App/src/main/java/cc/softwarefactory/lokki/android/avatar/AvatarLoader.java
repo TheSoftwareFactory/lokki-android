@@ -43,6 +43,7 @@ public class AvatarLoader {
         private final WeakReference<ImageView> imageViewReference;
         private String data = "";
 
+        @SuppressWarnings("unchecked")
         public BitmapWorkerTask(ImageView imageView) {
             // Use a WeakReference to ensure the ImageView can be garbage collected
             imageViewReference = new WeakReference<>(imageView);
@@ -104,6 +105,7 @@ public class AvatarLoader {
         return false;
     }
 
+    @SuppressWarnings("unchecked")
     private static BitmapWorkerTask getTaskFromView(ImageView imageView) {
 
 

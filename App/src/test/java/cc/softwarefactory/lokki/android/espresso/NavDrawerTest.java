@@ -36,6 +36,7 @@ public class NavDrawerTest extends LoggedInBaseTest {
         onView(withText("test@test.com")).check(matches(isDisplayed()));
     }
 
+    @SuppressWarnings("unchecked")
     public void testNavDrawerToggleButtonIsPresent() {
         getActivity();
         onView(allOf(withContentDescription("Lokki"), withParent(withId(R.id.toolbar_layout)), not(withText("Lokki"))))
@@ -44,6 +45,7 @@ public class NavDrawerTest extends LoggedInBaseTest {
                 .check(isLeftOf(allOf(withText("Lokki"), withParent(withId(R.id.toolbar_layout)), not(hasContentDescription()))));
     }
 
+    @SuppressWarnings("unchecked")
     public void testNavDrawerToggleButtonOpensMenu() {
         getActivity();
         onView(withId(R.id.drawer_layout)).check(matches(isClosed()));

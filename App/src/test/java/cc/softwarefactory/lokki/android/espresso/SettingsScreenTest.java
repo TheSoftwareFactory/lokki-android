@@ -22,7 +22,7 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
-
+@SuppressWarnings("unchecked")
 public class SettingsScreenTest extends LoggedInBaseTest {
     
     @Override
@@ -36,9 +36,9 @@ public class SettingsScreenTest extends LoggedInBaseTest {
         onView(withText(R.string.settings)).perform(click());
     }
     
-    
+
     // TEST
-    
+
     public void testSettingsScreenShown() {
         enterSettingScreen();
         onView(allOf(withText(R.string.you_are_visible))).check(matches(isDisplayed()));

@@ -17,7 +17,6 @@ import cc.softwarefactory.lokki.android.utilities.ServerApi;
  * some convenient helpers.
  */
 
-@SuppressWarnings("unchecked")
 public abstract class LokkiBaseTest extends ActivityInstrumentationTestCase2<MainActivity>  {
 
     private MockWebServer mockWebServer;

@@ -59,7 +59,7 @@ public class PlacesScreenTest extends LoggedInBaseTest {
         onView(withText("Testplace1")).check(matches(isDisplayed()));
     }
 
-
+    @SuppressWarnings("unchecked")
     public void testContactAppearsInPlace() throws JSONException {
         getMockDispatcher().setPlacesResponse(new MockResponse().setBody(MockJsonUtils.getPlacesJson()));
         String[] contactEmails = new String[]{"family.member@example.com"};
@@ -107,7 +107,7 @@ public class PlacesScreenTest extends LoggedInBaseTest {
         onView(withText(name)).check(doesNotExist());
     }
 
-
+    @SuppressWarnings("unchecked")
     public void testDeletePlaces() throws JSONException, InterruptedException {
         getMockDispatcher().setPlacesResponse(new MockResponse().setBody(MockJsonUtils.getPlacesJson()));
         getMockDispatcher().setPlacesDeleteResponse(new MockResponse().setResponseCode(200), "cb693820-3ce7-4c95-af2f-1f079d2841b1");
@@ -120,7 +120,7 @@ public class PlacesScreenTest extends LoggedInBaseTest {
         waitForView("Testplace1");
     }
 
-
+    @SuppressWarnings("unchecked")
     public void testRenamePlaces() throws JSONException, InterruptedException {
         getMockDispatcher().setPlacesResponse(new MockResponse().setBody(MockJsonUtils.getPlacesJson()));
         getMockDispatcher().setPlacesRenameResponse(new MockResponse().setResponseCode(200), "cb693820-3ce7-4c95-af2f-1f079d2841b1");
