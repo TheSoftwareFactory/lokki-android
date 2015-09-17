@@ -29,7 +29,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 
-
+@SuppressWarnings("unchecked")
 public class ContactsScreenTest extends LoggedInBaseTest {
 
 
