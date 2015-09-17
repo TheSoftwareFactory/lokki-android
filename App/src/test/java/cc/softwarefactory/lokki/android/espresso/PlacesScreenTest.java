@@ -115,7 +115,7 @@ public class PlacesScreenTest extends LoggedInBaseTest {
         enterPlacesScreen();
         onView(allOf(withId(R.id.places_context_menu_button), hasSibling(withText("Testplace1"))))
                 .perform(click());
-        onView(withText("Delete")).perform(click());
+        onView(withText(R.string.delete)).perform(click());
         onView(withText("OK")).perform(click());
         waitForView("Testplace1");
     }
@@ -130,7 +130,7 @@ public class PlacesScreenTest extends LoggedInBaseTest {
         onView(withText("Testplace1")).perform((longClick()));
         onView(allOf(withId(R.id.places_context_menu_button), hasSibling(withText("Testplace1"))))
                 .perform(click());
-        onView(withText("Rename")).perform(click());
+        onView(withText(R.string.rename)).perform(click());
         onView(withClassName(endsWith("EditText")))
                 .perform(click())
                 .perform(typeText("Renametext"));
