@@ -63,6 +63,7 @@
     <string name="you_are_invisible">You are now INVISIBLE</string>
     <string name="places_how_to_create">To create a new place go to the map and long press the location where the place is located. Zoom the map to change the location\'s size, type a name and click OK.</string>
     <string name="search_contacts">Search contacts…</string>
+    <string name="buzz_place">Buzz..</string>
 
     <string name="map_mode_default">Default</string>
     <string name="map_mode_satellite">Satellite</string>
@@ -89,6 +90,7 @@
     <string name="confirm_logout">Are you sure you want to sign out?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="confirm_buzz">Do you want us to alert you when you reach this place?</string>
 
     <string translatable="false" name="lokki_github_io_link">https://thesoftwarefactory.github.io/lokki/</string>
     <string translatable="false" name="lokki_play_store_link">market://details?id=cc.softwarefactory.lokki.android</string>

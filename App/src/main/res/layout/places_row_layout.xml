@@ -56,4 +56,14 @@
             android:scrollHorizontally="true" />
     </HorizontalScrollView>
 
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/buzz_place"
+        android:id="@+id/buzz_checkBox"
+        android:layout_alignTop="@+id/place_name"
+        android:layout_toLeftOf="@+id/places_context_menu_button"
+        android:layout_toStartOf="@+id/places_context_menu_button"
+        android:checked="false" />
+
 </RelativeLayout>

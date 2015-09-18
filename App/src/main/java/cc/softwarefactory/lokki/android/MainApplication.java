@@ -13,6 +13,7 @@ import android.util.Log;
 
 import com.google.android.gms.maps.GoogleMap;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -51,6 +52,7 @@ public class MainApplication extends Application {
     public static LruCache<String, Bitmap> avatarCache;
     public static JSONObject places;
     public static boolean locationDisabledPromptShown;
+    public static JSONArray buzzPlaces;
 
 
     @Override
@@ -116,6 +118,8 @@ public class MainApplication extends Application {
                     .penaltyDeath()
                     .build());
         }
+
+        buzzPlaces = new JSONArray();
 
         super.onCreate();
     }
