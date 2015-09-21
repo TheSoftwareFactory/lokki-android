@@ -85,9 +85,11 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
         mTitle = getTitle();
 
+        // Create the navigation drawer
         mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
-        mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout)); // Set up the drawer.
+        mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
 
+        // Set up the callback for the user menu button
         AQuery aq = new AQuery(findViewById(R.id.drawer_layout));
         aq.id(R.id.user_popout_menu_button).clicked(new View.OnClickListener() {
             @Override
@@ -106,14 +108,21 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         }
     }
 
+    /**
+     * Displays the popout user menu containing the Sign Out button
+     * @param v The UI element that was clicked to show the menu
+     */
     public void showUserPopupMenu(View v){
         PopupMenu menu = new PopupMenu(this, v);
         menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener(){
             @Override
             public boolean onMenuItemClick(MenuItem item){
                 switch (item.getItemId()){
+                    // User clicked the Sign Out option
                     case R.id.signout :
+                        // Close the drawer so it isn't open when you log back in
                         mNavigationDrawerFragment.toggleDrawer();
+                        // Sign the user out
                         logout();
                         return true;
                     default:
@@ -137,17 +146,35 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
             Log.i(TAG, "onStart - firstTimeLaunch, so showing terms.");
             startActivityForResult(new Intent(this, FirstTimeActivity.class), REQUEST_TERMS);
         } else {
-            checkIfUserIsLoggedIn(); // Log user In
+            signUserIn();
         }
 
     }
 
+    /**
+     * Is this the first time the app has been launched?
+     * @return  true, if the app hasn't been launched before
+     */
     private boolean firstTimeLaunch() {
         return !PreferenceUtils.getBoolean(this, PreferenceUtils.KEY_NOT_FIRST_TIME_LAUNCH);
     }
 
+    /**
+     * Is the user currently logged in?
+     * NOTE: this doesn't guarantee that all user information has already been fetched from the server,
+     * but it guarantees that the information can be safely fetched.
+     * @return  true, if the user has signed in
+     */
     public boolean loggedIn() {
-        return !PreferenceUtils.getString(this, PreferenceUtils.KEY_USER_ID).isEmpty();
+        String userAccount = PreferenceUtils.getString(this, PreferenceUtils.KEY_USER_ACCOUNT);
+        String userId = PreferenceUtils.getString(this, PreferenceUtils.KEY_USER_ID);
+        String authorizationToken = PreferenceUtils.getString(this, PreferenceUtils.KEY_AUTH_TOKEN);
+
+        Log.i(TAG, "User email: " + userAccount);
+        Log.i(TAG, "User id: " + userId);
+        Log.i(TAG, "authorizationToken: " + authorizationToken);
+
+        return !(userId.isEmpty() || userAccount.isEmpty() || authorizationToken.isEmpty());
     }
 
     @Override
@@ -203,27 +230,22 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         super.onPause();
     }
 
-    private void checkIfUserIsLoggedIn() {
+    /**
+     * Ensures that the user is signed in by launching the SignUpActivity if they aren't
+     */
+    private void signUserIn() {
 
-        String userAccount = PreferenceUtils.getString(this, PreferenceUtils.KEY_USER_ACCOUNT);
-        String userId = PreferenceUtils.getString(this, PreferenceUtils.KEY_USER_ID);
-        String authorizationToken = PreferenceUtils.getString(this, PreferenceUtils.KEY_AUTH_TOKEN);
-        boolean debug = false;
-
-        if (debug || userId.isEmpty() || userAccount.isEmpty() || authorizationToken.isEmpty()) {
+        if (!loggedIn()) {
             try {
                 startActivityForResult(new Intent(this, SignUpActivity.class), REQUEST_CODE_EMAIL);
             } catch (ActivityNotFoundException e) {
                 Toast.makeText(this, getString(R.string.general_error), Toast.LENGTH_LONG).show();
+                Log.e(TAG, "Could not start SignUpActivity " + e);
                 finish();
             }
         } else { // User already logged-in
-            MainApplication.userAccount = userAccount;
+            MainApplication.userAccount = PreferenceUtils.getString(this, PreferenceUtils.KEY_USER_ACCOUNT);
             GcmHelper.start(getApplicationContext()); // Register to GCM
-
-            Log.i(TAG, "User email: " + userAccount);
-            Log.i(TAG, "User id: " + userId);
-            Log.i(TAG, "authorizationToken: " + authorizationToken);
         }
     }
 
