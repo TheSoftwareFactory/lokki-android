@@ -77,6 +77,7 @@
     <string name="ignore">Ohita</string>
     <string name="location_services_disabled">Sijaintipalvelut poistettu käytöstä</string>
     <string name="contact_added">Henkilö lisätty</string>
+    <string name="unable_to_add_contact">Henkilöä ei voi lisätä</string>
     <string name="contact_email_address">Henkilön sähköpostiosoite</string>
     <string name="add_email">Lisää email</string>
     <string name="place_name">Paikan nimi</string>

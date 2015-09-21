@@ -142,10 +142,11 @@ public class ServerApi {
             public void callback(String url, String result, AjaxStatus status) {
                 Log.d(TAG, "allowPeople result code: " + status.getCode());
                 Log.d(TAG, "allowPeople result message: " + status.getMessage());
-                Log.e(TAG, "allowPeople ERROR: " + status.getError());
                 if (status.getError() == null) {
                     Log.d(TAG, "Getting new dashboard");
                     DataService.getDashboard(context);
+                } else {
+                    Log.e(TAG, "allowPeople ERROR: " + status.getError());
                 }
             }
         };
