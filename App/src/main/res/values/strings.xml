@@ -87,6 +87,7 @@
     <string name="send_anonymous_usage_data">Send anonymous usage data</string>
     <string name="receive_experimental_features">Receive experimental features</string>
     <string name="confirm_logout">Are you sure you want to sign out?</string>
+    <string name="no_contacts_to_show">No contacts to show.</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
 

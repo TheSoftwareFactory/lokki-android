@@ -59,6 +59,7 @@ public class AddContactsFragment extends Fragment {
     private EditText inputSearch;
     private Button clearFilter;
     private ArrayAdapter<String> adapter;
+    private TextView noContactsMessage;
 
     public AddContactsFragment() {
         contactList = new ArrayList<>();
@@ -74,6 +75,10 @@ public class AddContactsFragment extends Fragment {
         context = getActivity().getApplicationContext();
         avatarLoader = new AvatarLoader(context);
         inputSearch = (EditText) rootView.findViewById(R.id.add_contact_search);
+        inputSearch.setEnabled(false);
+        inputSearch.setAlpha(0);
+        noContactsMessage = (TextView) rootView.findViewById(R.id.no_contacts_message);
+        noContactsMessage.setText(R.string.no_contacts_to_show);
         clearFilter = (Button) rootView.findViewById(R.id.clear_filter);
 
         return rootView;
@@ -267,6 +272,10 @@ public class AddContactsFragment extends Fragment {
                     AQuery aq = new AQuery(convertView);
                     String contactName = getItem(position);
                     final String email = MainApplication.mapping.getString(contactName);
+
+                    inputSearch.setEnabled(true);
+                    inputSearch.setAlpha(1);
+                    noContactsMessage.setAlpha(0);
 
                     avatarLoader.load(email, holder.photo);
 
