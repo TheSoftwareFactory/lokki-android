@@ -74,6 +74,9 @@ public class MainApplication extends Application {
             }
         };
 
+        // get mapType from preferences
+        mapType = Integer.parseInt(PreferenceUtils.getString(getApplicationContext(), PreferenceUtils.KEY_SETTING_MAP_MODE));
+
         String iDontWantToSeeString = PreferenceUtils.getString(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE);
         if (!iDontWantToSeeString.isEmpty()) {
             try {
