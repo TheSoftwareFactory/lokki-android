@@ -24,7 +24,7 @@ public class TestUtils {
     private static final String TAG = "TestUtils";
 
     public static void clearAppData(Context targetContext) {
-        MainActivity.firstTimeLaunch = null;
+        PreferenceUtils.setBoolean(targetContext, PreferenceUtils.KEY_NOT_FIRST_TIME_LAUNCH, false);
         MainApplication.dashboard = null;
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(targetContext).edit();
         editor.clear();
@@ -32,7 +32,7 @@ public class TestUtils {
     }
 
     public static void setUserRegistrationData(Context targetContext) {
-        MainActivity.firstTimeLaunch = null;
+        PreferenceUtils.setBoolean(targetContext, PreferenceUtils.KEY_NOT_FIRST_TIME_LAUNCH, true);
         PreferenceUtils.setString(targetContext, PreferenceUtils.KEY_USER_ACCOUNT, VALUE_TEST_USER_ACCOUNT);
         PreferenceUtils.setString(targetContext, PreferenceUtils.KEY_USER_ID, VALUE_TEST_USER_ID);
         PreferenceUtils.setString(targetContext, PreferenceUtils.KEY_AUTH_TOKEN, VALUE_TEST_AUTH_TOKEN);

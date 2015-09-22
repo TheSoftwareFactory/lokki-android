@@ -20,6 +20,7 @@ public class PreferenceUtils {
     public static final String KEY_SETTING_MAP_MODE = "settingMapMode";
     public static final String KEY_SETTING_ANALYTICS_OPT_IN = "settingAnalyticsOptIn";
     public static final String KEY_SETTING_EXPERIMENTS_OPT_IN = "settingExperimentsOptIn";
+    public static final String KEY_NOT_FIRST_TIME_LAUNCH = "notFirstTimeLaunch";
 
     /**
      * Get a string value from default shared preferences
