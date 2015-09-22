@@ -154,6 +154,18 @@ public class AddContactsScreenTest extends LoggedInBaseTest {
         onView(withText(R.string.i_can_see)).check(matches(isDisplayed()));
     }
 
+    public void testAddingItselfAsContactDoesNotWork() {
+        enterAddContactsScreen();
+        openAddContactDialog();
+
+        String myEmail = TestUtils.VALUE_TEST_USER_ACCOUNT;
+        onView(withHint(R.string.contact_email_address)).perform(typeText(myEmail));
+        onView(withText(R.string.ok)).perform(click());
+
+        pressBack();
+        onView(allOf(withText(myEmail), withId(R.id.contact_email))).check(doesNotExist());
+    }
+
     public void testAddingCustomContactAddsToLocalContacts() {
         String contactEmail = "family.member@example.com";
         enterAddContactsScreen();

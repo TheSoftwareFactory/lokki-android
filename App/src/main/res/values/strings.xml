@@ -77,6 +77,7 @@
     <string name="ignore">Ignore</string>
     <string name="location_services_disabled">Location services disabled</string>
     <string name="contact_added">Contact added</string>
+    <string name="unable_to_add_contact">Unable to add the contact</string>
     <string name="contact_email_address">Contact email address</string>
     <string name="add_email">Add email</string>
     <string name="place_name">Place Name</string>

@@ -289,16 +289,22 @@ public class AddContactsFragment extends Fragment {
                                     .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
+                                            AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                                                    getString(R.string.analytics_action_click),
+                                                    getString(R.string.analytics_label_confirm_contact_add_from_list_dialog));
+
                                             try {
-                                                AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
-                                                        getString(R.string.analytics_action_click),
-                                                        getString(R.string.analytics_label_confirm_contact_add_from_list_dialog));
+                                                if(!ContactUtils.canAddContact(context, email)) {
+                                                    throw new IllegalArgumentException();
+                                                }
+
                                                 ServerApi.allowPeople(context, email);
                                                 ContactUtils.addLocalContact(context, email);
                                                 contactList.remove(position);
                                                 notifyDataSetChanged();
                                                 Toast.makeText(context, R.string.contact_added, Toast.LENGTH_SHORT).show();
-                                            } catch (JSONException e) {
+                                            } catch (Exception e) {
+                                                Toast.makeText(context, R.string.unable_to_add_contact, Toast.LENGTH_LONG).show();
                                                 e.printStackTrace();
                                             }
                                         }
@@ -366,10 +372,15 @@ public class AddContactsFragment extends Fragment {
                                 context.getString(R.string.analytics_label_confirm_contact_add_from_email_dialog_successful));
                         String email = value.toString();
                         try {
+                            if(!ContactUtils.canAddContact(context, email)) {
+                                throw new IllegalArgumentException();
+                            }
+
                             ServerApi.allowPeople(context, email);
                             ContactUtils.addLocalContact(context, email);
                             Toast.makeText(context, R.string.contact_added, Toast.LENGTH_SHORT).show();
-                        } catch (JSONException e) {
+                        } catch (Exception e) {
+                            Toast.makeText(context, R.string.unable_to_add_contact, Toast.LENGTH_LONG).show();
                             e.printStackTrace();
                         }
 
