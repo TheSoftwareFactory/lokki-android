@@ -40,6 +40,7 @@ public class MainApplication extends Application {
      * TODO: make private with proper accessor methods to disallow values not in mapTypes
      */
     public static int mapType = 0;
+    public static String mapValue;
     public static String emailBeingTracked;
     public static JSONObject dashboard = null;
     public static String userAccount; // Email
@@ -74,8 +75,20 @@ public class MainApplication extends Application {
             }
         };
 
-        // get mapType from preferences
-        mapType = Integer.parseInt(PreferenceUtils.getString(getApplicationContext(), PreferenceUtils.KEY_SETTING_MAP_MODE));
+
+        // get mapValue from preferences
+        mapValue = PreferenceUtils.getString(getApplicationContext(), PreferenceUtils.KEY_SETTING_MAP_MODE);
+
+        if(!mapValue.isEmpty()){
+            try{
+                mapType = Integer.parseInt(mapValue); // set mapValue to mapType
+            }catch (Error e){
+                mapType = 0;
+            }
+        }else {
+            mapType = 0; // if empty set to default
+        }
+
 
         String iDontWantToSeeString = PreferenceUtils.getString(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE);
         if (!iDontWantToSeeString.isEmpty()) {
