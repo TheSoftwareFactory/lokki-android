@@ -248,21 +248,6 @@ public class AddContactsFragment extends Fragment {
         return false;
     }
 
-    private ResultListener newResponseListenerForContactAdding(final String email, String title) {
-        return new ResultListener(TAG, title) {
-            @Override
-            public void onError(String message) {
-                Toast.makeText(context, R.string.unable_to_add_contact, Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onSuccess(String message) {
-                ContactUtils.addLocalContact(context, email);
-                Toast.makeText(context, R.string.contact_added, Toast.LENGTH_SHORT).show();
-            }
-        };
-    }
-
     private void setListAdapter() {
 
         adapter = new ArrayAdapter<String>(getActivity(), R.layout.add_people_row_layout, contactList) {
