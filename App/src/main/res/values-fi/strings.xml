@@ -17,6 +17,7 @@
     <string name="delete">Poista</string>
     <string name="rename">Nimeä uudelleen</string>
     <string name="logout">Kirjaudu ulos</string>
+    <string name="buzz_place">Värinä</string>
 
     <string name="loading">Ladataan…</string>
 
@@ -90,5 +91,6 @@
     <string name="no_contacts_to_show">Ei näytettäviä yhteystietoja.</string>
     <string name="yes">Kyllä</string>
     <string name="no">Ei</string>
+    <string name="confirm_buzz">Haluatko hälytyksen kun saavut tähän paikkaan?</string>
 
 </resources>

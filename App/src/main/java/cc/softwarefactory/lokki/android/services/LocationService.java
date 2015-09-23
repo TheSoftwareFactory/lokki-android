@@ -13,6 +13,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.SystemClock;
+import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -31,6 +32,9 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Iterator;
 
 public class LocationService extends Service implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener  {
 
@@ -46,6 +50,7 @@ public class LocationService extends Service implements LocationListener, Google
     private static final String TAG = "LocationService";
     private static final String RUN_1_MIN = "RUN_1_MIN";
     private static final String ALARM_TIMER = "ALARM_TIMER";
+    private int Buzz_Count ;
 
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest locationRequest;
@@ -188,6 +193,7 @@ public class LocationService extends Service implements LocationListener, Google
         Log.d(TAG, String.format("onLocationChanged - Location: %s", location));
         if (serviceRunning && mGoogleApiClient.isConnected() && location != null) {
             updateLokkiLocation(location);
+            checkBuzzplaces();
         } else {
             this.stopSelf();
             onDestroy();
@@ -216,7 +222,49 @@ public class LocationService extends Service implements LocationListener, Google
             }
         }
     }
+    private void checkBuzzplaces()
+    {
+        for (int i=0;i<MainApplication.buzzPlaces.length();i++)
+        {
+            Iterator<String> keys = MainApplication.places.keys();
+            while(keys.hasNext())
+            {
+                String key = keys.next();
+                try {
+                    JSONObject placeBuzz = MainApplication.buzzPlaces.getJSONObject(i);
+                    if (key.equals(placeBuzz.getString("name"))) {
 
+                        JSONObject place = MainApplication.places.getJSONObject(key);
+                        Location placeLocation = new Location(key);
+                        placeLocation.setLatitude(place.getDouble("lat"));
+                        placeLocation.setLongitude((place.getDouble("lon")));
+
+                       if (placeLocation.distanceTo(lastLocation)<place.getInt("rad"))
+                       {
+                           if (placeBuzz.getInt("buzzcount")>0){
+                               Vibrator v = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
+                               v.vibrate(1000);
+                               placeBuzz.put("buzzcount",placeBuzz.getInt("buzzcount")-1);
+                           }
+
+                       }
+                        else
+                       {
+                           placeBuzz.put("buzzcount",5);
+                       }
+
+                    }
+                }
+                catch (JSONException e)
+                {
+                    Log.e(TAG,"Error in checking buzz places"+e);
+                }
+
+            }
+
+        }
+
+    }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
