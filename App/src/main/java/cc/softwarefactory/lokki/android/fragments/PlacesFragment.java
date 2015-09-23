@@ -136,6 +136,10 @@ public class PlacesFragment extends Fragment {
                                     .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int which) {
+
+                                            AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                                            getString(R.string.analytics_action_click),
+                                                    getString(R.string.analytics_label_buzz_turn_on));
                                             JSONObject placeBuzz = new JSONObject();
                                             try {
                                                 placeBuzz.put("name", placeName);
@@ -151,6 +155,9 @@ public class PlacesFragment extends Fragment {
                                     .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int which) {
+                                            AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                                                    getString(R.string.analytics_action_click),
+                                                    getString(R.string.analytics_label_buzz_decline));
                                             ((CheckBox) view).toggle();
                                         }
                                     })
