@@ -24,12 +24,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.androidquery.AQuery;
 
+import cc.softwarefactory.lokki.android.activities.MainActivity;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
 import cc.softwarefactory.lokki.android.services.DataService;
@@ -40,11 +42,13 @@ import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 import com.makeramen.roundedimageview.RoundedImageView;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.jar.JarException;
 
 
 public class PlacesFragment extends Fragment {
@@ -122,6 +126,69 @@ public class PlacesFragment extends Fragment {
                         v.showContextMenu();
                     }
                 });
+                Log.d(TAG, "Setting up checkbox callback");
+                aq.id(R.id.buzz_checkBox).clicked(new View.OnClickListener() {
+                    @Override
+                    public void onClick(final View view) {
+                        if (((CheckBox) view).isChecked()) {
+                            new AlertDialog.Builder(getActivity())
+                                    .setMessage(R.string.confirm_buzz)
+                                    .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int which) {
+                                            JSONObject placeBuzz = new JSONObject();
+                                            try {
+                                                placeBuzz.put("name", placeName);
+                                                placeBuzz.put("buzzcount", 5);
+
+                                                MainApplication.buzzPlaces.put(placeBuzz);
+                                            } catch (JSONException e) {
+                                                Log.e(TAG, " Error while creating placeBuzz object" + e);
+
+                                            }
+                                        }
+                                    })
+                                    .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int which) {
+                                            ((CheckBox) view).toggle();
+                                        }
+                                    })
+                                    .show();
+
+
+                        } else {
+                            try {
+                                for (int i = 0; i < MainApplication.buzzPlaces.length(); i++) {
+
+                                    if (MainApplication.buzzPlaces.getJSONObject(i).getString("name").equals(placeName)) {
+
+                                        MainApplication.buzzPlaces.put(i, MainApplication.buzzPlaces.getJSONObject(MainApplication.buzzPlaces.length() - 1));
+                                        MainApplication.buzzPlaces.remove(MainApplication.buzzPlaces.length() - 1);
+                                    }
+
+                                }
+                            } catch (JSONException e) {
+                                Log.e(TAG, "Error while modifying the buzz places" + e);
+
+                            }
+                        }
+
+                    }
+                });
+
+                for (int i=0;i<MainApplication.buzzPlaces.length();i++)
+                {
+                    try {
+                        if (MainApplication.buzzPlaces.getJSONObject(i).getString("name").equals(placeName)) {
+
+                            aq.id(R.id.buzz_checkBox).checked(true);
+                        }
+                    } catch (JSONException e) {
+                        Log.e(TAG, "Error while checking the buzz places" + e);
+
+                    }
+                }
 
                 Log.d(TAG, "Place name: " + placeName);
                 Log.d(TAG, "peopleInsidePlace? " + peopleInsidePlace.has(placeName));
@@ -162,6 +229,7 @@ public class PlacesFragment extends Fragment {
         };
 
         listView.setAdapter(adapter);
+
 
     }
 
