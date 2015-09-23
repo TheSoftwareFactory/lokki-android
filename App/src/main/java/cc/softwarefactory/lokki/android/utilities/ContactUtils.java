@@ -12,13 +12,12 @@ public class ContactUtils {
         return addr.trim().toLowerCase();
     }
 
-    public static boolean canAddContact(Context context, String contact) {
+    public static boolean isSelf(Context context, String contact) {
         String myEmail = getUnambiguousEmail(PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ACCOUNT));
-        contact = getUnambiguousEmail(contact);
-        return !myEmail.equals(contact) && contact.matches(".+@.+\\..+");
+        return myEmail.equals(getUnambiguousEmail(contact));
     }
 
-    public static void addLocalContact(Context context, String contact) throws Exception {
+    public static void addLocalContact(Context context, String contact) {
         JSONArray localContacts = getLocalContactsJsonArray(context);
         localContacts.put(getUnambiguousEmail(contact));
         PreferenceUtils.setString(context, PreferenceUtils.KEY_LOCAL_CONTACTS, localContacts.toString());

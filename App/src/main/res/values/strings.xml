@@ -89,6 +89,7 @@
     <string name="receive_experimental_features">Receive experimental features</string>
     <string name="confirm_logout">Are you sure you want to sign out?</string>
     <string name="no_contacts_to_show">No contacts to show.</string>
+    <string name="cant_add_self_as_contact">You can\'t add yourself as contact.</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="confirm_buzz">Do you want us to alert you when you reach this place?</string>

@@ -25,6 +25,7 @@ import java.util.Map;
 
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
+import cc.softwarefactory.lokki.android.ResultListener;
 import cc.softwarefactory.lokki.android.constants.Constants;
 import cc.softwarefactory.lokki.android.errors.AddPlaceError;
 import cc.softwarefactory.lokki.android.services.DataService;
@@ -120,7 +121,7 @@ public class ServerApi {
         aq.ajax(url, JSONObject.class, cb);
     }
 
-    public static void allowPeople(final Context context, String email) throws JSONException {
+    public static void allowPeople(final Context context, String email, final ResultListener resultListener) {
 
         Log.d(TAG, "allowPeople");
         AQuery aq = new AQuery(context);
@@ -132,27 +133,29 @@ public class ServerApi {
         JSONArray JSONemails = new JSONArray();
         JSONemails.put(email);
 
-        JSONObject JSONdata = new JSONObject()
-                .put("emails", JSONemails);
+        try {
+            JSONObject JSONdata = new JSONObject().put("emails", JSONemails);
 
-        Log.d(TAG, "Emails to be alloweed: " + JSONdata);
+            Log.d(TAG, "Emails to be alloweed: " + JSONdata);
 
-        AjaxCallback<String> cb = new AjaxCallback<String>() {
-            @Override
-            public void callback(String url, String result, AjaxStatus status) {
-                Log.d(TAG, "allowPeople result code: " + status.getCode());
-                Log.d(TAG, "allowPeople result message: " + status.getMessage());
-                if (status.getError() == null) {
-                    Log.d(TAG, "Getting new dashboard");
-                    DataService.getDashboard(context);
-                } else {
-                    Log.e(TAG, "allowPeople ERROR: " + status.getError());
+            AjaxCallback<String> cb = new AjaxCallback<String>() {
+                @Override
+                public void callback(String url, String result, AjaxStatus status) {
+                    if (status.getError() == null) {
+                        Log.d(TAG, "Getting new dashboard");
+                        DataService.getDashboard(context);
+                        resultListener.handleSuccess(status.getMessage());
+                    } else
+                        resultListener.handleError(status.getMessage());
                 }
-            }
-        };
+            };
 
-        cb.header("authorizationtoken", authorizationToken);
-        aq.post(url, JSONdata, String.class, cb);
+            cb.header("authorizationtoken", authorizationToken);
+            aq.post(url, JSONdata, String.class, cb);
+        }
+        catch(JSONException e) {
+            resultListener.handleError("JSON error");
+        }
     }
 
     public static void disallowUser(final Context context, String email) {
