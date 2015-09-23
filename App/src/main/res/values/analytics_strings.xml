@@ -53,5 +53,7 @@
     <string translatable="false" name="analytics_label_cancel_delete_place_dialog">Cancel delete place dialog</string>
     <string translatable="false" name="analytics_label_analytics_opt_in_toggle">Analytics opt-in toggle</string>
     <string translatable="false" name="analytics_label_experiments_opt_in_toggle">Experiments opt-in toggle</string>
+    <string translatable="false" name="analytics_label_buzz_turn_on">User turned on location buzz</string>
+    <string translatable="false" name="analytics_label_buzz_decline">User declined Buzz option</string>
 
 </resources>
