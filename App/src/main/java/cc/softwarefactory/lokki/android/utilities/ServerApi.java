@@ -215,6 +215,14 @@ public class ServerApi {
         }
     }
 
+    public static void logStatus(String request, AjaxStatus status) {
+        Log.d(TAG, request + " result code: " + status.getCode());
+        Log.d(TAG, request + " result message: " + status.getMessage());
+        if(status.getError() != null) {
+            Log.e(TAG, request + " ERROR: " + status.getError());
+        }
+    }
+
     public static void disallowUser(final Context context, String email) {
 
         Log.d(TAG, "disallowUser");
@@ -235,9 +243,7 @@ public class ServerApi {
         AjaxCallback<String> cb = new AjaxCallback<String>() {
             @Override
             public void callback(String url, String result, AjaxStatus status) {
-                Log.d(TAG, "disallowUser result code: " + status.getCode());
-                Log.d(TAG, "disallowUser result message: " + status.getMessage());
-                Log.e(TAG, "disallowUser ERROR: " + status.getError());
+                logStatus("disallowUser", status);
                 if (status.getError() == null) {
                     Log.d(TAG, "Getting new dashboard");
                     DataService.getDashboard(context);
@@ -286,13 +292,10 @@ public class ServerApi {
         AjaxCallback<String> cb = new AjaxCallback<String>() {
             @Override
             public void callback(String url, String result, AjaxStatus status) {
-                Log.d(TAG, "ignoreUsers result code: " + status.getCode());
-                Log.d(TAG, "ignoreUsers result message: " + status.getMessage());
+                logStatus("ignoreUsers", status);
                 if (status.getError() == null) {
                     Log.d(TAG, "Getting new contacts");
                     DataService.getContacts(context);
-                } else {
-                    Log.e(TAG, "ignoreUsers ERROR: " + status.getError());
                 }
             }
         };
@@ -326,15 +329,10 @@ public class ServerApi {
         AjaxCallback<String> cb = new AjaxCallback<String>() {
             @Override
             public void callback(String url, String result, AjaxStatus status) {
-                Log.d(TAG, "unignoreUser result code: " + status.getCode());
-                Log.d(TAG, "unignoreUser result message: " + status.getMessage());
-
+                logStatus("ignoreUser", status);
                 if (status.getError() == null) {
                     Log.d(TAG, "Getting new contacts");
                     DataService.getContacts(context);
-                }
-                else {
-                    Log.e(TAG, "unignoreUser ERROR: " + status.getError());
                 }
             }
         };
@@ -363,9 +361,7 @@ public class ServerApi {
         AjaxCallback<String> cb = new AjaxCallback<String>() {
             @Override
             public void callback(String url, String result, AjaxStatus status) {
-                Log.d(TAG, "sendLocation result code: " + status.getCode());
-                Log.d(TAG, "sendLocation result message: " + status.getMessage());
-                Log.e(TAG, "sendLocation ERROR: " + status.getError());
+                logStatus("sendLocation", status);
             }
         };
 
@@ -388,9 +384,7 @@ public class ServerApi {
         AjaxCallback<String> cb = new AjaxCallback<String>() {
             @Override
             public void callback(String url, String result, AjaxStatus status) {
-                Log.d(TAG, "sendGCMToken result code: " + status.getCode());
-                Log.d(TAG, "sendGCMToken result message: " + status.getMessage());
-                Log.e(TAG, "sendGCMToken ERROR: " + status.getError());
+                logStatus("sendGCMToken", status);
             }
         };
 
@@ -413,9 +407,7 @@ public class ServerApi {
         AjaxCallback<String> cb = new AjaxCallback<String>() {
             @Override
             public void callback(String url, String result, AjaxStatus status) {
-                Log.d(TAG, "requestUpdates result code: " + status.getCode());
-                Log.d(TAG, "requestUpdates result message: " + status.getMessage());
-                Log.e(TAG, "requestUpdates ERROR: " + status.getError());
+                logStatus("requestUpdates", status);
             }
         };
 
@@ -438,9 +430,7 @@ public class ServerApi {
         AjaxCallback<String> cb = new AjaxCallback<String>() {
             @Override
             public void callback(String url, String result, AjaxStatus status) {
-                Log.d(TAG, "setVisibility result code: " + status.getCode());
-                Log.d(TAG, "setVisibility result message: " + status.getMessage());
-                Log.e(TAG, "setVisibility ERROR: " + status.getError());
+                logStatus("setVisibility", status);
             }
         };
 
@@ -470,9 +460,7 @@ public class ServerApi {
         AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject object, AjaxStatus status) {
-                Log.d(TAG, "addPlace result code: " + status.getCode());
-                Log.d(TAG, "addPlace result message: " + status.getMessage());
-                Log.e(TAG, "addPlace ERROR: " + status.getError());
+                logStatus("addPlace", status);
 
                 if (status.getError() != null) {
                     handleError(status);
@@ -512,9 +500,7 @@ public class ServerApi {
         AjaxCallback<String> cb = new AjaxCallback<String>() {
             @Override
             public void callback(String url, String result, AjaxStatus status) {
-                Log.d(TAG, "removePlace result code: " + status.getCode());
-                Log.d(TAG, "removePlace result message: " + status.getMessage());
-                Log.e(TAG, "removePlace ERROR: " + status.getError());
+                logStatus("removePlace", status);
                 if (status.getError() == null) {
                     Log.d(TAG, "No error, continuing deletion.");
                     MainApplication.places.remove(placeId);
@@ -561,9 +547,7 @@ public class ServerApi {
         AjaxCallback<String> cb = new AjaxCallback<String>() {
             @Override
             public void callback(String url, String result, AjaxStatus status) {
-                Log.d(TAG, "renamePlace result code: " + status.getCode());
-                Log.d(TAG, "renamePlace result message: " + status.getMessage());
-                Log.e(TAG, "renamePlace ERROR: " + status.getError());
+                logStatus("renamePlace", status);
 
                 if (status.getError() == null) {
                     Log.d(TAG, "No error, place renamed.");
