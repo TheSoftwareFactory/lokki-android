@@ -58,6 +58,7 @@
     <string name="rename_place">Nimeä uudelleen %1$s?</string>
     <string name="place_created">Paikka luotu</string>
     <string name="place_removed">Paikka poistettu</string>
+    <string name="add_place_hint">Vinkki: Zoomaaminen sisään ja ulos auttaa määrittämään paikan koon.</string>
     <string name="place_renamed">Paikka nimetty uudelleen</string>
     <string name="place_limit_reached">Et voi luoda enempää paikkoja. Maksimiraja saavutettu.</string>
     <string name="you_are_visible">Olet nyt NÄKYVISSÄ</string>
