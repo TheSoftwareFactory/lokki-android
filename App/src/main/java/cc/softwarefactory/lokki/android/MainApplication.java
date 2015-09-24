@@ -43,10 +43,67 @@ public class MainApplication extends Application {
     public static int mapType = 0;
     public static String mapValue;
     public static String emailBeingTracked;
+    /**
+     * User dashboard JSON object. Format:
+     * {
+     *      "battery":"",
+     *      "canseeme":["c429003ba3a3c508cba1460607ab7f8cd4a0d450"],
+     *      "icansee":{
+     *          "c429003ba3a3c508cba1460607ab7f8cd4a0d450":{
+     *              "battery":"",
+     *              "location":{},
+     *              "visibility":true
+     *          }
+     *      },
+     *      "idmapping":{
+     *          "a1b2c3d4e5f6g7h8i9j10k11l12m13n14o15p16q":"test@test.com",
+     *          "c429003ba3a3c508cba1460607ab7f8cd4a0d450":"family.member@example.com"
+     *      },
+     *      "location":{},
+     *      "visibility":true
+     * }
+     */
     public static JSONObject dashboard = null;
     public static String userAccount; // Email
+    /**
+     * User's contacts. Format:
+     * {
+     *      "test.friend@example.com": {
+     *          "id":1,
+     *          "name":"Test Friend"
+     *      },
+     *      "family.member@example.com":{
+     *          "id":2,
+     *          "name":"Family Member"
+     *      },
+     *      "work.buddy@example.com":{
+     *          "id":3,
+     *          "name":"Work Buddy"
+     *      },
+     *      "mapping":{
+     *          "Test Friend":"test.friend@example.com",
+     *          "Family Member":"family.member@example.com",
+     *          "Work Buddy":"work.buddy@example.com"
+     *      }
+     * }
+     */
     public static JSONObject contacts;
+    /**
+     * Format:
+     * {
+     *      "Test Friend":"test.friend@example.com",
+     *      "Family Member":"family.member@example.com",
+     *      "Work Buddy":"work.buddy@example.com"
+     * }
+     */
     public static JSONObject mapping;
+    /**
+     * Contacts that aren't shown on the map. Format:
+     * {
+     *      "test.friend@example.com":1,
+     *      "family.member@example.com":1
+     * }
+     */
     public static JSONObject iDontWantToSee;
     public static Boolean visible = true;
     public static LruCache<String, Bitmap> avatarCache;

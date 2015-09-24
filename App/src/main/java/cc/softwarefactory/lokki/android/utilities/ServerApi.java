@@ -121,6 +121,63 @@ public class ServerApi {
         aq.ajax(url, JSONObject.class, cb);
     }
 
+    /**
+     * Fetch all contact data from server
+     * @param context   The context used to store data into preferences
+     */
+    public static void getContacts(final Context context) {
+
+        Log.d(TAG, "getContacts");
+        AQuery aq = new AQuery(context);
+
+        String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
+        String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
+        String url = ApiUrl + "user/" + userId + "/contacts";
+
+        AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>(){
+            @Override
+            public void callback(String url, JSONObject json, AjaxStatus status) {
+                Log.d(TAG, "contactsCallback");
+
+                if (json == null) {
+                    Log.e(TAG, "Error fetching contacts: " + status.getCode() + " - " + status.getMessage());
+                    return;
+                }
+                Log.d(TAG, "contacts JSON returned: " + json);
+                try {
+                    //Store ignored users
+                    MainApplication.iDontWantToSee = new JSONObject();
+                    JSONArray ignored = json.getJSONArray("ignored");
+                    JSONObject idmapping = json.getJSONObject("idmapping");
+                    for (int i = 0; i < ignored.length(); i++){
+                        String email;
+                        try {
+                            email = idmapping.getString(ignored.getString(i));
+                            MainApplication.iDontWantToSee.put(email, 1);
+                        }
+                        catch (JSONException e){
+                            Log.w(TAG, "Ignore list contained unknown id: " + ignored.getString(i));
+                        }
+                    }
+                    PreferenceUtils.setString(context, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, MainApplication.iDontWantToSee.toString());
+                    //Write all other contact data into the user dashboard
+                    MainApplication.dashboard.remove("icansee");
+                    MainApplication.dashboard.put("icansee", json.getJSONObject("icansee"));
+                    MainApplication.dashboard.remove("canseeme");
+                    MainApplication.dashboard.put("canseeme", json.getJSONArray("canseeme"));
+                    MainApplication.dashboard.remove("idmapping");
+                    MainApplication.dashboard.put("idmapping", json.getJSONObject("idmapping"));
+                    PreferenceUtils.setString(context, PreferenceUtils.KEY_DASHBOARD, MainApplication.dashboard.toString());
+                }
+                catch (JSONException e){
+                    Log.e(TAG, "Error parsing contacts JSON: " + e);
+                }
+            }
+        };
+        cb.header("authorizationtoken", authorizationToken);
+        aq.ajax(url, JSONObject.class, cb);
+    }
+
     public static void allowPeople(final Context context, String email, final ResultListener resultListener) {
 
         Log.d(TAG, "allowPeople");
@@ -169,6 +226,7 @@ public class ServerApi {
         String targetId = Utils.getIdFromEmail(context, email);
 
         if (targetId == null) {
+            Log.e(TAG, "Attempted to disallow invalid email");
             return;
         }
         url += targetId;
@@ -183,6 +241,100 @@ public class ServerApi {
                 if (status.getError() == null) {
                     Log.d(TAG, "Getting new dashboard");
                     DataService.getDashboard(context);
+                }
+            }
+        };
+
+        cb.header("authorizationtoken", authorizationToken);
+        aq.delete(url, String.class, cb);
+    }
+
+    /**
+     * Prevents an user from showing up on the map
+     * @param context           Context used to access data in preferences
+     * @param email             The email address to be ignored
+     * @throws JSONException
+     */
+    public static void ignoreUsers(final Context context, String email) {
+
+        Log.d(TAG, "ignoreUsers");
+        AQuery aq = new AQuery(context);
+
+        String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
+        String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
+        String url = ApiUrl + "user/" + userId + "/ignore";
+
+        String targetId = Utils.getIdFromEmail(context, email);
+        JSONArray JSONids = new JSONArray();
+        JSONids.put(targetId);
+
+        if (targetId == null) {
+            Log.e(TAG, "Attempted to ignore invalid email");
+            return;
+        }
+        JSONObject JSONdata = new JSONObject();
+        try {
+                    JSONdata.put("ids", JSONids);
+        }
+        catch (JSONException e){
+            Log.e(TAG, "Error creating ignore request: " + e);
+            return;
+        }
+
+        Log.d(TAG, "IDs to be ignored: " + JSONdata);
+
+        AjaxCallback<String> cb = new AjaxCallback<String>() {
+            @Override
+            public void callback(String url, String result, AjaxStatus status) {
+                Log.d(TAG, "ignoreUsers result code: " + status.getCode());
+                Log.d(TAG, "ignoreUsers result message: " + status.getMessage());
+                if (status.getError() == null) {
+                    Log.d(TAG, "Getting new contacts");
+                    DataService.getContacts(context);
+                } else {
+                    Log.e(TAG, "ignoreUsers ERROR: " + status.getError());
+                }
+            }
+        };
+
+        cb.header("authorizationtoken", authorizationToken);
+        aq.post(url, JSONdata, String.class, cb);
+    }
+
+    /**
+     * Allows an ignored user to appear on the map again
+     * @param context   The context used to access preferences
+     * @param email     The email of the user to be unignored
+     */
+    public static void unignoreUser(final Context context, String email) {
+
+        Log.d(TAG, "unignoreUser");
+        AQuery aq = new AQuery(context);
+
+        String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
+        String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
+        String url = ApiUrl + "user/" + userId + "/ignore/";
+        String targetId = Utils.getIdFromEmail(context, email);
+
+        if (targetId == null) {
+            Log.e(TAG, "Attempted to unignore invalid email");
+            return;
+        }
+        url += targetId;
+        Log.d(TAG, "Email to be unignored: " + email + ", userIdToDisallow: " + targetId);
+
+        AjaxCallback<String> cb = new AjaxCallback<String>() {
+            @Override
+            public void callback(String url, String result, AjaxStatus status) {
+                Log.d(TAG, "unignoreUser result code: " + status.getCode());
+                Log.d(TAG, "unignoreUser result message: " + status.getMessage());
+
+                if (status.getError() == null) {
+                    Log.d(TAG, "Getting new contacts");
+                    DataService.getContacts(context);
+                }
+                else {
+                    Log.e(TAG, "unignoreUser ERROR: " + status.getError());
                 }
             }
         };

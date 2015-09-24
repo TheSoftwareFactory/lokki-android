@@ -32,6 +32,7 @@ import android.widget.Toast;
 import com.androidquery.AQuery;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
@@ -199,8 +200,9 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
         Log.i(TAG, "onResume - check if dashboard is null");
         if (MainApplication.dashboard == null) {
-            Log.w(TAG, "onResume - dashboard was null, get dashboard from server");
+            Log.w(TAG, "onResume - dashboard was null, get dashboard & contacts from server");
             ServerApi.getDashboard(getApplicationContext());
+            ServerApi.getContacts(getApplicationContext());
         }
     }
 
@@ -456,13 +458,17 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         if (!allow) {
             try {
                 MainApplication.iDontWantToSee.put(email, 1);
+                Log.d(TAG, MainApplication.iDontWantToSee.toString());
                 PreferenceUtils.setString(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, MainApplication.iDontWantToSee.toString());
+                ServerApi.ignoreUsers(this, email);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         } else if (MainApplication.iDontWantToSee.has(email)) {
+            Log.d(TAG, "unignoring user");
             MainApplication.iDontWantToSee.remove(email);
             PreferenceUtils.setString(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, MainApplication.iDontWantToSee.toString());
+            ServerApi.unignoreUser(this, email);
         }
     }
 
@@ -535,11 +541,17 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                         PreferenceUtils.setString(main, PreferenceUtils.KEY_USER_ACCOUNT, null);
                         PreferenceUtils.setString(main, PreferenceUtils.KEY_USER_ID, null);
                         PreferenceUtils.setString(main, PreferenceUtils.KEY_AUTH_TOKEN, null);
+                        PreferenceUtils.setString(main, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, null);
+                        PreferenceUtils.setString(main, PreferenceUtils.KEY_CONTACTS, null);
+                        PreferenceUtils.setString(main, PreferenceUtils.KEY_DASHBOARD, null);
+                        PreferenceUtils.setString(main, PreferenceUtils.KEY_LOCAL_CONTACTS, null);
+                        PreferenceUtils.setString(main, PreferenceUtils.KEY_PLACES, null);
                         MainApplication.userAccount = null;
                         MainApplication.dashboard = null;
                         MainApplication.contacts = null;
                         MainApplication.mapping = null;
                         MainApplication.places = null;
+                        MainApplication.iDontWantToSee = new JSONObject();
                         //Restart main activity to clear state
                         main.recreate();
                     }
