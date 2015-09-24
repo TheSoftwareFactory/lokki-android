@@ -89,6 +89,7 @@
     <string name="receive_experimental_features">Vastaanota kokeellisia ominaisuuksia</string>
     <string name="confirm_logout">Haluatko varmasti kirjautua ulos?</string>
     <string name="no_contacts_to_show">Ei näytettäviä yhteystietoja.</string>
+    <string name="cant_add_self_as_contact">Et voi lisätä itseäsi yhteystietoihisi.</string>
     <string name="yes">Kyllä</string>
     <string name="no">Ei</string>
     <string name="confirm_buzz">Haluatko hälytyksen kun saavut tähän paikkaan?</string>

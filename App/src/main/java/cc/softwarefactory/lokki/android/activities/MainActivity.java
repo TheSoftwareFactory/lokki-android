@@ -35,6 +35,7 @@ import org.json.JSONException;
 
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
+import cc.softwarefactory.lokki.android.ResultListener;
 import cc.softwarefactory.lokki.android.datasources.contacts.ContactDataSource;
 import cc.softwarefactory.lokki.android.datasources.contacts.DefaultContactDataSource;
 import cc.softwarefactory.lokki.android.fragments.AboutFragment;
@@ -477,11 +478,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
             if (!allow) {
                 ServerApi.disallowUser(this, email);
             } else {
-                try {
-                    ServerApi.allowPeople(this, email);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                ServerApi.allowPeople(this, email, new ResultListener(TAG, "allow user"));
             }
         }
 
