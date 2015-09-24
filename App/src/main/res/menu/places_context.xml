@@ -8,4 +8,5 @@
         android:id="@+id/places_context_menu_delete"
         android:title="@string/delete" />
 
+
 </menu>
