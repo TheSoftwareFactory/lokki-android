@@ -106,5 +106,6 @@
     <string translatable="false" name="lokki_github_io_link">https://thesoftwarefactory.github.io/lokki/</string>
     <string translatable="false" name="lokki_play_store_link">market://details?id=cc.softwarefactory.lokki.android</string>
     <string translatable="false" name="sign_out_button_key">signOutButton</string>
+    <string name="rename_contact">Enter contact name</string>
 
 </resources>

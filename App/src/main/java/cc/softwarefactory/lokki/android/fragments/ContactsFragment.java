@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -52,6 +53,8 @@ import cc.softwarefactory.lokki.android.utilities.ContactUtils;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
 import cc.softwarefactory.lokki.android.utilities.Utils;
+
+import static cc.softwarefactory.lokki.android.R.string.analytics_label_confirm_rename_contact_dialog;
 
 
 public class ContactsFragment extends Fragment {
@@ -290,11 +293,43 @@ public class ContactsFragment extends Fragment {
                     holder = (ViewHolder) convertView.getTag();
                 }
 
-                String contactName = getItem(position);
+                final String contactName = getItem(position);
                 String email = mapping.get(contactName);
+                final EditText input = new EditText(getActivity());
+                String titleFormat = getString(R.string.rename_place);
+                final String title = String.format(titleFormat, contactName);
 
                 AQuery aq = new AQuery(convertView);
-                aq.id(holder.name).text(contactName);
+                aq.id(holder.name).text(contactName).longClicked(new View.OnLongClickListener(){
+                    @Override
+                    public boolean onLongClick(View view){
+                        new AlertDialog.Builder(getActivity())
+                                .setTitle(title)
+                                .setMessage(R.string.rename_contact)
+                                .setView(input)
+                                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                                                getString(R.string.analytics_action_click),
+                                                getString(analytics_label_confirm_rename_contact_dialog));
+                                        String newName = input.getText().toString();
+                                        renameContacts(contactName, newName);
+                                    }
+                                })
+                                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                                                getString(R.string.analytics_action_click),
+                                                getString(R.string.analytics_label_cancel_rename_contact_dialog));
+                                    }
+                                })
+                                .show();
+                        return true;
+                    }
+
+                });
                 aq.id(holder.email).text(email);
 
                 avatarLoader.load(email, holder.photo);
@@ -347,6 +382,9 @@ public class ContactsFragment extends Fragment {
 
         aq.id(R.id.headers).visibility(View.VISIBLE);
         aq.id(R.id.contacts_list_view).adapter(adapter);
+    }
+    public void renameContacts(String contactName,String newName){
+        
     }
 
     static class ViewHolder {
