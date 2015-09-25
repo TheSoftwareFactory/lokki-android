@@ -11,6 +11,14 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:id="@+id/place_adding_tip"
+        android:layout_gravity="center_horizontal|top"
+        android:alpha="0" />
+
     <FrameLayout
         android:id="@+id/add_place_overlay"
         android:layout_width="match_parent"
@@ -70,8 +78,11 @@
 
 
         <ImageView
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="fill_parent"
-                android:id="@+id/addPlaceCircle" />
+                android:id="@+id/addPlaceCircle"
+            android:layout_gravity="center_horizontal|bottom" />
+
     </FrameLayout>
+
 </RelativeLayout>

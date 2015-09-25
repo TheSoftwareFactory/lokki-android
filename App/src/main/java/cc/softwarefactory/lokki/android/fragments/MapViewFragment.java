@@ -35,6 +35,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.androidquery.AQuery;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -76,6 +77,7 @@ public class MapViewFragment extends Fragment {
     private Boolean firstTimeZoom = true;
     private ArrayList<Circle> placesOverlay;
     private double radiusMultiplier = 0.9;  // Dont want to fill the screen from edge to edge...
+    private TextView placeAddingTip;
 
     public MapViewFragment() {
         markerMap = new HashMap<>();
@@ -84,15 +86,26 @@ public class MapViewFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         View rootView = inflater.inflate(R.layout.activity_map, container, false);
+        placeAddingTip = (TextView) rootView.findViewById(R.id.place_adding_tip);
+        placeAddingTip.setText(R.string.place_adding_tip);
+        updatePlaceAddingTipVisibility();
+
         aq = new AQuery(getActivity(), rootView);
         context = getActivity().getApplicationContext();
         return rootView;
 
     }
 
+    public void updatePlaceAddingTipVisibility() {
+        boolean placeIsBeingAdded = getView() != null && getView().findViewById(R.id.addPlaceCircle) != null &&
+            ((ImageView) getView().findViewById(R.id.addPlaceCircle)).getDrawable() != null;
 
+        boolean noPlacesAdded = MainApplication.places != null && (MainApplication.places.names() == null ||
+                MainApplication.places.names().length() == 0);
+
+        placeAddingTip.setAlpha(noPlacesAdded && !placeIsBeingAdded? 1: 0);
+    }
 
     @Override
     public void onDestroyView() {
@@ -284,6 +297,7 @@ public class MapViewFragment extends Fragment {
             ((ImageView) getView().findViewById(R.id.addPlaceCircle)).setImageDrawable(null);
             hideAddPlaceButtons();
         }
+        updatePlaceAddingTipVisibility();
     }
 
     private void showAddPlaceButtons() {
@@ -379,6 +393,8 @@ public class MapViewFragment extends Fragment {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+
+        updatePlaceAddingTipVisibility();
     }
 
     private void removePlaces() {
