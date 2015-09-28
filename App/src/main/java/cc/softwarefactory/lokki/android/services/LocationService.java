@@ -232,7 +232,8 @@ public class LocationService extends Service implements LocationListener, Google
                 String key = keys.next();
                 try {
                     JSONObject placeBuzz = MainApplication.buzzPlaces.getJSONObject(i);
-                    if (key.equals(placeBuzz.getString("name"))) {
+
+                    if (key.equals(placeBuzz.getString("placeid"))) {
 
                         JSONObject place = MainApplication.places.getJSONObject(key);
                         Location placeLocation = new Location(key);
