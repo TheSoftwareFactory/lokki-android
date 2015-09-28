@@ -138,7 +138,7 @@ public class PlacesFragment extends Fragment {
                                         public void onClick(DialogInterface dialogInterface, int which) {
 
                                             AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
-                                            getString(R.string.analytics_action_click),
+                                                    getString(R.string.analytics_action_click),
                                                     getString(R.string.analytics_label_buzz_turn_on));
                                             JSONObject placeBuzz = new JSONObject();
                                             try {
@@ -187,7 +187,7 @@ public class PlacesFragment extends Fragment {
                 for (int i=0;i<MainApplication.buzzPlaces.length();i++)
                 {
                     try {
-                        if (MainApplication.buzzPlaces.getJSONObject(i).getString("name").equals(placeName)) {
+                        if (MainApplication.buzzPlaces.getJSONObject(i).getString("name").toLowerCase().equals(placeName.toLowerCase())) {
 
                             aq.id(R.id.buzz_checkBox).checked(true);
                         }
@@ -349,6 +349,27 @@ public class PlacesFragment extends Fragment {
                 .show();
     }
 
+    private boolean inheritBuzz(JSONObject object, String oldName, String newName) throws JSONException {
+        if (!object.getString("name").toLowerCase().equals(oldName.toLowerCase())) {
+            return false;
+        }
+        object.remove("name");
+        object.put("name", newName);
+        return true;
+    }
+
+    private void inheritBuzz(String oldName, String newName) {
+        try {
+            for (int i = 0; i < MainApplication.buzzPlaces.length(); i++) {
+                if(inheritBuzz((JSONObject)MainApplication.buzzPlaces.get(i), oldName, newName)) {
+                    return;
+                }
+            }
+        } catch(JSONException e) {
+            Log.e(TAG, "JSONException " + e);
+        }
+    }
+
     private void renamePlace(String oldName, String newName) {
 
         Log.d(TAG, "renamePlace");
@@ -363,6 +384,7 @@ public class PlacesFragment extends Fragment {
                     break;
                 }
             }
+            inheritBuzz(oldName, newName);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
