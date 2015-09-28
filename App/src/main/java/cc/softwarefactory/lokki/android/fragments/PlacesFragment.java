@@ -127,9 +127,27 @@ public class PlacesFragment extends Fragment {
                     }
                 });
                 Log.d(TAG, "Setting up checkbox callback");
+                Iterator<String> keys = MainApplication.places.keys();
+                String tempId = "";
+                while(keys.hasNext()) {
+                    String key = keys.next();
+                    try {
+                        JSONObject place = MainApplication.places.getJSONObject(key);
+                        if (place.getString("name").equals(placeName)) {
+                            tempId = key;
+                        }
+                    }
+                    catch (JSONException e)
+                    {
+                        Log.e(TAG, " Error while loading place id" + e);
+                    }
+                }
+                final String id = tempId;
+
                 aq.id(R.id.buzz_checkBox).clicked(new View.OnClickListener() {
                     @Override
                     public void onClick(final View view) {
+
                         if (((CheckBox) view).isChecked()) {
                             new AlertDialog.Builder(getActivity())
                                     .setMessage(R.string.confirm_buzz)
@@ -138,13 +156,12 @@ public class PlacesFragment extends Fragment {
                                         public void onClick(DialogInterface dialogInterface, int which) {
 
                                             AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
-                                                    getString(R.string.analytics_action_click),
+                                            getString(R.string.analytics_action_click),
                                                     getString(R.string.analytics_label_buzz_turn_on));
                                             JSONObject placeBuzz = new JSONObject();
                                             try {
-                                                placeBuzz.put("name", placeName);
+                                                placeBuzz.put("placeid",id);
                                                 placeBuzz.put("buzzcount", 5);
-
                                                 MainApplication.buzzPlaces.put(placeBuzz);
                                             } catch (JSONException e) {
                                                 Log.e(TAG, " Error while creating placeBuzz object" + e);
@@ -168,7 +185,7 @@ public class PlacesFragment extends Fragment {
                             try {
                                 for (int i = 0; i < MainApplication.buzzPlaces.length(); i++) {
 
-                                    if (MainApplication.buzzPlaces.getJSONObject(i).getString("name").equals(placeName)) {
+                                    if (MainApplication.buzzPlaces.getJSONObject(i).getString("placeid").equals(id)) {
 
                                         MainApplication.buzzPlaces.put(i, MainApplication.buzzPlaces.getJSONObject(MainApplication.buzzPlaces.length() - 1));
                                         MainApplication.buzzPlaces.remove(MainApplication.buzzPlaces.length() - 1);
@@ -187,7 +204,7 @@ public class PlacesFragment extends Fragment {
                 for (int i=0;i<MainApplication.buzzPlaces.length();i++)
                 {
                     try {
-                        if (MainApplication.buzzPlaces.getJSONObject(i).getString("name").toLowerCase().equals(placeName.toLowerCase())) {
+                        if (MainApplication.buzzPlaces.getJSONObject(i).getString("placeid").equals(id)) {
 
                             aq.id(R.id.buzz_checkBox).checked(true);
                         }
@@ -349,27 +366,6 @@ public class PlacesFragment extends Fragment {
                 .show();
     }
 
-    private boolean inheritBuzz(JSONObject object, String oldName, String newName) throws JSONException {
-        if (!object.getString("name").toLowerCase().equals(oldName.toLowerCase())) {
-            return false;
-        }
-        object.remove("name");
-        object.put("name", newName);
-        return true;
-    }
-
-    private void inheritBuzz(String oldName, String newName) {
-        try {
-            for (int i = 0; i < MainApplication.buzzPlaces.length(); i++) {
-                if(inheritBuzz((JSONObject)MainApplication.buzzPlaces.get(i), oldName, newName)) {
-                    return;
-                }
-            }
-        } catch(JSONException e) {
-            Log.e(TAG, "JSONException " + e);
-        }
-    }
-
     private void renamePlace(String oldName, String newName) {
 
         Log.d(TAG, "renamePlace");
@@ -384,7 +380,6 @@ public class PlacesFragment extends Fragment {
                     break;
                 }
             }
-            inheritBuzz(oldName, newName);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
