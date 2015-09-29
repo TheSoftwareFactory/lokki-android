@@ -107,6 +107,32 @@ public class MainApplication extends Application {
     public static JSONObject iDontWantToSee;
     public static Boolean visible = true;
     public static LruCache<String, Bitmap> avatarCache;
+    /**
+     * The user's places. Format:
+     * {
+     *      "f414af16-e532-49d2-999f-c3bdd160dca4":{
+     *          "lat":11.17839332191203,
+     *          "lon":1.4752149581909178E-5,
+     *          "rad":6207030,
+     *          "name":"1",
+     *          "img":""
+     *      },
+     *      "b0d77236-cdad-4a25-8cca-47b4426d5f1f":{
+     *          "lat":11.17839332191203,
+     *          "lon":1.4752149581909178E-5,
+     *          "rad":6207030,
+     *          "name":"1",
+     *          "img":""
+     *      },
+     *      "1f1a3303-5964-40d5-bd07-3744a0c0d0f7":{
+     *          "lat":11.17839332191203,
+     *          "lon":1.4752149581909178E-5,
+     *          "rad":6207030,
+     *          "name":"3",
+     *          "img":""
+     *      }
+     * }
+     */
     public static JSONObject places;
     public static boolean locationDisabledPromptShown;
     public static JSONArray buzzPlaces;
