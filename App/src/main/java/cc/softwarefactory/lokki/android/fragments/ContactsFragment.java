@@ -152,7 +152,7 @@ public class ContactsFragment extends Fragment {
     private void deleteContactDialog(final String contactName){
         new AlertDialog.Builder(getActivity())
                 .setMessage(getString(R.string.delete_contact))
-                .setMessage(contactName + " " + getString(R.string.will_be_deleted_from_places))
+                .setMessage(contactName + " " + getString(R.string.will_be_deleted_from_contacts))
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

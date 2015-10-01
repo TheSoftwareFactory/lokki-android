@@ -165,7 +165,6 @@ public class ContactsScreenTest extends LoggedInBaseTest {
         assertEquals("There should be no requests to allow path before clicking the delete button.", requests.getRequests().size(), 0);
         onView(allOf(withId(R.id.people_context_menu_button), hasSibling(withText(firstContactEmail)))).perform(click());
         onView(withText(R.string.delete)).check(matches(isDisplayed())).perform(click());
-        onView(withText(firstContactEmail + " " + getResources().getString(R.string.will_be_deleted_from_places))).check(matches(isDisplayed()));
         onView(withText(R.string.ok)).check(matches(isDisplayed())).perform(click());
 
         requests.waitUntilAnyRequests();
