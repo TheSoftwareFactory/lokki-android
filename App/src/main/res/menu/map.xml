@@ -3,11 +3,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity">
 
+    <item
+        android:id="@+id/search"
+        android:title="@string/search_lable"
+        android:icon="@drawable/abc_ic_search_api_mtrl_alpha"
+        app:showAsAction="ifRoom|collapseActionView"
+       app:actionViewClass="android.widget.SearchView"/>
 
     <item
         android:id="@+id/action_visibility"
         android:title="@string/visibility"
         android:icon="@drawable/ic_visibility_white_48dp"
         app:showAsAction="always" />
+
+
+
 
 </menu>

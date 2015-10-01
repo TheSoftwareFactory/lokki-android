@@ -95,6 +95,7 @@
     <string name="no">No</string>
     <string name="confirm_buzz">Do you want us to alert you when you reach this place?</string>
     <string name="place_adding_tip">Long press on map to add new place.</string>
+    <string name="search_lable">Search bar</string>
 
     <string translatable="false" name="lokki_github_io_link">https://thesoftwarefactory.github.io/lokki/</string>
     <string translatable="false" name="lokki_play_store_link">market://details?id=cc.softwarefactory.lokki.android</string>

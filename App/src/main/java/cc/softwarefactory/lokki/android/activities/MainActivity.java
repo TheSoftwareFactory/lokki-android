@@ -4,6 +4,8 @@ See LICENSE for details
 */
 package cc.softwarefactory.lokki.android.activities;
 
+import android.app.Activity;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
@@ -27,6 +29,7 @@ import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.androidquery.AQuery;
@@ -298,6 +301,32 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        /*final Activity mainactivity = this;
+        getMenuInflater().inflate(R.menu.map,menu);
+        Log.d(TAG,"OnCreatOptionsMenu1");
+        SearchView searchView=(SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
+        Log.d(TAG,"OnCreatOptionsMenu2");
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
+
+            @Override
+        public boolean onQueryTextChange(String newText)
+            {
+                Log.d(TAG,"OnCreatOptionsMenu3");
+                return true;
+            }
+            @Override
+        public boolean onQueryTextSubmit(String query)
+            {
+                Intent intent= new Intent(mainactivity,SearchActivity.class);
+                Log.d(TAG,"OnCreatOptionsMenu4");
+                intent.putExtra(SearchActivity.QUERY_MESSAGE, query);
+                startActivity(intent);
+                Log.d(TAG, "OnCreatOptionsMenu5");
+                return  true;
+            }
+
+
+        });*/
 
         return true;
     }
@@ -305,6 +334,10 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+        final Activity mainactivity = this;
+       // getMenuInflater().inflate(R.menu.map,menu);
+        Log.d(TAG,"OnCreatOptionsMenu1");
+
 
         menu.clear();
         if (mNavigationDrawerFragment != null && !mNavigationDrawerFragment.isDrawerOpen()) {
@@ -319,6 +352,31 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                         menuItem.setIcon(R.drawable.ic_visibility_off_white_48dp);
                     }
                 }
+                SearchView searchView=(SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
+                Log.d(TAG,"OnCreatOptionsMenu2");
+                searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
+
+                    @Override
+                    public boolean onQueryTextChange(String newText)
+                    {
+
+                        Log.d(TAG,"OnCreatOptionsMenu3");
+                        return true;
+                    }
+                    @Override
+                    public boolean onQueryTextSubmit(String query)
+                    {
+                        Intent intent= new Intent(mainactivity,SearchActivity.class);
+                        Log.d(TAG,"OnCreatOptionsMenu4");
+                        intent.putExtra(SearchActivity.QUERY_MESSAGE, query);
+                        startActivity(intent);
+                        Log.d(TAG, "OnCreatOptionsMenu5");
+                        return  true;
+                    }
+
+
+                });
+
             } else if (selectedOption == 2) { // Contacts screen
                 getMenuInflater().inflate(R.menu.contacts, menu);
             } else if (selectedOption == -10) { // Add contacts screen
