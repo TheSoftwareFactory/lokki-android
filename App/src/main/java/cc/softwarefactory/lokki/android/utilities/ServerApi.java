@@ -23,11 +23,14 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.transform.Result;
+
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.ResultListener;
 import cc.softwarefactory.lokki.android.constants.Constants;
 import cc.softwarefactory.lokki.android.errors.AddPlaceError;
+import cc.softwarefactory.lokki.android.fragments.PlacesFragment;
 import cc.softwarefactory.lokki.android.services.DataService;
 
 
@@ -535,9 +538,9 @@ public class ServerApi {
             MainApplication.places = new JSONObject(PreferenceUtils.
                     getString(context, PreferenceUtils.KEY_PLACES));
         }
-        JSONObject placeObj = MainApplication.places.getJSONObject(placeId);
+        final JSONObject placeObj = MainApplication.places.getJSONObject(placeId);
 
-        JSONObject JSONdata = new JSONObject()
+        final JSONObject JSONdata = new JSONObject()
                 .put("lat", placeObj.getString("lat"))
                 .put("lon", placeObj.getString("lon"))
                 .put("rad", placeObj.getString("rad"))
@@ -550,10 +553,10 @@ public class ServerApi {
                 logStatus("renamePlace", status);
 
                 if (status.getError() == null) {
-                    Log.d(TAG, "No error, place renamed.");
                     DataService.getPlaces(context);
                     Intent intent = new Intent("PLACES-UPDATE");
                     LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+                    PlacesFragment.renamePlaceLocally(placeId, JSONdata);
                     Toast.makeText(context, R.string.place_renamed, Toast.LENGTH_SHORT).show();
                 }
             }

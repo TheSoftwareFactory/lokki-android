@@ -105,10 +105,34 @@ public class PlacesFragment extends Fragment {
         }
     };
 
+    private void removeBuzz(String id) {
+        try {
+            for (int i = 0; i < MainApplication.buzzPlaces.length(); i++) {
+                if (MainApplication.buzzPlaces.getJSONObject(i).getString("placeid").equals(id)) {
+                    MainApplication.buzzPlaces.put(i, MainApplication.buzzPlaces.getJSONObject(MainApplication.buzzPlaces.length() - 1));
+                    MainApplication.buzzPlaces.remove(MainApplication.buzzPlaces.length() - 1);
+                }
+            }
+        } catch (JSONException e) {
+            Log.e(TAG, "Error while removing buzz; " + e);
+        }
+    }
+
+    private void setBuzz(String id, int buzzCount) {
+        try {
+            removeBuzz(id);
+            MainApplication.buzzPlaces.put(new JSONObject()
+                    .put("placeid", id).put("buzzcount", buzzCount));
+        } catch (JSONException e) {
+            Log.e(TAG, " Error while creating placeBuzz object " + e);
+        }
+    }
+
     private void setListAdapter() {
 
         Log.d(TAG, "setListAdapter");
 
+        final PlacesFragment placesFragment = this;
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, R.layout.places_row_layout, placesList) {
 
             @Override
@@ -149,53 +173,35 @@ public class PlacesFragment extends Fragment {
                     public void onClick(final View view) {
 
                         if (((CheckBox) view).isChecked()) {
+                            // This ensures that automatic UI refresh won't uncheck the checkbox
+                            // while the the dialog is still open.
+                            setBuzz(id, 0);
+
                             new AlertDialog.Builder(getActivity())
                                     .setMessage(R.string.confirm_buzz)
                                     .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int which) {
-
                                             AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
-                                            getString(R.string.analytics_action_click),
-                                                    getString(R.string.analytics_label_buzz_turn_on));
-                                            JSONObject placeBuzz = new JSONObject();
-                                            try {
-                                                placeBuzz.put("placeid",id);
-                                                placeBuzz.put("buzzcount", 5);
-                                                MainApplication.buzzPlaces.put(placeBuzz);
-                                            } catch (JSONException e) {
-                                                Log.e(TAG, " Error while creating placeBuzz object" + e);
-
-                                            }
+                                                getString(R.string.analytics_action_click),
+                                                getString(R.string.analytics_label_buzz_turn_on));
+                                            setBuzz(id, 5);
                                         }
                                     })
                                     .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int which) {
+                                            removeBuzz(id);
+                                            ((CheckBox) view).setChecked(false);
+                                            placesFragment.showPlaces();  // Update UI for tests
                                             AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
                                                     getString(R.string.analytics_action_click),
                                                     getString(R.string.analytics_label_buzz_decline));
-                                            ((CheckBox) view).toggle();
                                         }
                                     })
                                     .show();
-
-
                         } else {
-                            try {
-                                for (int i = 0; i < MainApplication.buzzPlaces.length(); i++) {
-
-                                    if (MainApplication.buzzPlaces.getJSONObject(i).getString("placeid").equals(id)) {
-
-                                        MainApplication.buzzPlaces.put(i, MainApplication.buzzPlaces.getJSONObject(MainApplication.buzzPlaces.length() - 1));
-                                        MainApplication.buzzPlaces.remove(MainApplication.buzzPlaces.length() - 1);
-                                    }
-
-                                }
-                            } catch (JSONException e) {
-                                Log.e(TAG, "Error while modifying the buzz places" + e);
-
-                            }
+                            removeBuzz(id);
                         }
 
                     }
@@ -366,7 +372,16 @@ public class PlacesFragment extends Fragment {
                 .show();
     }
 
-    private void renamePlace(String oldName, String newName) {
+    static public void renamePlaceLocally(final String key, JSONObject placeObj) {
+        try {
+            MainApplication.places.remove(key);
+            MainApplication.places.put(key, placeObj);
+        } catch(Exception e) {
+            Log.e(TAG, "renamePlaceLocally() failed.");
+        }
+    }
+
+    private void renamePlace(final String oldName, final String newName) {
 
         Log.d(TAG, "renamePlace");
         try {
