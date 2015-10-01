@@ -29,7 +29,7 @@ import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
-import android.widget.SearchView;
+import android.support.v7.widget.SearchView;
 import android.widget.Toast;
 
 import com.androidquery.AQuery;
@@ -352,8 +352,10 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                         menuItem.setIcon(R.drawable.ic_visibility_off_white_48dp);
                     }
                 }
+
                 SearchView searchView=(SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
-                Log.d(TAG,"OnCreatOptionsMenu2");
+                searchView.setQueryHint(getString(R.string.search_hint));
+                Log.d(TAG, "OnCreatOptionsMenu2");
                 searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
 
                     @Override
