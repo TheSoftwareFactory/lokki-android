@@ -79,14 +79,14 @@
                 android:layout_gravity="bottom"
                 />
 
-            <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/addPlaceCircle"
-                android:layout_weight="1.0" />
-
 
         </LinearLayout>
+
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/addPlaceCircle"
+            android:layout_gravity="center_horizontal|bottom" />
 
 
     </FrameLayout>
