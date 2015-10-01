@@ -226,8 +226,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     protected void onPause() {
         // Fixes buggy avatars after leaving the app from the "Map" screen
         MainApplication.avatarCache.evictAll();
-        LocationService.stop(this.getApplicationContext());
-        DataService.stop(this.getApplicationContext());
+        //LocationService.stop(this.getApplicationContext());
+        //DataService.stop(this.getApplicationContext());
         LocalBroadcastManager.getInstance(this).unregisterReceiver(switchToMapReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(exitMessageReceiver);
         super.onPause();
