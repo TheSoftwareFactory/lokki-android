@@ -4,11 +4,13 @@ See LICENSE for details
 */
 package cc.softwarefactory.lokki.android.fragments;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -78,6 +80,7 @@ public class MapViewFragment extends Fragment {
     private ArrayList<Circle> placesOverlay;
     private double radiusMultiplier = 0.9;  // Dont want to fill the screen from edge to edge...
     private TextView placeAddingTip;
+    private final static String BUNDLE_KEY_MAP_STATE ="mapdata";
 
     public MapViewFragment() {
         markerMap = new HashMap<>();
@@ -104,7 +107,7 @@ public class MapViewFragment extends Fragment {
         boolean noPlacesAdded = MainApplication.places != null && (MainApplication.places.names() == null ||
                 MainApplication.places.names().length() == 0);
 
-        placeAddingTip.setAlpha(noPlacesAdded && !placeIsBeingAdded? 1: 0);
+        placeAddingTip.setAlpha(noPlacesAdded && !placeIsBeingAdded ? 1 : 0);
     }
 
     @Override
@@ -129,6 +132,29 @@ public class MapViewFragment extends Fragment {
             fm.beginTransaction().replace(R.id.map, fragment).commit();
         }
     }
+
+    private void storeMapState(){
+        float zoom = map.getCameraPosition().zoom;
+        float lat = (float) map.getCameraPosition().target.latitude;
+        float lng = (float) map.getCameraPosition().target.longitude;
+
+        SharedPreferences prefs = context.getSharedPreferences(BUNDLE_KEY_MAP_STATE, Activity.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putFloat("lat", lat);
+        editor.putFloat("lng", lng);
+        editor.putFloat("zoom", zoom);
+        editor.commit();
+
+    }
+
+    private  void loadMapState(){
+        SharedPreferences prefs = context.getSharedPreferences(BUNDLE_KEY_MAP_STATE, Activity.MODE_PRIVATE);
+        float lat = prefs.getFloat("lat", 0);
+        float lng = prefs.getFloat("lng", 0);
+        float zoom = prefs.getFloat("zoom", 0);
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), zoom));
+    }
+
 
 
     @Override
@@ -208,6 +234,8 @@ public class MapViewFragment extends Fragment {
         map.setIndoorEnabled(true);
         map.setBuildingsEnabled(true);
         map.getUiSettings().setZoomControlsEnabled(false);
+
+        loadMapState(); //load map state from preferences
 
         map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
@@ -345,6 +373,7 @@ public class MapViewFragment extends Fragment {
 
     @Override
     public void onPause() {
+        storeMapState(); //save state of map
         super.onPause();
         LocalBroadcastManager.getInstance(context).unregisterReceiver(mMessageReceiver);
         LocalBroadcastManager.getInstance(context).unregisterReceiver(placesUpdateReceiver);

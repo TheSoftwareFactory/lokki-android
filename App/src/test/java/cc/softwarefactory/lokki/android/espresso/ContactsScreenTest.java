@@ -149,6 +149,30 @@ public class ContactsScreenTest extends LoggedInBaseTest {
         assertEquals(expectedPath, request.getPath());
     }
 
+    public void testdeleteButtonSendsDeleteRequest() throws InterruptedException, JSONException, TimeoutException {
+        String firstContactEmail = "family.member@example.com";
+        String dashboardJsonString = MockJsonUtils.getDashboardJsonWithContacts(firstContactEmail);
+        String firstContactId = getContactId(dashboardJsonString, firstContactEmail);
+
+        JSONObject dashboardJson = new JSONObject(dashboardJsonString);
+        dashboardJson.put("canseeme", new JSONArray());
+        getMockDispatcher().setDashboardResponse(new MockResponse().setBody(dashboardJson.toString()));
+        RequestsHandle requests = getMockDispatcher().setRemoveContactResponse(new MockResponse().setResponseCode(200), firstContactId);
+        //Prevent server from crashing when a getContacts message is sent afterwards
+        RequestsHandle requests2 = getMockDispatcher().setGetContactsResponse(new MockResponse().setResponseCode(200));
+
+        enterContactsScreen();
+        assertEquals("There should be no requests to allow path before clicking the delete button.", requests.getRequests().size(), 0);
+        onView(allOf(withId(R.id.people_context_menu_button), hasSibling(withText(firstContactEmail)))).perform(click());
+        onView(withText(R.string.delete)).check(matches(isDisplayed())).perform(click());
+        onView(withText(R.string.ok)).check(matches(isDisplayed())).perform(click());
+
+        requests.waitUntilAnyRequests();
+        RecordedRequest request = requests.getRequests().get(0);
+        String expectedPath = "/user/" + TestUtils.VALUE_TEST_USER_ID + "/contacts/" + firstContactId;
+        assertEquals(expectedPath, request.getPath());
+    }
+
     public void testShowOnMapCheckboxIsDisabledWhenNotAllowedToSeeContact() throws InterruptedException, JSONException, TimeoutException {
         String firstContactEmail = "family.member@example.com";
         String dashboardJsonString = MockJsonUtils.getDashboardJsonWithContacts(firstContactEmail);

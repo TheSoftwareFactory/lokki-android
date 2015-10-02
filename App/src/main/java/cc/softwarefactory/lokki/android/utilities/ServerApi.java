@@ -171,6 +171,8 @@ public class ServerApi {
                     MainApplication.dashboard.remove("idmapping");
                     MainApplication.dashboard.put("idmapping", json.getJSONObject("idmapping"));
                     PreferenceUtils.setString(context, PreferenceUtils.KEY_DASHBOARD, MainApplication.dashboard.toString());
+                    Intent intent = new Intent("CONTACTS-UPDATE");
+                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                 }
                 catch (JSONException e){
                     Log.e(TAG, "Error parsing contacts JSON: " + e);
@@ -327,12 +329,47 @@ public class ServerApi {
             return;
         }
         url += targetId;
-        Log.d(TAG, "Email to be unignored: " + email + ", userIdToDisallow: " + targetId);
+        Log.d(TAG, "Email to be unignored: " + email + ", userIdToUnIgnore: " + targetId);
 
         AjaxCallback<String> cb = new AjaxCallback<String>() {
             @Override
             public void callback(String url, String result, AjaxStatus status) {
                 logStatus("ignoreUser", status);
+                if (status.getError() == null) {
+                    Log.d(TAG, "Getting new contacts");
+                    DataService.getContacts(context);
+                }
+            }
+        };
+
+        cb.header("authorizationtoken", authorizationToken);
+        aq.delete(url, String.class, cb);
+    }
+
+    /** Removes a contact, preventing them from showing up on either user's contact list     *
+     * @param context   The context used to access preferences
+     * @param email     The email address of the contact to be removed
+     */
+    public static void removeContact(final Context context, String email) {
+        Log.d(TAG, "Remove contact");
+        AQuery aq = new AQuery(context);
+
+        String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
+        String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
+        String url = ApiUrl + "user/" + userId + "/contacts/";
+        String targetId = Utils.getIdFromEmail(context, email);
+
+        if (targetId == null) {
+            Log.e(TAG, "Attempted to delete invalid email");
+            return;
+        }
+        url += targetId;
+        Log.d(TAG, "Email to be removed: " + email + ", userIdToRemove: " + targetId);
+
+        AjaxCallback<String> cb = new AjaxCallback<String>() {
+            @Override
+            public void callback(String url, String result, AjaxStatus status) {
+                logStatus("removeContact", status);
                 if (status.getError() == null) {
                     Log.d(TAG, "Getting new contacts");
                     DataService.getContacts(context);

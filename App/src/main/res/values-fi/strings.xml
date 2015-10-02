@@ -95,6 +95,8 @@
     <string name="no">Ei</string>
     <string name="confirm_buzz">Haluatko hälytyksen kun saavut tähän paikkaan?</string>
     <string name="place_adding_tip">Paina pitkään karttaa lisätäksesi paikan.</string>
+    <string name="delete_contact">Haluatko poistaa tämän yhteystiedon?</string>
+    <string name="will_be_deleted_from_contacts">poistetaan yhteystiedoistasi</string>
     <string name="search_hint">Hae yhteystiedoista</string>
     <string name="search_lable">Hakupalkki</string>
 

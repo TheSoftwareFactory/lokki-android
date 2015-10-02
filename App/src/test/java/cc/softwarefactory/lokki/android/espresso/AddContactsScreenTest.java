@@ -3,13 +3,20 @@ package cc.softwarefactory.lokki.android.espresso;
 import android.content.Context;
 import android.support.test.espresso.action.ViewActions;
 
+import com.squareup.okhttp.mockwebserver.MockResponse;
+import com.squareup.okhttp.mockwebserver.RecordedRequest;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mockito.Mockito;
 
+import java.util.concurrent.TimeoutException;
+
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.datasources.contacts.ContactDataSource;
 import cc.softwarefactory.lokki.android.espresso.utilities.MockJsonUtils;
+import cc.softwarefactory.lokki.android.espresso.utilities.RequestsHandle;
 import cc.softwarefactory.lokki.android.espresso.utilities.TestUtils;
 
 import static android.support.test.espresso.Espresso.onView;
@@ -166,29 +173,40 @@ public class AddContactsScreenTest extends LoggedInBaseTest {
         onView(allOf(withText(myEmail), withId(R.id.contact_email))).check(doesNotExist());
     }
 
-    public void testAddingCustomContactAddsToLocalContacts() {
+
+    public void testAddingCustomContactSendsAllowRequest() throws JSONException, TimeoutException, InterruptedException{
         String contactEmail = "family.member@example.com";
+        String dashboardJsonString = MockJsonUtils.getDashboardJsonWithContacts(contactEmail);
+        JSONObject dashboardJson = new JSONObject(dashboardJsonString);
+        dashboardJson.put("canseeme", new JSONArray());
+        getMockDispatcher().setDashboardResponse(new MockResponse().setBody(dashboardJson.toString()));
+        RequestsHandle requests = getMockDispatcher().setAllowPostResponse(new MockResponse().setResponseCode(200));
+
         enterAddContactsScreen();
         openAddContactDialog();
         onView(withHint(R.string.contact_email_address)).perform(typeText(contactEmail));
         onView(withText(R.string.ok)).perform(click());
 
-        // Go to Contacts screen
-        pressBack();
-
-        // Mock dispatcher sends a dashboard without any contacts by default, so this checks if the contact is added locally
-        onView(allOf(withText(contactEmail), withId(R.id.contact_email))).check(matches(isDisplayed()));
+        requests.waitUntilAnyRequests();
+        RecordedRequest request = requests.getRequests().get(0);
+        String expectedPath = "/user/" + TestUtils.VALUE_TEST_USER_ID + "/allow";
+        assertEquals(expectedPath, request.getPath());
     }
 
-    public void testAddingContactFromListAddsToLocalContacts() {
+    public void testAddingContactFromListSendsAllowRequest() throws JSONException, TimeoutException, InterruptedException{
         String contactEmail = "family.member@example.com";
+        String dashboardJsonString = MockJsonUtils.getDashboardJsonWithContacts(contactEmail);
+        JSONObject dashboardJson = new JSONObject(dashboardJsonString);
+        dashboardJson.put("canseeme", new JSONArray());
+        getMockDispatcher().setDashboardResponse(new MockResponse().setBody(dashboardJson.toString()));
+        RequestsHandle requests = getMockDispatcher().setAllowPostResponse(new MockResponse().setResponseCode(200));
+
         enterAddContactsScreen();
         addContactFromContactListScreen(contactEmail, contactEmail);
 
-        // Go to Contacts screen
-        pressBack();
-
-        // Mock dispatcher sends a dashboard without any contacts by default, so this checks if the contact is added locally
-        onView(allOf(withText(contactEmail), withId(R.id.contact_email))).check(matches(isDisplayed()));
+        requests.waitUntilAnyRequests();
+        RecordedRequest request = requests.getRequests().get(0);
+        String expectedPath = "/user/" + TestUtils.VALUE_TEST_USER_ID + "/allow";
+        assertEquals(expectedPath, request.getPath());
     }
 }
