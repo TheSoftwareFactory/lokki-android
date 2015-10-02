@@ -4,17 +4,29 @@ See LICENSE for details
 */
 package cc.softwarefactory.lokki.android.fragments;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -38,6 +50,7 @@ import cc.softwarefactory.lokki.android.services.DataService;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 import cc.softwarefactory.lokki.android.utilities.ContactUtils;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
+import cc.softwarefactory.lokki.android.utilities.ServerApi;
 import cc.softwarefactory.lokki.android.utilities.Utils;
 
 
@@ -72,13 +85,126 @@ public class ContactsFragment extends Fragment {
         context = getActivity().getApplicationContext();
         avatarLoader = new AvatarLoader(context);
         new GetPeopleThatCanSeeMe().execute();
+        ListView listView = aq.id(R.id.contacts_list_view).getListView();
+        this.registerForContextMenu(listView);
         return rootView;
+    }
+    @Override
+    public void onResume() {
+
+        Log.d(TAG, "onResume");
+        super.onResume();
+        //Register a receiver to update the contents of the contact list whenever we load contacts from server
+        LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver, new IntentFilter("CONTACTS-UPDATE"));
+        AnalyticsUtils.screenHit(getString(R.string.analytics_screen_contacts));
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        AnalyticsUtils.screenHit(getString(R.string.analytics_screen_contacts));
+    public void onPause() {
+
+        super.onPause();
+        //Deregister the receiver
+        LocalBroadcastManager.getInstance(context).unregisterReceiver(mMessageReceiver);
+    }
+
+    private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //Update contact list
+            Log.d(TAG, "BroadcastReceiver onReceive");
+            refresh();
+        }
+    };
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        // Create the contact context menu (remove contact)
+        MenuInflater inflater = getActivity().getMenuInflater();
+        inflater.inflate(R.menu.contacts_context, menu);
+        Log.d(TAG, "opened contact context menu");
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+        int position = info.position;
+        String contactName = peopleList.get(position);
+
+        switch(item.getItemId()) {
+            // Remove contact
+            case R.id.contacts_context_menu_delete:
+                AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                        getString(R.string.analytics_action_click),
+                        getString(R.string.analytics_label_delete_contact));
+                deleteContactDialog(contactName);
+                return true;
+        }
+
+        return super.onContextItemSelected(item);
+    }
+
+    /** Ask the user to confirm contact deletion
+     *
+     * @param contactName   Name of the contact to be removed
+     */
+    private void deleteContactDialog(final String contactName){
+        new AlertDialog.Builder(getActivity())
+                .setMessage(getString(R.string.delete_contact))
+                .setMessage(contactName + " " + getString(R.string.will_be_deleted_from_contacts))
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                                getString(R.string.analytics_action_click),
+                                getString(R.string.analytics_label_confirm_delete_contact_dialog));
+                        deleteContact(contactName);
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                                getString(R.string.analytics_action_click),
+                                getString(R.string.analytics_label_cancel_delete_contact_dialog));
+                    }
+                })
+                .show();
+    }
+
+    /**Deletes a contact from the user's contacts
+     *
+     * @param name  The name of the contact to be deleted
+     */
+    private void deleteContact(String name){
+        //By default, the contact's name is their email
+        String email = name;
+        //If the contact has been assigned a different name, it's in mapping
+        if (MainApplication.mapping != null && MainApplication.mapping.has(name)){
+            try {
+                email = MainApplication.mapping.getString(name);
+            } catch (JSONException e) {
+                Log.wtf(TAG, "Contact mysteriously vanished from mapping! " + e);
+            }
+        }
+        //Delete the contact
+        ServerApi.removeContact(context, email);
+    }
+
+    /**
+     * Reload contact information
+     */
+    public void refresh(){
+        Log.d(TAG, "Refreshing contacts screen");
+        //Empty all existing local data structures
+        peopleList = new ArrayList<>();
+        iCanSee = new HashSet<>();
+        canSeeMe = new HashSet<>();
+        mapping = new HashMap<>();
+        timestamps = new HashMap<>();
+        //Fill them with up-to-date data
+        new GetPeopleThatCanSeeMe().execute();
     }
 
     private void getPeopleThatCanSeeMe() {
@@ -119,14 +245,16 @@ public class ContactsFragment extends Fragment {
                 Log.d(TAG, "Can see me: " + email);
             }
 
+            // Don't actually add local contacts to mapping because it screws with deleting contacts
+            // (Why do local contacts even exist?)
             // Add local contacts to mapping
-            JSONArray localContacts = ContactUtils.getLocalContactsJsonArray(context);
+            /*JSONArray localContacts = ContactUtils.getLocalContactsJsonArray(context);
             for (int i = 0; i < localContacts.length(); i++) {
                 String email = localContacts.getString(i);
                 String name = Utils.getNameFromEmail(context, email);
                 mapping.put(name, email);
                 Log.d(TAG, "Local contact: " + email);
-            }
+            }*/
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -155,6 +283,7 @@ public class ContactsFragment extends Fragment {
                     holder.photo = (ImageView) convertView.findViewById(R.id.contact_photo);
                     holder.checkICanSee = (CheckBox) convertView.findViewById(R.id.i_can_see);
                     holder.checkCanSeeMe = (CheckBox) convertView.findViewById(R.id.can_see_me);
+                    holder.contextButton = (ImageButton) convertView.findViewById(R.id.people_context_menu_button);
                     convertView.setTag(holder);
 
                 } else {
@@ -204,6 +333,14 @@ public class ContactsFragment extends Fragment {
                     aq.id(holder.checkICanSee).enabled(true);
                 }
 
+                aq.id(holder.contextButton).clicked(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.d(TAG, "clicked contact context button");
+                        v.showContextMenu();
+                    }
+                });
+
                 return convertView;
             }
         };
@@ -219,6 +356,7 @@ public class ContactsFragment extends Fragment {
         ImageView photo;
         CheckBox checkICanSee;
         CheckBox checkCanSeeMe;
+        ImageButton contextButton;
         int position;
     }
 
