@@ -233,6 +233,14 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         super.onPause();
     }
 
+    @Override
+    protected void onDestroy()
+    {
+        LocationService.stop(this.getApplicationContext());
+        DataService.stop(this.getApplicationContext());
+        super.onDestroy();
+    }
+
     /**
      * Ensures that the user is signed in by launching the SignUpActivity if they aren't
      */

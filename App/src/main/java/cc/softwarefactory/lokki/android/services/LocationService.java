@@ -42,6 +42,7 @@ public class LocationService extends Service implements LocationListener, Google
 
     // INTERVALS
     private static final long INTERVAL_10_MS = 10;
+    private static final long LOCATION_CHECK_INTERVAL = 5000;
     private static final long INTERVAL_30_SECS = 30 * 1000;
     private static final long INTERVAL_1_MIN = 60 * 1000;
 
@@ -127,7 +128,7 @@ public class LocationService extends Service implements LocationListener, Google
 
         locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setInterval(INTERVAL_10_MS);
+        locationRequest.setInterval(LOCATION_CHECK_INTERVAL);
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
