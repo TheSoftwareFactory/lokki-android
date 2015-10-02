@@ -4,6 +4,7 @@ See LICENSE for details
 */
 package cc.softwarefactory.lokki.android.fragments;
 
+import android.app.Dialog;
 import android.support.v7.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -178,7 +179,7 @@ public class PlacesFragment extends Fragment {
                             // while the the dialog is still open.
                             setBuzz(id, 0);
 
-                            new AlertDialog.Builder(getActivity())
+                            Dialog dialog = new AlertDialog.Builder(getActivity())
                                     .setMessage(R.string.confirm_buzz)
                                     .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                                         @Override
@@ -199,8 +200,9 @@ public class PlacesFragment extends Fragment {
                                                     getString(R.string.analytics_action_click),
                                                     getString(R.string.analytics_label_buzz_decline));
                                         }
-                                    })
-                                    .show();
+                                    }).create();
+                            dialog.setCanceledOnTouchOutside(false);
+                            dialog.show();
                         } else {
                             removeBuzz(id);
                         }
