@@ -61,7 +61,7 @@
     <string name="place_limit_reached">You cannot create more places. Maximum limit reached.</string>
     <string name="you_are_visible">You are now VISIBLE</string>
     <string name="you_are_invisible">You are now INVISIBLE</string>
-    <string name="places_how_to_create">To create a new place go to the map and long press the location where the place is located. Zoom the map to change the location\'s size, type a name and click OK.</string>
+    <string name="places_how_to_create">To create a new place go to the map and long press the location where the place is located.</string>
     <string name="search_contacts">Search contacts…</string>
     <string name="buzz_place">Buzz..</string>
 
