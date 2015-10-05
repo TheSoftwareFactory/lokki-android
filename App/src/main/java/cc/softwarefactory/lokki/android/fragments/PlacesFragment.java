@@ -4,6 +4,7 @@ See LICENSE for details
 */
 package cc.softwarefactory.lokki.android.fragments;
 
+import android.app.Dialog;
 import android.support.v7.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -28,6 +29,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.androidquery.AQuery;
 
@@ -177,7 +179,7 @@ public class PlacesFragment extends Fragment {
                             // while the the dialog is still open.
                             setBuzz(id, 0);
 
-                            new AlertDialog.Builder(getActivity())
+                            Dialog dialog = new AlertDialog.Builder(getActivity())
                                     .setMessage(R.string.confirm_buzz)
                                     .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                                         @Override
@@ -198,8 +200,9 @@ public class PlacesFragment extends Fragment {
                                                     getString(R.string.analytics_action_click),
                                                     getString(R.string.analytics_label_buzz_decline));
                                         }
-                                    })
-                                    .show();
+                                    }).create();
+                            dialog.setCanceledOnTouchOutside(false);
+                            dialog.show();
                         } else {
                             removeBuzz(id);
                         }
@@ -372,6 +375,16 @@ public class PlacesFragment extends Fragment {
                 .show();
     }
 
+    static public boolean placeNameAlreadyInUse(String name) throws JSONException {
+        Iterator<String> it = MainApplication.places.keys();
+        while(it.hasNext()) {
+            JSONObject object = (JSONObject)MainApplication.places.get(it.next());
+            if(object.getString("name").toLowerCase().trim().equals(name.toLowerCase().trim()))
+                return true;
+        }
+        return false;
+    }
+
     static public void renamePlaceLocally(final String key, JSONObject placeObj) {
         try {
             MainApplication.places.remove(key);
@@ -385,6 +398,11 @@ public class PlacesFragment extends Fragment {
 
         Log.d(TAG, "renamePlace");
         try {
+            if(placeNameAlreadyInUse(newName)) {
+                Toast.makeText(context, R.string.place_name_already_in_use, Toast.LENGTH_LONG).show();
+                return;
+            }
+
             Iterator<String> keys = MainApplication.places.keys();
             while (keys.hasNext()) {
                 String key = keys.next();
