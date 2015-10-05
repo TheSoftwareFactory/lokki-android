@@ -3,6 +3,7 @@ package cc.softwarefactory.lokki.android.espresso;
 import android.content.res.Resources;
 import android.preference.PreferenceManager;
 import android.test.ActivityInstrumentationTestCase2;
+import android.util.Log;
 
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 
@@ -27,6 +28,18 @@ public abstract class LokkiBaseTest extends ActivityInstrumentationTestCase2<Mai
 
     protected Resources getResources() {
         return getInstrumentation().getTargetContext().getResources();
+    }
+
+    // The UI refreshes itself when this is called.
+    public void updateSituation() {
+        try {
+            mockWebServer.shutdown();
+            PreferenceManager.getDefaultSharedPreferences(getInstrumentation().getTargetContext()).edit().clear().commit();
+            mockWebServer.start();
+        } catch(Exception e) {
+            Log.e("LokkiBaseTest", "updateSituation() failed: " + e);
+            e.printStackTrace();
+        }
     }
 
     @Override
