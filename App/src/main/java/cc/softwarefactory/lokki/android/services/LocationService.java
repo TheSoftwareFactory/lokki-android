@@ -12,10 +12,12 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.os.SystemClock;
 import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.content.WakefulBroadcastReceiver;
 import android.util.Log;
 
 import cc.softwarefactory.lokki.android.MainApplication;
@@ -40,6 +42,7 @@ public class LocationService extends Service implements LocationListener, Google
 
     // INTERVALS
     private static final long INTERVAL_10_MS = 10;
+    private static final long LOCATION_CHECK_INTERVAL = 5000;
     private static final long INTERVAL_30_SECS = 30 * 1000;
     private static final long INTERVAL_1_MIN = 60 * 1000;
 
@@ -56,6 +59,7 @@ public class LocationService extends Service implements LocationListener, Google
     private LocationRequest locationRequest;
     private static Boolean serviceRunning = false;
     private static Location lastLocation = null;
+    private PowerManager.WakeLock wakeLock;
 
     public static void start(Context context) {
 
@@ -66,6 +70,7 @@ public class LocationService extends Service implements LocationListener, Google
             return;
         }
         context.startService(new Intent(context, LocationService.class));
+
     }
 
     public static void stop(Context context) {
@@ -92,6 +97,7 @@ public class LocationService extends Service implements LocationListener, Google
         Log.d(TAG, "onCreate");
         super.onCreate();
 
+
         if (PreferenceUtils.getString(this, PreferenceUtils.KEY_AUTH_TOKEN).isEmpty()) {
             Log.d(TAG, "User disabled reporting in App. Service not started.");
             stopSelf();
@@ -99,6 +105,9 @@ public class LocationService extends Service implements LocationListener, Google
             Log.d(TAG, "Starting Service..");
             setLocationClient();
             setNotificationAndForeground();
+            PowerManager mgr = (PowerManager)getApplicationContext().getSystemService(Context.POWER_SERVICE);
+            wakeLock=mgr.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"Lokki Wake Lock");
+            wakeLock.acquire();
             serviceRunning = true;
         } else {
             Log.e(TAG, "Google Play Services Are NOT installed.");
@@ -119,7 +128,7 @@ public class LocationService extends Service implements LocationListener, Google
 
         locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setInterval(INTERVAL_10_MS);
+        locationRequest.setInterval(LOCATION_CHECK_INTERVAL);
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
@@ -275,11 +284,13 @@ public class LocationService extends Service implements LocationListener, Google
     @Override
     public void onDestroy() {
         Log.d(TAG, "onDestroy called");
+        wakeLock.release();
         stopForeground(true);
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
             mGoogleApiClient.disconnect();
             Log.d(TAG, "Location Updates removed.");
+
 
         } else {
             Log.e(TAG, "locationClient didn't exist.");

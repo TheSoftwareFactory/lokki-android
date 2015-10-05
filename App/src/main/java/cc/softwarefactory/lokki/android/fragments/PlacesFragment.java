@@ -40,6 +40,7 @@ import cc.softwarefactory.lokki.android.services.DataService;
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
+import cc.softwarefactory.lokki.android.utilities.Utils;
 
 import com.makeramen.roundedimageview.RoundedImageView;
 
@@ -111,8 +112,7 @@ public class PlacesFragment extends Fragment {
         try {
             for (int i = 0; i < MainApplication.buzzPlaces.length(); i++) {
                 if (MainApplication.buzzPlaces.getJSONObject(i).getString("placeid").equals(id)) {
-                    MainApplication.buzzPlaces.put(i, MainApplication.buzzPlaces.getJSONObject(MainApplication.buzzPlaces.length() - 1));
-                    MainApplication.buzzPlaces.remove(MainApplication.buzzPlaces.length() - 1);
+                    MainApplication.buzzPlaces= Utils.removeFromJSONArray(MainApplication.buzzPlaces,i);
                 }
             }
         } catch (JSONException e) {
@@ -275,7 +275,7 @@ public class PlacesFragment extends Fragment {
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        AdapterContextMenuInfo info = (AdapterContextMenuInfo)item.getMenuInfo();
+        AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
         int position = info.position;
         String placeName = placesList.get(position);
 
