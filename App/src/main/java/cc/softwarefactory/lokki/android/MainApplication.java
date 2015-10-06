@@ -197,6 +197,12 @@ public class MainApplication extends Application {
         Log.d(TAG, "Visible: " + visible);
 
         // get mapValue from preferences
-        mapType = Integer.parseInt(PreferenceUtils.getString(getApplicationContext(), PreferenceUtils.KEY_SETTING_MAP_MODE));
+        try {
+            mapType = Integer.parseInt(PreferenceUtils.getString(getApplicationContext(), PreferenceUtils.KEY_SETTING_MAP_MODE));
+        }
+        catch (NumberFormatException e){
+            mapType = mapTypes[0];
+            Log.w(TAG, "Could not parse map type; using default value: " + e);
+        }
     }
 }

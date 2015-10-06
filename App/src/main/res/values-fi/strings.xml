@@ -99,5 +99,6 @@
     <string name="will_be_deleted_from_contacts">poistetaan yhteystiedoistasi</string>
     <string name="search_hint">Hae yhteystiedoista</string>
     <string name="search_lable">Hakupalkki</string>
+    <string name="no_search_results">Ei hakutuloksia</string>
 
 </resources>

@@ -70,6 +70,9 @@ import cc.softwarefactory.lokki.android.utilities.map.MapUtils;
 public class MapViewFragment extends Fragment {
 
     private static final String TAG = "MapViewFragment";
+    public static final String BROADCAST_GO_TO = "GO_TO_LOCATION";
+    public static final String GO_TO_COORDS = "GO_TO_COORDS";
+    private static final int DEFAULT_ZOOM = 16;
     private SupportMapFragment fragment;
     private GoogleMap map;
     private HashMap<String, Marker> markerMap;
@@ -81,6 +84,7 @@ public class MapViewFragment extends Fragment {
     private double radiusMultiplier = 0.9;  // Dont want to fill the screen from edge to edge...
     private TextView placeAddingTip;
     private final static String BUNDLE_KEY_MAP_STATE ="mapdata";
+    private LatLng startLocation = null;
 
     public MapViewFragment() {
         markerMap = new HashMap<>();
@@ -96,6 +100,7 @@ public class MapViewFragment extends Fragment {
 
         aq = new AQuery(getActivity(), rootView);
         context = getActivity().getApplicationContext();
+        LocalBroadcastManager.getInstance(context).registerReceiver(goToReceiver, new IntentFilter(BROADCAST_GO_TO));
         return rootView;
 
     }
@@ -116,6 +121,7 @@ public class MapViewFragment extends Fragment {
         fragment = null;
         map = null;
         aq = null;
+        LocalBroadcastManager.getInstance(context).unregisterReceiver(goToReceiver);
         super.onDestroyView();
     }
 
@@ -181,6 +187,10 @@ public class MapViewFragment extends Fragment {
             updatePlaces();
         }
         AnalyticsUtils.screenHit(getString(R.string.analytics_screen_map));
+        if (startLocation != null){
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(startLocation, DEFAULT_ZOOM));
+            startLocation = null;
+        }
     }
 
     private void checkLocationServiceStatus() {
@@ -395,6 +405,35 @@ public class MapViewFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             Log.d(TAG, "placesUpdateReceiver onReceive");
             updatePlaces();
+        }
+    };
+
+    private BroadcastReceiver goToReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d(TAG, "goToReceiver onReceive");
+            String coords = intent.getStringExtra(GO_TO_COORDS);
+            int separator = coords.indexOf(',');
+            if (separator == -1){
+                Log.e(TAG, "Invalid coordinates, no separator");
+                return;
+            }
+            double lat, lon;
+            try {
+                lat = Double.parseDouble(coords.substring(0 , separator));
+                lon = Double.parseDouble(coords.substring(separator +1));
+            }
+            catch (NumberFormatException e){
+                Log.e(TAG, "Could not parse coordinates");
+                return;
+            }
+            MainApplication.emailBeingTracked = null;
+            if (MapViewFragment.this.isVisible()){
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat,lon), DEFAULT_ZOOM));
+            }
+            else {
+                startLocation = new LatLng(lat, lon);
+            }
         }
     };
 
@@ -672,13 +711,13 @@ public class MapViewFragment extends Fragment {
                 marker.showInfoWindow();
                 Log.d(TAG, "onPostExecute - showInfoWindow open");
                 if (isNew) {
-                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 16));
+                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), DEFAULT_ZOOM));
                 } else {
                     map.moveCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
                 }
             } else if (firstTimeZoom && MainApplication.emailBeingTracked == null && MainApplication.userAccount != null && marker.getTitle().equals(MainApplication.userAccount)) {
                 firstTimeZoom = false;
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 16));
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), DEFAULT_ZOOM));
             }
         }
 
@@ -686,7 +725,6 @@ public class MapViewFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-
         // TODO: Cancel ALL Async tasks
         cancelAsyncTasks = true;
         super.onDestroy();

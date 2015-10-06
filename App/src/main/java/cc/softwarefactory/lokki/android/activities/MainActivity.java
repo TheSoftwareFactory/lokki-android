@@ -309,32 +309,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        /*final Activity mainactivity = this;
-        getMenuInflater().inflate(R.menu.map,menu);
-        Log.d(TAG,"OnCreatOptionsMenu1");
-        SearchView searchView=(SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
-        Log.d(TAG,"OnCreatOptionsMenu2");
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
-
-            @Override
-        public boolean onQueryTextChange(String newText)
-            {
-                Log.d(TAG,"OnCreatOptionsMenu3");
-                return true;
-            }
-            @Override
-        public boolean onQueryTextSubmit(String query)
-            {
-                Intent intent= new Intent(mainactivity,SearchActivity.class);
-                Log.d(TAG,"OnCreatOptionsMenu4");
-                intent.putExtra(SearchActivity.QUERY_MESSAGE, query);
-                startActivity(intent);
-                Log.d(TAG, "OnCreatOptionsMenu5");
-                return  true;
-            }
-
-
-        });*/
 
         return true;
     }
@@ -343,10 +317,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         final Activity mainactivity = this;
-       // getMenuInflater().inflate(R.menu.map,menu);
-        Log.d(TAG,"OnCreatOptionsMenu1");
-
-
+        Log.d(TAG,"onPrepareOptionsMenu");
         menu.clear();
         if (mNavigationDrawerFragment != null && !mNavigationDrawerFragment.isDrawerOpen()) {
             if (selectedOption == 0) { // Map
@@ -363,24 +334,21 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
                 SearchView searchView=(SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
                 searchView.setQueryHint(getString(R.string.search_hint));
-                Log.d(TAG, "OnCreatOptionsMenu2");
                 searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
 
                     @Override
                     public boolean onQueryTextChange(String newText)
                     {
 
-                        Log.d(TAG,"OnCreatOptionsMenu3");
                         return true;
                     }
                     @Override
                     public boolean onQueryTextSubmit(String query)
                     {
                         Intent intent= new Intent(mainactivity,SearchActivity.class);
-                        Log.d(TAG,"OnCreatOptionsMenu4");
+                        Log.d(TAG,"Search Query submitted");
                         intent.putExtra(SearchActivity.QUERY_MESSAGE, query);
                         startActivity(intent);
-                        Log.d(TAG, "OnCreatOptionsMenu5");
                         return  true;
                     }
 
