@@ -57,23 +57,23 @@ public class SearchScreenTest extends LoggedInBaseTest{
     }
 
     public void testSearchFindsContacts() throws InterruptedException, JSONException {
-        String firstContactEmail = "family.member@example.com";
-        String secondContactEmail = "work.buddy@example.com";
+        String firstContactEmail = "family.member@test.com";
+        String secondContactEmail = "work.buddy@test.com";
         getMockDispatcher().setDashboardResponse(new MockResponse().setBody(MockJsonUtils.getDashboardJsonWithContacts(firstContactEmail, secondContactEmail)));
 
-        enterQuery("example");
-        onView(withText("family.member@example.com")).check(matches(isDisplayed()));
-        onView(withText("work.buddy@example.com")).check(matches(isDisplayed()));
+        enterQuery("test");
+        onView(withText("family.member@test.com")).check(matches(isDisplayed()));
+        onView(withText("work.buddy@test.com")).check(matches(isDisplayed()));
     }
 
     public void testSearchFindsOnlyMatchingContacts() throws InterruptedException, JSONException {
-        String firstContactEmail = "family.member@example.com";
-        String secondContactEmail = "work.buddy@example.com";
+        String firstContactEmail = "family.member@test.com";
+        String secondContactEmail = "work.buddy@test.com";
         getMockDispatcher().setDashboardResponse(new MockResponse().setBody(MockJsonUtils.getDashboardJsonWithContacts(firstContactEmail, secondContactEmail)));
 
         enterQuery("family");
-        onView(withText("family.member@example.com")).check(matches(isDisplayed()));
-        onView(withText("work.buddy@example.com")).check(doesNotExist());
+        onView(withText("family.member@test.com")).check(matches(isDisplayed()));
+        onView(withText("work.buddy@test.com")).check(doesNotExist());
     }
 
     public void testSearchFindsPlaces() throws InterruptedException, JSONException {
