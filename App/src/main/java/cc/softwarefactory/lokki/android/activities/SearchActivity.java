@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -83,20 +84,40 @@ public class SearchActivity extends ListActivity {
         Intent intent = getIntent();
         //Get the user's query from the intent
         String queryMessage = intent.getStringExtra(QUERY_MESSAGE);
-        queryMessage = queryMessage.toLowerCase();
         Log.d(TAG, "User searched for: " + queryMessage );
 
-        resultList = new ArrayList<>();
+        new PerformSearch().execute(queryMessage);
+    }
 
-        //Perform searches
-        searchContacts(queryMessage);
-        searchPlaces(queryMessage);
+    private class PerformSearch extends AsyncTask<String, Void, Void> {
 
-        //If no results, show a message to the user
-        if(resultList.isEmpty())
-            resultList.add(new SearchResult(ResultType.NONE, getString(R.string.no_search_results), null));
-        //Show the results
-        setListAdapter(this);
+        @Override
+        protected Void doInBackground(String... query) {
+            if (query.length < 1){
+                Log.w(TAG, "No search parameters");
+                return null;
+            }
+            String queryMessage = query[0];
+            queryMessage = queryMessage.toLowerCase();
+            resultList = new ArrayList<>();
+
+            //Perform searches
+            searchContacts(queryMessage);
+            searchPlaces(queryMessage);
+
+            //If no results, show a message to the user
+            if(resultList.isEmpty())
+                resultList.add(new SearchResult(ResultType.NONE, getString(R.string.no_search_results), null));
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+
+            //Show the results
+            setListAdapter(SearchActivity.this);
+        }
     }
 
     /**
@@ -145,6 +166,7 @@ public class SearchActivity extends ListActivity {
     protected void searchPlaces(String query){
         // Loop through all user places
         Iterator<String> it = MainApplication.places.keys();
+        Log.d(TAG, MainApplication.places.toString());
         while (it.hasNext()){
             String id = it.next();
             try {

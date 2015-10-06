@@ -36,6 +36,8 @@ public class ContactsScreenTest extends LoggedInBaseTest {
     @Override
     public void setUp() throws Exception {
         super.setUp();
+        //Prevent server from crashing when a getContacts message is sent
+        getMockDispatcher().setGetContactsResponse(new MockResponse().setResponseCode(200));
     }
 
     private void enterContactsScreen() {
@@ -158,8 +160,7 @@ public class ContactsScreenTest extends LoggedInBaseTest {
         dashboardJson.put("canseeme", new JSONArray());
         getMockDispatcher().setDashboardResponse(new MockResponse().setBody(dashboardJson.toString()));
         RequestsHandle requests = getMockDispatcher().setRemoveContactResponse(new MockResponse().setResponseCode(200), firstContactId);
-        //Prevent server from crashing when a getContacts message is sent afterwards
-        RequestsHandle requests2 = getMockDispatcher().setGetContactsResponse(new MockResponse().setResponseCode(200));
+
 
         enterContactsScreen();
         assertEquals("There should be no requests to allow path before clicking the delete button.", requests.getRequests().size(), 0);
