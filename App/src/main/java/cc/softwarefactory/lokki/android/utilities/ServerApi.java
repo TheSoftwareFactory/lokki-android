@@ -23,13 +23,11 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.transform.Result;
-
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.ResultListener;
 import cc.softwarefactory.lokki.android.constants.Constants;
-import cc.softwarefactory.lokki.android.errors.AddPlaceError;
+import cc.softwarefactory.lokki.android.errors.PlaceError;
 import cc.softwarefactory.lokki.android.fragments.PlacesFragment;
 import cc.softwarefactory.lokki.android.services.DataService;
 
@@ -478,6 +476,13 @@ public class ServerApi {
         aq.put(url, JSONdata, String.class, cb);
     }
 
+    public static void displayPlaceError(final Context context, final AjaxStatus status) {
+        PlaceError error = PlaceError.getEnum(status.getError());
+        if (error != null) {
+            Toast.makeText(context, context.getString(error.getErrorMessage()), Toast.LENGTH_SHORT).show();
+        }
+    }
+
     public static void addPlace(final Context context, String name, LatLng latLng, int radius) throws JSONException {
 
         Log.d(TAG, "addPlace");
@@ -503,24 +508,13 @@ public class ServerApi {
                 logStatus("addPlace", status);
 
                 if (status.getError() != null) {
-                    handleError(status);
+                    displayPlaceError(context, status);
                     return;
                 }
 
                 Log.d(TAG, "No error, place created.");
                 Toast.makeText(context, context.getString(R.string.place_created), Toast.LENGTH_SHORT).show();
                 DataService.getPlaces(context);
-            }
-
-            private void handleError(AjaxStatus status) {
-
-                AddPlaceError ape = AddPlaceError.getEnum(status.getError());
-                if (ape == null) {
-                    return;
-                }
-
-                String toastMessage = context.getString(ape.getErrorMessage());
-                Toast.makeText(context, toastMessage, Toast.LENGTH_SHORT).show();
             }
         };
 
@@ -589,13 +583,16 @@ public class ServerApi {
             public void callback(String url, String result, AjaxStatus status) {
                 logStatus("renamePlace", status);
 
-                if (status.getError() == null) {
-                    DataService.getPlaces(context);
-                    Intent intent = new Intent("PLACES-UPDATE");
-                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-                    PlacesFragment.renamePlaceLocally(placeId, JSONdata);
-                    Toast.makeText(context, R.string.place_renamed, Toast.LENGTH_SHORT).show();
+                if(status.getError() != null) {
+                    displayPlaceError(context, status);
+                    return;
                 }
+
+                DataService.getPlaces(context);
+                Intent intent = new Intent("PLACES-UPDATE");
+                LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+                PlacesFragment.renamePlaceLocally(placeId, JSONdata);
+                Toast.makeText(context, R.string.place_renamed, Toast.LENGTH_SHORT).show();
             }
         };
 

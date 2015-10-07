@@ -375,16 +375,6 @@ public class PlacesFragment extends Fragment {
                 .show();
     }
 
-    static public boolean placeNameAlreadyInUse(String name) throws JSONException {
-        Iterator<String> it = MainApplication.places.keys();
-        while(it.hasNext()) {
-            JSONObject object = (JSONObject)MainApplication.places.get(it.next());
-            if(object.getString("name").toLowerCase().trim().equals(name.toLowerCase().trim()))
-                return true;
-        }
-        return false;
-    }
-
     static public void renamePlaceLocally(final String key, JSONObject placeObj) {
         try {
             MainApplication.places.remove(key);
@@ -398,11 +388,6 @@ public class PlacesFragment extends Fragment {
 
         Log.d(TAG, "renamePlace");
         try {
-            if(placeNameAlreadyInUse(newName)) {
-                Toast.makeText(context, R.string.place_name_already_in_use, Toast.LENGTH_LONG).show();
-                return;
-            }
-
             Iterator<String> keys = MainApplication.places.keys();
             while (keys.hasNext()) {
                 String key = keys.next();
