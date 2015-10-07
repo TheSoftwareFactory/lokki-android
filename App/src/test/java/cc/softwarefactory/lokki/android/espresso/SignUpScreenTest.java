@@ -67,6 +67,8 @@ public class SignUpScreenTest extends LokkiBaseTest {
         RequestsHandle requests = getMockDispatcher().setSignUpResponse(loginOkResponse);
 
         signUpUsingEmail("email@example.com");
+        //Attempt to reduce test flakiness by waiting
+        Thread.sleep(500);
         assertSignUpIsOk(requests);
     }
 
@@ -89,7 +91,8 @@ public class SignUpScreenTest extends LokkiBaseTest {
         // expected!
         onView(withId(R.id.logo)).perform(click());
         onView(withId(R.id.email)).perform(pressImeActionButton());
-
+        //Attempt to reduce test flakiness by waiting
+        Thread.sleep(500);
         assertSignUpIsOk(requests);
     }
 
