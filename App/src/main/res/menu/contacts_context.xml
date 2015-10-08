@@ -5,4 +5,8 @@
         android:id="@+id/contacts_context_menu_delete"
         android:title="@string/delete" />
 
+    <item
+        android:id="@+id/contacts_context_menu_rename"
+        android:title="@string/rename" />
+
 </menu>

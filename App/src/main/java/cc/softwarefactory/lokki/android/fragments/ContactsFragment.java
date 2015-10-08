@@ -143,6 +143,14 @@ public class ContactsFragment extends Fragment {
                         getString(R.string.analytics_label_delete_contact));
                 deleteContactDialog(contactName);
                 return true;
+            case R.id.contacts_context_menu_rename:
+                final String email = mapping.get(contactName);
+                final EditText input = new EditText(getActivity());
+                String titleFormat = getString(R.string.rename_contact);
+                final String title = String.format(titleFormat, contactName);
+                showRenameDialog(title, input, email, contactName);
+                return true;
+
         }
 
         return super.onContextItemSelected(item);
@@ -296,36 +304,14 @@ public class ContactsFragment extends Fragment {
                 final String contactName = getItem(position);
                 final String email = mapping.get(contactName);
                 final EditText input = new EditText(getActivity());
-                String titleFormat = getString(R.string.rename_place);
+                String titleFormat = getString(R.string.rename_contact);
                 final String title = String.format(titleFormat, contactName);
 
                 AQuery aq = new AQuery(convertView);
                 aq.id(holder.name).text(contactName).longClicked(new View.OnLongClickListener(){
                     @Override
                     public boolean onLongClick(View view){
-                        new AlertDialog.Builder(getActivity())
-                                .setTitle(title)
-                                .setMessage(R.string.rename_contact)
-                                .setView(input)
-                                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
-                                                getString(R.string.analytics_action_click),
-                                                getString(analytics_label_confirm_rename_contact_dialog));
-                                        String newName = input.getText().toString();
-                                        renameContacts(email ,contactName, newName);
-                                    }
-                                })
-                                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
-                                                getString(R.string.analytics_action_click),
-                                                getString(R.string.analytics_label_cancel_rename_contact_dialog));
-                                    }
-                                })
-                                .show();
+                        showRenameDialog(title, input, email, contactName);
                         return true;
                     }
 
@@ -383,6 +369,34 @@ public class ContactsFragment extends Fragment {
         aq.id(R.id.headers).visibility(View.VISIBLE);
         aq.id(R.id.contacts_list_view).adapter(adapter);
     }
+
+    private void showRenameDialog(String title, final EditText input, final String email, final String contactName) {
+        new AlertDialog.Builder(getActivity())
+            .setTitle(title)
+            .setMessage(R.string.rename_contact)
+            .setView(input)
+            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                            getString(R.string.analytics_action_click),
+                            getString(analytics_label_confirm_rename_contact_dialog));
+                    String newName = input.getText().toString();
+                    renameContacts(email, contactName, newName);
+                }
+            })
+            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                            getString(R.string.analytics_action_click),
+                            getString(R.string.analytics_label_cancel_rename_contact_dialog));
+                }
+            })
+            .show();
+
+    }
+
     public void renameContacts(String email ,String contactName,String newName) {
         mapping.remove(contactName);
         mapping.put(newName, email);
@@ -393,14 +407,22 @@ public class ContactsFragment extends Fragment {
 
         }
         try {
+            if (MainApplication.contacts == null){
+                MainApplication.contacts = new JSONObject();
+            }
+            if (MainApplication.mapping == null){
+                MainApplication.mapping = new JSONObject();
+            }
             if(!MainApplication.contacts.has(email)){
                 MainApplication.contacts.put(email ,new JSONObject());
             }
             MainApplication.contacts.getJSONObject(email).put("name", newName);
             MainApplication.contacts.getJSONObject(email).put("id", 5);
-            MainApplication.mapping.put(newName ,email);
-            MainApplication.contacts.put("mapping" , MainApplication.mapping);
+            MainApplication.mapping.put(newName, email);
+            MainApplication.contacts.put("mapping", MainApplication.mapping);
             PreferenceUtils.setString(context, PreferenceUtils.KEY_CONTACTS, MainApplication.contacts.toString());
+
+            ServerApi.renameContact(context, email, newName);
 
         } catch (JSONException e) {
             Log.e(TAG, "rename failed" + e);
