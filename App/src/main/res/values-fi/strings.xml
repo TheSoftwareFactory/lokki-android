@@ -74,6 +74,7 @@
     <string name="email_required">Sähköpostiosoite on pakollinen.</string>
     <string name="required">Pakollinen</string>
     <string name="place_name_already_in_use">Nimi on jo käytössä</string>
+    <string name="place_name_too_long">Paikan nimi on liian pitkä.</string>
     <string name="add_place">Lisää paikka</string>
     <string name="gps_disabled">Lokki haluaa käyttää sijaintiasi. Ota sijaintipalvelut käyttöön.</string>
     <string name="ignore">Ohita</string>

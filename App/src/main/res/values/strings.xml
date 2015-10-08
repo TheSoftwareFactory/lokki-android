@@ -75,6 +75,7 @@
     <string name="email_required">An email address is required.</string>
     <string name="required">Required</string>
     <string name="place_name_already_in_use">Name is already in use</string>
+    <string name="place_name_too_long">Place has too long name.</string>
     <string name="add_place">Add place</string>
     <string name="add_place_hint">Hint:You can zoom and pan the map to adjust the location.</string>
     <string name="gps_disabled">Lokki needs access to your location. Please turn on location access.</string>

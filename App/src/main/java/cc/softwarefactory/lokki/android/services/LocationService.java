@@ -284,11 +284,8 @@ public class LocationService extends Service implements LocationListener, Google
     @Override
     public void onDestroy() {
         Log.d(TAG, "onDestroy called");
-        try {
+        if(wakeLock.isHeld()) {
             wakeLock.release();
-        }
-        catch (RuntimeException e){
-            Log.w(TAG, "Exception while attempting to release wake lock: " + e);
         }
         stopForeground(true);
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
