@@ -187,8 +187,11 @@ public class MapViewFragment extends Fragment {
             updatePlaces();
         }
         AnalyticsUtils.screenHit(getString(R.string.analytics_screen_map));
+
+        //After we're done updating the map, move it to a specific place if requested
         if (startLocation != null){
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(startLocation, DEFAULT_ZOOM));
+            //Don't move again on the next resume
             startLocation = null;
         }
     }
@@ -408,10 +411,14 @@ public class MapViewFragment extends Fragment {
         }
     };
 
+    /**
+     * Receives intents that cause the map to move to a specific location
+     */
     private BroadcastReceiver goToReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d(TAG, "goToReceiver onReceive");
+            //Parse coordinates from extra data
             String coords = intent.getStringExtra(GO_TO_COORDS);
             int separator = coords.indexOf(',');
             if (separator == -1){
@@ -427,11 +434,14 @@ public class MapViewFragment extends Fragment {
                 Log.e(TAG, "Could not parse coordinates");
                 return;
             }
+            //If we're tracking a contact, untrack them to prevent the camera from focusing on them
             MainApplication.emailBeingTracked = null;
             if (MapViewFragment.this.isVisible()){
+                //If the map is already visible, just move the map
                 map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat,lon), DEFAULT_ZOOM));
             }
             else {
+                //If the map is not visible, move the camera the next time the map is shown
                 startLocation = new LatLng(lat, lon);
             }
         }

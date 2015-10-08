@@ -98,7 +98,8 @@
     <string name="confirm_buzz">Do you want us to alert you when you reach this place?</string>
     <string name="place_adding_tip">Long press on map to add new place.</string>
     <string name="search_lable">Search bar</string>
-    <string name="search_hint">Search Contacts</string>
+    <string name="search_hint">Search contacts, places or map locations</string>
+    <string name="search_results">Search results for: </string>
     <string name="no_search_results">No results found</string>
 
     <string translatable="false" name="lokki_github_io_link">https://thesoftwarefactory.github.io/lokki/</string>
