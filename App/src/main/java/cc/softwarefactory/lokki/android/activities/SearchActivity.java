@@ -41,7 +41,11 @@ public class SearchActivity extends ListActivity {
     public static final String TAG = "SearchActivity";
     // The string used to fetch the search query from the launching intent
     public final static String QUERY_MESSAGE = "SEARCH_QUERY";
+    // URL to public Google Maps geocoding API
     public static final String GOOGLE_MAPS_API_URL = "http://maps.googleapis.com/maps/api/geocode/json?address=";
+
+    //List adapter for the results list view
+    private ArrayAdapter<SearchResult> adapter;
 
     // Icons need to be resized to fit buttons, so cache them to prevent them from hogging the UI thread
     private Drawable contactIcon = null;
@@ -107,6 +111,8 @@ public class SearchActivity extends ListActivity {
      * (Prevents the search from hogging the UI thread)
      */
     private class PerformSearch extends AsyncTask<String, Void, String> {
+        // Store search results in a temporary array list to avoid modifying resultList from background thread.
+        private ArrayList<SearchResult> tempResults;
 
         @Override
         protected String doInBackground(String... query) {
@@ -114,20 +120,22 @@ public class SearchActivity extends ListActivity {
                 Log.w(TAG, "No search parameters");
                 return null;
             }
+            tempResults = new ArrayList<>();
             String queryMessage = query[0];
             queryMessage = queryMessage.toLowerCase();
 
             //Perform searches
-            searchContacts(queryMessage);
-            searchPlaces(queryMessage);
+            searchContacts(queryMessage, tempResults);
+            searchPlaces(queryMessage, tempResults);
 
             return queryMessage;
         }
 
         @Override
         protected void onPostExecute(String query) {
+            resultList.addAll(tempResults);
             //Show the results
-            setListAdapter(SearchActivity.this);
+            adapter.notifyDataSetChanged();
             setHeader(query);
             //Start Google Maps search (separate task so that we can show local results before online search finishes)
             new AddressSearch().execute(query);
@@ -163,7 +171,7 @@ public class SearchActivity extends ListActivity {
      * Attempts to find a match from contact names or emails.
      * @param query The string being searched
      */
-    protected void searchContacts(String query)
+    protected void searchContacts(String query, ArrayList<SearchResult> resultList)
     {
         try {
             JSONObject icansee = MainApplication.dashboard.getJSONObject("icansee");
@@ -203,7 +211,7 @@ public class SearchActivity extends ListActivity {
      * Attempts to find a match from place names.
      * @param query The string being searched
      */
-    protected void searchPlaces(String query){
+    protected void searchPlaces(String query, ArrayList<SearchResult> resultList){
         // Loop through all user places
         Iterator<String> it = MainApplication.places.keys();
         Log.d(TAG, MainApplication.places.toString());
@@ -256,7 +264,7 @@ public class SearchActivity extends ListActivity {
                 Log.d(TAG, "Geocoding result: " + json.toString());
 
                 //Show the results
-                setListAdapter(SearchActivity.this);
+                adapter.notifyDataSetChanged();
                 setHeader(query);
             }
 
@@ -273,7 +281,7 @@ public class SearchActivity extends ListActivity {
     private void setListAdapter(final Activity listActivity)
     {
         Log.d(TAG, "setListAdapter");
-        ArrayAdapter<SearchResult>adapter= new ArrayAdapter<SearchResult>(context,R.layout.listresult_layout, resultList){
+        adapter = new ArrayAdapter<SearchResult>(context,R.layout.listresult_layout, resultList){
 
         public View getView(int position, View unusedView, ViewGroup parent)
         {
