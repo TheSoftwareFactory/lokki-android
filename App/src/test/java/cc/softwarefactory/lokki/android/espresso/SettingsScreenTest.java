@@ -30,41 +30,42 @@ public class SettingsScreenTest extends LoggedInBaseTest {
         super.setUp();
     }
 
-    private void enterSettingScreen() {
+    private void enterSettingScreen() throws InterruptedException {
         getActivity();
         TestUtils.toggleNavigationDrawer();
+        Thread.sleep(1000);
         onView(withText(R.string.settings)).perform(click());
     }
     
     
     // TEST
     
-    public void testSettingsScreenShown() {
+    public void testSettingsScreenShown() throws InterruptedException {
         enterSettingScreen();
         onView(allOf(withText(R.string.you_are_visible))).check(matches(isDisplayed()));
         onView(allOf(withText(R.string.map_mode))).check(matches(isDisplayed()));
     }
 
-    public void testVisibilitySpinnerDefaultYes() {
+    public void testVisibilitySpinnerDefaultYes() throws InterruptedException {
         enterSettingScreen();
 
         onView(allOf(withText(R.string.you_are_visible))).check(matches(isDisplayed()));
     }
     
-    public void testVisibilitySpinnerSelectNo() {
+    public void testVisibilitySpinnerSelectNo() throws InterruptedException {
         enterSettingScreen();
         onView(withText(R.string.visibility)).perform(click());
 
         onView(allOf(withText(R.string.you_are_invisible))).check(matches(isDisplayed()));
     }
 
-    public void testMapTypeSpinnerDefault() {
+    public void testMapTypeSpinnerDefault() throws InterruptedException {
         enterSettingScreen();
 
         onView(allOf(withText(R.string.map_mode_default))).check(matches(isDisplayed()));
     }
 
-    public void testMapTypeSpinnerSelectSatellite() {
+    public void testMapTypeSpinnerSelectSatellite() throws InterruptedException {
         enterSettingScreen();
         onView(withText(R.string.map_mode)).perform(click());
         onData(allOf(is(instanceOf(String.class)), is(getResources().getString(R.string.map_mode_satellite)))).perform(click());
@@ -72,7 +73,7 @@ public class SettingsScreenTest extends LoggedInBaseTest {
         onView(allOf(withText(R.string.map_mode_satellite))).check(matches(isDisplayed()));
     }
 
-    public void testMapTypeSpinnerSelectHybrid() {
+    public void testMapTypeSpinnerSelectHybrid() throws InterruptedException {
         enterSettingScreen();
         onView(withText(R.string.map_mode)).perform(click());
         onData(allOf(is(instanceOf(String.class)), is(getResources().getString(R.string.map_mode_hybrid)))).perform(click());
@@ -80,7 +81,7 @@ public class SettingsScreenTest extends LoggedInBaseTest {
         onView(allOf(withText(R.string.map_mode_hybrid))).check(matches(isDisplayed()));
     }
 
-    public void testAnalyticsOptInIsDisplayedAndEnabled() {
+    public void testAnalyticsOptInIsDisplayedAndEnabled() throws InterruptedException {
         enterSettingScreen();
         CheckBoxPreference analyticsPref = (CheckBoxPreference) getPreference(PreferenceUtils.KEY_SETTING_ANALYTICS_OPT_IN);
 
@@ -89,7 +90,7 @@ public class SettingsScreenTest extends LoggedInBaseTest {
         assertTrue(analyticsPref.isChecked());
     }
 
-    public void testExperimentsOptInIsDisplayed() {
+    public void testExperimentsOptInIsDisplayed() throws InterruptedException {
         enterSettingScreen();
         CheckBoxPreference experimentsPref = (CheckBoxPreference) getPreference(PreferenceUtils.KEY_SETTING_EXPERIMENTS_OPT_IN);
 
@@ -98,7 +99,7 @@ public class SettingsScreenTest extends LoggedInBaseTest {
         assertTrue(experimentsPref.isChecked());
     }
 
-    public void testUncheckingAnalyticsOptInDisablesAndUnchecksExperimentsOptIn() {
+    public void testUncheckingAnalyticsOptInDisablesAndUnchecksExperimentsOptIn() throws InterruptedException {
         enterSettingScreen();
         CheckBoxPreference analyticsPref = (CheckBoxPreference) getPreference(PreferenceUtils.KEY_SETTING_ANALYTICS_OPT_IN);
         CheckBoxPreference experimentsPref = (CheckBoxPreference) getPreference(PreferenceUtils.KEY_SETTING_EXPERIMENTS_OPT_IN);
@@ -113,7 +114,7 @@ public class SettingsScreenTest extends LoggedInBaseTest {
         assertFalse(experimentsPref.isChecked());
     }
 
-    public void testCheckingAnalyticsOptInChecksExperimentsOptIn() {
+    public void testCheckingAnalyticsOptInChecksExperimentsOptIn() throws InterruptedException {
         enterSettingScreen();
         CheckBoxPreference analyticsPref = (CheckBoxPreference) getPreference(PreferenceUtils.KEY_SETTING_ANALYTICS_OPT_IN);
         CheckBoxPreference experimentsPref = (CheckBoxPreference) getPreference(PreferenceUtils.KEY_SETTING_EXPERIMENTS_OPT_IN);
@@ -128,7 +129,7 @@ public class SettingsScreenTest extends LoggedInBaseTest {
         assertTrue(experimentsPref.isChecked());
     }
 
-    public void testCheckOnlyAnalyticsOptInButNotExperimentsOptIn() {
+    public void testCheckOnlyAnalyticsOptInButNotExperimentsOptIn() throws InterruptedException {
         enterSettingScreen();
         CheckBoxPreference analyticsPref = (CheckBoxPreference) getPreference(PreferenceUtils.KEY_SETTING_ANALYTICS_OPT_IN);
         CheckBoxPreference experimentsPref = (CheckBoxPreference) getPreference(PreferenceUtils.KEY_SETTING_EXPERIMENTS_OPT_IN);

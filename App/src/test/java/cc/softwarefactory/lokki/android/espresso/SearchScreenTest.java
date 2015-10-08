@@ -108,7 +108,7 @@ public class SearchScreenTest extends LoggedInBaseTest{
 
     public void testSearchNotFound() throws InterruptedException{
         getActivity();
-        enterQuery("test");
+        enterQuery("invalid_search_qwertyuiop");
         onView(withText(getResources().getString(R.string.no_search_results))).check(matches(isDisplayed()));
     }
 

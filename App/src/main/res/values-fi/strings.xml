@@ -98,8 +98,9 @@
     <string name="place_adding_tip">Paina pitkään karttaa lisätäksesi paikan.</string>
     <string name="delete_contact">Haluatko poistaa tämän yhteystiedon?</string>
     <string name="will_be_deleted_from_contacts">poistetaan yhteystiedoistasi</string>
-    <string name="search_hint">Hae yhteystiedoista</string>
+    <string name="search_hint">Hae yhteystietoja, paikkoja tai karttasijainteja</string>
     <string name="search_lable">Hakupalkki</string>
     <string name="no_search_results">Ei hakutuloksia</string>
+    <string name="search_results">Tulokset haulla:</string>
 
 </resources>
