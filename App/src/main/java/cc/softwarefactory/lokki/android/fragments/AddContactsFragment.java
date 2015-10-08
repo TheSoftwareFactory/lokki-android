@@ -28,9 +28,7 @@ import android.widget.Toast;
 
 import com.androidquery.AQuery;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -191,7 +189,17 @@ public class AddContactsFragment extends Fragment {
             Log.d(TAG, "Number of contacts: " + (contactsResult.length() - 1));
             Log.d(TAG, "Contacts: " + contactsResult);
             try {
-                MainApplication.contacts = contactsResult;
+                Iterator<String> iter = contactsResult.keys();
+                while(iter.hasNext()){
+                    String key = iter.next();
+                    if(!MainApplication.contacts.has(key)){
+                        MainApplication.contacts.put(key,contactsResult.getJSONObject(key));
+                        String name = contactsResult.getJSONObject(key).getString("name");
+                        MainApplication.contacts.getJSONObject("mapping").put(name,contactsResult.getJSONObject("mapping").getString(name)) ;
+                    }
+
+                }
+
                 MainApplication.mapping = MainApplication.contacts.getJSONObject("mapping");
                 PreferenceUtils.setString(context, PreferenceUtils.KEY_CONTACTS, MainApplication.contacts.toString());
 

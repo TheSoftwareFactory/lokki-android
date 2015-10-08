@@ -294,7 +294,7 @@ public class ContactsFragment extends Fragment {
                 }
 
                 final String contactName = getItem(position);
-                String email = mapping.get(contactName);
+                final String email = mapping.get(contactName);
                 final EditText input = new EditText(getActivity());
                 String titleFormat = getString(R.string.rename_place);
                 final String title = String.format(titleFormat, contactName);
@@ -314,7 +314,7 @@ public class ContactsFragment extends Fragment {
                                                 getString(R.string.analytics_action_click),
                                                 getString(analytics_label_confirm_rename_contact_dialog));
                                         String newName = input.getText().toString();
-                                        renameContacts(contactName, newName);
+                                        renameContacts(email ,contactName, newName);
                                     }
                                 })
                                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -383,10 +383,31 @@ public class ContactsFragment extends Fragment {
         aq.id(R.id.headers).visibility(View.VISIBLE);
         aq.id(R.id.contacts_list_view).adapter(adapter);
     }
-    public void renameContacts(String contactName,String newName){
-        
-    }
+    public void renameContacts(String email ,String contactName,String newName) {
+        mapping.remove(contactName);
+        mapping.put(newName, email);
+        for (int i = 0; i < peopleList.size(); i++) {
+            if (peopleList.get(i).equals(contactName)) {
+                peopleList.set(i, newName);
+            }
 
+        }
+        try {
+            if(!MainApplication.contacts.has(email)){
+                MainApplication.contacts.put(email ,new JSONObject());
+            }
+            MainApplication.contacts.getJSONObject(email).put("name", newName);
+            MainApplication.contacts.getJSONObject(email).put("id", 5);
+            MainApplication.mapping.put(newName ,email);
+            MainApplication.contacts.put("mapping" , MainApplication.mapping);
+            PreferenceUtils.setString(context, PreferenceUtils.KEY_CONTACTS, MainApplication.contacts.toString());
+
+        } catch (JSONException e) {
+            Log.e(TAG, "rename failed" + e);
+        }
+        Log.d(TAG, MainApplication.contacts.toString());
+        Log.d(TAG, MainApplication.mapping.toString());
+    }
     static class ViewHolder {
         TextView name;
         TextView email;

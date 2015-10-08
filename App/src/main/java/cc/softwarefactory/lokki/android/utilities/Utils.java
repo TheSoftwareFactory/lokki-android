@@ -116,6 +116,7 @@ public class Utils {
 
         if (loadContacts(context)) {
             try {
+                Log.d(TAG, MainApplication.contacts.toString());
                 String name = MainApplication.contacts.getJSONObject(email).getString("name");
                 Log.d(TAG, "getNameFromEmail - Email: " + email + ", Name: " + name);
                 return name;
