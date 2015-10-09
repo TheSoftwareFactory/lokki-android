@@ -10,6 +10,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
@@ -17,7 +18,6 @@ import android.os.SystemClock;
 import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.content.WakefulBroadcastReceiver;
 import android.util.Log;
 
 import cc.softwarefactory.lokki.android.MainApplication;
@@ -41,8 +41,19 @@ import java.util.Iterator;
 public class LocationService extends Service implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener  {
 
     // INTERVALS
-    private static final long INTERVAL_10_MS = 10;
-    private static final long LOCATION_CHECK_INTERVAL = 5000;
+    /**
+     * Location polling interval when the service is set to get high accuracy updates (App running in foreground)
+     */
+    private static final long LOCATION_CHECK_INTERVAL_ACCURATE = 5000; //5 seconds
+    /**
+     * Location polling interval when the service is set to get medium accuracy updates (App running in background with Location Buzz)
+     */
+    private static final long LOCATION_CHECK_INTERVAL_BACKGROUND_ACCURATE = 15000; //15 seconds
+    /**
+     * Location polling interval when the service is set to get low accuracy updates (App running in background without Location Buzz)
+     */
+    private static final long LOCATION_CHECK_INTERVAL_BACKGROUND_INACCURATE = 1000 * 60 * 15; //15 minutes
+
     private static final long INTERVAL_30_SECS = 30 * 1000;
     private static final long INTERVAL_1_MIN = 60 * 1000;
 
@@ -53,13 +64,36 @@ public class LocationService extends Service implements LocationListener, Google
     private static final String TAG = "LocationService";
     private static final String RUN_1_MIN = "RUN_1_MIN";
     private static final String ALARM_TIMER = "ALARM_TIMER";
-    private int Buzz_Count ;
 
     private GoogleApiClient mGoogleApiClient;
-    private LocationRequest locationRequest;
+    /**
+     * Location request used to request accurate foreground updates from the Location API
+     */
+    private LocationRequest locationRequestAccurate;
+    /**
+     * Location request used to request accurate background updates from the Location API
+     */
+    private LocationRequest locationRequestBGAccurate;
+    /**
+     * Location request used to request inaccurate background updates from the Location API
+     */
+    private LocationRequest locationRequestBGInaccurate;
     private static Boolean serviceRunning = false;
     private static Location lastLocation = null;
     private PowerManager.WakeLock wakeLock;
+
+    /**
+     * Current accuracy of location updates
+     */
+    private LocationAccuracy currentAccuracy = LocationAccuracy.BGINACCURATE;
+
+    /**
+     * Location polling accuracy levels:
+     * ACCURATE: App running in foreground
+     * BGACCURATE: App running in background, but still needs relatively high accuracy for e.g. Location Buzz
+     * BGINACCURATE: App running in background, low accuracy
+     */
+    public enum LocationAccuracy{ACCURATE, BGACCURATE, BGINACCURATE}
 
     public static void start(Context context) {
 
@@ -126,10 +160,20 @@ public class LocationService extends Service implements LocationListener, Google
 
     private void setLocationClient() {
 
-        locationRequest = LocationRequest.create();
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setInterval(LOCATION_CHECK_INTERVAL);
+        //Build location requests for different power profiles
+        locationRequestAccurate = LocationRequest.create();
+        locationRequestAccurate.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequestAccurate.setInterval(LOCATION_CHECK_INTERVAL_ACCURATE);
 
+        locationRequestBGAccurate = LocationRequest.create();
+        locationRequestBGAccurate.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        locationRequestBGAccurate.setInterval(LOCATION_CHECK_INTERVAL_BACKGROUND_ACCURATE);
+
+        locationRequestBGInaccurate = LocationRequest.create();
+        locationRequestBGInaccurate.setPriority(LocationRequest.PRIORITY_LOW_POWER);
+        locationRequestBGInaccurate.setInterval(LOCATION_CHECK_INTERVAL_BACKGROUND_INACCURATE);
+
+        //Create and connect to Google API client
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
                 .addConnectionCallbacks(this)
@@ -148,6 +192,45 @@ public class LocationService extends Service implements LocationListener, Google
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
         notificationBuilder.setContentIntent(contentIntent);
         startForeground(NOTIFICATION_SERVICE, notificationBuilder.build());
+    }
+
+    /**
+     * Switched current location update accuracy level to prioritize accuracy or power saving
+     * @param acc   The new accuracy level
+     */
+    public void setLocationCheckAccuracy(LocationAccuracy acc){
+        currentAccuracy = acc;
+        if (mGoogleApiClient == null || !mGoogleApiClient.isConnected()){
+            Log.i(TAG, "Google API client not yet initialized, so not requesting updates yet");
+            return;
+        }
+
+        LocationRequest req;
+        switch (acc){
+            case ACCURATE:{
+                Log.d(TAG, "Setting location request accuracy to accurate");
+                req = locationRequestAccurate;
+                break;
+            }
+            case BGACCURATE:{
+                Log.d(TAG, "Setting location request accuracy to background accurate");
+                req = locationRequestBGAccurate;
+                break;
+            }
+            case BGINACCURATE:{
+                Log.d(TAG, "Setting location request accuracy to background inaccurate");
+                req = locationRequestBGInaccurate;
+                break;
+            }
+            default:{
+                Log.wtf(TAG, "Unknown location accuracy level");
+                throw new IllegalArgumentException("Unknown location accuracy level");
+            }
+
+        }
+        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, req, this);
+
     }
 
     @Override
@@ -176,14 +259,10 @@ public class LocationService extends Service implements LocationListener, Google
     }
 
     @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-
-    @Override
     public void onConnected(Bundle bundle) {
         Log.d(TAG, "locationClient connected");
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest, this);
+        //Set location update accuracy to whichever value was set last
+        setLocationCheckAccuracy(currentAccuracy);
         Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLastLocation != null) {
             updateLokkiLocation(mLastLocation);
@@ -299,5 +378,30 @@ public class LocationService extends Service implements LocationListener, Google
         }
         serviceRunning = false;
         super.onDestroy();
+    }
+
+    //------------Service binding------------
+
+    /**
+     * The service binder for this service instance
+     */
+    private final LocationBinder mBinder = new LocationBinder();
+
+    /**
+     * Binder object that allows this service to be accessed from other objects in the same process
+     */
+    public class LocationBinder extends Binder {
+        /**
+         * Gets a reference to the currently running LocationService instance
+         * @return  Reference to the current LocationService
+         */
+        public LocationService getService(){
+            return LocationService.this;
+        }
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return mBinder;
     }
 }

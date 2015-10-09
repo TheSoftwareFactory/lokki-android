@@ -5,6 +5,9 @@ See LICENSE for details
 package cc.softwarefactory.lokki.android.activities;
 
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.ServiceConnection;
+import android.os.IBinder;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.content.ActivityNotFoundException;
@@ -207,17 +210,108 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
             ServerApi.getDashboard(getApplicationContext());
             ServerApi.getContacts(getApplicationContext());
         }
+
     }
 
+    //-------------Location service interface-------------
 
-    private void startServices() {
-
-        if (MainApplication.visible) {
-            LocationService.start(this.getApplicationContext());
+    /**
+     * Reference to currently bound location service instance
+     */
+    private LocationService mBoundLocationService;
+    /**
+     * Currently selected location update accuracy level
+     * Will be sent to the service when setLocationServiceAccuracyLevel is called
+     */
+    private LocationService.LocationAccuracy currentAccuracy = LocationService.LocationAccuracy.BGINACCURATE;
+    /**
+     * Connection object in charge of fetching location service instances
+     */
+    private ServiceConnection mLocationServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mBoundLocationService = ((LocationService.LocationBinder)service).getService();
+            //Set accuracy level as soon as we're connected
+            setLocationServiceAccuracyLevel();
         }
 
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mBoundLocationService = null;
+        }
+    };
+
+    /**
+     * Sends currently selected accuracy level (in currentAccuracy) to the location service if it's initialized.
+     * Called automatically when the service is first initialized.
+     */
+    private void setLocationServiceAccuracyLevel(){
+        if (mBoundLocationService == null){
+            Log.i(TAG, "location service not yet bound, not changing accuracy");
+        }
+        mBoundLocationService.setLocationCheckAccuracy(currentAccuracy);
+    }
+
+    /**
+     * Creates a connection to the location service.
+     * Calls mLocationServiceConnection.onServiceConnected when done.
+     */
+    private void bindLocationService(){
+        bindService(new Intent(this, LocationService.class), mLocationServiceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    /**
+     * Removes connection to location service.
+     * Calls mLocationServiceConnection.onServiceDisconnected when done.
+     */
+    private void unbindLocationService(){
+        if (mBoundLocationService != null){
+            unbindService(mLocationServiceConnection);
+        }
+    }
+
+    /**
+     * Sets an appropriate location update accuracy for background updates.
+     * Call setLocationServiceAccuracyLevel() afterwards to send it to the service.
+     */
+    private void setBackgroundLocationAccuracy(){
+        if (MainApplication.buzzPlaces.length() > 0){
+            currentAccuracy = LocationService.LocationAccuracy.BGACCURATE;
+        }
+        else {
+            currentAccuracy = LocationService.LocationAccuracy.BGINACCURATE;
+        }
+    }
+
+    //-------------Location service interface ends-------------
+
+    /**
+     * Launches background services if they aren't already running
+     */
+    private void startServices() {
+
+        //Start location service
+        LocationService.start(this.getApplicationContext());
+
+        //Set appropriate location update accuracy
+        if (MainApplication.visible){
+            currentAccuracy = LocationService.LocationAccuracy.ACCURATE;
+        }
+        else {
+            setBackgroundLocationAccuracy();
+        }
+
+        //Create a connection to the location service if it doesn't already exist, else set new location check accuracy
+        if (mBoundLocationService == null){
+            bindLocationService();
+        } else {
+            setLocationServiceAccuracyLevel();
+        }
+
+        //Start data service
         DataService.start(this.getApplicationContext());
 
+        //Request updates from server
         try {
             ServerApi.requestUpdates(this.getApplicationContext());
         } catch (JSONException e) {
@@ -234,6 +328,11 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         LocalBroadcastManager.getInstance(this).unregisterReceiver(switchToMapReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(exitMessageReceiver);
         super.onPause();
+        //Set location update accuracy to low if the service has been initialized
+        if (mBoundLocationService != null) {
+            setBackgroundLocationAccuracy();
+            setLocationServiceAccuracyLevel();
+        }
     }
 
     @Override
@@ -241,6 +340,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     {
         LocationService.stop(this.getApplicationContext());
         DataService.stop(this.getApplicationContext());
+        //Remove connection to LocationService
+        unbindLocationService();
         super.onDestroy();
     }
 
