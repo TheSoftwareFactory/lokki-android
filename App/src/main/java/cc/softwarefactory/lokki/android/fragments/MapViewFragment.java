@@ -79,7 +79,6 @@ public class MapViewFragment extends Fragment {
     private AQuery aq;
     private static Boolean cancelAsyncTasks = false;
     private Context context;
-    private Boolean firstTimeZoom = true;
     private ArrayList<Circle> placesOverlay;
     private double radiusMultiplier = 0.9;  // Dont want to fill the screen from edge to edge...
     private TextView placeAddingTip;
@@ -139,26 +138,25 @@ public class MapViewFragment extends Fragment {
         }
     }
 
-    private void storeMapState(){
-        float zoom = map.getCameraPosition().zoom;
-        float lat = (float) map.getCameraPosition().target.latitude;
-        float lng = (float) map.getCameraPosition().target.longitude;
+    //store current map state on Sharedpreferences
+    public void storeMapState(){
+        Double lat = map.getCameraPosition().target.latitude;
+        Double lng =  map.getCameraPosition().target.longitude;
 
         SharedPreferences prefs = context.getSharedPreferences(BUNDLE_KEY_MAP_STATE, Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putFloat("lat", lat);
-        editor.putFloat("lng", lng);
-        editor.putFloat("zoom", zoom);
+        editor.putString("lat", Double.toString(lat));
+        editor.putString("lng", Double.toString(lng));
         editor.commit();
 
     }
 
-    private  void loadMapState(){
+    //load curretn map state from Sharedpreferences
+    public void loadMapState(){
         SharedPreferences prefs = context.getSharedPreferences(BUNDLE_KEY_MAP_STATE, Activity.MODE_PRIVATE);
-        float lat = prefs.getFloat("lat", 0);
-        float lng = prefs.getFloat("lng", 0);
-        float zoom = prefs.getFloat("zoom", 0);
-        map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), zoom));
+        Double lat = Double.parseDouble(prefs.getString("lat", "0"));
+        Double lng = Double.parseDouble(prefs.getString("lng", "0"));
+        startLocation = new LatLng(lat, lng);
     }
 
 
@@ -188,13 +186,18 @@ public class MapViewFragment extends Fragment {
         }
         AnalyticsUtils.screenHit(getString(R.string.analytics_screen_map));
 
-        //After we're done updating the map, move it to a specific place if requested
-        if (startLocation != null){
+
+        if(MainApplication.emailBeingTracked == null){
+            if(startLocation == null){
+              loadMapState();
+            }
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(startLocation, DEFAULT_ZOOM));
             //Don't move again on the next resume
             startLocation = null;
         }
+
     }
+
 
     private void checkLocationServiceStatus() {
         LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
@@ -248,8 +251,6 @@ public class MapViewFragment extends Fragment {
         map.setBuildingsEnabled(true);
         map.getUiSettings().setZoomControlsEnabled(false);
 
-        loadMapState(); //load map state from preferences
-
         map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
@@ -287,6 +288,7 @@ public class MapViewFragment extends Fragment {
                         getString(R.string.analytics_action_click),
                         getString(R.string.analytics_label_my_location_button));
                 MainApplication.locationDisabledPromptShown = false;
+                MainApplication.emailBeingTracked = null;
                 checkLocationServiceStatus();
                 return false;
             }
@@ -386,8 +388,8 @@ public class MapViewFragment extends Fragment {
 
     @Override
     public void onPause() {
-        storeMapState(); //save state of map
         super.onPause();
+        storeMapState();
         LocalBroadcastManager.getInstance(context).unregisterReceiver(mMessageReceiver);
         LocalBroadcastManager.getInstance(context).unregisterReceiver(placesUpdateReceiver);
     }
@@ -440,10 +442,8 @@ public class MapViewFragment extends Fragment {
                 //If the map is already visible, just move the map
                 map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat,lon), DEFAULT_ZOOM));
             }
-            else {
-                //If the map is not visible, move the camera the next time the map is shown
-                startLocation = new LatLng(lat, lon);
-            }
+            //If the map is not visible, move the camera the next time the map is shown
+            startLocation = new LatLng(lat, lon);
         }
     };
 
@@ -725,8 +725,8 @@ public class MapViewFragment extends Fragment {
                 } else {
                     map.moveCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
                 }
-            } else if (firstTimeZoom && MainApplication.emailBeingTracked == null && MainApplication.userAccount != null && marker.getTitle().equals(MainApplication.userAccount)) {
-                firstTimeZoom = false;
+            } else if (MainApplication.firstTimeZoom && MainApplication.emailBeingTracked == null && MainApplication.userAccount != null && marker.getTitle().equals(MainApplication.userAccount)) {
+                MainApplication.firstTimeZoom = false;
                 map.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), DEFAULT_ZOOM));
             }
         }

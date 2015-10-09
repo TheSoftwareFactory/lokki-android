@@ -588,6 +588,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                         MainApplication.mapping = null;
                         MainApplication.places = null;
                         MainApplication.iDontWantToSee = new JSONObject();
+                        MainApplication.firstTimeZoom = true;
                         //Restart main activity to clear state
                         main.recreate();
                     }
