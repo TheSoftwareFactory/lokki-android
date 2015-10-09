@@ -151,7 +151,7 @@ public class MapViewFragment extends Fragment {
 
     }
 
-    //load curretn map state from SharedPreferences
+    //load curret map state from SharedPreferences
     public void loadMapState(){
         SharedPreferences prefs = context.getSharedPreferences(BUNDLE_KEY_MAP_STATE, Activity.MODE_PRIVATE);
         Double lat, lon;
