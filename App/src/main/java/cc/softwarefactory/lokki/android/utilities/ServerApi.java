@@ -492,8 +492,8 @@ public class ServerApi {
         String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
         String url = ApiUrl + "user/" + userId + "/place";
 
-
-        String cleanName = name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
+        String cleanName = name.trim();
+        cleanName = cleanName.substring(0, 1).toUpperCase() + cleanName.substring(1).toLowerCase();
 
         JSONObject JSONdata = new JSONObject()
                 .put("lat", latLng.latitude)
@@ -558,8 +558,8 @@ public class ServerApi {
         String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
         String url = ApiUrl + "user/" + userId + "/place/" + placeId;
 
-
-        String cleanName = newName.substring(0, 1).toUpperCase() + newName.substring(1).toLowerCase();
+        String cleanName = newName.trim();
+        cleanName = cleanName.substring(0, 1).toUpperCase() + cleanName.substring(1).toLowerCase();
 
         // Get place info
         if (MainApplication.places == null) { // Read them from cache
