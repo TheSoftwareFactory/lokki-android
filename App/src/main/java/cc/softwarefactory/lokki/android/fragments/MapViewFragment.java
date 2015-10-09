@@ -146,18 +146,18 @@ public class MapViewFragment extends Fragment {
         SharedPreferences prefs = context.getSharedPreferences(BUNDLE_KEY_MAP_STATE, Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("lat", Double.toString(lat));
-        editor.putString("lng", Double.toString(lon));
+        editor.putString("lon", Double.toString(lon));
         editor.commit();
 
     }
 
-    //load curret map state from SharedPreferences
+    //load current map state from SharedPreferences
     public void loadMapState(){
         SharedPreferences prefs = context.getSharedPreferences(BUNDLE_KEY_MAP_STATE, Activity.MODE_PRIVATE);
         Double lat, lon;
         try {
-            lat = Double.parseDouble(prefs.getString("lat", "0"));
-            lon = Double.parseDouble(prefs.getString("lon", "0"));
+            lat = Double.parseDouble(prefs.getString("lat", "0.0"));
+            lon = Double.parseDouble(prefs.getString("lon", "0.0"));
         } catch(Exception e){
             Log.d(TAG, "Error Parsing saved coordinates" + e );
             lat = 0.0;
