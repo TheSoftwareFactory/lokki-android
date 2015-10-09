@@ -135,7 +135,7 @@ public class MainApplication extends Application {
     public static JSONObject places;
     public static boolean locationDisabledPromptShown;
     public static JSONArray buzzPlaces;
-
+    public static boolean firstTimeZoom = true;
 
     @Override
     public void onCreate() {
