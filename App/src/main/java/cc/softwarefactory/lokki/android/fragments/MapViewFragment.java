@@ -138,25 +138,32 @@ public class MapViewFragment extends Fragment {
         }
     }
 
-    //store current map state on Sharedpreferences
+    //store current map state on SharedPreferences
     public void storeMapState(){
         Double lat = map.getCameraPosition().target.latitude;
-        Double lng =  map.getCameraPosition().target.longitude;
+        Double lon =  map.getCameraPosition().target.longitude;
 
         SharedPreferences prefs = context.getSharedPreferences(BUNDLE_KEY_MAP_STATE, Activity.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("lat", Double.toString(lat));
-        editor.putString("lng", Double.toString(lng));
+        editor.putString("lng", Double.toString(lon));
         editor.commit();
 
     }
 
-    //load curretn map state from Sharedpreferences
+    //load curretn map state from SharedPreferences
     public void loadMapState(){
         SharedPreferences prefs = context.getSharedPreferences(BUNDLE_KEY_MAP_STATE, Activity.MODE_PRIVATE);
-        Double lat = Double.parseDouble(prefs.getString("lat", "0"));
-        Double lng = Double.parseDouble(prefs.getString("lng", "0"));
-        startLocation = new LatLng(lat, lng);
+        Double lat, lon;
+        try {
+            lat = Double.parseDouble(prefs.getString("lat", "0"));
+            lon = Double.parseDouble(prefs.getString("lon", "0"));
+        } catch(Exception e){
+            Log.d(TAG, "Error Parsing saved coordinates" + e );
+            lat = 0.0;
+            lon = 0.0;
+        }
+        startLocation = new LatLng(lat, lon);
     }
 
 
