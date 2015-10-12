@@ -78,7 +78,7 @@ public class Utils {
             MainApplication.contacts = new JSONObject(jsonData);
             MainApplication.mapping = MainApplication.contacts.getJSONObject("mapping");
         } catch (JSONException e) {
-            MainApplication.contacts = null;
+            MainApplication.contacts = new JSONObject();
             return false;
         }
         return true;

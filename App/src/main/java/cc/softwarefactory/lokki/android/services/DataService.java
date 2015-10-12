@@ -118,6 +118,7 @@ public class DataService extends Service {
             MainApplication.dashboard = null;
         }
         getPlaces();
+        getContacts();
     }
 
     private void setTimer() {

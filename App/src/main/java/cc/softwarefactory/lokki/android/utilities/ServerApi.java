@@ -171,29 +171,33 @@ public class ServerApi {
                     MainApplication.dashboard.put("idmapping", json.getJSONObject("idmapping"));
                     PreferenceUtils.setString(context, PreferenceUtils.KEY_DASHBOARD, MainApplication.dashboard.toString());
 
+                    // Write data into contacts
                     JSONObject nameMapping = json.getJSONObject("nameMapping");
+                    if (MainApplication.contacts == null){
+                        MainApplication.contacts = new JSONObject();
+                    }
+                    if (MainApplication.mapping == null){
+                        MainApplication.mapping = new JSONObject();
+                    }
                     Iterator<String> it = nameMapping.keys();
+
+                    //Write every custom name into contacts and mapping
                     while (it.hasNext()){
                         String key = it.next();
                         String email = MainApplication.dashboard.getJSONObject("idmapping").optString(key);
                         if (email.isEmpty()) continue;
                         String newName = nameMapping.getString(key);
 
-                        if (MainApplication.contacts == null){
-                            MainApplication.contacts = new JSONObject();
-                        }
-                        if (MainApplication.mapping == null){
-                            MainApplication.mapping = new JSONObject();
-                        }
                         if(!MainApplication.contacts.has(email)){
-                            MainApplication.contacts.put(email ,new JSONObject());
+                            MainApplication.contacts.put(email, new JSONObject());
                         }
                         MainApplication.contacts.getJSONObject(email).put("name", newName);
-                        MainApplication.contacts.getJSONObject(email).put("id", 5);
-                        MainApplication.mapping.put(newName ,email);
-                        MainApplication.contacts.put("mapping", MainApplication.mapping);
-                        PreferenceUtils.setString(context, PreferenceUtils.KEY_CONTACTS, MainApplication.contacts.toString());
+                        //TODO: figure out proper IDs or stop storing them if we don't need them
+                        MainApplication.contacts.getJSONObject(email).put("id", 0);
+                        MainApplication.mapping.put(newName, email);
                     }
+                    MainApplication.contacts.put("mapping", MainApplication.mapping);
+                    PreferenceUtils.setString(context, PreferenceUtils.KEY_CONTACTS, MainApplication.contacts.toString());
 
                     Intent intent = new Intent("CONTACTS-UPDATE");
                     LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
@@ -370,6 +374,12 @@ public class ServerApi {
         aq.delete(url, String.class, cb);
     }
 
+    /**
+     * Send a request to the server to rename a contact
+     * @param context   Context used to access preferences
+     * @param email     The email address of the contact to be renamed
+     * @param newName   The new namce for the contact
+     */
     public static void renameContact(final Context context, String email, String newName){
         Log.d(TAG, "Rename contact");
         AQuery aq = new AQuery(context);

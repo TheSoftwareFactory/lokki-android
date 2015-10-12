@@ -188,6 +188,9 @@ public class AddContactsFragment extends Fragment {
             }
             Log.d(TAG, "Number of contacts: " + (contactsResult.length() - 1));
             Log.d(TAG, "Contacts: " + contactsResult);
+            if (MainApplication.contacts == null){
+                MainApplication.contacts = new JSONObject();
+            }
             try {
                 Iterator<String> iter = contactsResult.keys();
                 while(iter.hasNext()){
@@ -215,6 +218,9 @@ public class AddContactsFragment extends Fragment {
 
         contactList = new ArrayList<>();
 
+        if (MainApplication.mapping == null){
+            MainApplication.mapping = new JSONObject();
+        }
         JSONArray keys = MainApplication.mapping.names();
 
         if (keys == null) {

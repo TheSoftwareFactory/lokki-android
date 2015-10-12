@@ -47,9 +47,7 @@ import java.util.Set;
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.avatar.AvatarLoader;
-import cc.softwarefactory.lokki.android.services.DataService;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
-import cc.softwarefactory.lokki.android.utilities.ContactUtils;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
 import cc.softwarefactory.lokki.android.utilities.Utils;
@@ -143,12 +141,10 @@ public class ContactsFragment extends Fragment {
                         getString(R.string.analytics_label_delete_contact));
                 deleteContactDialog(contactName);
                 return true;
+            //Rename contact
             case R.id.contacts_context_menu_rename:
                 final String email = mapping.get(contactName);
-                final EditText input = new EditText(getActivity());
-                String titleFormat = getString(R.string.rename_contact);
-                final String title = String.format(titleFormat, contactName);
-                showRenameDialog(title, input, email, contactName);
+                showRenameDialog(email, contactName);
                 return true;
 
         }
@@ -303,15 +299,13 @@ public class ContactsFragment extends Fragment {
 
                 final String contactName = getItem(position);
                 final String email = mapping.get(contactName);
-                final EditText input = new EditText(getActivity());
-                String titleFormat = getString(R.string.rename_contact);
-                final String title = String.format(titleFormat, contactName);
 
+                //Allow user to rename contact by long pressing their bane
                 AQuery aq = new AQuery(convertView);
                 aq.id(holder.name).text(contactName).longClicked(new View.OnLongClickListener(){
                     @Override
                     public boolean onLongClick(View view){
-                        showRenameDialog(title, input, email, contactName);
+                        showRenameDialog(email, contactName);
                         return true;
                     }
 
@@ -370,7 +364,16 @@ public class ContactsFragment extends Fragment {
         aq.id(R.id.contacts_list_view).adapter(adapter);
     }
 
-    private void showRenameDialog(String title, final EditText input, final String email, final String contactName) {
+    /**
+     * Shows a dialog window that allows the user to rename a contact
+     * @param email         The email address of the contact to be renamed
+     * @param contactName   The current name of the contact
+     */
+    private void showRenameDialog(final String email, final String contactName) {
+        final EditText input = new EditText(getActivity());
+        String titleFormat = getString(R.string.rename_prompt);
+        final String title = String.format(titleFormat, contactName);
+
         new AlertDialog.Builder(getActivity())
             .setTitle(title)
             .setMessage(R.string.rename_contact)
@@ -382,7 +385,7 @@ public class ContactsFragment extends Fragment {
                             getString(R.string.analytics_action_click),
                             getString(analytics_label_confirm_rename_contact_dialog));
                     String newName = input.getText().toString();
-                    renameContacts(email, contactName, newName);
+                    renameContact(email, contactName, newName);
                 }
             })
             .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -397,15 +400,22 @@ public class ContactsFragment extends Fragment {
 
     }
 
-    public void renameContacts(String email ,String contactName,String newName) {
+    /**
+     * Sets the custom display name for a contact
+     * @param email         The email of the contact to be renamed
+     * @param contactName   The current name of the contact
+     * @param newName       A new name for the contact
+     */
+    public void renameContact(String email, String contactName, String newName) {
+        //Set new name in local lists used by the contacts fragment
         mapping.remove(contactName);
         mapping.put(newName, email);
         for (int i = 0; i < peopleList.size(); i++) {
             if (peopleList.get(i).equals(contactName)) {
                 peopleList.set(i, newName);
             }
-
         }
+        //Set new name in the main application's contacts JSON
         try {
             if (MainApplication.contacts == null){
                 MainApplication.contacts = new JSONObject();
@@ -417,19 +427,21 @@ public class ContactsFragment extends Fragment {
                 MainApplication.contacts.put(email ,new JSONObject());
             }
             MainApplication.contacts.getJSONObject(email).put("name", newName);
-            MainApplication.contacts.getJSONObject(email).put("id", 5);
+            //TODO: fix IDs or remove them if we don't need them
+            MainApplication.contacts.getJSONObject(email).put("id", 0);
             MainApplication.mapping.put(newName, email);
             MainApplication.contacts.put("mapping", MainApplication.mapping);
             PreferenceUtils.setString(context, PreferenceUtils.KEY_CONTACTS, MainApplication.contacts.toString());
 
-            ServerApi.renameContact(context, email, newName);
-
         } catch (JSONException e) {
             Log.e(TAG, "rename failed" + e);
         }
+        //Set new name on the server
+        ServerApi.renameContact(context, email, newName);
         Log.d(TAG, MainApplication.contacts.toString());
         Log.d(TAG, MainApplication.mapping.toString());
     }
+
     static class ViewHolder {
         TextView name;
         TextView email;
