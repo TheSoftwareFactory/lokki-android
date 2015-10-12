@@ -188,26 +188,29 @@ public class AddContactsFragment extends Fragment {
             }
             Log.d(TAG, "Number of contacts: " + (contactsResult.length() - 1));
             Log.d(TAG, "Contacts: " + contactsResult);
-            if (MainApplication.contacts == null){
-                MainApplication.contacts = new JSONObject();
-            }
+
             try {
-                Iterator<String> iter = contactsResult.keys();
-                while(iter.hasNext()){
-                    String key = iter.next();
-                    if(!MainApplication.contacts.has(key)){
-                        MainApplication.contacts.put(key,contactsResult.getJSONObject(key));
-                        String name = contactsResult.getJSONObject(key).getString("name");
-                        MainApplication.contacts.getJSONObject("mapping").put(name,contactsResult.getJSONObject("mapping").getString(name)) ;
+                // If contacts don't exist already, use data source result
+                if (MainApplication.contacts == null){
+                    MainApplication.contacts = contactsResult;
+                } else {
+                    // If contacts already exist, combine data source result with existing data
+                    Iterator<String> iter = contactsResult.keys();
+                    while(iter.hasNext()){
+                        String key = iter.next();
+                        if(!MainApplication.contacts.has(key)){
+                            MainApplication.contacts.put(key,contactsResult.getJSONObject(key));
+                            String name = contactsResult.getJSONObject(key).getString("name");
+                            MainApplication.contacts.getJSONObject("mapping").put(name,contactsResult.getJSONObject("mapping").getString(name)) ;
+                        }
                     }
-
                 }
-
+                //Synchronize mapping JSON with contacts
                 MainApplication.mapping = MainApplication.contacts.getJSONObject("mapping");
                 PreferenceUtils.setString(context, PreferenceUtils.KEY_CONTACTS, MainApplication.contacts.toString());
 
             } catch (JSONException e) {
-                Log.e(TAG, e.getMessage());
+                Log.e(TAG, "Exception while parsing contacts results: " + e.getMessage());
             }
             new prepareAdapterAsync().execute();
             super.onPostExecute(MainApplication.contacts);
