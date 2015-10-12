@@ -166,4 +166,21 @@ public class SearchScreenTest extends LoggedInBaseTest{
         onView(withText("Testplace1")).check(matches(isDisplayed()));
         onView(withText("Testplace2")).check(doesNotExist());
     }
+
+    public void testSearchFindsContactsAndPlaces() throws InterruptedException, JSONException, TimeoutException {
+
+        String firstContactEmail = "family.member@test.com";
+        String secondContactEmail = "work.buddy@test.com";
+        getMockDispatcher().setDashboardResponse(new MockResponse().setBody(MockJsonUtils.getDashboardJsonWithContacts(firstContactEmail, secondContactEmail)));
+        getMockDispatcher().setPlacesResponse(new MockResponse().setBody(MockJsonUtils.getPlacesJson()));
+
+        getActivity();
+        waitForPlaces();
+
+        enterQuery("test");
+        onView(withText("family.member@test.com")).check(matches(isDisplayed()));
+        onView(withText("work.buddy@test.com")).check(matches(isDisplayed()));
+        onView(withText("Testplace1")).check(matches(isDisplayed()));
+        onView(withText("Testplace2")).check(matches(isDisplayed()));
+    }
 }
