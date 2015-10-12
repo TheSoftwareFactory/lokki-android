@@ -212,6 +212,10 @@ public class SearchActivity extends ListActivity {
      * @param query The string being searched
      */
     protected void searchPlaces(String query, ArrayList<SearchResult> resultList){
+        if (MainApplication.places == null){
+            //Do nothing if there are no places
+            return;
+        }
         // Loop through all user places
         Iterator<String> it = MainApplication.places.keys();
         Log.d(TAG, MainApplication.places.toString());
