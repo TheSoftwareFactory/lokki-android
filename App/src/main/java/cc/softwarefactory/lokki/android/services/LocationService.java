@@ -328,21 +328,47 @@ public class LocationService extends Service implements LocationListener, Google
         ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(42, mBuilder.build());
     }
 
+    class VibrationThread implements Runnable {
+        private String id;
+
+        VibrationThread(String id) {
+            this.id = id;
+        }
+
+        @Override
+        public void run() {
+            try {
+                while(true) {
+                    JSONObject placeBuzz = BuzzActivity.getBuzz(id);
+                    if(placeBuzz == null || placeBuzz.getInt("buzzcount") <= 0) {
+                        break;
+                    }
+                    Log.d(TAG, "Vibrating...");
+                    Vibrator v = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
+                    v.vibrate(1000);
+                    Thread.sleep(2500);
+                    placeBuzz.put("buzzcount", placeBuzz.getInt("buzzcount") - 1);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     private void triggerBuzzing(final JSONObject placeBuzz) throws JSONException {
         if(placeBuzz.getInt("buzzcount") > 0) {
 
             if(!placeBuzz.optBoolean("activated", false)) {
+                placeBuzz.put("activated", true);
                 Intent i = new Intent();
                 i.setClass(this, BuzzActivity.class);
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(i);
                 showArrivalNotification();
-            }
 
-            placeBuzz.put("activated", true);
-            Vibrator v = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
-            v.vibrate(1000);
-            placeBuzz.put("buzzcount", placeBuzz.getInt("buzzcount") - 1);
+                Log.d(TAG, "Starting vibration...");
+                new Thread(new VibrationThread(placeBuzz.getString("placeid"))).start();
+            }
         }
     }
 

@@ -12,9 +12,10 @@ import org.json.JSONObject;
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.fragments.PlacesFragment;
+import cc.softwarefactory.lokki.android.utilities.Utils;
 
 public class BuzzActivity extends AppCompatActivity {
-    private final String TAG = "BuzzActivity";
+    private static final String TAG = "BuzzActivity";
 
     @Override
     protected void onStart() {
@@ -24,6 +25,39 @@ public class BuzzActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void removeBuzz(String id) {
+        try {
+            for (int i = 0; i < MainApplication.buzzPlaces.length(); i++) {
+                if (MainApplication.buzzPlaces.getJSONObject(i).getString("placeid").equals(id))
+                    MainApplication.buzzPlaces = Utils.removeFromJSONArray(MainApplication.buzzPlaces, i);
+            }
+        } catch (JSONException e) {
+            Log.e(TAG, "Error while removing buzz; " + e);
+        }
+    }
+
+    public static void setBuzz(String id, int buzzCount) {
+        try {
+            removeBuzz(id);
+            MainApplication.buzzPlaces.put(new JSONObject()
+                    .put("placeid", id).put("buzzcount", buzzCount));
+        } catch (JSONException e) {
+            Log.e(TAG, " Error while creating placeBuzz object " + e);
+        }
+    }
+
+    public static JSONObject getBuzz(String id) {
+        try {
+            for (int i = 0; i < MainApplication.buzzPlaces.length(); i++) {
+                if (MainApplication.buzzPlaces.getJSONObject(i).getString("placeid").equals(id))
+                    return MainApplication.buzzPlaces.getJSONObject(i);
+            }
+        } catch (JSONException e) {
+            Log.e(TAG, "Error while getting buzz; " + e);
+        }
+        return null;
     }
 
     private void checkForActiveBuzzes() throws JSONException {
@@ -48,7 +82,7 @@ public class BuzzActivity extends AppCompatActivity {
                 public void onClick(DialogInterface dialogInterface, int which) {
                     try {
                         Log.d(TAG, "Removed buzz");
-                        PlacesFragment.setBuzz(placeBuzz.getString("placeid"), 0);
+                        setBuzz(placeBuzz.getString("placeid"), 0);
                         thisActivity.finish();
                     } catch (Exception e) {
                         Log.e(TAG, "Unable to terminate buzzing.");

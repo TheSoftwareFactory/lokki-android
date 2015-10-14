@@ -32,6 +32,7 @@ import android.widget.ListView;
 
 import com.androidquery.AQuery;
 
+import cc.softwarefactory.lokki.android.activities.BuzzActivity;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
 import cc.softwarefactory.lokki.android.services.DataService;
@@ -105,28 +106,6 @@ public class PlacesFragment extends Fragment {
         }
     };
 
-    public static void removeBuzz(String id) {
-        try {
-            for (int i = 0; i < MainApplication.buzzPlaces.length(); i++) {
-                if (MainApplication.buzzPlaces.getJSONObject(i).getString("placeid").equals(id)) {
-                    MainApplication.buzzPlaces= Utils.removeFromJSONArray(MainApplication.buzzPlaces,i);
-                }
-            }
-        } catch (JSONException e) {
-            Log.e(TAG, "Error while removing buzz; " + e);
-        }
-    }
-
-    public static void setBuzz(String id, int buzzCount) {
-        try {
-            removeBuzz(id);
-            MainApplication.buzzPlaces.put(new JSONObject()
-                    .put("placeid", id).put("buzzcount", buzzCount));
-        } catch (JSONException e) {
-            Log.e(TAG, " Error while creating placeBuzz object " + e);
-        }
-    }
-
     private void setListAdapter() {
 
         Log.d(TAG, "setListAdapter");
@@ -174,7 +153,7 @@ public class PlacesFragment extends Fragment {
                         if (((CheckBox) view).isChecked()) {
                             // This ensures that automatic UI refresh won't uncheck the checkbox
                             // while the the dialog is still open.
-                            setBuzz(id, 0);
+                            BuzzActivity.setBuzz(id, 0);
 
                             Dialog dialog = new AlertDialog.Builder(getActivity())
                                     .setMessage(R.string.confirm_buzz)
@@ -184,13 +163,13 @@ public class PlacesFragment extends Fragment {
                                             AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
                                                 getString(R.string.analytics_action_click),
                                                 getString(R.string.analytics_label_buzz_turn_on));
-                                            setBuzz(id, 5);
+                                            BuzzActivity.setBuzz(id, 5);
                                         }
                                     })
                                     .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int which) {
-                                            removeBuzz(id);
+                                            BuzzActivity.removeBuzz(id);
                                             ((CheckBox) view).setChecked(false);
                                             placesFragment.showPlaces();  // Update UI for tests
                                             AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
@@ -201,7 +180,7 @@ public class PlacesFragment extends Fragment {
                             dialog.setCanceledOnTouchOutside(false);
                             dialog.show();
                         } else {
-                            removeBuzz(id);
+                            BuzzActivity.removeBuzz(id);
                         }
 
                     }
