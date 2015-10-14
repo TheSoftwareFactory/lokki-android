@@ -58,5 +58,7 @@
     <string translatable="false" name="analytics_label_experiments_opt_in_toggle">Experiments opt-in toggle</string>
     <string translatable="false" name="analytics_label_buzz_turn_on">User turned on location buzz</string>
     <string translatable="false" name="analytics_label_buzz_decline">User declined Buzz option</string>
+    <string translatable="false" name="analytics_label_confirm_rename_contact_dialog">User renamed contact</string>
+    <string translatable="false" name="analytics_label_cancel_rename_contact_dialog">cancel rename contact operation</string>
 
 </resources>

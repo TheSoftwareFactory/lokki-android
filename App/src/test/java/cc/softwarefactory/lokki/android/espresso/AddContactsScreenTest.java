@@ -39,10 +39,10 @@ public class AddContactsScreenTest extends LoggedInBaseTest {
     @Override
     public void setUp() throws Exception {
         super.setUp();
+        getMockDispatcher().setGetContactsResponse(new MockResponse().setResponseCode(200));
         setMockContacts();
         enterContactsScreen();
     }
-
 
 
     private void setMockContacts() throws JSONException {

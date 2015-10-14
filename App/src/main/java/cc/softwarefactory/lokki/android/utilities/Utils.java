@@ -78,7 +78,7 @@ public class Utils {
             MainApplication.contacts = new JSONObject(jsonData);
             MainApplication.mapping = MainApplication.contacts.getJSONObject("mapping");
         } catch (JSONException e) {
-            MainApplication.contacts = null;
+            MainApplication.contacts = new JSONObject();
             return false;
         }
         return true;
@@ -116,6 +116,7 @@ public class Utils {
 
         if (loadContacts(context)) {
             try {
+                Log.d(TAG, MainApplication.contacts.toString());
                 String name = MainApplication.contacts.getJSONObject(email).getString("name");
                 Log.d(TAG, "getNameFromEmail - Email: " + email + ", Name: " + name);
                 return name;

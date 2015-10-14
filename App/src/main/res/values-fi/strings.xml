@@ -55,7 +55,7 @@
     <string name="write_place_name">Anna paikalle nimi</string>
     <string name="delete_place">Haluatko varmasti poistaa tämän paikan?</string>
     <string name="will_be_deleted_from_places">poistetaan paikoistasi</string>
-    <string name="rename_place">Nimeä uudelleen %1$s?</string>
+    <string name="rename_prompt">Nimeä uudelleen %1$s?</string>
     <string name="place_created">Paikka luotu</string>
     <string name="place_removed">Paikka poistettu</string>
     <string name="add_place_hint">Vinkki: Zoomaaminen sisään ja ulos auttaa määrittämään paikan koon.</string>
@@ -102,6 +102,7 @@
     <string name="search_lable">Hakupalkki</string>
     <string name="no_search_results">Ei hakutuloksia</string>
     <string name="search_results">Tulokset haulla:</string>
+    <string name="rename_contact">Anna nimi yhteystiedolle:</string>
     <string name="you_have_arrived">Olet saapunut määränpäähäsi.</string>
 
 </resources>

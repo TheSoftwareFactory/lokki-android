@@ -29,11 +29,9 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.androidquery.AQuery;
 
-import cc.softwarefactory.lokki.android.activities.MainActivity;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
 import cc.softwarefactory.lokki.android.services.DataService;
@@ -51,7 +49,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.jar.JarException;
 
 
 public class PlacesFragment extends Fragment {
@@ -347,7 +344,7 @@ public class PlacesFragment extends Fragment {
 
         Log.d(TAG, "renamePlaceDialog");
         final EditText input = new EditText(getActivity());
-        String titleFormat = getString(R.string.rename_place);
+        String titleFormat = getString(R.string.rename_prompt);
         String title = String.format(titleFormat, placeName);
 
         new AlertDialog.Builder(getActivity())

@@ -21,6 +21,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import cc.softwarefactory.lokki.android.MainApplication;
@@ -169,6 +170,35 @@ public class ServerApi {
                     MainApplication.dashboard.remove("idmapping");
                     MainApplication.dashboard.put("idmapping", json.getJSONObject("idmapping"));
                     PreferenceUtils.setString(context, PreferenceUtils.KEY_DASHBOARD, MainApplication.dashboard.toString());
+
+                    // Write data into contacts
+                    JSONObject nameMapping = json.getJSONObject("nameMapping");
+                    if (MainApplication.contacts == null){
+                        MainApplication.contacts = new JSONObject();
+                    }
+                    if (MainApplication.mapping == null){
+                        MainApplication.mapping = new JSONObject();
+                    }
+                    Iterator<String> it = nameMapping.keys();
+
+                    //Write every custom name into contacts and mapping
+                    while (it.hasNext()){
+                        String key = it.next();
+                        String email = MainApplication.dashboard.getJSONObject("idmapping").optString(key);
+                        if (email.isEmpty()) continue;
+                        String newName = nameMapping.getString(key);
+
+                        if(!MainApplication.contacts.has(email)){
+                            MainApplication.contacts.put(email, new JSONObject());
+                        }
+                        MainApplication.contacts.getJSONObject(email).put("name", newName);
+                        //TODO: figure out proper IDs or stop storing them if we don't need them
+                        MainApplication.contacts.getJSONObject(email).put("id", 0);
+                        MainApplication.mapping.put(newName, email);
+                    }
+                    MainApplication.contacts.put("mapping", MainApplication.mapping);
+                    PreferenceUtils.setString(context, PreferenceUtils.KEY_CONTACTS, MainApplication.contacts.toString());
+
                     Intent intent = new Intent("CONTACTS-UPDATE");
                     LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                 }
@@ -283,7 +313,7 @@ public class ServerApi {
         }
         JSONObject JSONdata = new JSONObject();
         try {
-                    JSONdata.put("ids", JSONids);
+            JSONdata.put("ids", JSONids);
         }
         catch (JSONException e){
             Log.e(TAG, "Error creating ignore request: " + e);
@@ -342,6 +372,50 @@ public class ServerApi {
 
         cb.header("authorizationtoken", authorizationToken);
         aq.delete(url, String.class, cb);
+    }
+
+    /**
+     * Send a request to the server to rename a contact
+     * @param context   Context used to access preferences
+     * @param email     The email address of the contact to be renamed
+     * @param newName   The new namce for the contact
+     */
+    public static void renameContact(final Context context, String email, String newName){
+        Log.d(TAG, "Rename contact");
+        AQuery aq = new AQuery(context);
+
+        String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
+        String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
+        String url = ApiUrl + "user/" + userId + "/rename/";
+        String targetId = Utils.getIdFromEmail(context, email);
+        if (targetId == null) {
+            Log.e(TAG, "Attempted to rename invalid contact");
+            return;
+        }
+        url += targetId;
+
+        JSONObject JSONdata = new JSONObject();
+        try {
+            JSONdata.put("name", newName);
+        }
+        catch (JSONException e){
+            Log.e(TAG, "Error creating ignore request: " + e);
+            return;
+        }
+
+        AjaxCallback<String> cb = new AjaxCallback<String>(){
+            @Override
+            public void callback(String url, String result, AjaxStatus status) {
+                logStatus("renameContact callback", status);
+                if (status.getError() == null) {
+                    Log.d(TAG, "Getting new contacts");
+                    DataService.getContacts(context);
+                }
+            }
+        };
+
+        cb.header("authorizationtoken", authorizationToken);
+        aq.post(url, JSONdata, String.class, cb);
     }
 
     /** Removes a contact, preventing them from showing up on either user's contact list     *

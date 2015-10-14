@@ -28,9 +28,7 @@ import android.widget.Toast;
 
 import com.androidquery.AQuery;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -190,13 +188,29 @@ public class AddContactsFragment extends Fragment {
             }
             Log.d(TAG, "Number of contacts: " + (contactsResult.length() - 1));
             Log.d(TAG, "Contacts: " + contactsResult);
+
             try {
-                MainApplication.contacts = contactsResult;
+                // If contacts don't exist already, use data source result
+                if (MainApplication.contacts == null){
+                    MainApplication.contacts = contactsResult;
+                } else {
+                    // If contacts already exist, combine data source result with existing data
+                    Iterator<String> iter = contactsResult.keys();
+                    while(iter.hasNext()){
+                        String key = iter.next();
+                        if(!MainApplication.contacts.has(key)){
+                            MainApplication.contacts.put(key,contactsResult.getJSONObject(key));
+                            String name = contactsResult.getJSONObject(key).getString("name");
+                            MainApplication.contacts.getJSONObject("mapping").put(name,contactsResult.getJSONObject("mapping").getString(name)) ;
+                        }
+                    }
+                }
+                //Synchronize mapping JSON with contacts
                 MainApplication.mapping = MainApplication.contacts.getJSONObject("mapping");
                 PreferenceUtils.setString(context, PreferenceUtils.KEY_CONTACTS, MainApplication.contacts.toString());
 
             } catch (JSONException e) {
-                Log.e(TAG, e.getMessage());
+                Log.e(TAG, "Exception while parsing contacts results: " + e.getMessage());
             }
             new prepareAdapterAsync().execute();
             super.onPostExecute(MainApplication.contacts);
@@ -207,6 +221,9 @@ public class AddContactsFragment extends Fragment {
 
         contactList = new ArrayList<>();
 
+        if (MainApplication.mapping == null){
+            MainApplication.mapping = new JSONObject();
+        }
         JSONArray keys = MainApplication.mapping.names();
 
         if (keys == null) {
