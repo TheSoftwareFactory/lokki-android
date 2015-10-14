@@ -178,7 +178,7 @@ public class ContactsScreenTest extends LoggedInBaseTest {
     }
 
     public void testRenameButtonSendsRenameRequest() throws InterruptedException, JSONException, TimeoutException {
-        String firstContactEmail = "family.member@test.com";
+        String firstContactEmail = "family.member@example.com";
         String dashboardJsonString = MockJsonUtils.getDashboardJsonWithContacts(firstContactEmail);
         String firstContactId = getContactId(dashboardJsonString, firstContactEmail);
 
