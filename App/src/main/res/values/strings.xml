@@ -102,6 +102,7 @@
     <string name="search_hint">Search contacts, places or map locations</string>
     <string name="search_results">Search results for: </string>
     <string name="no_search_results">No results found</string>
+    <string name="you_have_arrived">You have arrived to your destination.</string>
 
     <string translatable="false" name="lokki_github_io_link">https://thesoftwarefactory.github.io/lokki/</string>
     <string translatable="false" name="lokki_play_store_link">market://details?id=cc.softwarefactory.lokki.android</string>

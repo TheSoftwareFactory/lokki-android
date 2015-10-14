@@ -5,6 +5,7 @@ See LICENSE for details
 package cc.softwarefactory.lokki.android.services;
 
 import android.app.AlarmManager;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
@@ -22,6 +23,7 @@ import android.util.Log;
 
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
+import cc.softwarefactory.lokki.android.activities.BuzzActivity;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
 import cc.softwarefactory.lokki.android.activities.MainActivity;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
@@ -310,6 +312,40 @@ public class LocationService extends Service implements LocationListener, Google
             }
         }
     }
+
+    private void showArrivalNotification() {
+        Intent showIntent = new Intent(this, BuzzActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, showIntent, 0);
+
+        NotificationCompat.Builder mBuilder =
+            new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.ic_stat_notify)
+                .setContentTitle("Lokki")
+                .setContentText(getString(R.string.you_have_arrived))
+                .setAutoCancel(true)
+                .setContentIntent(contentIntent);
+
+        ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(42, mBuilder.build());
+    }
+
+    private void triggerBuzzing(final JSONObject placeBuzz) throws JSONException {
+        if(placeBuzz.getInt("buzzcount") > 0) {
+
+            if(!placeBuzz.optBoolean("activated", false)) {
+                Intent i = new Intent();
+                i.setClass(this, BuzzActivity.class);
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(i);
+                showArrivalNotification();
+            }
+
+            placeBuzz.put("activated", true);
+            Vibrator v = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
+            v.vibrate(1000);
+            placeBuzz.put("buzzcount", placeBuzz.getInt("buzzcount") - 1);
+        }
+    }
+
     private void checkBuzzplaces()
     {
         for (int i=0;i<MainApplication.buzzPlaces.length();i++)
@@ -328,20 +364,10 @@ public class LocationService extends Service implements LocationListener, Google
                         placeLocation.setLatitude(place.getDouble("lat"));
                         placeLocation.setLongitude((place.getDouble("lon")));
 
-                       if (placeLocation.distanceTo(lastLocation)<place.getInt("rad"))
-                       {
-                           if (placeBuzz.getInt("buzzcount")>0){
-                               Vibrator v = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
-                               v.vibrate(1000);
-                               placeBuzz.put("buzzcount",placeBuzz.getInt("buzzcount")-1);
-                           }
-
-                       }
+                        if (placeLocation.distanceTo(lastLocation) < place.getInt("rad"))
+                            triggerBuzzing(placeBuzz);
                         else
-                       {
-                           placeBuzz.put("buzzcount",5);
-                       }
-
+                            placeBuzz.put("buzzcount", 5).put("activated", false);
                     }
                 }
                 catch (JSONException e)
