@@ -103,5 +103,6 @@
     <string name="no_search_results">Ei hakutuloksia</string>
     <string name="search_results">Tulokset haulla:</string>
     <string name="rename_contact">Anna nimi yhteystiedolle:</string>
+    <string name="you_have_arrived">Olet saapunut määränpäähäsi.</string>
 
 </resources>

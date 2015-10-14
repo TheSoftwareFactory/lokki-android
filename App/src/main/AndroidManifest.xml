@@ -84,6 +84,9 @@
             </intent-filter>
 
         </activity>
+        <activity
+            android:name=".activities.BuzzActivity">
+        </activity>
 
         <service android:name=".services.LocationService" />
         <service android:name=".services.DataService" />

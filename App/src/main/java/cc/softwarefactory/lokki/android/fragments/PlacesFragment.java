@@ -105,7 +105,7 @@ public class PlacesFragment extends Fragment {
         }
     };
 
-    private void removeBuzz(String id) {
+    public static void removeBuzz(String id) {
         try {
             for (int i = 0; i < MainApplication.buzzPlaces.length(); i++) {
                 if (MainApplication.buzzPlaces.getJSONObject(i).getString("placeid").equals(id)) {
@@ -117,7 +117,7 @@ public class PlacesFragment extends Fragment {
         }
     }
 
-    private void setBuzz(String id, int buzzCount) {
+    public static void setBuzz(String id, int buzzCount) {
         try {
             removeBuzz(id);
             MainApplication.buzzPlaces.put(new JSONObject()
