@@ -140,6 +140,10 @@ public class MapViewFragment extends Fragment {
 
     //store current map state on SharedPreferences
     public void storeMapState(){
+        if (map == null){
+            Log.w(TAG, "No map, can't save current location");
+            return;
+        }
         Double lat = map.getCameraPosition().target.latitude;
         Double lon =  map.getCameraPosition().target.longitude;
 
@@ -194,7 +198,7 @@ public class MapViewFragment extends Fragment {
         AnalyticsUtils.screenHit(getString(R.string.analytics_screen_map));
 
 
-        if(MainApplication.emailBeingTracked == null){
+        if(MainApplication.emailBeingTracked == null && map != null){
             if(startLocation == null){
               loadMapState();
             }
@@ -246,6 +250,7 @@ public class MapViewFragment extends Fragment {
         map = fragment.getMap();
 
         if (map == null) {
+            Log.e(TAG, "Could not create map!");
             return;
         }
 
@@ -426,6 +431,10 @@ public class MapViewFragment extends Fragment {
     private BroadcastReceiver goToReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            if (map == null){
+                Log.w(TAG, "null map, not moving camera");
+                return;
+            }
             Log.d(TAG, "goToReceiver onReceive");
             //Parse coordinates from extra data
             String coords = intent.getStringExtra(GO_TO_COORDS);
