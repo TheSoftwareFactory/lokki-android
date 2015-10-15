@@ -26,7 +26,6 @@ import java.util.Map;
 
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
-import cc.softwarefactory.lokki.android.ResultListener;
 import cc.softwarefactory.lokki.android.constants.Constants;
 import cc.softwarefactory.lokki.android.errors.PlaceError;
 import cc.softwarefactory.lokki.android.fragments.PlacesFragment;
@@ -211,7 +210,7 @@ public class ServerApi {
         aq.ajax(url, JSONObject.class, cb);
     }
 
-    public static void allowPeople(final Context context, String email, final ResultListener resultListener) {
+    public static void allowPeople(final Context context, String email, AjaxCallback<String> cb) {
 
         Log.d(TAG, "allowPeople");
         AQuery aq = new AQuery(context);
@@ -225,26 +224,13 @@ public class ServerApi {
 
         try {
             JSONObject JSONdata = new JSONObject().put("emails", JSONemails);
-
             Log.d(TAG, "Emails to be alloweed: " + JSONdata);
-
-            AjaxCallback<String> cb = new AjaxCallback<String>() {
-                @Override
-                public void callback(String url, String result, AjaxStatus status) {
-                    if (status.getError() == null) {
-                        Log.d(TAG, "Getting new dashboard");
-                        DataService.getDashboard(context);
-                        resultListener.handleSuccess(status.getMessage());
-                    } else
-                        resultListener.handleError(status.getMessage());
-                }
-            };
 
             cb.header("authorizationtoken", authorizationToken);
             aq.post(url, JSONdata, String.class, cb);
         }
         catch(JSONException e) {
-            resultListener.handleError("JSON error");
+            Log.e(TAG, "JSON error in allowPeople()");
         }
     }
 
