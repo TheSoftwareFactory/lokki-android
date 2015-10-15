@@ -37,6 +37,7 @@ import android.widget.Toast;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
+import com.androidquery.callback.AjaxStatus;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -628,7 +629,13 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
             if (!allow) {
                 ServerApi.disallowUser(this, email);
             } else {
-                ServerApi.allowPeople(this, email, new AjaxCallback<String>() {});
+                final MainActivity activity = this;
+                ServerApi.allowPeople(this, email, new AjaxCallback<String>() {
+                    @Override
+                    public void callback(String url, String result, AjaxStatus status) {
+                        DataService.getDashboard(activity);
+                    }
+                });
             }
         }
 

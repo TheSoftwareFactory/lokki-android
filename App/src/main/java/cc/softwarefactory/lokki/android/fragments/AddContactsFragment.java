@@ -41,6 +41,7 @@ import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.avatar.AvatarLoader;
 import cc.softwarefactory.lokki.android.datasources.contacts.ContactDataSource;
 import cc.softwarefactory.lokki.android.datasources.contacts.DefaultContactDataSource;
+import cc.softwarefactory.lokki.android.services.DataService;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 import cc.softwarefactory.lokki.android.utilities.ContactUtils;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
@@ -335,6 +336,7 @@ public class AddContactsFragment extends Fragment {
                                                             ContactUtils.addLocalContact(context, email);
                                                             contactList.remove(position);
                                                             notifyDataSetChanged();
+                                                            DataService.getDashboard(context);
                                                             Toast.makeText(context, R.string.contact_added, Toast.LENGTH_SHORT).show();
                                                         }
                                                     }
@@ -416,6 +418,7 @@ public class AddContactsFragment extends Fragment {
                                         Toast.makeText(context, R.string.unable_to_add_contact, Toast.LENGTH_LONG).show();
                                     else {
                                         ContactUtils.addLocalContact(context, email);
+                                        DataService.getDashboard(context);
                                         Toast.makeText(context, R.string.contact_added, Toast.LENGTH_SHORT).show();
                                     }
                                 }
