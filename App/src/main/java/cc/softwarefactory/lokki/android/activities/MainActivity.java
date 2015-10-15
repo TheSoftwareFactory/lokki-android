@@ -83,6 +83,9 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
     private ContactDataSource mContactDataSource;
 
+    //Is this activity currently paused?
+    private boolean paused = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -190,6 +193,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     protected void onResume() {
 
         super.onResume();
+        paused = false;
         Log.d(TAG, "onResume");
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); // WAKE_LOCK
 
@@ -295,7 +299,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         LocationService.start(this.getApplicationContext());
 
         //Set appropriate location update accuracy
-        if (MainApplication.visible){
+        if (!paused){
             currentAccuracy = LocationService.LocationAccuracy.ACCURATE;
         }
         else {
@@ -322,6 +326,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
     @Override
     protected void onPause() {
+        paused = true;
         // Fixes buggy avatars after leaving the app from the "Map" screen
         MainApplication.avatarCache.evictAll();
         //LocationService.stop(this.getApplicationContext());
