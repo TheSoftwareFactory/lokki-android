@@ -433,7 +433,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                     }
                 }
 
-                SearchView searchView=(SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
+                //Set up the search bar
+                final SearchView searchView=(SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
                 searchView.setQueryHint(getString(R.string.search_hint));
                 searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
 
@@ -446,6 +447,12 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                     @Override
                     public boolean onQueryTextSubmit(String query)
                     {
+                        //Removes focus from the search field in order to prevent multiple key events from
+                        //launching this callback. See:
+                        //http://stackoverflow.com/questions/17874951/searchview-onquerytextsubmit-runs-twice-while-i-pressed-once
+                        searchView.clearFocus();
+
+                        //Launch search activity
                         Intent intent= new Intent(mainactivity,SearchActivity.class);
                         Log.d(TAG,"Search Query submitted");
                         intent.putExtra(SearchActivity.QUERY_MESSAGE, query);
