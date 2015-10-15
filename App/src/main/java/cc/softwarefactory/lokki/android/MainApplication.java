@@ -104,6 +104,9 @@ public class MainApplication extends Application {
      * }
      */
     public static JSONObject iDontWantToSee;
+    /**
+     * Is the user visible to others?
+     */
     public static Boolean visible = true;
     public static LruCache<String, Bitmap> avatarCache;
     /**

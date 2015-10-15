@@ -101,7 +101,7 @@ public class LocationService extends Service implements LocationListener, Google
 
         Log.d(TAG, "start Service called");
 
-        if (serviceRunning || !MainApplication.visible) { // If service is running, no need to start it again.
+        if (serviceRunning) { // If service is running, no need to start it again.
             Log.w(TAG, "Service already running...");
             return;
         }
@@ -119,7 +119,7 @@ public class LocationService extends Service implements LocationListener, Google
     public static void run1min(Context context) {
 
         if (serviceRunning || !MainApplication.visible) {
-            return; // If service is running, stop
+            return; // If service is running or user is not visible, stop
         }
         Log.d(TAG, "run1min called");
         Intent intent = new Intent(context, LocationService.class);
