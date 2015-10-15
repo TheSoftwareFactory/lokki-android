@@ -36,13 +36,13 @@ import android.support.v7.widget.SearchView;
 import android.widget.Toast;
 
 import com.androidquery.AQuery;
+import com.androidquery.callback.AjaxCallback;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
-import cc.softwarefactory.lokki.android.ResultListener;
 import cc.softwarefactory.lokki.android.datasources.contacts.ContactDataSource;
 import cc.softwarefactory.lokki.android.datasources.contacts.DefaultContactDataSource;
 import cc.softwarefactory.lokki.android.fragments.AboutFragment;
@@ -628,7 +628,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
             if (!allow) {
                 ServerApi.disallowUser(this, email);
             } else {
-                ServerApi.allowPeople(this, email, new ResultListener(TAG, "allow user"));
+                ServerApi.allowPeople(this, email, new AjaxCallback<String>() {});
             }
         }
 
