@@ -24,7 +24,8 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/nav_drawer_lokki_id_height"
         android:layout_below="@id/avatar"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:id="@+id/relativeLayout">
 
         <TextView
             android:id="@+id/lokki_id_label"
@@ -42,6 +43,17 @@
             android:textStyle="bold"
             android:textColor="@android:color/primary_text_dark"
             android:textSize="@dimen/default_text_size" />
+
+        <ImageButton
+            android:id="@+id/user_popout_menu_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_menu_overflow_dark"
+            android:gravity="center"
+            android:padding="16dp"
+            android:layout_alignBottom="@+id/user_name"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
 
     </RelativeLayout>
 

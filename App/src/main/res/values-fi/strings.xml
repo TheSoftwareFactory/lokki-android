@@ -16,6 +16,8 @@
     <string name="settings">Asetukset</string>
     <string name="delete">Poista</string>
     <string name="rename">Nimeä uudelleen</string>
+    <string name="logout">Kirjaudu ulos</string>
+    <string name="buzz_place">Värinä</string>
 
     <string name="loading">Ladataan…</string>
 
@@ -46,16 +48,17 @@
 
     <string name="terms_title">Käyttöehdot</string>
     <string name="security_sign_up">Meidän täytyy valtuuttaa tilinne ennen rekisteröintiä. Seuraa ohjeita, jotka olemme lähettäneet osoitteeseen: %1$s</string>
-    <string name="title_activity_sign_up">Rekisteröidy</string>
+    <string name="title_activity_sign_up">Rekisteröidy tai kirjaudu sisään</string>
     <string name="sign_up_explanation">Kirjoita sähköpostiosoitteesi - muut Lokki-käyttäjät löytävät sinut tällä osoitteella.</string>
     <string name="type_your_email_address">Sähköpostiosoitteesi</string>
     <string name="general_error">Tapahtui virhe. Yritä uudelleen myöhemmin.</string>
     <string name="write_place_name">Anna paikalle nimi</string>
     <string name="delete_place">Haluatko varmasti poistaa tämän paikan?</string>
     <string name="will_be_deleted_from_places">poistetaan paikoistasi</string>
-    <string name="rename_place">Nimeä uudelleen %1$s?</string>
+    <string name="rename_prompt">Nimeä uudelleen %1$s?</string>
     <string name="place_created">Paikka luotu</string>
     <string name="place_removed">Paikka poistettu</string>
+    <string name="add_place_hint">Vinkki: Zoomaaminen sisään ja ulos auttaa määrittämään paikan koon.</string>
     <string name="place_renamed">Paikka nimetty uudelleen</string>
     <string name="place_limit_reached">Et voi luoda enempää paikkoja. Maksimiraja saavutettu.</string>
     <string name="you_are_visible">Olet nyt NÄKYVISSÄ</string>
@@ -71,11 +74,13 @@
     <string name="email_required">Sähköpostiosoite on pakollinen.</string>
     <string name="required">Pakollinen</string>
     <string name="place_name_already_in_use">Nimi on jo käytössä</string>
+    <string name="place_name_too_long">Paikan nimi on liian pitkä.</string>
     <string name="add_place">Lisää paikka</string>
     <string name="gps_disabled">Lokki haluaa käyttää sijaintiasi. Ota sijaintipalvelut käyttöön.</string>
     <string name="ignore">Ohita</string>
     <string name="location_services_disabled">Sijaintipalvelut poistettu käytöstä</string>
     <string name="contact_added">Henkilö lisätty</string>
+    <string name="unable_to_add_contact">Henkilöä ei voi lisätä</string>
     <string name="contact_email_address">Henkilön sähköpostiosoite</string>
     <string name="add_email">Lisää email</string>
     <string name="place_name">Paikan nimi</string>
@@ -84,5 +89,20 @@
     <string name="opt_in_text_experiments">Haluan saada Lokin uusimmat kokeelliset ominaisuudet käyttööni</string>
     <string name="send_anonymous_usage_data">Lähetä anonyymiä käyttödataa</string>
     <string name="receive_experimental_features">Vastaanota kokeellisia ominaisuuksia</string>
+    <string name="confirm_logout">Haluatko varmasti kirjautua ulos?</string>
+    <string name="no_contacts_to_show">Ei näytettäviä yhteystietoja.</string>
+    <string name="cant_add_self_as_contact">Et voi lisätä itseäsi yhteystietoihisi.</string>
+    <string name="yes">Kyllä</string>
+    <string name="no">Ei</string>
+    <string name="confirm_buzz">Haluatko hälytyksen kun saavut tähän paikkaan?</string>
+    <string name="place_adding_tip">Paina pitkään karttaa lisätäksesi paikan.</string>
+    <string name="delete_contact">Haluatko poistaa tämän yhteystiedon?</string>
+    <string name="will_be_deleted_from_contacts">poistetaan yhteystiedoistasi</string>
+    <string name="search_hint">Hae yhteystietoja, paikkoja tai karttasijainteja</string>
+    <string name="search_lable">Hakupalkki</string>
+    <string name="no_search_results">Ei hakutuloksia</string>
+    <string name="search_results">Tulokset haulla:</string>
+    <string name="rename_contact">Anna nimi yhteystiedolle:</string>
+    <string name="you_have_arrived">Olet saapunut määränpäähäsi.</string>
 
 </resources>

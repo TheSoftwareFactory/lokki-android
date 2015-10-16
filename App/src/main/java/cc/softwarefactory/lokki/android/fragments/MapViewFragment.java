@@ -4,11 +4,13 @@ See LICENSE for details
 */
 package cc.softwarefactory.lokki.android.fragments;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -35,6 +37,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.androidquery.AQuery;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -67,15 +70,20 @@ import cc.softwarefactory.lokki.android.utilities.map.MapUtils;
 public class MapViewFragment extends Fragment {
 
     private static final String TAG = "MapViewFragment";
+    public static final String BROADCAST_GO_TO = "GO_TO_LOCATION";
+    public static final String GO_TO_COORDS = "GO_TO_COORDS";
+    private static final int DEFAULT_ZOOM = 16;
     private SupportMapFragment fragment;
     private GoogleMap map;
     private HashMap<String, Marker> markerMap;
     private AQuery aq;
     private static Boolean cancelAsyncTasks = false;
     private Context context;
-    private Boolean firstTimeZoom = true;
     private ArrayList<Circle> placesOverlay;
     private double radiusMultiplier = 0.9;  // Dont want to fill the screen from edge to edge...
+    private TextView placeAddingTip;
+    private final static String BUNDLE_KEY_MAP_STATE ="mapdata";
+    private LatLng startLocation = null;
 
     public MapViewFragment() {
         markerMap = new HashMap<>();
@@ -84,15 +92,27 @@ public class MapViewFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         View rootView = inflater.inflate(R.layout.activity_map, container, false);
+        placeAddingTip = (TextView) rootView.findViewById(R.id.place_adding_tip);
+        placeAddingTip.setText(R.string.place_adding_tip);
+        updatePlaceAddingTipVisibility();
+
         aq = new AQuery(getActivity(), rootView);
         context = getActivity().getApplicationContext();
+        LocalBroadcastManager.getInstance(context).registerReceiver(goToReceiver, new IntentFilter(BROADCAST_GO_TO));
         return rootView;
 
     }
 
+    public void updatePlaceAddingTipVisibility() {
+        boolean placeIsBeingAdded = getView() != null && getView().findViewById(R.id.addPlaceCircle) != null &&
+            ((ImageView) getView().findViewById(R.id.addPlaceCircle)).getDrawable() != null;
 
+        boolean noPlacesAdded = MainApplication.places != null && (MainApplication.places.names() == null ||
+                MainApplication.places.names().length() == 0);
+
+        placeAddingTip.setAlpha(noPlacesAdded && !placeIsBeingAdded ? 1 : 0);
+    }
 
     @Override
     public void onDestroyView() {
@@ -100,6 +120,7 @@ public class MapViewFragment extends Fragment {
         fragment = null;
         map = null;
         aq = null;
+        LocalBroadcastManager.getInstance(context).unregisterReceiver(goToReceiver);
         super.onDestroyView();
     }
 
@@ -116,6 +137,39 @@ public class MapViewFragment extends Fragment {
             fm.beginTransaction().replace(R.id.map, fragment).commit();
         }
     }
+
+    //store current map state on SharedPreferences
+    public void storeMapState(){
+        if (map == null){
+            Log.w(TAG, "No map, can't save current location");
+            return;
+        }
+        Double lat = map.getCameraPosition().target.latitude;
+        Double lon =  map.getCameraPosition().target.longitude;
+
+        SharedPreferences prefs = context.getSharedPreferences(BUNDLE_KEY_MAP_STATE, Activity.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("lat", Double.toString(lat));
+        editor.putString("lon", Double.toString(lon));
+        editor.commit();
+
+    }
+
+    //load current map state from SharedPreferences
+    public void loadMapState(){
+        SharedPreferences prefs = context.getSharedPreferences(BUNDLE_KEY_MAP_STATE, Activity.MODE_PRIVATE);
+        Double lat, lon;
+        try {
+            lat = Double.parseDouble(prefs.getString("lat", "0.0"));
+            lon = Double.parseDouble(prefs.getString("lon", "0.0"));
+        } catch(Exception e){
+            Log.d(TAG, "Error Parsing saved coordinates" + e );
+            lat = 0.0;
+            lon = 0.0;
+        }
+        startLocation = new LatLng(lat, lon);
+    }
+
 
 
     @Override
@@ -142,7 +196,19 @@ public class MapViewFragment extends Fragment {
             updatePlaces();
         }
         AnalyticsUtils.screenHit(getString(R.string.analytics_screen_map));
+
+
+        if(MainApplication.emailBeingTracked == null && map != null){
+            if(startLocation == null){
+              loadMapState();
+            }
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(startLocation, DEFAULT_ZOOM));
+            //Don't move again on the next resume
+            startLocation = null;
+        }
+
     }
+
 
     private void checkLocationServiceStatus() {
         LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
@@ -184,6 +250,7 @@ public class MapViewFragment extends Fragment {
         map = fragment.getMap();
 
         if (map == null) {
+            Log.e(TAG, "Could not create map!");
             return;
         }
 
@@ -233,6 +300,7 @@ public class MapViewFragment extends Fragment {
                         getString(R.string.analytics_action_click),
                         getString(R.string.analytics_label_my_location_button));
                 MainApplication.locationDisabledPromptShown = false;
+                MainApplication.emailBeingTracked = null;
                 checkLocationServiceStatus();
                 return false;
             }
@@ -284,6 +352,7 @@ public class MapViewFragment extends Fragment {
             ((ImageView) getView().findViewById(R.id.addPlaceCircle)).setImageDrawable(null);
             hideAddPlaceButtons();
         }
+        updatePlaceAddingTipVisibility();
     }
 
     private void showAddPlaceButtons() {
@@ -332,6 +401,7 @@ public class MapViewFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+        storeMapState();
         LocalBroadcastManager.getInstance(context).unregisterReceiver(mMessageReceiver);
         LocalBroadcastManager.getInstance(context).unregisterReceiver(placesUpdateReceiver);
     }
@@ -352,6 +422,44 @@ public class MapViewFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
             Log.d(TAG, "placesUpdateReceiver onReceive");
             updatePlaces();
+        }
+    };
+
+    /**
+     * Receives intents that cause the map to move to a specific location
+     */
+    private BroadcastReceiver goToReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (map == null){
+                Log.w(TAG, "null map, not moving camera");
+                return;
+            }
+            Log.d(TAG, "goToReceiver onReceive");
+            //Parse coordinates from extra data
+            String coords = intent.getStringExtra(GO_TO_COORDS);
+            int separator = coords.indexOf(',');
+            if (separator == -1){
+                Log.e(TAG, "Invalid coordinates, no separator");
+                return;
+            }
+            double lat, lon;
+            try {
+                lat = Double.parseDouble(coords.substring(0 , separator));
+                lon = Double.parseDouble(coords.substring(separator +1));
+            }
+            catch (NumberFormatException e){
+                Log.e(TAG, "Could not parse coordinates");
+                return;
+            }
+            //If we're tracking a contact, untrack them to prevent the camera from focusing on them
+            MainApplication.emailBeingTracked = null;
+            if (MapViewFragment.this.isVisible()){
+                //If the map is already visible, just move the map
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat,lon), DEFAULT_ZOOM));
+            }
+            //If the map is not visible, move the camera the next time the map is shown
+            startLocation = new LatLng(lat, lon);
         }
     };
 
@@ -379,6 +487,8 @@ public class MapViewFragment extends Fragment {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+
+        updatePlaceAddingTipVisibility();
     }
 
     private void removePlaces() {
@@ -627,13 +737,13 @@ public class MapViewFragment extends Fragment {
                 marker.showInfoWindow();
                 Log.d(TAG, "onPostExecute - showInfoWindow open");
                 if (isNew) {
-                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 16));
+                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), DEFAULT_ZOOM));
                 } else {
                     map.moveCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
                 }
-            } else if (firstTimeZoom && MainApplication.emailBeingTracked == null && MainApplication.userAccount != null && marker.getTitle().equals(MainApplication.userAccount)) {
-                firstTimeZoom = false;
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), 16));
+            } else if (MainApplication.firstTimeZoom && MainApplication.emailBeingTracked == null && MainApplication.userAccount != null && marker.getTitle().equals(MainApplication.userAccount)) {
+                MainApplication.firstTimeZoom = false;
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), DEFAULT_ZOOM));
             }
         }
 
@@ -641,7 +751,6 @@ public class MapViewFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-
         // TODO: Cancel ALL Async tasks
         cancelAsyncTasks = true;
         super.onDestroy();

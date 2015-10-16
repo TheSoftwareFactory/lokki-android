@@ -88,7 +88,7 @@ public class FirstTimeActivity extends AppCompatActivity {
             return true;
 
         } else if (id == R.id.i_agree) {
-            MainActivity.firstTimeLaunch = false;
+            PreferenceUtils.setBoolean(this,PreferenceUtils.KEY_NOT_FIRST_TIME_LAUNCH, true);
             setResult(RESULT_OK);
             finish();
             return true;

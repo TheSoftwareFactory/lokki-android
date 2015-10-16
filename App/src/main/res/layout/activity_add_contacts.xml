@@ -39,4 +39,12 @@
         android:layout_below="@id/search_contact_field_wrapper"
         android:id="@+id/add_contacts_list_view" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/no_contacts_message"
+        android:layout_below="@+id/search_contact_field_wrapper"
+        android:layout_centerHorizontal="true" />
+
 </RelativeLayout>

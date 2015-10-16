@@ -47,11 +47,18 @@
     <string translatable="false" name="analytics_label_ignore_location_disabled_dialog">Ignored location settings disabled dialog</string>
     <string translatable="false" name="analytics_label_rename_place">Rename place</string>
     <string translatable="false" name="analytics_label_delete_place">Delete place</string>
+    <string translatable="false" name="analytics_label_delete_contact">Delete contact</string>
     <string translatable="false" name="analytics_label_confirm_rename_place_dialog">Confirm rename place dialog</string>
     <string translatable="false" name="analytics_label_cancel_rename_place_dialog">Cancel rename place dialog</string>
     <string translatable="false" name="analytics_label_confirm_delete_place_dialog">Confirm delete place dialog</string>
     <string translatable="false" name="analytics_label_cancel_delete_place_dialog">Cancel delete place dialog</string>
+    <string translatable="false" name="analytics_label_confirm_delete_contact_dialog">Confirm delete contact dialog</string>
+    <string translatable="false" name="analytics_label_cancel_delete_contact_dialog">Cancel delete contact dialog</string>
     <string translatable="false" name="analytics_label_analytics_opt_in_toggle">Analytics opt-in toggle</string>
     <string translatable="false" name="analytics_label_experiments_opt_in_toggle">Experiments opt-in toggle</string>
+    <string translatable="false" name="analytics_label_buzz_turn_on">User turned on location buzz</string>
+    <string translatable="false" name="analytics_label_buzz_decline">User declined Buzz option</string>
+    <string translatable="false" name="analytics_label_confirm_rename_contact_dialog">User renamed contact</string>
+    <string translatable="false" name="analytics_label_cancel_rename_contact_dialog">cancel rename contact operation</string>
 
 </resources>

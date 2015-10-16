@@ -19,15 +19,18 @@ import cc.softwarefactory.lokki.android.espresso.utilities.TestUtils;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.hasSibling;
 import static android.support.test.espresso.matcher.ViewMatchers.isChecked;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.isNotChecked;
+import static android.support.test.espresso.matcher.ViewMatchers.withClassName;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.endsWith;
 
 
 public class ContactsScreenTest extends LoggedInBaseTest {
@@ -36,6 +39,8 @@ public class ContactsScreenTest extends LoggedInBaseTest {
     @Override
     public void setUp() throws Exception {
         super.setUp();
+        //Prevent server from crashing when a getContacts message is sent
+        getMockDispatcher().setGetContactsResponse(new MockResponse().setResponseCode(200));
     }
 
     private void enterContactsScreen() {
@@ -146,6 +151,59 @@ public class ContactsScreenTest extends LoggedInBaseTest {
         requests.waitUntilAnyRequests();
         RecordedRequest request = requests.getRequests().get(0);
         String expectedPath = "/user/" + TestUtils.VALUE_TEST_USER_ID + "/allow";
+        assertEquals(expectedPath, request.getPath());
+    }
+
+    public void testdeleteButtonSendsDeleteRequest() throws InterruptedException, JSONException, TimeoutException {
+        String firstContactEmail = "family.member@example.com";
+        String dashboardJsonString = MockJsonUtils.getDashboardJsonWithContacts(firstContactEmail);
+        String firstContactId = getContactId(dashboardJsonString, firstContactEmail);
+
+        JSONObject dashboardJson = new JSONObject(dashboardJsonString);
+        dashboardJson.put("canseeme", new JSONArray());
+        getMockDispatcher().setDashboardResponse(new MockResponse().setBody(dashboardJson.toString()));
+        RequestsHandle requests = getMockDispatcher().setRemoveContactResponse(new MockResponse().setResponseCode(200), firstContactId);
+
+
+        enterContactsScreen();
+        assertEquals("There should be no requests to allow path before clicking the delete button.", requests.getRequests().size(), 0);
+        onView(allOf(withId(R.id.people_context_menu_button), hasSibling(withText(firstContactEmail)))).perform(click());
+        onView(withText(R.string.delete)).check(matches(isDisplayed())).perform(click());
+        onView(withText(R.string.ok)).check(matches(isDisplayed())).perform(click());
+
+        requests.waitUntilAnyRequests();
+        RecordedRequest request = requests.getRequests().get(0);
+        String expectedPath = "/user/" + TestUtils.VALUE_TEST_USER_ID + "/contacts/" + firstContactId;
+        assertEquals(expectedPath, request.getPath());
+    }
+
+    public void testRenameButtonSendsRenameRequest() throws InterruptedException, JSONException, TimeoutException {
+        String firstContactEmail = "family.member@example.com";
+        String dashboardJsonString = MockJsonUtils.getDashboardJsonWithContacts(firstContactEmail);
+        String firstContactId = getContactId(dashboardJsonString, firstContactEmail);
+
+        JSONObject dashboardJson = new JSONObject(dashboardJsonString);
+        dashboardJson.put("canseeme", new JSONArray());
+        getMockDispatcher().setDashboardResponse(new MockResponse().setBody(dashboardJson.toString()));
+        RequestsHandle requests = getMockDispatcher().setRenameContactResponse(new MockResponse().setResponseCode(200), firstContactId);
+
+        enterContactsScreen();
+        assertEquals("There should be no requests to allow path before clicking the delete button.", requests.getRequests().size(), 0);
+        onView(allOf(withId(R.id.people_context_menu_button), hasSibling(withText(firstContactEmail)))).perform(click());
+        onView(withText(R.string.rename)).check(matches(isDisplayed())).perform(click());
+        onView(withClassName(endsWith("EditText")))
+                .perform(click())
+                .perform(typeText("Renametext"));
+        onView(withText(R.string.ok)).check(matches(isDisplayed())).perform(click());
+
+        updateSituation();
+        //Check local update
+        onView(allOf(withText("family.member@test.com"), withId(R.id.contact_name))).check(doesNotExist());
+        onView(withText("Renametext")).check(matches(isDisplayed()));
+
+        requests.waitUntilAnyRequests();
+        RecordedRequest request = requests.getRequests().get(0);
+        String expectedPath = "/user/" + TestUtils.VALUE_TEST_USER_ID + "/rename/" + firstContactId;
         assertEquals(expectedPath, request.getPath());
     }
 

@@ -32,6 +32,7 @@ import cc.softwarefactory.lokki.android.services.LocationService;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -77,7 +78,7 @@ public class Utils {
             MainApplication.contacts = new JSONObject(jsonData);
             MainApplication.mapping = MainApplication.contacts.getJSONObject("mapping");
         } catch (JSONException e) {
-            MainApplication.contacts = null;
+            MainApplication.contacts = new JSONObject();
             return false;
         }
         return true;
@@ -115,6 +116,7 @@ public class Utils {
 
         if (loadContacts(context)) {
             try {
+                Log.d(TAG, MainApplication.contacts.toString());
                 String name = MainApplication.contacts.getJSONObject(email).getString("name");
                 Log.d(TAG, "getNameFromEmail - Email: " + email + ", Name: " + name);
                 return name;
@@ -333,4 +335,23 @@ public class Utils {
             Log.e(TAG, "Could not set visibility:" + ex.getMessage());
         }
     }
+    public static JSONArray removeFromJSONArray(JSONArray input,int index)
+    {
+        JSONArray output=new JSONArray();
+        for(int i=0;i<(input.length());i++)
+        {
+            if(index!=i)
+            {
+                try {
+                    output.put(input.get(i));
+
+                } catch (JSONException e) {
+
+                Log.e(TAG,"Error in moving items into new JSON Array" +e);
+                }
+            }
+        }
+        return output;
+    }
+
 }

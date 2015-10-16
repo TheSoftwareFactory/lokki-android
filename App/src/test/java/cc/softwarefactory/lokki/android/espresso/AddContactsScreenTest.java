@@ -3,13 +3,20 @@ package cc.softwarefactory.lokki.android.espresso;
 import android.content.Context;
 import android.support.test.espresso.action.ViewActions;
 
+import com.squareup.okhttp.mockwebserver.MockResponse;
+import com.squareup.okhttp.mockwebserver.RecordedRequest;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.mockito.Mockito;
 
+import java.util.concurrent.TimeoutException;
+
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.datasources.contacts.ContactDataSource;
 import cc.softwarefactory.lokki.android.espresso.utilities.MockJsonUtils;
+import cc.softwarefactory.lokki.android.espresso.utilities.RequestsHandle;
 import cc.softwarefactory.lokki.android.espresso.utilities.TestUtils;
 
 import static android.support.test.espresso.Espresso.onView;
@@ -32,10 +39,10 @@ public class AddContactsScreenTest extends LoggedInBaseTest {
     @Override
     public void setUp() throws Exception {
         super.setUp();
+        getMockDispatcher().setGetContactsResponse(new MockResponse().setResponseCode(200));
         setMockContacts();
         enterContactsScreen();
     }
-
 
 
     private void setMockContacts() throws JSONException {
@@ -47,7 +54,7 @@ public class AddContactsScreenTest extends LoggedInBaseTest {
 
     private void enterContactsScreen() {
         TestUtils.toggleNavigationDrawer();
-        onView(withText("Contacts")).perform(click());
+        onView(withText(R.string.contacts)).perform(click());
     }
 
     private void enterAddContactsScreen() {
@@ -154,29 +161,52 @@ public class AddContactsScreenTest extends LoggedInBaseTest {
         onView(withText(R.string.i_can_see)).check(matches(isDisplayed()));
     }
 
-    public void testAddingCustomContactAddsToLocalContacts() {
+    public void testAddingItselfAsContactDoesNotWork() {
+        enterAddContactsScreen();
+        openAddContactDialog();
+
+        String myEmail = TestUtils.VALUE_TEST_USER_ACCOUNT;
+        onView(withHint(R.string.contact_email_address)).perform(typeText(myEmail));
+        onView(withText(R.string.ok)).perform(click());
+
+        pressBack();
+        onView(allOf(withText(myEmail), withId(R.id.contact_email))).check(doesNotExist());
+    }
+
+
+    public void testAddingCustomContactSendsAllowRequest() throws JSONException, TimeoutException, InterruptedException{
         String contactEmail = "family.member@example.com";
+        String dashboardJsonString = MockJsonUtils.getDashboardJsonWithContacts(contactEmail);
+        JSONObject dashboardJson = new JSONObject(dashboardJsonString);
+        dashboardJson.put("canseeme", new JSONArray());
+        getMockDispatcher().setDashboardResponse(new MockResponse().setBody(dashboardJson.toString()));
+        RequestsHandle requests = getMockDispatcher().setAllowPostResponse(new MockResponse().setResponseCode(200));
+
         enterAddContactsScreen();
         openAddContactDialog();
         onView(withHint(R.string.contact_email_address)).perform(typeText(contactEmail));
         onView(withText(R.string.ok)).perform(click());
 
-        // Go to Contacts screen
-        pressBack();
-
-        // Mock dispatcher sends a dashboard without any contacts by default, so this checks if the contact is added locally
-        onView(allOf(withText(contactEmail), withId(R.id.contact_email))).check(matches(isDisplayed()));
+        requests.waitUntilAnyRequests();
+        RecordedRequest request = requests.getRequests().get(0);
+        String expectedPath = "/user/" + TestUtils.VALUE_TEST_USER_ID + "/allow";
+        assertEquals(expectedPath, request.getPath());
     }
 
-    public void testAddingContactFromListAddsToLocalContacts() {
+    public void testAddingContactFromListSendsAllowRequest() throws JSONException, TimeoutException, InterruptedException{
         String contactEmail = "family.member@example.com";
+        String dashboardJsonString = MockJsonUtils.getDashboardJsonWithContacts(contactEmail);
+        JSONObject dashboardJson = new JSONObject(dashboardJsonString);
+        dashboardJson.put("canseeme", new JSONArray());
+        getMockDispatcher().setDashboardResponse(new MockResponse().setBody(dashboardJson.toString()));
+        RequestsHandle requests = getMockDispatcher().setAllowPostResponse(new MockResponse().setResponseCode(200));
+
         enterAddContactsScreen();
         addContactFromContactListScreen(contactEmail, contactEmail);
 
-        // Go to Contacts screen
-        pressBack();
-
-        // Mock dispatcher sends a dashboard without any contacts by default, so this checks if the contact is added locally
-        onView(allOf(withText(contactEmail), withId(R.id.contact_email))).check(matches(isDisplayed()));
+        requests.waitUntilAnyRequests();
+        RecordedRequest request = requests.getRequests().get(0);
+        String expectedPath = "/user/" + TestUtils.VALUE_TEST_USER_ID + "/allow";
+        assertEquals(expectedPath, request.getPath());
     }
 }

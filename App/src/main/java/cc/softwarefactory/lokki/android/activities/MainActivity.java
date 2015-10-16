@@ -4,6 +4,11 @@ See LICENSE for details
 */
 package cc.softwarefactory.lokki.android.activities;
 
+import android.app.Activity;
+import android.content.ComponentName;
+import android.content.ServiceConnection;
+import android.os.IBinder;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
@@ -26,9 +31,16 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
+import android.support.v7.widget.SearchView;
 import android.widget.Toast;
 
+import com.androidquery.AQuery;
+import com.androidquery.callback.AjaxCallback;
+import com.androidquery.callback.AjaxStatus;
+
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
@@ -71,9 +83,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
     private ContactDataSource mContactDataSource;
 
-    // TODO: make non static, put in shared prefs
-    public static Boolean firstTimeLaunch;
-
+    //Is this activity currently paused?
+    private boolean paused = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,8 +97,19 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
         mTitle = getTitle();
 
+        // Create the navigation drawer
         mNavigationDrawerFragment = (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
-        mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout)); // Set up the drawer.
+        mNavigationDrawerFragment.setUp(R.id.navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout));
+
+        // Set up the callback for the user menu button
+        AQuery aq = new AQuery(findViewById(R.id.drawer_layout));
+        aq.id(R.id.user_popout_menu_button).clicked(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "Clicked user menu button");
+                showUserPopupMenu(v);
+            }
+        });
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_layout);
         setSupportActionBar(toolbar);
@@ -98,6 +120,33 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         }
     }
 
+    /**
+     * Displays the popout user menu containing the Sign Out button
+     * @param v The UI element that was clicked to show the menu
+     */
+    public void showUserPopupMenu(View v){
+        PopupMenu menu = new PopupMenu(this, v);
+        menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener(){
+            @Override
+            public boolean onMenuItemClick(MenuItem item){
+                switch (item.getItemId()){
+                    // User clicked the Sign Out option
+                    case R.id.signout :
+                        // Close the drawer so it isn't open when you log back in
+                        mNavigationDrawerFragment.toggleDrawer();
+                        // Sign the user out
+                        logout();
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        });
+        menu.inflate(R.menu.user_menu);
+        menu.show();
+
+    }
+
 
     @Override
     protected void onStart() {
@@ -105,37 +154,56 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         super.onStart();
         Log.d(TAG, "onStart");
 
-        if (firstTimeLaunch == null) {
-            firstTimeLaunch = firstTimeLaunch();
-        }
-
-        if (firstTimeLaunch) {
+        if (firstTimeLaunch()) {
             Log.i(TAG, "onStart - firstTimeLaunch, so showing terms.");
             startActivityForResult(new Intent(this, FirstTimeActivity.class), REQUEST_TERMS);
         } else {
-            checkIfUserIsLoggedIn(); // Log user In
+            signUserIn();
         }
+
     }
 
+    /**
+     * Is this the first time the app has been launched?
+     * @return  true, if the app hasn't been launched before
+     */
     private boolean firstTimeLaunch() {
+        return !PreferenceUtils.getBoolean(this, PreferenceUtils.KEY_NOT_FIRST_TIME_LAUNCH);
+    }
 
-        return PreferenceUtils.getString(this, PreferenceUtils.KEY_AUTH_TOKEN).isEmpty();
+    /**
+     * Is the user currently logged in?
+     * NOTE: this doesn't guarantee that all user information has already been fetched from the server,
+     * but it guarantees that the information can be safely fetched.
+     * @return  true, if the user has signed in
+     */
+    public boolean loggedIn() {
+        String userAccount = PreferenceUtils.getString(this, PreferenceUtils.KEY_USER_ACCOUNT);
+        String userId = PreferenceUtils.getString(this, PreferenceUtils.KEY_USER_ID);
+        String authorizationToken = PreferenceUtils.getString(this, PreferenceUtils.KEY_AUTH_TOKEN);
+
+        Log.i(TAG, "User email: " + userAccount);
+        Log.i(TAG, "User id: " + userId);
+        Log.i(TAG, "authorizationToken: " + authorizationToken);
+
+        return !(userId.isEmpty() || userAccount.isEmpty() || authorizationToken.isEmpty());
     }
 
     @Override
     protected void onResume() {
 
         super.onResume();
+        paused = false;
         Log.d(TAG, "onResume");
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); // WAKE_LOCK
 
-        if (firstTimeLaunch || firstTimeLaunch()) {
-            Log.i(TAG, "onResume - firstTimeLaunch, so avoiding launching services.");
+        if (!loggedIn()) {
+            Log.i(TAG, "onResume - user NOT logged in, so avoiding launching services.");
             return;
         }
 
 
-        Log.i(TAG, "onResume - NOT firstTimeLaunch, so launching services.");
+        Log.i(TAG, "onResume - user logged in, so launching services.");
         startServices();
         LocalBroadcastManager.getInstance(this).registerReceiver(exitMessageReceiver, new IntentFilter("EXIT"));
         LocalBroadcastManager.getInstance(this).registerReceiver(switchToMapReceiver, new IntentFilter("GO-TO-MAP"));
@@ -143,20 +211,112 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
         Log.i(TAG, "onResume - check if dashboard is null");
         if (MainApplication.dashboard == null) {
-            Log.w(TAG, "onResume - dashboard was null, get dashboard from server");
+            Log.w(TAG, "onResume - dashboard was null, get dashboard & contacts from server");
             ServerApi.getDashboard(getApplicationContext());
+            ServerApi.getContacts(getApplicationContext());
+        }
+
+    }
+
+    //-------------Location service interface-------------
+
+    /**
+     * Reference to currently bound location service instance
+     */
+    private LocationService mBoundLocationService;
+    /**
+     * Currently selected location update accuracy level
+     * Will be sent to the service when setLocationServiceAccuracyLevel is called
+     */
+    private LocationService.LocationAccuracy currentAccuracy = LocationService.LocationAccuracy.BGINACCURATE;
+    /**
+     * Connection object in charge of fetching location service instances
+     */
+    private ServiceConnection mLocationServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mBoundLocationService = ((LocationService.LocationBinder)service).getService();
+            //Set accuracy level as soon as we're connected
+            setLocationServiceAccuracyLevel();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mBoundLocationService = null;
+        }
+    };
+
+    /**
+     * Sends currently selected accuracy level (in currentAccuracy) to the location service if it's initialized.
+     * Called automatically when the service is first initialized.
+     */
+    private void setLocationServiceAccuracyLevel(){
+        if (mBoundLocationService == null){
+            Log.i(TAG, "location service not yet bound, not changing accuracy");
+        }
+        mBoundLocationService.setLocationCheckAccuracy(currentAccuracy);
+    }
+
+    /**
+     * Creates a connection to the location service.
+     * Calls mLocationServiceConnection.onServiceConnected when done.
+     */
+    private void bindLocationService(){
+        bindService(new Intent(this, LocationService.class), mLocationServiceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    /**
+     * Removes connection to location service.
+     * Calls mLocationServiceConnection.onServiceDisconnected when done.
+     */
+    private void unbindLocationService(){
+        if (mBoundLocationService != null){
+            unbindService(mLocationServiceConnection);
         }
     }
 
+    /**
+     * Sets an appropriate location update accuracy for background updates.
+     * Call setLocationServiceAccuracyLevel() afterwards to send it to the service.
+     */
+    private void setBackgroundLocationAccuracy(){
+        if (MainApplication.buzzPlaces.length() > 0){
+            currentAccuracy = LocationService.LocationAccuracy.BGACCURATE;
+        }
+        else {
+            currentAccuracy = LocationService.LocationAccuracy.BGINACCURATE;
+        }
+    }
 
+    //-------------Location service interface ends-------------
+
+    /**
+     * Launches background services if they aren't already running
+     */
     private void startServices() {
 
-        if (MainApplication.visible) {
-            LocationService.start(this.getApplicationContext());
+        //Start location service
+        LocationService.start(this.getApplicationContext());
+
+        //Set appropriate location update accuracy
+        if (!paused){
+            currentAccuracy = LocationService.LocationAccuracy.ACCURATE;
+        }
+        else {
+            setBackgroundLocationAccuracy();
         }
 
+        //Create a connection to the location service if it doesn't already exist, else set new location check accuracy
+        if (mBoundLocationService == null){
+            bindLocationService();
+        } else {
+            setLocationServiceAccuracyLevel();
+        }
+
+        //Start data service
         DataService.start(this.getApplicationContext());
 
+        //Request updates from server
         try {
             ServerApi.requestUpdates(this.getApplicationContext());
         } catch (JSONException e) {
@@ -166,47 +326,60 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
     @Override
     protected void onPause() {
+        paused = true;
         // Fixes buggy avatars after leaving the app from the "Map" screen
         MainApplication.avatarCache.evictAll();
-        LocationService.stop(this.getApplicationContext());
-        DataService.stop(this.getApplicationContext());
+        //LocationService.stop(this.getApplicationContext());
+        //DataService.stop(this.getApplicationContext());
         LocalBroadcastManager.getInstance(this).unregisterReceiver(switchToMapReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(exitMessageReceiver);
         super.onPause();
+        //Set location update accuracy to low if the service has been initialized
+        if (mBoundLocationService != null) {
+            setBackgroundLocationAccuracy();
+            setLocationServiceAccuracyLevel();
+        }
     }
 
-    private void checkIfUserIsLoggedIn() {
+    @Override
+    protected void onDestroy()
+    {
+        LocationService.stop(this.getApplicationContext());
+        DataService.stop(this.getApplicationContext());
+        //Remove connection to LocationService
+        unbindLocationService();
+        super.onDestroy();
+    }
 
-        String userAccount = PreferenceUtils.getString(this, PreferenceUtils.KEY_USER_ACCOUNT);
-        String userId = PreferenceUtils.getString(this, PreferenceUtils.KEY_USER_ID);
-        String authorizationToken = PreferenceUtils.getString(this, PreferenceUtils.KEY_AUTH_TOKEN);
-        boolean debug = false;
+    /**
+     * Ensures that the user is signed in by launching the SignUpActivity if they aren't
+     */
+    private void signUserIn() {
 
-        if (debug || userId.isEmpty() || userAccount.isEmpty() || authorizationToken.isEmpty()) {
+        if (!loggedIn()) {
             try {
                 startActivityForResult(new Intent(this, SignUpActivity.class), REQUEST_CODE_EMAIL);
             } catch (ActivityNotFoundException e) {
                 Toast.makeText(this, getString(R.string.general_error), Toast.LENGTH_LONG).show();
+                Log.e(TAG, "Could not start SignUpActivity " + e);
                 finish();
             }
         } else { // User already logged-in
-            MainApplication.userAccount = userAccount;
+            MainApplication.userAccount = PreferenceUtils.getString(this, PreferenceUtils.KEY_USER_ACCOUNT);
             GcmHelper.start(getApplicationContext()); // Register to GCM
-
-            Log.i(TAG, "User email: " + userAccount);
-            Log.i(TAG, "User id: " + userId);
-            Log.i(TAG, "authorizationToken: " + authorizationToken);
         }
     }
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
+        // Position of the logout button
         String[] menuOptions = getResources().getStringArray(R.array.nav_drawer_options);
         FragmentManager fragmentManager = getSupportFragmentManager();
         mTitle = menuOptions[position];
         selectedOption = position;
 
         ActionBar actionBar = getSupportActionBar();
+        // set action bar title if it exists and the user isn't trying to log off
         if (actionBar != null) {
             actionBar.setTitle(mTitle);
         }
@@ -250,7 +423,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-
+        final Activity mainactivity = this;
+        Log.d(TAG,"onPrepareOptionsMenu");
         menu.clear();
         if (mNavigationDrawerFragment != null && !mNavigationDrawerFragment.isDrawerOpen()) {
             if (selectedOption == 0) { // Map
@@ -264,6 +438,37 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                         menuItem.setIcon(R.drawable.ic_visibility_off_white_48dp);
                     }
                 }
+
+                //Set up the search bar
+                final SearchView searchView=(SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.search));
+                searchView.setQueryHint(getString(R.string.search_hint));
+                searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
+
+                    @Override
+                    public boolean onQueryTextChange(String newText)
+                    {
+
+                        return true;
+                    }
+                    @Override
+                    public boolean onQueryTextSubmit(String query)
+                    {
+                        //Removes focus from the search field in order to prevent multiple key events from
+                        //launching this callback. See:
+                        //http://stackoverflow.com/questions/17874951/searchview-onquerytextsubmit-runs-twice-while-i-pressed-once
+                        searchView.clearFocus();
+
+                        //Launch search activity
+                        Intent intent= new Intent(mainactivity,SearchActivity.class);
+                        Log.d(TAG,"Search Query submitted");
+                        intent.putExtra(SearchActivity.QUERY_MESSAGE, query);
+                        startActivity(intent);
+                        return  true;
+                    }
+
+
+                });
+
             } else if (selectedOption == 2) { // Contacts screen
                 getMenuInflater().inflate(R.menu.contacts, menu);
             } else if (selectedOption == -10) { // Add contacts screen
@@ -403,13 +608,17 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         if (!allow) {
             try {
                 MainApplication.iDontWantToSee.put(email, 1);
+                Log.d(TAG, MainApplication.iDontWantToSee.toString());
                 PreferenceUtils.setString(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, MainApplication.iDontWantToSee.toString());
+                ServerApi.ignoreUsers(this, email);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         } else if (MainApplication.iDontWantToSee.has(email)) {
+            Log.d(TAG, "unignoring user");
             MainApplication.iDontWantToSee.remove(email);
             PreferenceUtils.setString(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, MainApplication.iDontWantToSee.toString());
+            ServerApi.unignoreUser(this, email);
         }
     }
 
@@ -425,11 +634,13 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
             if (!allow) {
                 ServerApi.disallowUser(this, email);
             } else {
-                try {
-                    ServerApi.allowPeople(this, email);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                final MainActivity activity = this;
+                ServerApi.allowPeople(this, email, new AjaxCallback<String>() {
+                    @Override
+                    public void callback(String url, String result, AjaxStatus status) {
+                        DataService.getDashboard(activity);
+                    }
+                });
             }
         }
 
@@ -472,6 +683,38 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     // For dependency injection
     public void setContactUtils(ContactDataSource contactDataSource) {
         this.mContactDataSource = contactDataSource;
+    }
+
+    public void logout(){
+        final MainActivity main = this;
+        new AlertDialog.Builder(main)
+                .setIcon(R.drawable.ic_power_settings_new_black_48dp)
+                .setMessage(R.string.confirm_logout)
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which){
+                        //Clear logged in status
+                        PreferenceUtils.setString(main, PreferenceUtils.KEY_USER_ACCOUNT, null);
+                        PreferenceUtils.setString(main, PreferenceUtils.KEY_USER_ID, null);
+                        PreferenceUtils.setString(main, PreferenceUtils.KEY_AUTH_TOKEN, null);
+                        PreferenceUtils.setString(main, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, null);
+                        PreferenceUtils.setString(main, PreferenceUtils.KEY_CONTACTS, null);
+                        PreferenceUtils.setString(main, PreferenceUtils.KEY_DASHBOARD, null);
+                        PreferenceUtils.setString(main, PreferenceUtils.KEY_LOCAL_CONTACTS, null);
+                        PreferenceUtils.setString(main, PreferenceUtils.KEY_PLACES, null);
+                        MainApplication.userAccount = null;
+                        MainApplication.dashboard = null;
+                        MainApplication.contacts = null;
+                        MainApplication.mapping = null;
+                        MainApplication.places = null;
+                        MainApplication.iDontWantToSee = new JSONObject();
+                        MainApplication.firstTimeZoom = true;
+                        //Restart main activity to clear state
+                        main.recreate();
+                    }
+                })
+                .setNegativeButton(R.string.no, null)
+                .show();
     }
 
 }

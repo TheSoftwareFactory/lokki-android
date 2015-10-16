@@ -27,10 +27,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androidquery.AQuery;
+import com.androidquery.callback.AjaxCallback;
+import com.androidquery.callback.AjaxStatus;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,6 +41,7 @@ import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.avatar.AvatarLoader;
 import cc.softwarefactory.lokki.android.datasources.contacts.ContactDataSource;
 import cc.softwarefactory.lokki.android.datasources.contacts.DefaultContactDataSource;
+import cc.softwarefactory.lokki.android.services.DataService;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 import cc.softwarefactory.lokki.android.utilities.ContactUtils;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
@@ -59,6 +60,7 @@ public class AddContactsFragment extends Fragment {
     private EditText inputSearch;
     private Button clearFilter;
     private ArrayAdapter<String> adapter;
+    private TextView noContactsMessage;
 
     public AddContactsFragment() {
         contactList = new ArrayList<>();
@@ -74,6 +76,10 @@ public class AddContactsFragment extends Fragment {
         context = getActivity().getApplicationContext();
         avatarLoader = new AvatarLoader(context);
         inputSearch = (EditText) rootView.findViewById(R.id.add_contact_search);
+        inputSearch.setEnabled(false);
+        inputSearch.setAlpha(0);
+        noContactsMessage = (TextView) rootView.findViewById(R.id.no_contacts_message);
+        noContactsMessage.setText(R.string.no_contacts_to_show);
         clearFilter = (Button) rootView.findViewById(R.id.clear_filter);
 
         return rootView;
@@ -183,13 +189,30 @@ public class AddContactsFragment extends Fragment {
                 return;
             }
             Log.d(TAG, "Number of contacts: " + (contactsResult.length() - 1));
+            Log.d(TAG, "Contacts: " + contactsResult);
+
             try {
-                MainApplication.contacts = contactsResult;
+                // If contacts don't exist already, use data source result
+                if (MainApplication.contacts == null){
+                    MainApplication.contacts = contactsResult;
+                } else {
+                    // If contacts already exist, combine data source result with existing data
+                    Iterator<String> iter = contactsResult.keys();
+                    while(iter.hasNext()){
+                        String key = iter.next();
+                        if(!MainApplication.contacts.has(key)){
+                            MainApplication.contacts.put(key,contactsResult.getJSONObject(key));
+                            String name = contactsResult.getJSONObject(key).getString("name");
+                            MainApplication.contacts.getJSONObject("mapping").put(name,contactsResult.getJSONObject("mapping").getString(name)) ;
+                        }
+                    }
+                }
+                //Synchronize mapping JSON with contacts
                 MainApplication.mapping = MainApplication.contacts.getJSONObject("mapping");
                 PreferenceUtils.setString(context, PreferenceUtils.KEY_CONTACTS, MainApplication.contacts.toString());
 
             } catch (JSONException e) {
-                Log.e(TAG, e.getMessage());
+                Log.e(TAG, "Exception while parsing contacts results: " + e.getMessage());
             }
             new prepareAdapterAsync().execute();
             super.onPostExecute(MainApplication.contacts);
@@ -200,6 +223,9 @@ public class AddContactsFragment extends Fragment {
 
         contactList = new ArrayList<>();
 
+        if (MainApplication.mapping == null){
+            MainApplication.mapping = new JSONObject();
+        }
         JSONArray keys = MainApplication.mapping.names();
 
         if (keys == null) {
@@ -268,6 +294,10 @@ public class AddContactsFragment extends Fragment {
                     String contactName = getItem(position);
                     final String email = MainApplication.mapping.getString(contactName);
 
+                    inputSearch.setEnabled(true);
+                    inputSearch.setAlpha(1);
+                    noContactsMessage.setAlpha(0);
+
                     avatarLoader.load(email, holder.photo);
 
                     aq.id(holder.name).text(contactName);
@@ -289,17 +319,28 @@ public class AddContactsFragment extends Fragment {
                                     .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-                                            try {
-                                                AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
-                                                        getString(R.string.analytics_action_click),
-                                                        getString(R.string.analytics_label_confirm_contact_add_from_list_dialog));
-                                                ServerApi.allowPeople(context, email);
-                                                ContactUtils.addLocalContact(context, email);
-                                                contactList.remove(position);
-                                                notifyDataSetChanged();
-                                                Toast.makeText(context, R.string.contact_added, Toast.LENGTH_SHORT).show();
-                                            } catch (JSONException e) {
-                                                e.printStackTrace();
+                                            AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                                                    getString(R.string.analytics_action_click),
+                                                    getString(R.string.analytics_label_confirm_contact_add_from_list_dialog));
+
+                                            if(ContactUtils.isSelf(context, email)) {
+                                                Toast.makeText(context, R.string.cant_add_self_as_contact, Toast.LENGTH_LONG).show();
+                                            } else {
+                                                ServerApi.allowPeople(context, email, new AjaxCallback<String>() {
+                                                    @Override
+                                                    public void callback(String url, String result, AjaxStatus status)  {
+                                                        ServerApi.logStatus("allowPeople", status);
+                                                        if(status.getError() != null)
+                                                            Toast.makeText(context, R.string.unable_to_add_contact, Toast.LENGTH_LONG).show();
+                                                        else {
+                                                            ContactUtils.addLocalContact(context, email);
+                                                            contactList.remove(position);
+                                                            notifyDataSetChanged();
+                                                            DataService.getDashboard(context);
+                                                            Toast.makeText(context, R.string.contact_added, Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    }
+                                                });
                                             }
                                         }
                                     })
@@ -364,15 +405,25 @@ public class AddContactsFragment extends Fragment {
                         AnalyticsUtils.eventHit(context.getString(R.string.analytics_category_ux),
                                 context.getString(R.string.analytics_action_click),
                                 context.getString(R.string.analytics_label_confirm_contact_add_from_email_dialog_successful));
-                        String email = value.toString();
-                        try {
-                            ServerApi.allowPeople(context, email);
-                            ContactUtils.addLocalContact(context, email);
-                            Toast.makeText(context, R.string.contact_added, Toast.LENGTH_SHORT).show();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                        final String email = value.toString();
 
+                        if(ContactUtils.isSelf(context, email)) {
+                            Toast.makeText(context, R.string.cant_add_self_as_contact, Toast.LENGTH_LONG).show();
+                        } else {
+                            ServerApi.allowPeople(context, email, new AjaxCallback<String>() {
+                                @Override
+                                public void callback(String url, String result, AjaxStatus status)  {
+                                    ServerApi.logStatus("allowPeople", status);
+                                    if(status.getError() != null)
+                                        Toast.makeText(context, R.string.unable_to_add_contact, Toast.LENGTH_LONG).show();
+                                    else {
+                                        ContactUtils.addLocalContact(context, email);
+                                        DataService.getDashboard(context);
+                                        Toast.makeText(context, R.string.contact_added, Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                        }
                         addContactDialog.dismiss();
                     }
                 });

@@ -3,9 +3,15 @@ package cc.softwarefactory.lokki.android.espresso;
 import android.content.res.Resources;
 import android.preference.PreferenceManager;
 import android.test.ActivityInstrumentationTestCase2;
+import android.util.Log;
 
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 
+import org.json.JSONObject;
+
+import java.util.Iterator;
+
+import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.activities.MainActivity;
 import cc.softwarefactory.lokki.android.espresso.utilities.MockDispatcher;
@@ -29,6 +35,18 @@ public abstract class LokkiBaseTest extends ActivityInstrumentationTestCase2<Mai
         return getInstrumentation().getTargetContext().getResources();
     }
 
+    // The UI refreshes itself when this is called.
+    public void updateSituation() {
+        try {
+            mockWebServer.shutdown();
+            PreferenceManager.getDefaultSharedPreferences(getInstrumentation().getTargetContext()).edit().clear().commit();
+            mockWebServer.start();
+        } catch(Exception e) {
+            Log.e("LokkiBaseTest", "updateSituation() failed: " + e);
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -44,6 +62,16 @@ public abstract class LokkiBaseTest extends ActivityInstrumentationTestCase2<Mai
         ServerApi.setApiUrl(mockUrl);
     }
 
+    public static void clearJSONData(JSONObject object) {
+        if(object == null)
+            return;
+        Iterator<String> it = object.keys();
+        while(it.hasNext()) {
+            it.next();
+            it.remove();
+        }
+    }
+
     @Override
     protected void tearDown() throws Exception {
         mockWebServer.shutdown();
@@ -52,6 +80,8 @@ public abstract class LokkiBaseTest extends ActivityInstrumentationTestCase2<Mai
         // if user is running application normally after running tests
         TestUtils.clearAppData(getInstrumentation().getTargetContext());
 
+        clearJSONData(MainApplication.contacts);
+        clearJSONData(MainApplication.places);
         super.tearDown();
     }
 

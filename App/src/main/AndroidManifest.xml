@@ -19,6 +19,8 @@
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="cc.softwarefactory.lokki.android.permission.C2D_MESSAGE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
 
     <uses-feature
         android:name="android.hardware.location"
@@ -74,6 +76,16 @@
             android:label="@string/title_activity_sign_up"
             android:configChanges="orientation"
             android:screenOrientation="portrait">
+        </activity>
+        <activity android:name=".activities.SearchActivity">
+
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+
+        </activity>
+        <activity
+            android:name=".activities.BuzzActivity">
         </activity>
 
         <service android:name=".services.LocationService" />

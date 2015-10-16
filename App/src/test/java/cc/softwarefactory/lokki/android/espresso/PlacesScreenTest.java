@@ -8,8 +8,6 @@ import com.squareup.okhttp.mockwebserver.MockResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Date;
-
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.espresso.utilities.MockJsonUtils;
 import cc.softwarefactory.lokki.android.espresso.utilities.TestUtils;
@@ -31,7 +29,7 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.endsWith;
 
-
+@SuppressWarnings("unchecked")
 public class PlacesScreenTest extends LoggedInBaseTest {
 
 
@@ -45,7 +43,6 @@ public class PlacesScreenTest extends LoggedInBaseTest {
         TestUtils.toggleNavigationDrawer();
         onView(withText(R.string.places)).perform((click()));
     }
-
 
     public void testEmptyPlacesScreen() {
         enterPlacesScreen();
@@ -92,50 +89,37 @@ public class PlacesScreenTest extends LoggedInBaseTest {
         onView(withId(R.id.map)).check(matches(isDisplayed()));
     }
 
-
-    public static void waitForView(String name) {
-        long startTime = (new Date()).getTime();
-        long endTime = startTime + 15000;
-        do {
-            try {
-                onView(withText(name)).check(matches(isDisplayed()));
-                return;
-            } catch (Throwable ex) {
-                Thread.yield();
-            }
-        } while (((new Date()).getTime()) < endTime);
-        onView(withText(name)).check(doesNotExist());
-    }
-
-
     public void testDeletePlaces() throws JSONException, InterruptedException {
         getMockDispatcher().setPlacesResponse(new MockResponse().setBody(MockJsonUtils.getPlacesJson()));
         getMockDispatcher().setPlacesDeleteResponse(new MockResponse().setResponseCode(200), "cb693820-3ce7-4c95-af2f-1f079d2841b1");
 
         enterPlacesScreen();
+        onView(withText("Testplace1")).perform((longClick()));
         onView(allOf(withId(R.id.places_context_menu_button), hasSibling(withText("Testplace1"))))
                 .perform(click());
-        onView(withText("Delete")).perform(click());
+        onView(withText(R.string.delete)).perform(click());
         onView(withText("OK")).perform(click());
-        waitForView("Testplace1");
-    }
 
+        updateSituation();
+        onView(withText("Testplace1")).check(doesNotExist());
+    }
 
     public void testRenamePlaces() throws JSONException, InterruptedException {
         getMockDispatcher().setPlacesResponse(new MockResponse().setBody(MockJsonUtils.getPlacesJson()));
         getMockDispatcher().setPlacesRenameResponse(new MockResponse().setResponseCode(200), "cb693820-3ce7-4c95-af2f-1f079d2841b1");
 
-
         enterPlacesScreen();
         onView(withText("Testplace1")).perform((longClick()));
         onView(allOf(withId(R.id.places_context_menu_button), hasSibling(withText("Testplace1"))))
                 .perform(click());
-        onView(withText("Rename")).perform(click());
+        onView(withText(R.string.rename)).perform(click());
         onView(withClassName(endsWith("EditText")))
                 .perform(click())
                 .perform(typeText("Renametext"));
         onView(withText("OK")).perform(click());
-        // Test that old name no longer exists
-        waitForView("Testplace1");
+
+        updateSituation();
+        onView(withText("Testplace1")).check(doesNotExist());
+        onView(withText("Renametext")).check(matches(isDisplayed()));
     }
 }

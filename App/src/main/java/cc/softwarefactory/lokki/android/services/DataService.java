@@ -26,7 +26,10 @@ public class DataService extends Service {
 
     private static final String ALARM_TIMER = "ALARM_TIMER";
     private static final String TAG = "DataService";
+    //Tag used to tell the service to load places
     private static final String GET_PLACES = "GET_PLACES";
+    //Tag used to tell the service to load contacts
+    private static final String GET_CONTACTS = "GET_CONTACTS";
 
     private AlarmManager alarm;
     private PendingIntent alarmCallback;
@@ -55,6 +58,18 @@ public class DataService extends Service {
         Intent placesIntent = new Intent(context, DataService.class);
         placesIntent.putExtra(GET_PLACES, 1);
         context.startService(placesIntent);
+    }
+
+    /**
+     * Schedules the data service to load contacts in the background
+     * @param context
+     */
+    public static void getContacts(Context context) {
+
+        Log.d(TAG, "getContacts");
+        Intent contactIntent = new Intent(context, DataService.class);
+        contactIntent.putExtra(GET_CONTACTS, 1);
+        context.startService(contactIntent);
     }
 
     public static void getDashboard(Context context) {
@@ -103,6 +118,7 @@ public class DataService extends Service {
             MainApplication.dashboard = null;
         }
         getPlaces();
+        getContacts();
     }
 
     private void setTimer() {
@@ -132,8 +148,10 @@ public class DataService extends Service {
 
         if (extras.containsKey(ALARM_TIMER)) {
             fetchDashboard();
-        } else if (extras.containsKey(GET_PLACES)) {
+        } if (extras.containsKey(GET_PLACES)) {
             getPlaces();
+        } if (extras.containsKey(GET_CONTACTS)) {
+            getContacts();
         }
         return START_STICKY;
     }
@@ -142,6 +160,11 @@ public class DataService extends Service {
 
         Log.d(TAG, "getPlaces");
         ServerApi.getPlaces(this);
+    }
+
+    private void getContacts() {
+        Log.d(TAG, "getContacts");
+        ServerApi.getContacts(this);
     }
 
     private void fetchDashboard() {

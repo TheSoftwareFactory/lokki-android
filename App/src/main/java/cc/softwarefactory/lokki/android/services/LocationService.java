@@ -5,20 +5,25 @@ See LICENSE for details
 package cc.softwarefactory.lokki.android.services;
 
 import android.app.AlarmManager;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.os.SystemClock;
+import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
+import cc.softwarefactory.lokki.android.activities.BuzzActivity;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
 import cc.softwarefactory.lokki.android.activities.MainActivity;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
@@ -31,11 +36,26 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Iterator;
 
 public class LocationService extends Service implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener  {
 
     // INTERVALS
-    private static final long INTERVAL_10_MS = 10;
+    /**
+     * Location polling interval when the service is set to get high accuracy updates (App running in foreground)
+     */
+    private static final long LOCATION_CHECK_INTERVAL_ACCURATE = 5000; //5 seconds
+    /**
+     * Location polling interval when the service is set to get medium accuracy updates (App running in background with Location Buzz)
+     */
+    private static final long LOCATION_CHECK_INTERVAL_BACKGROUND_ACCURATE = 15000; //15 seconds
+    /**
+     * Location polling interval when the service is set to get low accuracy updates (App running in background without Location Buzz)
+     */
+    private static final long LOCATION_CHECK_INTERVAL_BACKGROUND_INACCURATE = 1000 * 60 * 15; //15 minutes
+
     private static final long INTERVAL_30_SECS = 30 * 1000;
     private static final long INTERVAL_1_MIN = 60 * 1000;
 
@@ -48,19 +68,45 @@ public class LocationService extends Service implements LocationListener, Google
     private static final String ALARM_TIMER = "ALARM_TIMER";
 
     private GoogleApiClient mGoogleApiClient;
-    private LocationRequest locationRequest;
+    /**
+     * Location request used to request accurate foreground updates from the Location API
+     */
+    private LocationRequest locationRequestAccurate;
+    /**
+     * Location request used to request accurate background updates from the Location API
+     */
+    private LocationRequest locationRequestBGAccurate;
+    /**
+     * Location request used to request inaccurate background updates from the Location API
+     */
+    private LocationRequest locationRequestBGInaccurate;
     private static Boolean serviceRunning = false;
     private static Location lastLocation = null;
+    private PowerManager.WakeLock wakeLock;
+
+    /**
+     * Current accuracy of location updates
+     */
+    private LocationAccuracy currentAccuracy = LocationAccuracy.BGINACCURATE;
+
+    /**
+     * Location polling accuracy levels:
+     * ACCURATE: App running in foreground
+     * BGACCURATE: App running in background, but still needs relatively high accuracy for e.g. Location Buzz
+     * BGINACCURATE: App running in background, low accuracy
+     */
+    public enum LocationAccuracy{ACCURATE, BGACCURATE, BGINACCURATE}
 
     public static void start(Context context) {
 
         Log.d(TAG, "start Service called");
 
-        if (serviceRunning || !MainApplication.visible) { // If service is running, no need to start it again.
+        if (serviceRunning) { // If service is running, no need to start it again.
             Log.w(TAG, "Service already running...");
             return;
         }
         context.startService(new Intent(context, LocationService.class));
+
     }
 
     public static void stop(Context context) {
@@ -73,7 +119,7 @@ public class LocationService extends Service implements LocationListener, Google
     public static void run1min(Context context) {
 
         if (serviceRunning || !MainApplication.visible) {
-            return; // If service is running, stop
+            return; // If service is running or user is not visible, stop
         }
         Log.d(TAG, "run1min called");
         Intent intent = new Intent(context, LocationService.class);
@@ -87,6 +133,7 @@ public class LocationService extends Service implements LocationListener, Google
         Log.d(TAG, "onCreate");
         super.onCreate();
 
+
         if (PreferenceUtils.getString(this, PreferenceUtils.KEY_AUTH_TOKEN).isEmpty()) {
             Log.d(TAG, "User disabled reporting in App. Service not started.");
             stopSelf();
@@ -94,6 +141,9 @@ public class LocationService extends Service implements LocationListener, Google
             Log.d(TAG, "Starting Service..");
             setLocationClient();
             setNotificationAndForeground();
+            PowerManager mgr = (PowerManager)getApplicationContext().getSystemService(Context.POWER_SERVICE);
+            wakeLock=mgr.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"Lokki Wake Lock");
+            wakeLock.acquire();
             serviceRunning = true;
         } else {
             Log.e(TAG, "Google Play Services Are NOT installed.");
@@ -112,10 +162,20 @@ public class LocationService extends Service implements LocationListener, Google
 
     private void setLocationClient() {
 
-        locationRequest = LocationRequest.create();
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setInterval(INTERVAL_10_MS);
+        //Build location requests for different power profiles
+        locationRequestAccurate = LocationRequest.create();
+        locationRequestAccurate.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequestAccurate.setInterval(LOCATION_CHECK_INTERVAL_ACCURATE);
 
+        locationRequestBGAccurate = LocationRequest.create();
+        locationRequestBGAccurate.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        locationRequestBGAccurate.setInterval(LOCATION_CHECK_INTERVAL_BACKGROUND_ACCURATE);
+
+        locationRequestBGInaccurate = LocationRequest.create();
+        locationRequestBGInaccurate.setPriority(LocationRequest.PRIORITY_LOW_POWER);
+        locationRequestBGInaccurate.setInterval(LOCATION_CHECK_INTERVAL_BACKGROUND_INACCURATE);
+
+        //Create and connect to Google API client
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
                 .addConnectionCallbacks(this)
@@ -134,6 +194,45 @@ public class LocationService extends Service implements LocationListener, Google
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
         notificationBuilder.setContentIntent(contentIntent);
         startForeground(NOTIFICATION_SERVICE, notificationBuilder.build());
+    }
+
+    /**
+     * Switched current location update accuracy level to prioritize accuracy or power saving
+     * @param acc   The new accuracy level
+     */
+    public void setLocationCheckAccuracy(LocationAccuracy acc){
+        currentAccuracy = acc;
+        if (mGoogleApiClient == null || !mGoogleApiClient.isConnected()){
+            Log.i(TAG, "Google API client not yet initialized, so not requesting updates yet");
+            return;
+        }
+
+        LocationRequest req;
+        switch (acc){
+            case ACCURATE:{
+                Log.d(TAG, "Setting location request accuracy to accurate");
+                req = locationRequestAccurate;
+                break;
+            }
+            case BGACCURATE:{
+                Log.d(TAG, "Setting location request accuracy to background accurate");
+                req = locationRequestBGAccurate;
+                break;
+            }
+            case BGINACCURATE:{
+                Log.d(TAG, "Setting location request accuracy to background inaccurate");
+                req = locationRequestBGInaccurate;
+                break;
+            }
+            default:{
+                Log.wtf(TAG, "Unknown location accuracy level");
+                throw new IllegalArgumentException("Unknown location accuracy level");
+            }
+
+        }
+        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, req, this);
+
     }
 
     @Override
@@ -162,14 +261,10 @@ public class LocationService extends Service implements LocationListener, Google
     }
 
     @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-
-    @Override
     public void onConnected(Bundle bundle) {
         Log.d(TAG, "locationClient connected");
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest, this);
+        //Set location update accuracy to whichever value was set last
+        setLocationCheckAccuracy(currentAccuracy);
         Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLastLocation != null) {
             updateLokkiLocation(mLastLocation);
@@ -188,6 +283,7 @@ public class LocationService extends Service implements LocationListener, Google
         Log.d(TAG, String.format("onLocationChanged - Location: %s", location));
         if (serviceRunning && mGoogleApiClient.isConnected() && location != null) {
             updateLokkiLocation(location);
+            checkBuzzplaces();
         } else {
             this.stopSelf();
             onDestroy();
@@ -217,6 +313,99 @@ public class LocationService extends Service implements LocationListener, Google
         }
     }
 
+    private void showArrivalNotification() {
+        Intent showIntent = new Intent(this, BuzzActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, showIntent, 0);
+
+        NotificationCompat.Builder mBuilder =
+            new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.ic_stat_notify)
+                .setContentTitle("Lokki")
+                .setContentText(getString(R.string.you_have_arrived))
+                .setAutoCancel(true)
+                .setContentIntent(contentIntent);
+
+        ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(42, mBuilder.build());
+    }
+
+    class VibrationThread implements Runnable {
+        private String id;
+
+        VibrationThread(String id) {
+            this.id = id;
+        }
+
+        @Override
+        public void run() {
+            try {
+                while(true) {
+                    JSONObject placeBuzz = BuzzActivity.getBuzz(id);
+                    if(placeBuzz == null || placeBuzz.getInt("buzzcount") <= 0) {
+                        break;
+                    }
+                    Log.d(TAG, "Vibrating...");
+                    Vibrator v = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
+                    v.vibrate(1000);
+                    Thread.sleep(2500);
+                    placeBuzz.put("buzzcount", placeBuzz.getInt("buzzcount") - 1);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void triggerBuzzing(final JSONObject placeBuzz) throws JSONException {
+        if(placeBuzz.getInt("buzzcount") > 0) {
+
+            if(!placeBuzz.optBoolean("activated", false)) {
+                placeBuzz.put("activated", true);
+                Intent i = new Intent();
+                i.setClass(this, BuzzActivity.class);
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(i);
+                showArrivalNotification();
+
+                Log.d(TAG, "Starting vibration...");
+                new Thread(new VibrationThread(placeBuzz.getString("placeid"))).start();
+            }
+        }
+    }
+
+    private void checkBuzzplaces()
+    {
+        for (int i=0;i<MainApplication.buzzPlaces.length();i++)
+        {
+            Iterator<String> keys = MainApplication.places.keys();
+            while(keys.hasNext())
+            {
+                String key = keys.next();
+                try {
+                    JSONObject placeBuzz = MainApplication.buzzPlaces.getJSONObject(i);
+
+                    if (key.equals(placeBuzz.getString("placeid"))) {
+
+                        JSONObject place = MainApplication.places.getJSONObject(key);
+                        Location placeLocation = new Location(key);
+                        placeLocation.setLatitude(place.getDouble("lat"));
+                        placeLocation.setLongitude((place.getDouble("lon")));
+
+                        if (placeLocation.distanceTo(lastLocation) < place.getInt("rad"))
+                            triggerBuzzing(placeBuzz);
+                        else
+                            placeBuzz.put("buzzcount", 5).put("activated", false);
+                    }
+                }
+                catch (JSONException e)
+                {
+                    Log.e(TAG,"Error in checking buzz places"+e);
+                }
+
+            }
+
+        }
+
+    }
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
@@ -226,16 +415,45 @@ public class LocationService extends Service implements LocationListener, Google
     @Override
     public void onDestroy() {
         Log.d(TAG, "onDestroy called");
+        if(wakeLock != null && wakeLock.isHeld()) {
+            wakeLock.release();
+        }
         stopForeground(true);
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
             mGoogleApiClient.disconnect();
             Log.d(TAG, "Location Updates removed.");
 
+
         } else {
             Log.e(TAG, "locationClient didn't exist.");
         }
         serviceRunning = false;
         super.onDestroy();
+    }
+
+    //------------Service binding------------
+
+    /**
+     * The service binder for this service instance
+     */
+    private final LocationBinder mBinder = new LocationBinder();
+
+    /**
+     * Binder object that allows this service to be accessed from other objects in the same process
+     */
+    public class LocationBinder extends Binder {
+        /**
+         * Gets a reference to the currently running LocationService instance
+         * @return  Reference to the current LocationService
+         */
+        public LocationService getService(){
+            return LocationService.this;
+        }
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return mBinder;
     }
 }
