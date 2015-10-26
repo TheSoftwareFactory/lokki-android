@@ -76,7 +76,7 @@ public class AboutFragment extends Fragment {
 
             switch (position) {
                 case 0: // Help
-                case 1: // Send Feedback
+                case 1: // Send feedback
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
                     break;
 
