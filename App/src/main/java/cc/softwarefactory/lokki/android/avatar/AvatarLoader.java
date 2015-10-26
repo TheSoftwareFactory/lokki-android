@@ -114,4 +114,5 @@ public class AvatarLoader {
 
         return ((WeakReference<BitmapWorkerTask>)(imageView.getTag())).get();
     }
+
 }
