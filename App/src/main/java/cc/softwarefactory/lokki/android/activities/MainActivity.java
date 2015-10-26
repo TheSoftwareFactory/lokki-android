@@ -168,7 +168,9 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
      * @return  true, if the app hasn't been launched before
      */
     private boolean firstTimeLaunch() {
-        return !PreferenceUtils.getBoolean(this, PreferenceUtils.KEY_NOT_FIRST_TIME_LAUNCH);
+	// XXX Added a useless piece of code to test workflow.
+	boolean useless_addition = true;
+        return (!PreferenceUtils.getBoolean(this, PreferenceUtils.KEY_NOT_FIRST_TIME_LAUNCH)) && useless_addition;
     }
 
     /**
