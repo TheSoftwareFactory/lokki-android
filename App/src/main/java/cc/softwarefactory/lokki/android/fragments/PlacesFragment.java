@@ -15,7 +15,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
+//import android.util.Log;
 import android.util.TypedValue;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -73,7 +73,7 @@ public class PlacesFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
 
-        Log.d(TAG, "onActivityCreated");
+        //Log.d(TAG, "onActivityCreated");
         super.onActivityCreated(savedInstanceState);
         DataService.getPlaces(context);
         showPlaces();
@@ -82,7 +82,7 @@ public class PlacesFragment extends Fragment {
     @Override
     public void onResume() {
 
-        Log.d(TAG, "onResume");
+        //Log.d(TAG, "onResume");
         super.onResume();
         LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver, new IntentFilter("PLACES-UPDATE"));
         LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver, new IntentFilter("LOCATION-UPDATE"));
@@ -101,14 +101,14 @@ public class PlacesFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            Log.d(TAG, "BroadcastReceiver onReceive");
+            //Log.d(TAG, "BroadcastReceiver onReceive");
             showPlaces();
         }
     };
 
     private void setListAdapter() {
 
-        Log.d(TAG, "setListAdapter");
+        //Log.d(TAG, "setListAdapter");
 
         final PlacesFragment placesFragment = this;
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, R.layout.places_row_layout, placesList) {
@@ -128,7 +128,7 @@ public class PlacesFragment extends Fragment {
                         v.showContextMenu();
                     }
                 });
-                Log.d(TAG, "Setting up checkbox callback");
+                //Log.d(TAG, "Setting up checkbox callback");
                 Iterator<String> keys = MainApplication.places.keys();
                 String tempId = "";
                 while(keys.hasNext()) {
@@ -141,7 +141,7 @@ public class PlacesFragment extends Fragment {
                     }
                     catch (JSONException e)
                     {
-                        Log.e(TAG, " Error while loading place id" + e);
+                        //Log.e(TAG, " Error while loading place id" + e);
                     }
                 }
                 final String id = tempId;
@@ -194,16 +194,16 @@ public class PlacesFragment extends Fragment {
                             aq.id(R.id.buzz_checkBox).checked(true);
                         }
                     } catch (JSONException e) {
-                        Log.e(TAG, "Error while checking the buzz places" + e);
+                        //Log.e(TAG, "Error while checking the buzz places" + e);
 
                     }
                 }
 
-                Log.d(TAG, "Place name: " + placeName);
-                Log.d(TAG, "peopleInsidePlace? " + peopleInsidePlace.has(placeName));
+                //Log.d(TAG, "Plane name: " + placeName);
+                //Log.d(TAG, "peopleInsidePlace? " + peopleInsidePlace.has(placeName));
 
                 if (peopleInsidePlace.has(placeName)) { // People are inside this place
-                    Log.d(TAG, "Inside loop");
+                    //Log.d(TAG, "Inside loop");
                     try {
                         JSONArray people = peopleInsidePlace.getJSONArray(placeName);
                         LinearLayout avatarRow = (LinearLayout) convertView.findViewById(R.id.avatar_row);
@@ -220,7 +220,7 @@ public class PlacesFragment extends Fragment {
                             if (MainApplication.avatarCache.get(email) != null) {
                                 image.setImageBitmap(MainApplication.avatarCache.get(email));
                             } else {
-                                Log.d(TAG, "Avatar not in cache, email: " + email);
+                                //Log.d(TAG, "Avatar not in cache, email: " + email);
                                 image.setImageResource(R.drawable.default_avatar);
                             }
                             image.setContentDescription(email);
@@ -229,7 +229,7 @@ public class PlacesFragment extends Fragment {
                         }
 
                     } catch (Exception ex) {
-                        Log.e(TAG, "Error in adding avatars" + ex.getMessage());
+                        //Log.d(TAG, "Error in adding avatars");
                     }
                 }
 
@@ -275,7 +275,7 @@ public class PlacesFragment extends Fragment {
 
     private void deletePlaceDialog(final String name) {
 
-        Log.d(TAG, "deletePlaceDialog");
+        //Log.d(TAG, "deletePlaceDialog");
         new AlertDialog.Builder(getActivity())
                 .setTitle(getString(R.string.delete_place))
                 .setMessage(name + " " + getString(R.string.will_be_deleted_from_places))
@@ -302,14 +302,14 @@ public class PlacesFragment extends Fragment {
 
     private void deletePlace(String name) {
 
-        Log.d(TAG, "deletePlace");
+        //Log.d(TAG, "deletePlace");
         try {
             Iterator<String> keys = MainApplication.places.keys();
             while (keys.hasNext()) {
                 String key = keys.next();
                 JSONObject placeObj = MainApplication.places.getJSONObject(key);
                 if (name.equals(placeObj.getString("name"))) {
-                    Log.d(TAG, "Place ID to be deleted: " + key);
+                    //Log.d(TAG, "Place ID to be deleted: " + key);
                     ServerApi.removePlace(context, key);
                     break;
                 }
@@ -321,7 +321,7 @@ public class PlacesFragment extends Fragment {
 
     private void renamePlaceDialog(final String placeName) {
 
-        Log.d(TAG, "renamePlaceDialog");
+        //Log.d(TAG, "renamePlaceDialog");
         final EditText input = new EditText(getActivity());
         String titleFormat = getString(R.string.rename_prompt);
         String title = String.format(titleFormat, placeName);
@@ -356,20 +356,20 @@ public class PlacesFragment extends Fragment {
             MainApplication.places.remove(key);
             MainApplication.places.put(key, placeObj);
         } catch(Exception e) {
-            Log.e(TAG, "renamePlaceLocally() failed.");
+            //Log.e(TAG, "renamePlaceLocally() failed.");
         }
     }
 
     private void renamePlace(final String oldName, final String newName) {
 
-        Log.d(TAG, "renamePlace");
+        //Log.d(TAG, "renamePlace");
         try {
             Iterator<String> keys = MainApplication.places.keys();
             while (keys.hasNext()) {
                 String key = keys.next();
                 JSONObject placeObj = MainApplication.places.getJSONObject(key);
                 if (oldName.equals(placeObj.getString("name"))) {
-                    Log.d(TAG, "Place ID to be renamed: " + key);
+                    //Log.d(TAG, "Place ID to be renamed: " + key);
                     ServerApi.renamePlace(context, key, newName);
                     break;
                 }
@@ -406,7 +406,7 @@ public class PlacesFragment extends Fragment {
 
     private void showPlaces() {
 
-        Log.d(TAG, "showPlaces");
+        //Log.d(TAG, "showPlaces");
         placesList = new ArrayList<>();
         peopleInsidePlace = new JSONObject();
 
@@ -418,7 +418,7 @@ public class PlacesFragment extends Fragment {
                 MainApplication.places = new JSONObject(PreferenceUtils.getString(context, PreferenceUtils.KEY_PLACES));
             }
 
-            Log.d(TAG, "Places json: " + MainApplication.places);
+            //Log.d(TAG, "Places json: " + MainApplication.places);
             Iterator<String> keys = MainApplication.places.keys();
             while (keys.hasNext()) {
                 String key = keys.next();
@@ -429,12 +429,12 @@ public class PlacesFragment extends Fragment {
                 calculatePeopleInside(placeObj);
             }
 
-            Log.d(TAG, "peopleInsidePlace: " + peopleInsidePlace);
+            //Log.d(TAG, "peopleInsidePlace: " + peopleInsidePlace);
             Collections.sort(placesList);
             setListAdapter();
 
         } catch (Exception ex) {
-            Log.e(TAG, "ERROR: " + ex.getMessage());
+            //Log.d(TAG, "ERROR: " + ex.getMessage());
             ex.printStackTrace();
         }
     }
@@ -460,12 +460,12 @@ public class PlacesFragment extends Fragment {
             Location myLocation = new Location(MainApplication.userAccount);
             myLocation.setLatitude(userLocationObj.getDouble("lat"));
             myLocation.setLongitude(userLocationObj.getDouble("lon"));
-            //Log.d(TAG, "userLocation: " + userLocation);
+            ////Log.d(TAG, "userLocation: " + userLocation);
 
             // Compare location
             float myDistance = placeLocation.distanceTo(myLocation);
             if (myDistance < placeLocation.getAccuracy()) {
-                //Log.d(TAG, email + " is in place: " + placeLocation.getProvider());
+                ////Log.d(TAG, email + " is in place: " + placeLocation.getProvider());
                 peopleInThisPlace.put(MainApplication.userAccount);
             }
 
@@ -484,24 +484,24 @@ public class PlacesFragment extends Fragment {
 
                 userLocation.setLatitude(locationObj.getDouble("lat"));
                 userLocation.setLongitude(locationObj.getDouble("lon"));
-                //Log.d(TAG, "userLocation: " + userLocation);
+                ////Log.d(TAG, "userLocation: " + userLocation);
 
                 // Compare location
                 float distance = placeLocation.distanceTo(userLocation);
                 if (distance < placeLocation.getAccuracy()) {
-                    //Log.d(TAG, email + " is in place: " + placeLocation.getProvider());
+                    ////Log.d(TAG, email + " is in place: " + placeLocation.getProvider());
                     peopleInThisPlace.put(email);
                 }
             }
 
             if (peopleInThisPlace.length() > 0) {
-                //Log.d(TAG, "peopleInThisPlace: " + peopleInThisPlace);
+                ////Log.d(TAG, "peopleInThisPlace: " + peopleInThisPlace);
                 peopleInsidePlace.put(placeObj.getString("name"), peopleInThisPlace);
             }
 
 
         } catch (Exception ex) {
-            Log.e(TAG, "Error" + ex.getMessage());
+            //Log.d(TAG, "Error");
             ex.printStackTrace();
 
         }

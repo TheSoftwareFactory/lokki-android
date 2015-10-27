@@ -8,7 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
+//import android.util.Log;
 import android.widget.Toast;
 
 import com.androidquery.AQuery;
@@ -39,7 +39,7 @@ public class ServerApi {
 
     public static void signUp(Context context, AjaxCallback<JSONObject> signUpCallback) {
 
-        Log.d(TAG, "Sign up");
+        //Log.e(TAG, "Sign up");
         AQuery aq = new AQuery(context);
         String url = ApiUrl + "signup";
 
@@ -54,12 +54,12 @@ public class ServerApi {
         }
 
         aq.ajax(url, params, JSONObject.class, signUpCallback);
-        Log.d(TAG, "Sign up - email: " + userAccount + ", deviceId: " + deviceId + ", language: " + Utils.getLanguage());
+        //Log.e(TAG, "Sign up - email: " + userAccount + ", deviceId: " + deviceId + ", language: " + Utils.getLanguage());
     }
 
 
     public static void getDashboard(final Context context) {
-        Log.d(TAG, "getDashboard");
+        //Log.e(TAG, "getDashboard");
         AQuery aq = new AQuery(context);
 
         String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
@@ -69,23 +69,23 @@ public class ServerApi {
         AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject json, AjaxStatus status) {
-                Log.d(TAG, "dashboardCallback");
+                //Log.e(TAG, "dashboardCallback");
 
                 if (status.getCode() == 401) {
-                    Log.e(TAG, "Status login failed. App should exit.");
+                    //Log.e(TAG, "Status login failed. App should exit.");
                     PreferenceUtils.setString(context, PreferenceUtils.KEY_AUTH_TOKEN, "");
                     Intent intent = new Intent("EXIT");
                     LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
                 } else if (json != null){
-                    Log.d(TAG, "json returned: " + json);
+                    //Log.e(TAG, "json returned: " + json);
                     MainApplication.dashboard = json;
                     PreferenceUtils.setString(context, PreferenceUtils.KEY_DASHBOARD, json.toString());
                     Intent intent = new Intent("LOCATION-UPDATE");
                     LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
                 } else {
-                    Log.e(TAG, "Error: " + status.getCode() + " - " + status.getMessage());
+                    //Log.e(TAG, "Error: " + status.getCode() + " - " + status.getMessage());
                 }
             }
         };
@@ -95,7 +95,7 @@ public class ServerApi {
 
     public static void getPlaces(final Context context) {
 
-        Log.d(TAG, "getPlaces");
+        //Log.e(TAG, "getPlaces");
         AQuery aq = new AQuery(context);
 
         String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
@@ -105,13 +105,13 @@ public class ServerApi {
         AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>(){
             @Override
             public void callback(String url, JSONObject json, AjaxStatus status) {
-                Log.d(TAG, "placesCallback");
+                //Log.e(TAG, "placesCallback");
 
                 if (json == null) {
-                    Log.e(TAG, "Error: " + status.getCode() + " - " + status.getMessage());
+                    //Log.e(TAG, "Error: " + status.getCode() + " - " + status.getMessage());
                     return;
                 }
-                Log.d(TAG, "json returned: " + json);
+                //Log.e(TAG, "json returned: " + json);
                 MainApplication.places = json;
                 PreferenceUtils.setString(context, PreferenceUtils.KEY_PLACES, json.toString());
                 Intent intent = new Intent("PLACES-UPDATE");
@@ -128,7 +128,7 @@ public class ServerApi {
      */
     public static void getContacts(final Context context) {
 
-        Log.d(TAG, "getContacts");
+        //Log.d(TAG, "getContacts");
         AQuery aq = new AQuery(context);
 
         String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
@@ -138,13 +138,13 @@ public class ServerApi {
         AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>(){
             @Override
             public void callback(String url, JSONObject json, AjaxStatus status) {
-                Log.d(TAG, "contactsCallback");
+                //Log.d(TAG, "contactsCallback");
 
                 if (json == null) {
-                    Log.e(TAG, "Error fetching contacts: " + status.getCode() + " - " + status.getMessage());
+                    //Log.e(TAG, "Error fetching contacts: " + status.getCode() + " - " + status.getMessage());
                     return;
                 }
-                Log.d(TAG, "contacts JSON returned: " + json);
+                //Log.d(TAG, "contacts JSON returned: " + json);
                 try {
                     //Store ignored users
                     MainApplication.iDontWantToSee = new JSONObject();
@@ -157,7 +157,7 @@ public class ServerApi {
                             MainApplication.iDontWantToSee.put(email, 1);
                         }
                         catch (JSONException e){
-                            Log.w(TAG, "Ignore list contained unknown id: " + ignored.getString(i));
+                            //Log.w(TAG, "Ignore list contained unknown id: " + ignored.getString(i));
                         }
                     }
                     PreferenceUtils.setString(context, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, MainApplication.iDontWantToSee.toString());
@@ -202,7 +202,7 @@ public class ServerApi {
                     LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                 }
                 catch (JSONException e){
-                    Log.e(TAG, "Error parsing contacts JSON: " + e);
+                    //Log.e(TAG, "Error parsing contacts JSON: " + e);
                 }
             }
         };
@@ -212,7 +212,7 @@ public class ServerApi {
 
     public static void allowPeople(final Context context, String email, AjaxCallback<String> cb) {
 
-        Log.d(TAG, "allowPeople");
+        //Log.d(TAG, "allowPeople");
         AQuery aq = new AQuery(context);
 
         String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
@@ -224,27 +224,28 @@ public class ServerApi {
 
         try {
             JSONObject JSONdata = new JSONObject().put("emails", JSONemails);
-            Log.d(TAG, "Emails to be alloweed: " + JSONdata);
+
+        //Log.e(TAG, "Emails to be alloweed: " + JSONdata);
 
             cb.header("authorizationtoken", authorizationToken);
             aq.post(url, JSONdata, String.class, cb);
         }
         catch(JSONException e) {
-            Log.e(TAG, "JSON error in allowPeople()");
+            //Log.e(TAG, "JSON error in allowPeople()");
         }
     }
 
     public static void logStatus(String request, AjaxStatus status) {
-        Log.d(TAG, request + " result code: " + status.getCode());
-        Log.d(TAG, request + " result message: " + status.getMessage());
+        //Log.d(TAG, request + " result code: " + status.getCode());
+        //Log.d(TAG, request + " result message: " + status.getMessage());
         if(status.getError() != null) {
-            Log.e(TAG, request + " ERROR: " + status.getError());
+            //Log.e(TAG, request + " ERROR: " + status.getError());
         }
     }
 
     public static void disallowUser(final Context context, String email) {
 
-        Log.d(TAG, "disallowUser");
+        //Log.d(TAG, "disallowUser");
         AQuery aq = new AQuery(context);
 
         String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
@@ -253,18 +254,18 @@ public class ServerApi {
         String targetId = Utils.getIdFromEmail(context, email);
 
         if (targetId == null) {
-            Log.e(TAG, "Attempted to disallow invalid email");
+            //Log.e(TAG, "Attempted to disallow invalid email");
             return;
         }
         url += targetId;
-        Log.d(TAG, "Email to be disallowed: " + email + ", userIdToDisallow: " + targetId);
+        //Log.d(TAG, "Email to be disallowed: " + email + ", userIdToDisallow: " + targetId);
 
         AjaxCallback<String> cb = new AjaxCallback<String>() {
             @Override
             public void callback(String url, String result, AjaxStatus status) {
                 logStatus("disallowUser", status);
                 if (status.getError() == null) {
-                    Log.d(TAG, "Getting new dashboard");
+                    //Log.e(TAG, "Getting new dashboard");
                     DataService.getDashboard(context);
                 }
             }
@@ -282,7 +283,7 @@ public class ServerApi {
      */
     public static void ignoreUsers(final Context context, String email) {
 
-        Log.d(TAG, "ignoreUsers");
+        //Log.d(TAG, "ignoreUsers");
         AQuery aq = new AQuery(context);
 
         String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
@@ -294,7 +295,7 @@ public class ServerApi {
         JSONids.put(targetId);
 
         if (targetId == null) {
-            Log.e(TAG, "Attempted to ignore invalid email");
+            //Log.e(TAG, "Attempted to ignore invalid email");
             return;
         }
         JSONObject JSONdata = new JSONObject();
@@ -302,18 +303,18 @@ public class ServerApi {
             JSONdata.put("ids", JSONids);
         }
         catch (JSONException e){
-            Log.e(TAG, "Error creating ignore request: " + e);
+            //Log.e(TAG, "Error creating ignore request: " + e);
             return;
         }
 
-        Log.d(TAG, "IDs to be ignored: " + JSONdata);
+        //Log.d(TAG, "IDs to be ignored: " + JSONdata);
 
         AjaxCallback<String> cb = new AjaxCallback<String>() {
             @Override
             public void callback(String url, String result, AjaxStatus status) {
                 logStatus("ignoreUsers", status);
                 if (status.getError() == null) {
-                    Log.d(TAG, "Getting new contacts");
+                    //Log.d(TAG, "Getting new contacts");
                     DataService.getContacts(context);
                 }
             }
@@ -330,7 +331,7 @@ public class ServerApi {
      */
     public static void unignoreUser(final Context context, String email) {
 
-        Log.d(TAG, "unignoreUser");
+        //Log.d(TAG, "unignoreUser");
         AQuery aq = new AQuery(context);
 
         String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
@@ -339,18 +340,18 @@ public class ServerApi {
         String targetId = Utils.getIdFromEmail(context, email);
 
         if (targetId == null) {
-            Log.e(TAG, "Attempted to unignore invalid email");
+            //Log.e(TAG, "Attempted to unignore invalid email");
             return;
         }
         url += targetId;
-        Log.d(TAG, "Email to be unignored: " + email + ", userIdToUnIgnore: " + targetId);
+        //Log.d(TAG, "Email to be unignored: " + email + ", userIdToDisallow: " + targetId);
 
         AjaxCallback<String> cb = new AjaxCallback<String>() {
             @Override
             public void callback(String url, String result, AjaxStatus status) {
                 logStatus("ignoreUser", status);
                 if (status.getError() == null) {
-                    Log.d(TAG, "Getting new contacts");
+                    //Log.d(TAG, "Getting new contacts");
                     DataService.getContacts(context);
                 }
             }
@@ -367,7 +368,7 @@ public class ServerApi {
      * @param newName   The new namce for the contact
      */
     public static void renameContact(final Context context, String email, String newName){
-        Log.d(TAG, "Rename contact");
+        //Log.d(TAG, "Rename contact");
         AQuery aq = new AQuery(context);
 
         String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
@@ -375,7 +376,7 @@ public class ServerApi {
         String url = ApiUrl + "user/" + userId + "/rename/";
         String targetId = Utils.getIdFromEmail(context, email);
         if (targetId == null) {
-            Log.e(TAG, "Attempted to rename invalid contact");
+            //Log.e(TAG, "Attempted to rename invalid contact");
             return;
         }
         url += targetId;
@@ -385,7 +386,7 @@ public class ServerApi {
             JSONdata.put("name", newName);
         }
         catch (JSONException e){
-            Log.e(TAG, "Error creating ignore request: " + e);
+            //Log.e(TAG, "Error creating ignore request: " + e);
             return;
         }
 
@@ -394,7 +395,7 @@ public class ServerApi {
             public void callback(String url, String result, AjaxStatus status) {
                 logStatus("renameContact callback", status);
                 if (status.getError() == null) {
-                    Log.d(TAG, "Getting new contacts");
+                    //Log.d(TAG, "Getting new contacts");
                     DataService.getContacts(context);
                 }
             }
@@ -409,7 +410,7 @@ public class ServerApi {
      * @param email     The email address of the contact to be removed
      */
     public static void removeContact(final Context context, String email) {
-        Log.d(TAG, "Remove contact");
+        //Log.d(TAG, "Remove contact");
         AQuery aq = new AQuery(context);
 
         String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
@@ -418,18 +419,18 @@ public class ServerApi {
         String targetId = Utils.getIdFromEmail(context, email);
 
         if (targetId == null) {
-            Log.e(TAG, "Attempted to delete invalid email");
+            //Log.e(TAG, "Attempted to delete invalid email");
             return;
         }
         url += targetId;
-        Log.d(TAG, "Email to be removed: " + email + ", userIdToRemove: " + targetId);
+        //Log.d(TAG, "Email to be removed: " + email + ", userIdToRemove: " + targetId);
 
         AjaxCallback<String> cb = new AjaxCallback<String>() {
             @Override
             public void callback(String url, String result, AjaxStatus status) {
                 logStatus("removeContact", status);
                 if (status.getError() == null) {
-                    Log.d(TAG, "Getting new contacts");
+                    //Log.d(TAG, "Getting new contacts");
                     DataService.getContacts(context);
                 }
             }
@@ -441,7 +442,7 @@ public class ServerApi {
 
     public static void sendLocation(Context context, Location location) throws JSONException {
 
-        Log.d(TAG, "sendLocation");
+        //Log.e(TAG, "sendLocation");
         AQuery aq = new AQuery(context);
 
         String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
@@ -469,7 +470,7 @@ public class ServerApi {
 
     public static void sendGCMToken(Context context, String GCMToken) throws JSONException {
 
-        Log.d(TAG, "sendGCMToken");
+        //Log.e(TAG, "sendGCMToken");
         AQuery aq = new AQuery(context);
 
         String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
@@ -492,7 +493,7 @@ public class ServerApi {
 
     public static void requestUpdates(Context context) throws JSONException {
 
-        Log.d(TAG, "requestUpdates");
+        //Log.e(TAG, "requestUpdates");
         AQuery aq = new AQuery(context);
 
         String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
@@ -515,7 +516,7 @@ public class ServerApi {
 
     public static void setVisibility(Context context, Boolean visible) throws JSONException {
 
-        Log.d(TAG, "setVisibility");
+        //Log.e(TAG, "setVisibility");
         AQuery aq = new AQuery(context);
 
         String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
@@ -545,7 +546,7 @@ public class ServerApi {
 
     public static void addPlace(final Context context, String name, LatLng latLng, int radius) throws JSONException {
 
-        Log.d(TAG, "addPlace");
+        //Log.e(TAG, "addPlace");
         AQuery aq = new AQuery(context);
 
         String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
@@ -572,7 +573,7 @@ public class ServerApi {
                     return;
                 }
 
-                Log.d(TAG, "No error, place created.");
+                //Log.e(TAG, "No error, place created.");
                 Toast.makeText(context, context.getString(R.string.place_created), Toast.LENGTH_SHORT).show();
                 DataService.getPlaces(context);
             }
@@ -584,7 +585,7 @@ public class ServerApi {
 
     public static void removePlace(final Context context, final String placeId) {
 
-        Log.d(TAG, "removePlace");
+        //Log.e(TAG, "removePlace");
         AQuery aq = new AQuery(context);
 
         String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
@@ -596,7 +597,7 @@ public class ServerApi {
             public void callback(String url, String result, AjaxStatus status) {
                 logStatus("removePlace", status);
                 if (status.getError() == null) {
-                    Log.d(TAG, "No error, continuing deletion.");
+                    //Log.e(TAG, "No error, continuing deletion.");
                     MainApplication.places.remove(placeId);
                     Toast.makeText(context, context.getString(R.string.place_removed), Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent("PLACES-UPDATE");
@@ -611,7 +612,7 @@ public class ServerApi {
 
     public static void renamePlace(final Context context, final String placeId,
                                    final String newName) throws JSONException {
-        Log.d(TAG, "renamePlace");
+        //Log.e(TAG, "renamePlace");
         AQuery aq = new AQuery(context);
 
         String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);

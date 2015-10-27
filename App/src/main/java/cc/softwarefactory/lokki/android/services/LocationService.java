@@ -19,7 +19,7 @@ import android.os.SystemClock;
 import android.os.Vibrator;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
+//import android.util.Log;
 
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
@@ -99,10 +99,10 @@ public class LocationService extends Service implements LocationListener, Google
 
     public static void start(Context context) {
 
-        Log.d(TAG, "start Service called");
+        //Log.e(TAG, "start Service called");
 
         if (serviceRunning) { // If service is running, no need to start it again.
-            Log.w(TAG, "Service already running...");
+            //Log.w(TAG, "Service already running...");
             return;
         }
         context.startService(new Intent(context, LocationService.class));
@@ -111,7 +111,7 @@ public class LocationService extends Service implements LocationListener, Google
 
     public static void stop(Context context) {
 
-        Log.d(TAG, "stop Service called");
+        //Log.e(TAG, "stop Service called");
         context.stopService(new Intent(context, LocationService.class));
     }
 
@@ -121,7 +121,7 @@ public class LocationService extends Service implements LocationListener, Google
         if (serviceRunning || !MainApplication.visible) {
             return; // If service is running or user is not visible, stop
         }
-        Log.d(TAG, "run1min called");
+        //Log.e(TAG, "run1min called");
         Intent intent = new Intent(context, LocationService.class);
         intent.putExtra(RUN_1_MIN, 1);
         context.startService(intent);
@@ -130,15 +130,15 @@ public class LocationService extends Service implements LocationListener, Google
     @Override
     public void onCreate() {
 
-        Log.d(TAG, "onCreate");
+        //Log.e(TAG, "onCreate");
         super.onCreate();
 
 
         if (PreferenceUtils.getString(this, PreferenceUtils.KEY_AUTH_TOKEN).isEmpty()) {
-            Log.d(TAG, "User disabled reporting in App. Service not started.");
+            //Log.e(TAG, "User disabled reporting in App. Service not started.");
             stopSelf();
         } else if (Utils.checkGooglePlayServices(this)) {
-            Log.d(TAG, "Starting Service..");
+            //Log.e(TAG, "Starting Service..");
             setLocationClient();
             setNotificationAndForeground();
             PowerManager mgr = (PowerManager)getApplicationContext().getSystemService(Context.POWER_SERVICE);
@@ -146,7 +146,7 @@ public class LocationService extends Service implements LocationListener, Google
             wakeLock.acquire();
             serviceRunning = true;
         } else {
-            Log.e(TAG, "Google Play Services Are NOT installed.");
+            //Log.e(TAG, "Google Play Services Are NOT installed.");
             stopSelf();
         }
     }
@@ -157,7 +157,7 @@ public class LocationService extends Service implements LocationListener, Google
         alarmIntent.putExtra(ALARM_TIMER, 1);
         PendingIntent alarmCallback = PendingIntent.getService(this, 0, alarmIntent, 0);
         alarm.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + INTERVAL_1_MIN, alarmCallback);
-        Log.d(TAG, "Time created.");
+        //Log.e(TAG, "Time created.");
     }
 
     private void setLocationClient() {
@@ -182,7 +182,7 @@ public class LocationService extends Service implements LocationListener, Google
                 .addOnConnectionFailedListener(this)
                 .build();
         mGoogleApiClient.connect();
-        Log.d(TAG, "Location Client created.");
+        //Log.e(TAG, "Location Client created.");
     }
 
     private void setNotificationAndForeground() {
@@ -203,29 +203,29 @@ public class LocationService extends Service implements LocationListener, Google
     public void setLocationCheckAccuracy(LocationAccuracy acc){
         currentAccuracy = acc;
         if (mGoogleApiClient == null || !mGoogleApiClient.isConnected()){
-            Log.i(TAG, "Google API client not yet initialized, so not requesting updates yet");
+            //Log.i(TAG, "Google API client not yet initialized, so not requesting updates yet");
             return;
         }
 
         LocationRequest req;
         switch (acc){
             case ACCURATE:{
-                Log.d(TAG, "Setting location request accuracy to accurate");
+                //Log.d(TAG, "Setting location request accuracy to accurate");
                 req = locationRequestAccurate;
                 break;
             }
             case BGACCURATE:{
-                Log.d(TAG, "Setting location request accuracy to background accurate");
+                //Log.d(TAG, "Setting location request accuracy to background accurate");
                 req = locationRequestBGAccurate;
                 break;
             }
             case BGINACCURATE:{
-                Log.d(TAG, "Setting location request accuracy to background inaccurate");
+                //Log.d(TAG, "Setting location request accuracy to background inaccurate");
                 req = locationRequestBGInaccurate;
                 break;
             }
             default:{
-                Log.wtf(TAG, "Unknown location accuracy level");
+                //Log.wtf(TAG, "Unknown location accuracy level");
                 throw new IllegalArgumentException("Unknown location accuracy level");
             }
 
@@ -238,7 +238,7 @@ public class LocationService extends Service implements LocationListener, Google
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        Log.d(TAG, "onStartCommand invoked");
+        //Log.e(TAG, "onStartCommand invoked");
 
         if (intent == null) {
             return START_STICKY;
@@ -251,10 +251,10 @@ public class LocationService extends Service implements LocationListener, Google
         }
 
         if (extras.containsKey(RUN_1_MIN)) {
-            Log.d(TAG, "onStartCommand RUN_1_MIN");
+            //Log.e(TAG, "onStartCommand RUN_1_MIN");
             setTemporalTimer();
         } else if (extras.containsKey(ALARM_TIMER)) {
-            Log.d(TAG, "onStartCommand ALARM_TIMER");
+            //Log.e(TAG, "onStartCommand ALARM_TIMER");
             stopSelf();
         }
         return START_STICKY;
@@ -262,14 +262,14 @@ public class LocationService extends Service implements LocationListener, Google
 
     @Override
     public void onConnected(Bundle bundle) {
-        Log.d(TAG, "locationClient connected");
+        //Log.d(TAG, "locationClient connected");
         //Set location update accuracy to whichever value was set last
         setLocationCheckAccuracy(currentAccuracy);
         Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLastLocation != null) {
             updateLokkiLocation(mLastLocation);
         } else {
-            Log.e(TAG, "Location is null?! Check location service?!");    // todo add prompt for checking that location services are enabled maybe?
+            //Log.e(TAG, "Location is null?! Check location service?!");    // todo add prompt for checking that location services are enabled maybe?
         }
     }
 
@@ -280,7 +280,7 @@ public class LocationService extends Service implements LocationListener, Google
 
     @Override
     public void onLocationChanged(Location location) {
-        Log.d(TAG, String.format("onLocationChanged - Location: %s", location));
+        //Log.e(TAG, String.format("onLocationChanged - Location: %s", location));
         if (serviceRunning && mGoogleApiClient.isConnected() && location != null) {
             updateLokkiLocation(location);
             checkBuzzplaces();
@@ -293,11 +293,11 @@ public class LocationService extends Service implements LocationListener, Google
     private void updateLokkiLocation(Location location) {
 
         if (!MapUtils.useNewLocation(location, lastLocation, INTERVAL_30_SECS)) {
-            Log.d(TAG, "New location discarded.");
+            //Log.e(TAG, "New location discarded.");
             return;
         }
 
-        Log.d(TAG, "New location taken into use.");
+        //Log.e(TAG, "New location taken into use.");
         lastLocation = location;
         DataService.updateDashboard(location);
         Intent intent = new Intent("LOCATION-UPDATE");
@@ -343,7 +343,7 @@ public class LocationService extends Service implements LocationListener, Google
                     if(placeBuzz == null || placeBuzz.getInt("buzzcount") <= 0) {
                         break;
                     }
-                    Log.d(TAG, "Vibrating...");
+                    //Log.d(TAG, "Vibrating...");
                     Vibrator v = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
                     v.vibrate(1000);
                     Thread.sleep(2500);
@@ -366,7 +366,7 @@ public class LocationService extends Service implements LocationListener, Google
                 startActivity(i);
                 showArrivalNotification();
 
-                Log.d(TAG, "Starting vibration...");
+                //Log.d(TAG, "Starting vibration...");
                 new Thread(new VibrationThread(placeBuzz.getString("placeid"))).start();
             }
         }
@@ -398,7 +398,7 @@ public class LocationService extends Service implements LocationListener, Google
                 }
                 catch (JSONException e)
                 {
-                    Log.e(TAG,"Error in checking buzz places"+e);
+                    //Log.e(TAG,"Error in checking buzz places"+e);
                 }
 
             }
@@ -409,12 +409,12 @@ public class LocationService extends Service implements LocationListener, Google
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.e(TAG, "locationClient onConnectionFailed");
+        //Log.e(TAG, "locationClient onConnectionFailed");
     }
 
     @Override
     public void onDestroy() {
-        Log.d(TAG, "onDestroy called");
+        //Log.d(TAG, "onDestroy called");
         if(wakeLock != null && wakeLock.isHeld()) {
             wakeLock.release();
         }
@@ -422,11 +422,11 @@ public class LocationService extends Service implements LocationListener, Google
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
             mGoogleApiClient.disconnect();
-            Log.d(TAG, "Location Updates removed.");
+            //Log.e(TAG, "Location Updates removed.");
 
 
         } else {
-            Log.e(TAG, "locationClient didn't exist.");
+            //Log.e(TAG, "locationClient didn't exist.");
         }
         serviceRunning = false;
         super.onDestroy();

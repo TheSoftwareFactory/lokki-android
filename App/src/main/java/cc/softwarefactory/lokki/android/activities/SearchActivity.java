@@ -8,7 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
+//import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -88,20 +88,20 @@ public class SearchActivity extends ListActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        Log.d(TAG, "searchActivityOnCreate");
+        //Log.d(TAG, "searchActivityOnCreate");
         setContentView(R.layout.activity_search);
         context= getApplicationContext();
         Intent intent = getIntent();
         //Get the user's query from the intent
         String queryMessage = intent.getStringExtra(QUERY_MESSAGE);
-        Log.d(TAG, "User searched for: " + queryMessage);
+        //Log.d(TAG, "User searched for: " + queryMessage);
 
         resultList = new ArrayList<>();
         setHeader(queryMessage);
 
         setListAdapter(this);
         new PerformSearch().execute(queryMessage);
-        Log.d(TAG, "end of onCreate");
+        //Log.d(TAG, "end of onCreate");
     }
 
     //------------------Background tasks------------------
@@ -117,7 +117,7 @@ public class SearchActivity extends ListActivity {
         @Override
         protected String doInBackground(String... query) {
             if (query.length < 1){
-                Log.w(TAG, "No search parameters");
+                //Log.w(TAG, "No search parameters");
                 return null;
             }
             tempResults = new ArrayList<>();
@@ -139,7 +139,7 @@ public class SearchActivity extends ListActivity {
             setHeader(query);
             //Start Google Maps search (separate task so that we can show local results before online search finishes)
             new AddressSearch().execute(query);
-            Log.d(TAG, "end of performSearch");
+            //Log.d(TAG, "end of performSearch");
         }
     }
 
@@ -150,7 +150,7 @@ public class SearchActivity extends ListActivity {
         @Override
         protected String doInBackground(String... query) {
             if (query.length < 1){
-                Log.w(TAG, "No search parameters");
+                //Log.w(TAG, "No search parameters");
                 return null;
             }
             String queryMessage = query[0];
@@ -161,7 +161,7 @@ public class SearchActivity extends ListActivity {
 
         @Override
         protected void onPostExecute(String query) {
-            Log.d(TAG, "end of addressSearch");
+            //Log.d(TAG, "end of addressSearch");
         }
     }
 
@@ -203,7 +203,7 @@ public class SearchActivity extends ListActivity {
             }
 
         } catch (JSONException e) {
-            Log.e(TAG, "Error parsing contacts: " + e);
+            //Log.e(TAG, "Error parsing contacts: " + e);
         }
     }
 
@@ -218,13 +218,13 @@ public class SearchActivity extends ListActivity {
         }
         // Loop through all user places
         Iterator<String> it = MainApplication.places.keys();
-        Log.d(TAG, MainApplication.places.toString());
+        //Log.d(TAG, MainApplication.places.toString());
         while (it.hasNext()){
             String id = it.next();
             try {
                 JSONObject location = MainApplication.places.getJSONObject(id);
                 String name = location.getString("name");
-                Log.d(TAG, "place: " + name);
+                //Log.d(TAG, "place: " + name);
                 if (name.toLowerCase().contains(query)){
                     //Store place coordinates in the result's extra data for easy access
                     String coords = location.getDouble("lat") + "," + location.getDouble("lon");
@@ -232,7 +232,7 @@ public class SearchActivity extends ListActivity {
                 }
 
             } catch (JSONException e) {
-                Log.e(TAG, "Error parsing places: " + e);
+                //Log.e(TAG, "Error parsing places: " + e);
             }
         }
     }
@@ -249,7 +249,7 @@ public class SearchActivity extends ListActivity {
             @Override
             public void callback(String url, JSONObject json, AjaxStatus status) {
                 if (status.getError() != null){
-                    Log.e(TAG, "Error accessing Google Maps API: " + status.getError());
+                    //Log.e(TAG, "Error accessing Google Maps API: " + status.getError());
                     return;
                 }
                 //TODO: Move result parsing to an async task
@@ -263,9 +263,9 @@ public class SearchActivity extends ListActivity {
                         }
 
                 } catch (JSONException e){
-                    Log.e(TAG, "Error parsing Google Maps JSON: " + e);
+                    //Log.e(TAG, "Error parsing Google Maps JSON: " + e);
                 }
-                Log.d(TAG, "Geocoding result: " + json.toString());
+                //Log.d(TAG, "Geocoding result: " + json.toString());
 
                 //Show the results
                 adapter.notifyDataSetChanged();
@@ -284,7 +284,7 @@ public class SearchActivity extends ListActivity {
      */
     private void setListAdapter(final Activity listActivity)
     {
-        Log.d(TAG, "setListAdapter");
+        //Log.d(TAG, "setListAdapter");
         adapter = new ArrayAdapter<SearchResult>(context,R.layout.listresult_layout, resultList){
 
         public View getView(int position, View unusedView, ViewGroup parent)
@@ -298,22 +298,22 @@ public class SearchActivity extends ListActivity {
             aq.id(R.id.list_result).text(buttonLabel).clicked(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Log.d(TAG, "user clicked search result");
+                    //Log.d(TAG, "user clicked search result");
                     switch (clickedResult.type) {
                         case CONTACT: {
-                            Log.d(TAG, "result type: contact");
+                            //Log.d(TAG, "result type: contact");
                             //Set app to track contact's email
                             MainApplication.emailBeingTracked = clickedResult.extraData;
                             finish();
                             break;
                         }
                         case PLACE:
-                            Log.d(TAG, "result type: place");
+                            //Log.d(TAG, "result type: place");
                             //Maps locations and places have the same behavior, so fall through
                         case GOOGLE_LOCATION: {
                             //Recheck the result type in case we fell through from PLACE
-                            if (clickedResult.type == ResultType.GOOGLE_LOCATION)
-                                Log.d(TAG, "result type: Google Maps location");
+                            //if (clickedResult.type == ResultType.GOOGLE_LOCATION)
+                                //Log.d(TAG, "result type: Google Maps location");
                             //Broadcast back place coordinates
                             Intent intent = new Intent(MapViewFragment.BROADCAST_GO_TO);
                             intent.putExtra(MapViewFragment.GO_TO_COORDS, clickedResult.extraData);
@@ -323,7 +323,7 @@ public class SearchActivity extends ListActivity {
                             break;
                         }
                         default: {
-                            Log.d(TAG, "invalid search type");
+                            //Log.d(TAG, "invalid search type");
                             //Close the search
                             finish();
                         }
@@ -397,7 +397,7 @@ public class SearchActivity extends ListActivity {
      * @return      The icon scaled down to fit the button
      */
     private Drawable scaleIconToButton(Button btn, int icon){
-        Log.d(TAG, "Setting button icon");
+        //Log.d(TAG, "Setting button icon");
         Drawable drawable;
         //getResources().getDrawable is deprecated, but context.getDrawable doesn't work below API level 21
         if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){
@@ -406,18 +406,18 @@ public class SearchActivity extends ListActivity {
             drawable = getResources().getDrawable(icon);
         }
         if (drawable == null){
-            Log.e(TAG, "Could not find drawable resource " + icon);
+            //Log.e(TAG, "Could not find drawable resource " + icon);
             return null;
         }
         //Scale the drawable if it's too big
         //"Too big" = forces app to resize button
         if (drawable.getIntrinsicHeight() > btn.getHeight() / 2){
-            Log.d(TAG, "Intrinsic size: " + drawable.getIntrinsicWidth() + "x" + drawable.getIntrinsicHeight());
+            //Log.d(TAG, "Intrinsic size: " + drawable.getIntrinsicWidth() + "x" + drawable.getIntrinsicHeight());
             int newHeight = btn.getHeight() / 2;
             int newWidth = (int)(drawable.getIntrinsicWidth() * ((float)newHeight / (float)drawable.getIntrinsicHeight()));
 
             drawable.setBounds(0, 0, newWidth, newHeight);
-            Log.d(TAG, "new drawable size: " + newWidth + "x" + newHeight);
+            //Log.d(TAG, "new drawable size: " + newWidth + "x" + newHeight);
         } else {
             //Call setBounds so that setCompoundDrawables can be called safely
             drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());

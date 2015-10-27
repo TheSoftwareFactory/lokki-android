@@ -9,7 +9,7 @@ import android.graphics.Bitmap;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.support.v4.util.LruCache;
-import android.util.Log;
+//import android.util.Log;
 
 import com.google.android.gms.maps.GoogleMap;
 
@@ -25,7 +25,7 @@ public class MainApplication extends Application {
     /**
      * Indicates whether this is a development or production build
      */
-    private static final boolean DEVELOPER_MODE = true;
+    private static final boolean DEVELOPER_MODE = false;
 
     /**
      * Debug tag identifying that a log message was caused by the main application
@@ -143,7 +143,7 @@ public class MainApplication extends Application {
     @Override
     public void onCreate() {
 
-        Log.d(TAG, "Lokki started component");
+        //Log.e(TAG, "Lokki started component");
 
         //Load user settings
         loadSetting();
@@ -168,12 +168,12 @@ public class MainApplication extends Application {
                 MainApplication.iDontWantToSee = new JSONObject(iDontWantToSeeString);
             } catch (JSONException e) {
                 MainApplication.iDontWantToSee = null;
-                Log.e(TAG, e.getMessage());
+                //Log.e(TAG, e.getMessage());
             }
         } else {
             MainApplication.iDontWantToSee = new JSONObject();
         }
-        Log.d(TAG, "MainApplication.iDontWantToSee: " + MainApplication.iDontWantToSee);
+        //Log.e(TAG, "MainApplication.iDontWantToSee: " + MainApplication.iDontWantToSee);
 
         if (DEVELOPER_MODE) {
 
@@ -197,7 +197,7 @@ public class MainApplication extends Application {
     private void loadSetting() {
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         visible = PreferenceUtils.getBoolean(getApplicationContext(), PreferenceUtils.KEY_SETTING_VISIBILITY);
-        Log.d(TAG, "Visible: " + visible);
+        //Log.d(TAG, "Visible: " + visible);
 
         // get mapValue from preferences
         try {
@@ -205,7 +205,7 @@ public class MainApplication extends Application {
         }
         catch (NumberFormatException e){
             mapType = mapTypes[0];
-            Log.w(TAG, "Could not parse map type; using default value: " + e);
+            //Log.w(TAG, "Could not parse map type; using default value: " + e);
         }
     }
 }

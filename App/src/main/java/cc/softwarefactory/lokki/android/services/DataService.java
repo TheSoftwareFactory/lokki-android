@@ -12,7 +12,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
+//import android.util.Log;
 
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
@@ -38,9 +38,9 @@ public class DataService extends Service {
 
     public static void start(Context context) {
 
-        Log.d(TAG, "start Service called");
+        //Log.e(TAG, "start Service called");
         if (serviceRunning) { // If service is running, no need to start it again.
-            Log.w(TAG, "Service already running...");
+            //Log.e(TAG, "Service already running...");
             return;
         }
         context.startService(new Intent(context, DataService.class));
@@ -48,13 +48,13 @@ public class DataService extends Service {
 
     public static void stop(Context context) {
 
-        Log.d(TAG, "stop Service called");
+        //Log.e(TAG, "stop Service called");
         context.stopService(new Intent(context, DataService.class));
     }
 
     public static void getPlaces(Context context) {
 
-        Log.d(TAG, "getPlaces");
+        //Log.e(TAG, "getPlaces");
         Intent placesIntent = new Intent(context, DataService.class);
         placesIntent.putExtra(GET_PLACES, 1);
         context.startService(placesIntent);
@@ -66,7 +66,7 @@ public class DataService extends Service {
      */
     public static void getContacts(Context context) {
 
-        Log.d(TAG, "getContacts");
+        //Log.d(TAG, "getContacts");
         Intent contactIntent = new Intent(context, DataService.class);
         contactIntent.putExtra(GET_CONTACTS, 1);
         context.startService(contactIntent);
@@ -74,7 +74,7 @@ public class DataService extends Service {
 
     public static void getDashboard(Context context) {
 
-        Log.d(TAG, "getDashboard");
+        //Log.e(TAG, "getDashboard");
         Intent placesIntent = new Intent(context, DataService.class);
         placesIntent.putExtra(ALARM_TIMER, 1);
         context.startService(placesIntent);
@@ -82,7 +82,7 @@ public class DataService extends Service {
 
     public static void updateDashboard(Location location) {
 
-        Log.d(TAG, "updateDashboard");
+        //Log.e(TAG, "updateDashboard");
         if (MainApplication.dashboard == null) {
             return;
         }
@@ -94,7 +94,7 @@ public class DataService extends Service {
             dashboardLocation.put("acc", location.getAccuracy());
             dashboardLocation.put("time", location.getTime());
             MainApplication.dashboard.put("location", dashboardLocation);
-            Log.d(TAG, "new Dashboard: " + MainApplication.dashboard);
+            //Log.e(TAG, "new Dashboard: " + MainApplication.dashboard);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -108,7 +108,7 @@ public class DataService extends Service {
     @Override
     public void onCreate() {
 
-        Log.d(TAG, "onCreate");
+        //Log.e(TAG, "onCreate");
         super.onCreate();
         setTimer();
         serviceRunning = true;
@@ -128,13 +128,13 @@ public class DataService extends Service {
         alarmIntent.putExtra(ALARM_TIMER, 1);
         alarmCallback = PendingIntent.getService(this, 0, alarmIntent, 0);
         alarm.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 0, 30 * 1000, alarmCallback);
-        Log.d(TAG, "Timer created.");
+        //Log.e(TAG, "Timer created.");
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        Log.d(TAG, "onStartCommand invoked");
+        //Log.e(TAG, "onStartCommand invoked");
 
         if (intent == null) {
             return START_STICKY;
@@ -158,25 +158,25 @@ public class DataService extends Service {
 
     private void getPlaces() {
 
-        Log.d(TAG, "getPlaces");
+        //Log.e(TAG, "getPlaces");
         ServerApi.getPlaces(this);
     }
 
     private void getContacts() {
-        Log.d(TAG, "getContacts");
+        //Log.d(TAG, "getContacts");
         ServerApi.getContacts(this);
     }
 
     private void fetchDashboard() {
 
-        Log.d(TAG, "alarmCallback");
+        //Log.e(TAG, "alarmCallback");
         ServerApi.getDashboard(this);
     }
 
     @Override
     public void onDestroy() {
 
-        Log.d(TAG, "onDestroy");
+        //Log.e(TAG, "onDestroy");
         alarm.cancel(alarmCallback);
         serviceRunning = false;
         super.onDestroy();

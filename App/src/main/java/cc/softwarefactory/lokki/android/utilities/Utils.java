@@ -22,7 +22,7 @@ import android.net.Uri;
 
 import android.os.Build;
 import android.provider.ContactsContract;
-import android.util.Log;
+//import android.util.Log;
 import android.widget.Toast;
 
 import cc.softwarefactory.lokki.android.MainApplication;
@@ -97,13 +97,13 @@ public class Utils {
                 String key = (String) keys.next();
                 String emailInObject = (String) idMapping.get(key);
                 if (email.equals(emailInObject)) {
-                    Log.d(TAG, "email: " + email + ", Id from mapping: " + key);
+                    //Log.e(TAG, "email: " + email + ", Id from mapping: " + key);
                     return key;
                 }
             }
 
         } catch (JSONException e) {
-            Log.e(TAG, "getIdFromEmail - failed: " + email);
+            //Log.e(TAG, "getIdFromEmail - failed: " + email);
         }
         return null;
     }
@@ -116,23 +116,23 @@ public class Utils {
 
         if (loadContacts(context)) {
             try {
-                Log.d(TAG, MainApplication.contacts.toString());
+                //Log.d(TAG, MainApplication.contacts.toString());
                 String name = MainApplication.contacts.getJSONObject(email).getString("name");
-                Log.d(TAG, "getNameFromEmail - Email: " + email + ", Name: " + name);
+                //Log.e(TAG, "getNameFromEmail - Email: " + email + ", Name: " + name);
                 return name;
             } catch (JSONException e) {
-                Log.e(TAG, "getNameFromEmail - failed: " + email);
+                //Log.e(TAG, "getNameFromEmail - failed: " + email);
             }
         }
 
-        Log.d(TAG, "getNameFromEmail - Name queried: " + email);
+        //Log.e(TAG, "getNameFromEmail - Name queried: " + email);
         Cursor emailCursor = context.getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null, "lower(" + ContactsContract.CommonDataKinds.Email.DATA + ")=lower('" + email + "')", null, null);
         if (emailCursor == null) {
             return "???";
         }
         if (emailCursor.moveToNext()) {
             String name = emailCursor.getString(emailCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DISPLAY_NAME_PRIMARY));
-            Log.d(TAG, "getNameFromEmail - Email: " + email + ", Name: " + name);
+            //Log.e(TAG, "getNameFromEmail - Email: " + email + ", Name: " + name);
             emailCursor.close();
             return name;
         }
@@ -148,19 +148,19 @@ public class Utils {
 
         Bitmap result = MainApplication.avatarCache.get(email);
         if (result != null) {
-            Log.d(TAG, "getPhotoFromEmail IN cache, Email: " + email);
+            //Log.e(TAG, "getPhotoFromEmail IN cache, Email: " + email);
             return result;
         }
 
         if (loadContacts(context)) {
             try {
-                Log.d(TAG, "getPhotoFromEmail - Email: " + email + ", id: " + MainApplication.contacts.getJSONObject(email).getLong("id"));
+                //Log.e(TAG, "getPhotoFromEmail - Email: " + email + ", id: " + MainApplication.contacts.getJSONObject(email).getLong("id"));
                 result = openPhoto(context, MainApplication.contacts.getJSONObject(email).getLong("id"));
             } catch (JSONException e) {
-                Log.e(TAG, "getPhotoFromEmail - failed: " + email);
+                //Log.e(TAG, "getPhotoFromEmail - failed: " + email);
             }
         } else {
-            Log.d(TAG, "getPhotoFromEmail - id queried: " + email);
+            //Log.e(TAG, "getPhotoFromEmail - id queried: " + email);
             Cursor emailCursor = context.getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null, "lower(" + ContactsContract.CommonDataKinds.Email.DATA + ")=lower('" + email + "')", null, null);
             while (emailCursor != null && emailCursor.moveToNext()) {
                 Long contactId = Long.valueOf(emailCursor.getString(emailCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.CONTACT_ID)));
@@ -182,7 +182,7 @@ public class Utils {
 
     public static Bitmap getRoundedCornerBitmap(Bitmap bitmap, float pixels) {
         if (bitmap == null) {
-            Log.w(TAG, "getRoundedCornerBitmap - null bitmap");
+            //Log.e(TAG, "getRoundedCornerBitmap - null bitmap");
             return null;
         }
 
@@ -204,7 +204,7 @@ public class Utils {
 
     private static Bitmap openPhoto(Context context, long contactId) {
 
-        Log.d(TAG, "openPhoto");
+        //Log.e(TAG, "openPhoto");
         if (context == null) {
             return null;
         }
@@ -238,14 +238,14 @@ public class Utils {
         int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(context);
 
         if (resultCode == ConnectionResult.SUCCESS) {
-            Log.d(TAG, "Google Play Services is OK.");
+            //Log.e(TAG, "Google Play Services is OK.");
             return true;
         }
         if (GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
             Toast.makeText(context, GooglePlayServicesUtil.getErrorString(resultCode), Toast.LENGTH_LONG).show();
-            Log.e(TAG, "Google Play Services Error: " + GooglePlayServicesUtil.getErrorString(resultCode));
+            //Log.e(TAG, "Google Play Services Error: " + GooglePlayServicesUtil.getErrorString(resultCode));
         } else {
-            Log.e(TAG, "This device is not supported.");
+            //Log.e(TAG, "This device is not supported.");
         }
         return false;
     }
@@ -255,10 +255,10 @@ public class Utils {
         PackageManager packageManager = context.getPackageManager();
         try {
             PackageInfo packageInfo = packageManager.getPackageInfo(context.getPackageName(), 0);
-            Log.d(TAG, "getAppVersion: " + packageInfo.versionName);
+            //Log.e(TAG, "getAppVersion: " + packageInfo.versionName);
             return packageInfo.versionName;
         } catch (PackageManager.NameNotFoundException e) {
-            Log.e(TAG, e.getMessage());
+            //Log.e(TAG, e.getMessage());
             return "";
         }
     }
@@ -286,7 +286,7 @@ public class Utils {
 
     private static Bitmap getDefaultAvatarInitials(Context context, String text) {
 
-        Log.d(TAG, "getDefaultAvatarInitials");
+        //Log.e(TAG, "getDefaultAvatarInitials");
 
         String initials = getInitials(text);
 
@@ -332,7 +332,7 @@ public class Utils {
                 LocationService.start(context);
             }
         } catch (JSONException ex) {
-            Log.e(TAG, "Could not set visibility:" + ex.getMessage());
+            //Log.e(TAG, "Could not set visibility:" + ex.getMessage());
         }
     }
     public static JSONArray removeFromJSONArray(JSONArray input,int index)
@@ -347,7 +347,7 @@ public class Utils {
 
                 } catch (JSONException e) {
 
-                Log.e(TAG,"Error in moving items into new JSON Array" +e);
+                //Log.e(TAG,"Error in moving items into new JSON Array" +e);
                 }
             }
         }

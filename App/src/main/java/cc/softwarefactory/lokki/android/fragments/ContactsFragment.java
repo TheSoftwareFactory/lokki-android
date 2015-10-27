@@ -14,7 +14,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
+//import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -93,7 +93,7 @@ public class ContactsFragment extends Fragment {
     @Override
     public void onResume() {
 
-        Log.d(TAG, "onResume");
+        //Log.d(TAG, "onResume");
         super.onResume();
         //Register a receiver to update the contents of the contact list whenever we load contacts from server
         LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver, new IntentFilter("CONTACTS-UPDATE"));
@@ -113,7 +113,7 @@ public class ContactsFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             //Update contact list
-            Log.d(TAG, "BroadcastReceiver onReceive");
+            //Log.d(TAG, "BroadcastReceiver onReceive");
             refresh();
         }
     };
@@ -124,7 +124,7 @@ public class ContactsFragment extends Fragment {
         // Create the contact context menu (remove contact)
         MenuInflater inflater = getActivity().getMenuInflater();
         inflater.inflate(R.menu.contacts_context, menu);
-        Log.d(TAG, "opened contact context menu");
+        //Log.d(TAG, "opened contact context menu");
     }
 
     @Override
@@ -192,7 +192,7 @@ public class ContactsFragment extends Fragment {
             try {
                 email = MainApplication.mapping.getString(name);
             } catch (JSONException e) {
-                Log.wtf(TAG, "Contact mysteriously vanished from mapping! " + e);
+                //Log.wtf(TAG, "Contact mysteriously vanished from mapping! " + e);
             }
         }
         //Delete the contact
@@ -203,7 +203,7 @@ public class ContactsFragment extends Fragment {
      * Reload contact information
      */
     public void refresh(){
-        Log.d(TAG, "Refreshing contacts screen");
+        //Log.d(TAG, "Refreshing contacts screen");
         //Empty all existing local data structures
         peopleList = new ArrayList<>();
         iCanSee = new HashSet<>();
@@ -229,7 +229,7 @@ public class ContactsFragment extends Fragment {
             JSONArray canSeeMeArray = MainApplication.dashboard.getJSONArray("canseeme");
             JSONObject idMappingObj = MainApplication.dashboard.getJSONObject("idmapping");
 
-            
+
             Iterator keys = iCanSeeObj.keys();
             while (keys.hasNext()) {
                 String key = (String) keys.next();
@@ -240,7 +240,7 @@ public class ContactsFragment extends Fragment {
                 }
                 iCanSee.add(email);
                 mapping.put(name, email);
-                Log.d(TAG, "I can see: " + email);
+                //Log.e(TAG, "I can see: " + email);
             }
 
             for (int i = 0; i < canSeeMeArray.length(); i++) {
@@ -249,7 +249,7 @@ public class ContactsFragment extends Fragment {
                 String name = Utils.getNameFromEmail(context, email);
                 canSeeMe.add(email);
                 mapping.put(name, email);
-                Log.d(TAG, "Can see me: " + email);
+                //Log.e(TAG, "Can see me: " + email);
             }
 
             // Don't actually add local contacts to mapping because it screws with deleting contacts
@@ -269,7 +269,7 @@ public class ContactsFragment extends Fragment {
 
         peopleList.addAll(mapping.keySet());
         Collections.sort(peopleList);
-        Log.d(TAG, "Contact list: " + peopleList);
+        //Log.e(TAG, "Contact list: " + peopleList);
     }
 
     private void setListAdapter() {
@@ -351,7 +351,7 @@ public class ContactsFragment extends Fragment {
                 aq.id(holder.contextButton).clicked(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Log.d(TAG, "clicked contact context button");
+                        //Log.d(TAG, "clicked contact context button");
                         v.showContextMenu();
                     }
                 });
@@ -434,12 +434,12 @@ public class ContactsFragment extends Fragment {
             PreferenceUtils.setString(context, PreferenceUtils.KEY_CONTACTS, MainApplication.contacts.toString());
 
         } catch (JSONException e) {
-            Log.e(TAG, "rename failed" + e);
+            //Log.e(TAG, "rename failed" + e);
         }
         //Set new name on the server
         ServerApi.renameContact(context, email, newName);
-        Log.d(TAG, MainApplication.contacts.toString());
-        Log.d(TAG, MainApplication.mapping.toString());
+        //Log.d(TAG, MainApplication.contacts.toString());
+        //Log.d(TAG, MainApplication.mapping.toString());
     }
 
     static class ViewHolder {

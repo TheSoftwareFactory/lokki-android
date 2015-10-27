@@ -15,7 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.Log;
+//import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -158,7 +158,7 @@ public class AddContactsFragment extends Fragment {
         @Override
         protected Boolean doInBackground(Void... params) {
 
-            Log.d(TAG, "prepareAdapterAsync");
+            //Log.e(TAG, "prepareAdapterAsync");
             getContactList();
             return true;
         }
@@ -167,7 +167,7 @@ public class AddContactsFragment extends Fragment {
         protected void onPostExecute(Boolean contactsExist) {
 
             if (isAdded()) {
-                Log.d(TAG, "prepareAdapterAsync - ContactList: " + contactList);
+                //Log.e(TAG, "prepareAdapterAsync - ContactList: " + contactList);
                 setListAdapter();
             }
             super.onPostExecute(contactsExist);
@@ -188,9 +188,8 @@ public class AddContactsFragment extends Fragment {
                 super.onPostExecute(MainApplication.contacts);
                 return;
             }
-            Log.d(TAG, "Number of contacts: " + (contactsResult.length() - 1));
-            Log.d(TAG, "Contacts: " + contactsResult);
-
+            //Log.d(TAG, "Number of contacts: " + (contactsResult.length() - 1));
+            //Log.d(TAG, "Contacts: " + contactsResult);
             try {
                 // If contacts don't exist already, use data source result
                 if (MainApplication.contacts == null){
@@ -212,7 +211,7 @@ public class AddContactsFragment extends Fragment {
                 PreferenceUtils.setString(context, PreferenceUtils.KEY_CONTACTS, MainApplication.contacts.toString());
 
             } catch (JSONException e) {
-                Log.e(TAG, "Exception while parsing contacts results: " + e.getMessage());
+                //Log.e(TAG, e.getMessage());
             }
             new prepareAdapterAsync().execute();
             super.onPostExecute(MainApplication.contacts);
@@ -241,11 +240,11 @@ public class AddContactsFragment extends Fragment {
                 }
                 contactList.add(name);
             } catch (JSONException e) {
-                Log.e(TAG, e.getMessage());
+                //Log.e(TAG, e.getMessage());
             }
         }
         Collections.sort(contactList);
-        Log.d(TAG, "Adapter ContactList: " + contactList);
+        //Log.e(TAG, "Adapter ContactList: " + contactList);
     }
 
     private boolean alreadyAdded(String email) {
@@ -358,7 +357,7 @@ public class AddContactsFragment extends Fragment {
                     });
 
                 } catch (JSONException e) {
-                    Log.e(TAG, e.getMessage());
+                    //Log.e(TAG, e.getMessage());
                 }
                 return convertView;
             }

@@ -23,7 +23,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+//import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        Log.d(TAG, "onCreate");
+        //Log.e(TAG, "onCreate");
         mContactDataSource = new DefaultContactDataSource();
 
         super.onCreate(savedInstanceState);
@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         aq.id(R.id.user_popout_menu_button).clicked(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "Clicked user menu button");
+                //Log.d(TAG, "Clicked user menu button");
                 showUserPopupMenu(v);
             }
         });
@@ -152,10 +152,10 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     protected void onStart() {
 
         super.onStart();
-        Log.d(TAG, "onStart");
+        //Log.e(TAG, "onStart");
 
         if (firstTimeLaunch()) {
-            Log.i(TAG, "onStart - firstTimeLaunch, so showing terms.");
+            //Log.i(TAG, "onStart - firstTimeLaunch, so showing terms.");
             startActivityForResult(new Intent(this, FirstTimeActivity.class), REQUEST_TERMS);
         } else {
             signUserIn();
@@ -182,9 +182,9 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         String userId = PreferenceUtils.getString(this, PreferenceUtils.KEY_USER_ID);
         String authorizationToken = PreferenceUtils.getString(this, PreferenceUtils.KEY_AUTH_TOKEN);
 
-        Log.i(TAG, "User email: " + userAccount);
-        Log.i(TAG, "User id: " + userId);
-        Log.i(TAG, "authorizationToken: " + authorizationToken);
+        //Log.i(TAG, "User email: " + userAccount);
+        //Log.i(TAG, "User id: " + userId);
+        //Log.i(TAG, "authorizationToken: " + authorizationToken);
 
         return !(userId.isEmpty() || userAccount.isEmpty() || authorizationToken.isEmpty());
     }
@@ -194,24 +194,24 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
         super.onResume();
         paused = false;
-        Log.d(TAG, "onResume");
+        //Log.d(TAG, "onResume");
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); // WAKE_LOCK
 
         if (!loggedIn()) {
-            Log.i(TAG, "onResume - user NOT logged in, so avoiding launching services.");
+            //Log.i(TAG, "onResume - user NOT logged in, so avoiding launching services.");
             return;
         }
 
 
-        Log.i(TAG, "onResume - user logged in, so launching services.");
+        //Log.i(TAG, "onResume - user logged in, so launching services.");
         startServices();
         LocalBroadcastManager.getInstance(this).registerReceiver(exitMessageReceiver, new IntentFilter("EXIT"));
         LocalBroadcastManager.getInstance(this).registerReceiver(switchToMapReceiver, new IntentFilter("GO-TO-MAP"));
 
 
-        Log.i(TAG, "onResume - check if dashboard is null");
+        //Log.e(TAG, "onResume - check if dashboard is null");
         if (MainApplication.dashboard == null) {
-            Log.w(TAG, "onResume - dashboard was null, get dashboard & contacts from server");
+            //Log.w(TAG, "onResume - dashboard was null, get dashboard & contacts from server");
             ServerApi.getDashboard(getApplicationContext());
             ServerApi.getContacts(getApplicationContext());
         }
@@ -252,7 +252,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
      */
     private void setLocationServiceAccuracyLevel(){
         if (mBoundLocationService == null){
-            Log.i(TAG, "location service not yet bound, not changing accuracy");
+            //Log.i(TAG, "location service not yet bound, not changing accuracy");
         }
         mBoundLocationService.setLocationCheckAccuracy(currentAccuracy);
     }
@@ -361,7 +361,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                 startActivityForResult(new Intent(this, SignUpActivity.class), REQUEST_CODE_EMAIL);
             } catch (ActivityNotFoundException e) {
                 Toast.makeText(this, getString(R.string.general_error), Toast.LENGTH_LONG).show();
-                Log.e(TAG, "Could not start SignUpActivity " + e);
+                //Log.e(TAG, "Could not start SignUpActivity " + e);
                 finish();
             }
         } else { // User already logged-in
@@ -424,14 +424,14 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         final Activity mainactivity = this;
-        Log.d(TAG,"onPrepareOptionsMenu");
+        //Log.d(TAG,"onPrepareOptionsMenu");
         menu.clear();
         if (mNavigationDrawerFragment != null && !mNavigationDrawerFragment.isDrawerOpen()) {
             if (selectedOption == 0) { // Map
                 getMenuInflater().inflate(R.menu.map, menu);
                 MenuItem menuItem = menu.findItem(R.id.action_visibility);
                 if (menuItem != null) {
-                    Log.d(TAG, "onPrepareOptionsMenu - Visible: " + MainApplication.visible);
+                    //Log.e(TAG, "onPrepareOptionsMenu - Visible: " + MainApplication.visible);
                     if (MainApplication.visible) {
                         menuItem.setIcon(R.drawable.ic_visibility_white_48dp);
                     } else {
@@ -460,7 +460,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
                         //Launch search activity
                         Intent intent= new Intent(mainactivity,SearchActivity.class);
-                        Log.d(TAG,"Search Query submitted");
+                        //Log.d(TAG,"Search Query submitted");
                         intent.putExtra(SearchActivity.QUERY_MESSAGE, query);
                         startActivity(intent);
                         return  true;
@@ -536,7 +536,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
             case KeyEvent.KEYCODE_BACK:
                 if (selectedOption == 0) {
-                    Log.i(TAG, "Exiting app because requested by user.");
+                    //Log.e(TAG, "Exiting app because requested by user.");
                     finish();
                 } else if (selectedOption == -10) { // -10 is the Add Contacts screen
                     mNavigationDrawerFragment.selectNavDrawerItem(3);    // 3 is the Contacts screen
@@ -551,26 +551,26 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        Log.d(TAG, "onActivityResult");
+        //Log.e(TAG, "onActivityResult");
 
         if (requestCode == REQUEST_CODE_EMAIL) {
             if (resultCode == RESULT_OK) {
-                Log.d(TAG, "Returned from sign up. Now we will show the map.");
+                //Log.e(TAG, "Returned from sign up. Now we will show the map.");
                 startServices();
                 mNavigationDrawerFragment.setUserInfo();
                 GcmHelper.start(getApplicationContext()); // Register to GCM
 
             } else {
-                Log.w(TAG, "Returned from sign up. Exiting app on request.");
+                //Log.e(TAG, "Returned from sign up. Exiting app on request.");
                 finish();
             }
 
         } else if (requestCode == REQUEST_TERMS && resultCode == RESULT_OK) {
-            Log.d(TAG, "Returned from terms. Now we will show sign up form.");
+            //Log.e(TAG, "Returned from terms. Now we will show sign up form.");
             // Terms shown and accepted.
 
         } else {
-            Log.e(TAG, "Got - request Code: " + requestCode + ", result: " + resultCode);
+            //Log.e(TAG, "Got - request Code: " + requestCode + ", result: " + resultCode);
             finish();
         }
     }
@@ -589,7 +589,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
     private void showUserInMap(String email) { // Used in Contacts
 
-        Log.d(TAG, "showUserInMap: " + email);
+        //Log.e(TAG, "showUserInMap: " + email);
         MainApplication.emailBeingTracked = email;
         mNavigationDrawerFragment.selectNavDrawerItem(1); // Position 1 is the Map
     }
@@ -604,18 +604,18 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         CheckBox checkBox = (CheckBox) view;
         Boolean allow = checkBox.isChecked();
         String email = (String) checkBox.getTag();
-        Log.d(TAG, "toggleIDontWantToSee: " + email + ", Checkbox is: " + allow);
+        //Log.e(TAG, "toggleIDontWantToSee: " + email + ", Checkbox is: " + allow);
         if (!allow) {
             try {
                 MainApplication.iDontWantToSee.put(email, 1);
-                Log.d(TAG, MainApplication.iDontWantToSee.toString());
+                //Log.d(TAG, MainApplication.iDontWantToSee.toString());
                 PreferenceUtils.setString(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, MainApplication.iDontWantToSee.toString());
                 ServerApi.ignoreUsers(this, email);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         } else if (MainApplication.iDontWantToSee.has(email)) {
-            Log.d(TAG, "unignoring user");
+            //Log.d(TAG, "unignoring user");
             MainApplication.iDontWantToSee.remove(email);
             PreferenceUtils.setString(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, MainApplication.iDontWantToSee.toString());
             ServerApi.unignoreUser(this, email);
@@ -630,7 +630,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
             CheckBox checkBox = (CheckBox) view;
             Boolean allow = checkBox.isChecked();
             String email = (String) checkBox.getTag();
-            Log.d(TAG, "toggleUserCanSeeMe: " + email + ", Checkbox is: " + allow);
+            //Log.e(TAG, "toggleUserCanSeeMe: " + email + ", Checkbox is: " + allow);
             if (!allow) {
                 ServerApi.disallowUser(this, email);
             } else {
@@ -649,7 +649,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     private BroadcastReceiver exitMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d(TAG, "exitMessageReceiver onReceive");
+            //Log.e(TAG, "exitMessageReceiver onReceive");
 
             LocationService.stop(MainActivity.this.getApplicationContext());
             DataService.stop(MainActivity.this.getApplicationContext());

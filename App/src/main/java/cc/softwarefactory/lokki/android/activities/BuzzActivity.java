@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+//import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,7 +34,7 @@ public class BuzzActivity extends AppCompatActivity {
                     MainApplication.buzzPlaces = Utils.removeFromJSONArray(MainApplication.buzzPlaces, i);
             }
         } catch (JSONException e) {
-            Log.e(TAG, "Error while removing buzz; " + e);
+            //Log.e(TAG, "Error while removing buzz; " + e);
         }
     }
 
@@ -44,7 +44,7 @@ public class BuzzActivity extends AppCompatActivity {
             MainApplication.buzzPlaces.put(new JSONObject()
                     .put("placeid", id).put("buzzcount", buzzCount));
         } catch (JSONException e) {
-            Log.e(TAG, " Error while creating placeBuzz object " + e);
+            //Log.e(TAG, " Error while creating placeBuzz object " + e);
         }
     }
 
@@ -55,13 +55,13 @@ public class BuzzActivity extends AppCompatActivity {
                     return MainApplication.buzzPlaces.getJSONObject(i);
             }
         } catch (JSONException e) {
-            Log.e(TAG, "Error while getting buzz; " + e);
+            //Log.e(TAG, "Error while getting buzz; " + e);
         }
         return null;
     }
 
     private void checkForActiveBuzzes() throws JSONException {
-        Log.d(TAG, "Checking for active buzzes...");
+        //Log.d(TAG, "Checking for active buzzes...");
         for (int i = 0; i < MainApplication.buzzPlaces.length(); i++) {
             final JSONObject placeBuzz = MainApplication.buzzPlaces.getJSONObject(i);
             if (placeBuzz.optBoolean("activated", false)) {
@@ -73,7 +73,7 @@ public class BuzzActivity extends AppCompatActivity {
     }
 
     public void openBuzzTerminationDialog(final JSONObject placeBuzz) {
-        Log.d(TAG, "Opening termination dialog");
+        //Log.d(TAG, "Opening termination dialog");
         final Activity thisActivity = this;
         Dialog buzzTerminationDialog = new android.app.AlertDialog.Builder(this)
             .setMessage(R.string.you_have_arrived)
@@ -81,11 +81,11 @@ public class BuzzActivity extends AppCompatActivity {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int which) {
                     try {
-                        Log.d(TAG, "Removed buzz");
+                        //Log.d(TAG, "Removed buzz");
                         setBuzz(placeBuzz.getString("placeid"), 0);
                         thisActivity.finish();
                     } catch (Exception e) {
-                        Log.e(TAG, "Unable to terminate buzzing.");
+                        //Log.e(TAG, "Unable to terminate buzzing.");
                         e.printStackTrace();
                     }
                 }
