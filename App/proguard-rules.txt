@@ -34,9 +34,24 @@
 -dontusemixedcaseclassnames
 -dontskipnonpubliclibraryclasses
 -verbose
+-dontobfuscate
+-forceprocessing
+
+-keep class * extends android.app.Activity
+-assumenosideeffects class android.util.Log {
+    public static *** d(...);
+    public static *** v(...);
+    public static *** i(...);
+    public static *** w(...);
+    public static *** e(...);
+    public static *** wtf(...);
+}
+
+#Building with optimization enabled fails without this.
+-optimizations !code/allocation/variable
 
 # We restrict a few more optimizations for the maps library.
--optimizations !code/simplification/arithmetic,!field/*,!class/merging/*,!code/simplification/variable
+#-optimizations !code/simplification/arithmetic,!field/*,!class/merging/*,!code/simplification/variable
 
 -keep public class * extends android.app.Activity
 -keep public class * extends android.app.Application
@@ -109,3 +124,4 @@
 
 # Unused RoundedImageView dependancies
 -dontwarn com.squareup.picasso.Transformation
+
