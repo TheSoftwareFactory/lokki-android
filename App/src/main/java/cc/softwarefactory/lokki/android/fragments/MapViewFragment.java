@@ -116,7 +116,7 @@ public class MapViewFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
-        // Trying to clean up properties (not to hold anything coming from the map (and avoid mem leaks).
+        // Trying to clean up properties (not to hold anything coming from the map (and avoid mem leaks)).
         fragment = null;
         map = null;
         aq = null;
