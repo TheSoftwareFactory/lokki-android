@@ -36,8 +36,12 @@ android {
     }
 
     productFlavors {
-        development {}
-        production {}
+        development {
+            resValue "string", "personal_android_key", file("personal-android-key.txt").getText()
+        }
+        production {
+            resValue "string", "personal_android_key", "AIzaSyCmHGAOJLyg_cMw-SuDD-Jfh4yiZZ-XI3E"
+        }
     }
 
     sourceSets {
