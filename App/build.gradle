@@ -29,6 +29,12 @@ android {
     }
 
     buildTypes {
+        debug {
+            resValue "string", "personal_android_key", "AIzaSyCmHGAOJLyg_cMw-SuDD-Jfh4yiZZ-XI3E"
+            if (file("personal-android-key.txt").exists()) {
+                resValue "string", "personal_android_key", file("personal-android-key.txt").getText()
+            }
+        }
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.txt'
@@ -44,12 +50,8 @@ android {
 
 
     productFlavors {
-        development {
-            resValue "string", "personal_android_key", file("personal-android-key.txt").getText()
-        }
-        production {
-            resValue "string", "personal_android_key", "AIzaSyCmHGAOJLyg_cMw-SuDD-Jfh4yiZZ-XI3E"
-        }
+        development {}
+        production {}
     }
 
     sourceSets {
