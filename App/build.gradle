@@ -25,14 +25,17 @@ android {
         }
     }
 
+    def defaultKey = "AIzaSyCmHGAOJLyg_cMw-SuDD-Jfh4yiZZ-XI3E"
+
     buildTypes {
         debug {
-            resValue "string", "personal_android_key", "AIzaSyCmHGAOJLyg_cMw-SuDD-Jfh4yiZZ-XI3E"
+            resValue "string", "personal_android_key", defaultKey
             if (file("personal-android-key.txt").exists()) {
                 resValue "string", "personal_android_key", file("personal-android-key.txt").getText()
             }
         }
         release {
+            resValue "string", "personal_android_key", defaultKey
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.txt'
             if (file("lokki-release.keystore").exists()) {
