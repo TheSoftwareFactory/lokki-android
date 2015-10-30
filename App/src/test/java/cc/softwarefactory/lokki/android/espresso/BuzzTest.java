@@ -56,7 +56,7 @@ public class BuzzTest extends LoggedInBaseTest {
     }
 
     // Sometimes the tests fail to open the confirmation dialog at first attempt,
-    // so this method lets it try it for one second before throwing exception.
+    // so this method lets it try it for one second before throwing exception..
     public void openDialogForTestplace1() throws JSONException {
         long timeLimit = new Date().getTime() + 1000;
         while(true) {
