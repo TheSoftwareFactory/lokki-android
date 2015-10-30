@@ -1,0 +1,1 @@
+AAzaSyA2eooz2DQbmBYckvAaWRxA3yeFTiUs32g #This is an example key. Create a new file 'personal-android-key.txt' to the App folder. Replace this whole line (including this comment) with your own key.
