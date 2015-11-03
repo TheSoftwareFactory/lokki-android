@@ -67,6 +67,8 @@ android {
 
     packagingOptions {
         exclude 'LICENSE.txt'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
     }
 
     applicationVariants.all { variant ->
@@ -110,6 +112,10 @@ dependencies {
     compile(name:'android-support-v4-preferencefragment-master-release', ext:'aar')
 
     compile 'com.android.support:support-annotations:22.0.1'
+
+    compile 'com.fasterxml.jackson.core:jackson-core:2.3.1'
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.3.1'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.3.1'
 
     // Espresso
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.0'

@@ -14,12 +14,14 @@ import android.widget.Toast;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -28,7 +30,8 @@ import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.constants.Constants;
 import cc.softwarefactory.lokki.android.errors.PlaceError;
-import cc.softwarefactory.lokki.android.fragments.PlacesFragment;
+import cc.softwarefactory.lokki.android.models.JSONModel;
+import cc.softwarefactory.lokki.android.models.Place;
 import cc.softwarefactory.lokki.android.services.DataService;
 
 
@@ -102,7 +105,7 @@ public class ServerApi {
         String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
         String url = ApiUrl + "user/" + userId + "/places";
 
-        AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>(){
+        AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject json, AjaxStatus status) {
                 Log.d(TAG, "placesCallback");
@@ -112,10 +115,17 @@ public class ServerApi {
                     return;
                 }
                 Log.d(TAG, "json returned: " + json);
-                MainApplication.places = json;
-                PreferenceUtils.setString(context, PreferenceUtils.KEY_PLACES, json.toString());
-                Intent intent = new Intent("PLACES-UPDATE");
-                LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+                try {
+                    MainApplication.Places places;
+                    places = JSONModel.createFromJson(json.toString(), MainApplication.Places.class);
+                    MainApplication.places = places;
+                    PreferenceUtils.setString(context, PreferenceUtils.KEY_PLACES, places.serialize());
+                    Intent intent = new Intent("PLACES-UPDATE");
+                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+                } catch (IOException e) {
+                    Log.e(TAG, "Error: Failed to parse places JSON.");
+                    e.printStackTrace();
+                }
             }
         };
         cb.header("authorizationtoken", authorizationToken);
@@ -543,7 +553,7 @@ public class ServerApi {
         }
     }
 
-    public static void addPlace(final Context context, String name, LatLng latLng, int radius) throws JSONException {
+    public static void addPlace(final Context context, String name, LatLng latLng, int radius) throws JSONException, JsonProcessingException {
 
         Log.d(TAG, "addPlace");
         AQuery aq = new AQuery(context);
@@ -555,12 +565,12 @@ public class ServerApi {
         String cleanName = name.trim();
         cleanName = cleanName.substring(0, 1).toUpperCase() + cleanName.substring(1).toLowerCase();
 
-        JSONObject JSONdata = new JSONObject()
-                .put("lat", latLng.latitude)
-                .put("lon", latLng.longitude)
-                .put("rad", radius)
-                .put("img", "")
-                .put("name", cleanName);
+        Place place = new Place();
+        place.setName(cleanName);
+        place.setImg("");
+        place.setLat(latLng.latitude);
+        place.setLon(latLng.longitude);
+        place.setRad(radius);
 
         AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>() {
             @Override
@@ -579,7 +589,7 @@ public class ServerApi {
         };
 
         cb.header("authorizationtoken", authorizationToken);
-        aq.post(url, JSONdata, JSONObject.class, cb);
+        aq.post(url, place.toJSONObject(), JSONObject.class, cb);
     }
 
     public static void removePlace(final Context context, final String placeId) {
@@ -610,7 +620,7 @@ public class ServerApi {
     }
 
     public static void renamePlace(final Context context, final String placeId,
-                                   final String newName) throws JSONException {
+                                   final String newName) throws JSONException, IOException {
         Log.d(TAG, "renamePlace");
         AQuery aq = new AQuery(context);
 
@@ -626,17 +636,11 @@ public class ServerApi {
             if (PreferenceUtils.getString(context, PreferenceUtils.KEY_PLACES).isEmpty()) {
                 return;
             }
-            MainApplication.places = new JSONObject(PreferenceUtils.
-                    getString(context, PreferenceUtils.KEY_PLACES));
+            MainApplication.places = JSONModel.createFromJson(PreferenceUtils.getString(context, PreferenceUtils.KEY_PLACES), MainApplication.Places.class);
         }
-        final JSONObject placeObj = MainApplication.places.getJSONObject(placeId);
-
-        final JSONObject JSONdata = new JSONObject()
-                .put("lat", placeObj.getString("lat"))
-                .put("lon", placeObj.getString("lon"))
-                .put("rad", placeObj.getString("rad"))
-                .put("img", placeObj.getString("img"))
-                .put("name", cleanName);
+        Place place = MainApplication.places.getPlaceById(placeId);
+        place.setName(cleanName);
+        final Place finalPlace = place;
 
         AjaxCallback<String> cb = new AjaxCallback<String>() {
             @Override
@@ -651,13 +655,13 @@ public class ServerApi {
                 DataService.getPlaces(context);
                 Intent intent = new Intent("PLACES-UPDATE");
                 LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-                PlacesFragment.renamePlaceLocally(placeId, JSONdata);
+                MainApplication.places.update(placeId, finalPlace);
                 Toast.makeText(context, R.string.place_renamed, Toast.LENGTH_SHORT).show();
             }
         };
 
         cb.header("authorizationtoken", authorizationToken);
-        aq.put(url, JSONdata, String.class, cb);
+        aq.put(url, place.toJSONObject(), String.class, cb);
     }
 
 

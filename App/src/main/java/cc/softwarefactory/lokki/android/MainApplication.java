@@ -8,6 +8,7 @@ import android.app.Application;
 import android.graphics.Bitmap;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.util.LruCache;
 import android.util.Log;
 
@@ -17,6 +18,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import cc.softwarefactory.lokki.android.models.JSONModel;
+import cc.softwarefactory.lokki.android.models.Place;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 
@@ -109,33 +119,102 @@ public class MainApplication extends Application {
      */
     public static Boolean visible = true;
     public static LruCache<String, Bitmap> avatarCache;
+
     /**
-     * The user's places. Format:
-     * {
-     *      "f414af16-e532-49d2-999f-c3bdd160dca4":{
-     *          "lat":11.17839332191203,
-     *          "lon":1.4752149581909178E-5,
-     *          "rad":6207030,
-     *          "name":"1",
-     *          "img":""
-     *      },
-     *      "b0d77236-cdad-4a25-8cca-47b4426d5f1f":{
-     *          "lat":11.17839332191203,
-     *          "lon":1.4752149581909178E-5,
-     *          "rad":6207030,
-     *          "name":"1",
-     *          "img":""
-     *      },
-     *      "1f1a3303-5964-40d5-bd07-3744a0c0d0f7":{
-     *          "lat":11.17839332191203,
-     *          "lon":1.4752149581909178E-5,
-     *          "rad":6207030,
-     *          "name":"3",
-     *          "img":""
-     *      }
-     * }
+     * User's places is a map, where key is ID and value is the place.
      */
-    public static JSONObject places;
+    public static class Places extends JSONModel implements Map<String, Place> {
+
+        private HashMap<String, Place> places = new HashMap<>();
+
+        public Place getPlaceById(String id) {
+            return places.get(id);
+        }
+
+        public String getPlaceIdByName(String name) {
+            for (Entry<String, Place> entrySet : places.entrySet()) {
+                if (entrySet.getValue().getName().equals(name)) return entrySet.getKey();
+            }
+            return null;
+        }
+
+        public Collection<Place> getPlaces() {
+            return places.values();
+        }
+
+        public Place getPlaceByName(String name) {
+            return places.get(this.getPlaceIdByName(name));
+        }
+
+        public void update(String id, Place place) {
+            places.put(id, place);
+        }
+
+        @Override
+        public void clear() {
+            places.clear();
+        }
+
+        @Override
+        public boolean containsKey(Object key) {
+            return places.containsKey(key);
+        }
+
+        @Override
+        public boolean containsValue(Object value) {
+            return places.containsValue(value);
+        }
+
+        @NonNull
+        @Override
+        public Set<Entry<String, Place>> entrySet() {
+            return places.entrySet();
+        }
+
+        @Override
+        public Place get(Object key) {
+            return places.get(key);
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return places.isEmpty();
+        }
+
+        @NonNull
+        @Override
+        public Set<String> keySet() {
+            return places.keySet();
+        }
+
+        @Override
+        public Place put(String key, Place value) {
+            return places.put(key, value);
+        }
+
+        @Override
+        public void putAll(Map<? extends String, ? extends Place> map) {
+            places.putAll(map);
+        }
+
+        @Override
+        public Place remove(Object key) {
+            return places.remove(key);
+        }
+
+        @Override
+        public int size() {
+            return places.size();
+        }
+
+        @NonNull
+        @Override
+        public Collection<Place> values() {
+            return places.values();
+        }
+    }
+
+    public static Places places;
     public static boolean locationDisabledPromptShown;
     public static JSONArray buzzPlaces;
     public static boolean firstTimeZoom = true;
@@ -203,7 +282,7 @@ public class MainApplication extends Application {
         try {
             mapType = Integer.parseInt(PreferenceUtils.getString(getApplicationContext(), PreferenceUtils.KEY_SETTING_MAP_MODE));
         }
-        catch (NumberFormatException e){
+        catch (NumberFormatException e) {
             mapType = mapTypes[0];
             Log.w(TAG, "Could not parse map type; using default value: " + e);
         }

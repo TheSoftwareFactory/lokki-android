@@ -93,7 +93,7 @@ public class DialogUtils {
                                         context.getString(R.string.analytics_label_confirm_name_new_place_dialog_successful));
                                 try {
                                     ServerApi.addPlace(context, value.toString(), latLng, radius);
-                                } catch (JSONException e) {
+                                } catch (Exception e) {
                                     e.printStackTrace();
                                 }
 
