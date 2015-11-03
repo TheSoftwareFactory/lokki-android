@@ -60,6 +60,7 @@ import java.util.Iterator;
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.activities.FirstTimeActivity;
+import cc.softwarefactory.lokki.android.models.Place;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 import cc.softwarefactory.lokki.android.utilities.DialogUtils;
 import cc.softwarefactory.lokki.android.utilities.Utils;
@@ -108,8 +109,7 @@ public class MapViewFragment extends Fragment {
         boolean placeIsBeingAdded = getView() != null && getView().findViewById(R.id.addPlaceCircle) != null &&
             ((ImageView) getView().findViewById(R.id.addPlaceCircle)).getDrawable() != null;
 
-        boolean noPlacesAdded = MainApplication.places != null && (MainApplication.places.names() == null ||
-                MainApplication.places.names().length() == 0);
+        boolean noPlacesAdded = MainApplication.places != null && MainApplication.places.size() > 0;
 
         placeAddingTip.setAlpha(noPlacesAdded && !placeIsBeingAdded ? 1 : 0);
     }
@@ -472,20 +472,13 @@ public class MapViewFragment extends Fragment {
 
         removePlaces();
 
-        try {
-            Iterator<String> keys = MainApplication.places.keys();
-            while (keys.hasNext()) {
-                String key = keys.next();
-                JSONObject placeObj = MainApplication.places.getJSONObject(key);
-                Circle circle = map.addCircle(new CircleOptions()
-                        .center(new LatLng(placeObj.getDouble("lat"), placeObj.getDouble("lon")))
-                        .radius(placeObj.getInt("rad"))
-                        .strokeWidth(0)
-                        .fillColor(getResources().getColor(R.color.place_circle)));
-                placesOverlay.add(circle);
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        for (Place place : MainApplication.places.getPlaces()) {
+            Circle circle = map.addCircle(new CircleOptions()
+                    .center(new LatLng(place.getLat(), place.getLon()))
+                    .radius(place.getRad())
+                    .strokeWidth(0)
+                    .fillColor(getResources().getColor(R.color.place_circle)));
+            placesOverlay.add(circle);
         }
 
         updatePlaceAddingTipVisibility();

@@ -28,6 +28,7 @@ import java.util.Iterator;
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.fragments.MapViewFragment;
+import cc.softwarefactory.lokki.android.models.Place;
 
 /**
  * An activity for performing searches and displaying their results
@@ -217,21 +218,18 @@ public class SearchActivity extends ListActivity {
             return;
         }
         // Loop through all user places
-        Iterator<String> it = MainApplication.places.keys();
         Log.d(TAG, MainApplication.places.toString());
-        while (it.hasNext()){
-            String id = it.next();
+        for (Place place : MainApplication.places.getPlaces()) {
             try {
-                JSONObject location = MainApplication.places.getJSONObject(id);
-                String name = location.getString("name");
+                String name = place.getName();
                 Log.d(TAG, "place: " + name);
                 if (name.toLowerCase().contains(query)){
                     //Store place coordinates in the result's extra data for easy access
-                    String coords = location.getDouble("lat") + "," + location.getDouble("lon");
+                    String coords = place.getLat() + "," + place.getLon();
                     resultList.add(new SearchResult(ResultType.PLACE, name, coords));
                 }
 
-            } catch (JSONException e) {
+            } catch (Exception e) {
                 Log.e(TAG, "Error parsing places: " + e);
             }
         }

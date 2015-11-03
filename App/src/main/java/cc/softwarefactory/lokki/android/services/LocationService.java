@@ -24,6 +24,7 @@ import android.util.Log;
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.activities.BuzzActivity;
+import cc.softwarefactory.lokki.android.models.Place;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
 import cc.softwarefactory.lokki.android.activities.MainActivity;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
@@ -37,8 +38,6 @@ import com.google.android.gms.location.LocationServices;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.Iterator;
 
 public class LocationService extends Service implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener  {
 
@@ -372,37 +371,22 @@ public class LocationService extends Service implements LocationListener, Google
         }
     }
 
-    private void checkBuzzplaces()
-    {
-        for (int i=0;i<MainApplication.buzzPlaces.length();i++)
-        {
-            Iterator<String> keys = MainApplication.places.keys();
-            while(keys.hasNext())
-            {
-                String key = keys.next();
-                try {
-                    JSONObject placeBuzz = MainApplication.buzzPlaces.getJSONObject(i);
-
-                    if (key.equals(placeBuzz.getString("placeid"))) {
-
-                        JSONObject place = MainApplication.places.getJSONObject(key);
-                        Location placeLocation = new Location(key);
-                        placeLocation.setLatitude(place.getDouble("lat"));
-                        placeLocation.setLongitude((place.getDouble("lon")));
-
-                        if (placeLocation.distanceTo(lastLocation) < place.getInt("rad"))
-                            triggerBuzzing(placeBuzz);
-                        else
-                            placeBuzz.put("buzzcount", 5).put("activated", false);
-                    }
-                }
-                catch (JSONException e)
-                {
-                    Log.e(TAG,"Error in checking buzz places"+e);
-                }
-
+    private void checkBuzzplaces() {
+        for (int i=0; i < MainApplication.buzzPlaces.length(); i++) {
+            try {
+                JSONObject placeBuzz = MainApplication.buzzPlaces.getJSONObject(i);
+                String placeId = placeBuzz.getString("placeid");
+                Place place = MainApplication.places.getPlaceById(placeId);
+                Location placeLocation = new Location(placeId);
+                placeLocation.setLatitude(place.getLat());
+                placeLocation.setLongitude((place.getLon()));
+                if (placeLocation.distanceTo(lastLocation) < place.getRad())
+                    triggerBuzzing(placeBuzz);
+                else
+                    placeBuzz.put("buzzcount", 5).put("activated", false);
+            } catch (JSONException e) {
+                Log.e(TAG,"Error in checking buzz places" + e);
             }
-
         }
 
     }
