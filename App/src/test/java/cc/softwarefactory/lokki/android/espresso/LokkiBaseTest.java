@@ -80,8 +80,7 @@ public abstract class LokkiBaseTest extends ActivityInstrumentationTestCase2<Mai
         // if user is running application normally after running tests
         TestUtils.clearAppData(getInstrumentation().getTargetContext());
 
-        clearJSONData(MainApplication.contacts);
-//        clearJSONData(MainApplication.places);
+        MainApplication.contacts = null;
         MainApplication.places = null;
         super.tearDown();
     }

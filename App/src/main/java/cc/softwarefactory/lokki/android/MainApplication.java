@@ -12,6 +12,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.util.LruCache;
 import android.util.Log;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.android.gms.maps.GoogleMap;
 
 import org.json.JSONArray;
@@ -19,12 +21,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import cc.softwarefactory.lokki.android.models.Contact;
 import cc.softwarefactory.lokki.android.models.JSONModel;
 import cc.softwarefactory.lokki.android.models.Place;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
@@ -96,7 +101,114 @@ public class MainApplication extends Application {
      *      }
      * }
      */
-    public static JSONObject contacts;
+    @JsonIgnoreProperties("mapping")
+    public static class Contacts extends JSONModel implements Map<String, Contact> {
+
+        private HashMap<String, Contact> contacts = new HashMap<>();
+        private HashMap<String, String> nameToEmail = new HashMap<>();
+
+        public boolean hasEmail(String email) {
+            return contacts.containsKey(email);
+        }
+
+        public List<Contact> contacts() {
+            return new ArrayList<Contact>(contacts.values());
+        }
+        public List<String> names() {
+            return new ArrayList<String>(nameToEmail.keySet());
+        }
+
+        public boolean hasName(String name) {
+            return nameToEmail.containsKey(name);
+        }
+
+        public Contact getContactByEmail(String email) {
+            return contacts.get(email);
+        }
+
+        public Contact getContactByName(String name) {
+            return contacts.get(nameToEmail.get(name));
+        }
+
+        public String getEmailByName(String name) {
+            return nameToEmail.get(name);
+        }
+
+        public void update(String email, Contact contact) {
+            contacts.put(email, contact);
+            nameToEmail.put(contact.getName(), email);
+        }
+
+        @Override
+        public void clear() {
+            contacts.clear();
+            nameToEmail.clear();
+        }
+
+        @Override
+        public boolean containsKey(Object key) {
+            return contacts.containsKey(key);
+        }
+
+        @Override
+        public boolean containsValue(Object value) {
+            return contacts.containsValue(value);
+        }
+
+        @NonNull
+        @Override
+        public Set<Entry<String, Contact>> entrySet() {
+            return contacts.entrySet();
+        }
+
+        @Override
+        public Contact get(Object key) {
+            return contacts.get(key);
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return contacts.isEmpty();
+        }
+
+        @NonNull
+        @Override
+        public Set<String> keySet() {
+            return contacts.keySet();
+        }
+
+        @Override
+        public Contact put(String key, Contact value) {
+            nameToEmail.put(value.getName(), key);
+            return contacts.put(key, value);
+        }
+
+        @Override
+        public void putAll(Map<? extends String, ? extends Contact> map) {
+            contacts.putAll(map);
+            for (Entry<? extends String, ? extends Contact> entry : map.entrySet()) {
+                nameToEmail.put(entry.getValue().getName(), entry.getKey());
+            }
+        }
+
+        @Override
+        public Contact remove(Object key) {
+            nameToEmail.remove(contacts.get(key).getName());
+            return contacts.remove(key);
+        }
+
+        @Override
+        public int size() {
+            return contacts.size();
+        }
+
+        @NonNull
+        @Override
+        public Collection<Contact> values() {
+            return contacts.values();
+        }
+    }
+    public static Contacts contacts;
     /**
      * Format:
      * {
@@ -105,7 +217,7 @@ public class MainApplication extends Application {
      *      "Work Buddy":"work.buddy@example.com"
      * }
      */
-    public static JSONObject mapping;
+//    public static JSONObject mapping;
     /**
      * Contacts that aren't shown on the map. Format:
      * {

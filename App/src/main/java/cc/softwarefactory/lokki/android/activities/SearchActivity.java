@@ -28,6 +28,7 @@ import java.util.Iterator;
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.fragments.MapViewFragment;
+import cc.softwarefactory.lokki.android.models.Contact;
 import cc.softwarefactory.lokki.android.models.Place;
 
 /**
@@ -177,22 +178,20 @@ public class SearchActivity extends ListActivity {
         try {
             JSONObject icansee = MainApplication.dashboard.getJSONObject("icansee");
             JSONObject idmapping =  MainApplication.dashboard.getJSONObject("idmapping");
-            JSONObject contacts = MainApplication.contacts;
+            MainApplication.Contacts contacts = MainApplication.contacts;
             Iterator<String> it = icansee.keys();
 
             // Loop through everyone we can see
-            while(it.hasNext())
-            {
+            while (it.hasNext()) {
                 String id = it.next();
                 String email = idmapping.getString(id);
-                JSONObject contact = (contacts != null)? contacts.optJSONObject(email) : null;
-                String name ="";
+                Contact contact = (contacts != null)? contacts.getContactByEmail(email) : null;
+                String name = "";
 
-                if(contact!=null){
-                    name=contact.optString("name");
+                if (contact != null) {
+                    name = contact.getName();
                 }
-                if(email.toLowerCase().contains(query)||name.toLowerCase().contains(query))
-                {
+                if (email.toLowerCase().contains(query) || name.toLowerCase().contains(query)) {
                     //Display either name or email depending on whether a name exists
                     //Store contact data in the result's extra data for easy access
                     if(!name.isEmpty())
