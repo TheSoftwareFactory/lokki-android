@@ -104,5 +104,9 @@
     <string name="search_results">Tulokset haulla:</string>
     <string name="rename_contact">Anna nimi yhteystiedolle:</string>
     <string name="you_have_arrived">Olet saapunut määränpäähäsi.</string>
+    <string name="email_verification">Rekisteröinnin vahvistus</string>
+    <string name="email_verification_msg">Olemme lähettäneet sinulle vahvistussähköpostin.
+        Jos et vahvista tiliäsi, kaikki tallennetut yhteystietosi ja paikkasi poistetaan 24 tunnin kuluttua.
+    </string>
 
 </resources>
