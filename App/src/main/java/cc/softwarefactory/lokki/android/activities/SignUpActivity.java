@@ -5,15 +5,20 @@ See LICENSE for details
 package cc.softwarefactory.lokki.android.activities;
 
 import android.accounts.AccountManager;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ActivityNotFoundException;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
@@ -86,6 +91,7 @@ public class SignUpActivity extends AppCompatActivity {
                 aq.id(R.id.email).text(accountName);
             }
         }
+        Log.v(TAG, "onActivityResult");
     }
 
     public void signUpClick(View view) {
@@ -141,7 +147,7 @@ public class SignUpActivity extends AppCompatActivity {
                     Log.e(TAG, "General Error");
                     DialogUtils.generalError(SignUpActivity.this);
                 }
-
+                DialogUtils.generalError(SignUpActivity.this);
                 toggleLoading(false);
                 return;
             }
@@ -151,15 +157,14 @@ public class SignUpActivity extends AppCompatActivity {
             Log.d(TAG, "json response: " + json);
             String id = json.optString("id");
             String authorizationToken = json.optString("authorizationtoken");
-
+            String userType = json.optString("userType");
             PreferenceUtils.setString(SignUpActivity.this, PreferenceUtils.KEY_USER_ID, id);
             PreferenceUtils.setString(SignUpActivity.this, PreferenceUtils.KEY_AUTH_TOKEN, authorizationToken);
-
             Log.d(TAG, "User id: " + id);
             Log.d(TAG, "authorizationToken: " + authorizationToken);
+            checkUserType(userType);
 
-            setResult(RESULT_OK);
-            finish();
+
         }
 
         private boolean successfulSignUp(JSONObject json, AjaxStatus status) {
@@ -170,5 +175,33 @@ public class SignUpActivity extends AppCompatActivity {
     private void toggleLoading(Boolean isLoading) {
         aq.id(R.id.sign_up_loading).visibility(isLoading ? View.VISIBLE : View.INVISIBLE);
         aq.id(R.id.sign_up_button).visibility(isLoading ? View.INVISIBLE : View.VISIBLE);
+    }
+    private void checkUserType(String userType){
+        if(userType.equals("newUser")){
+            toggleLoading(false);
+            new AlertDialog.Builder(SignUpActivity.this)
+                    .setTitle(R.string.email_verification)
+                    .setMessage(R.string.email_verification_msg)
+                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            setResult(RESULT_OK);
+                            finish();
+                        }
+                    })
+                    .setOnCancelListener(
+                            new DialogInterface.OnCancelListener() {
+                                @Override
+                                public void onCancel(DialogInterface dialog) {
+                                    setResult(RESULT_OK);
+                                    finish();
+                                }
+                            })
+                    .show();
+
+        } else {
+            setResult(RESULT_OK);
+            finish();
+        }
     }
 }
