@@ -108,5 +108,9 @@
     <string translatable="false" name="lokki_play_store_link">market://details?id=cc.softwarefactory.lokki.android</string>
     <string translatable="false" name="sign_out_button_key">signOutButton</string>
     <string name="rename_contact">Enter contact name:</string>
+    <string name="email_verification">Email verification</string>
+    <string name="email_verification_msg">We have sent you verification email for your account acitivation.
+        If you don\'t verify all your saved contacts and places will be deleted after 24 hr
+    </string>
 
 </resources>
