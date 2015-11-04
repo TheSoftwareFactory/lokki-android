@@ -6,7 +6,6 @@ package cc.softwarefactory.lokki.android.activities;
 
 import android.accounts.AccountManager;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,10 +14,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
@@ -147,7 +144,6 @@ public class SignUpActivity extends AppCompatActivity {
                     Log.e(TAG, "General Error");
                     DialogUtils.generalError(SignUpActivity.this);
                 }
-                DialogUtils.generalError(SignUpActivity.this);
                 toggleLoading(false);
                 return;
             }
