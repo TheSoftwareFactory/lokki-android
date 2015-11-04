@@ -27,8 +27,10 @@ import android.widget.Toast;
 
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
+import cc.softwarefactory.lokki.android.models.JSONModel;
 import cc.softwarefactory.lokki.android.services.LocationService;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
@@ -37,6 +39,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.Locale;
 
@@ -75,10 +78,10 @@ public class Utils {
             return false;
         }
         try {
-            MainApplication.contacts = new JSONObject(jsonData);
-            MainApplication.mapping = MainApplication.contacts.getJSONObject("mapping");
-        } catch (JSONException e) {
-            MainApplication.contacts = new JSONObject();
+            MainApplication.contacts = JSONModel.createFromJson(jsonData, MainApplication.Contacts.class);
+        } catch (IOException e) {
+            MainApplication.contacts = new MainApplication.Contacts();
+            e.printStackTrace();
             return false;
         }
         return true;
@@ -116,12 +119,13 @@ public class Utils {
 
         if (loadContacts(context)) {
             try {
-                Log.d(TAG, MainApplication.contacts.toString());
-                String name = MainApplication.contacts.getJSONObject(email).getString("name");
+                Log.d(TAG, MainApplication.contacts.serialize());
+                String name = MainApplication.contacts.getContactByEmail(email).getName();
                 Log.d(TAG, "getNameFromEmail - Email: " + email + ", Name: " + name);
                 return name;
-            } catch (JSONException e) {
-                Log.e(TAG, "getNameFromEmail - failed: " + email);
+            } catch (JsonProcessingException e) {
+                Log.e(TAG, "serializing contact to JSON failed");
+                e.printStackTrace();
             }
         }
 
@@ -153,12 +157,9 @@ public class Utils {
         }
 
         if (loadContacts(context)) {
-            try {
-                Log.d(TAG, "getPhotoFromEmail - Email: " + email + ", id: " + MainApplication.contacts.getJSONObject(email).getLong("id"));
-                result = openPhoto(context, MainApplication.contacts.getJSONObject(email).getLong("id"));
-            } catch (JSONException e) {
-                Log.e(TAG, "getPhotoFromEmail - failed: " + email);
-            }
+            long id = MainApplication.contacts.getContactByEmail(email).getId();
+            Log.d(TAG, "getPhotoFromEmail - Email: " + email + ", id: " + id);
+            result = openPhoto(context, id);
         } else {
             Log.d(TAG, "getPhotoFromEmail - id queried: " + email);
             Cursor emailCursor = context.getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null, "lower(" + ContactsContract.CommonDataKinds.Email.DATA + ")=lower('" + email + "')", null, null);

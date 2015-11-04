@@ -11,13 +11,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.mockito.Mockito;
 
+import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
+import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.datasources.contacts.ContactDataSource;
 import cc.softwarefactory.lokki.android.espresso.utilities.MockJsonUtils;
 import cc.softwarefactory.lokki.android.espresso.utilities.RequestsHandle;
 import cc.softwarefactory.lokki.android.espresso.utilities.TestUtils;
+import cc.softwarefactory.lokki.android.models.JSONModel;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.pressBack;
@@ -45,10 +48,10 @@ public class AddContactsScreenTest extends LoggedInBaseTest {
     }
 
 
-    private void setMockContacts() throws JSONException {
+    private void setMockContacts() throws IOException, JSONException {
         ContactDataSource mockContactDataSource = Mockito.mock(ContactDataSource.class);
         JSONObject testJSONObject = new JSONObject(MockJsonUtils.getContactsJson());
-        when(mockContactDataSource.getContactsJson(any(Context.class))).thenReturn(testJSONObject);
+        when(mockContactDataSource.getContacts(any(Context.class))).thenReturn(JSONModel.createFromJson(testJSONObject.toString(), MainApplication.Contacts.class));
         getActivity().setContactUtils(mockContactDataSource);
     }
 

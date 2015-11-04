@@ -30,6 +30,7 @@ import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.constants.Constants;
 import cc.softwarefactory.lokki.android.errors.PlaceError;
+import cc.softwarefactory.lokki.android.models.Contact;
 import cc.softwarefactory.lokki.android.models.JSONModel;
 import cc.softwarefactory.lokki.android.models.Place;
 import cc.softwarefactory.lokki.android.services.DataService;
@@ -139,7 +140,7 @@ public class ServerApi {
     public static void getContacts(final Context context) {
 
         Log.d(TAG, "getContacts");
-        AQuery aq = new AQuery(context);
+        final AQuery aq = new AQuery(context);
 
         String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
         String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
@@ -183,10 +184,7 @@ public class ServerApi {
                     // Write data into contacts
                     JSONObject nameMapping = json.getJSONObject("nameMapping");
                     if (MainApplication.contacts == null){
-                        MainApplication.contacts = new JSONObject();
-                    }
-                    if (MainApplication.mapping == null){
-                        MainApplication.mapping = new JSONObject();
+                        MainApplication.contacts = new MainApplication.Contacts();
                     }
                     Iterator<String> it = nameMapping.keys();
 
@@ -196,24 +194,25 @@ public class ServerApi {
                         String email = MainApplication.dashboard.getJSONObject("idmapping").optString(key);
                         if (email.isEmpty()) continue;
                         String newName = nameMapping.getString(key);
-
-                        if(!MainApplication.contacts.has(email)){
-                            MainApplication.contacts.put(email, new JSONObject());
+                        if(!MainApplication.contacts.hasEmail(email)) {
+                            Contact contact = new Contact();
+                            contact.setName(newName);
+                            //TODO: figure out proper IDs or stop storing them if we don't need them
+                            contact.setId(0);
+                            MainApplication.contacts.put(email, contact);
                         }
-                        MainApplication.contacts.getJSONObject(email).put("name", newName);
-                        //TODO: figure out proper IDs or stop storing them if we don't need them
-                        MainApplication.contacts.getJSONObject(email).put("id", 0);
-                        MainApplication.mapping.put(newName, email);
                     }
-                    MainApplication.contacts.put("mapping", MainApplication.mapping);
-                    PreferenceUtils.setString(context, PreferenceUtils.KEY_CONTACTS, MainApplication.contacts.toString());
+                    PreferenceUtils.setString(context, PreferenceUtils.KEY_CONTACTS, MainApplication.contacts.serialize());
+                } catch (JsonProcessingException e) {
+                    Log.e(TAG, "Serializing contacts to JSON failed");
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    Log.e(TAG, "Error parsing contacts JSON");
+                    e.printStackTrace();
+                }
 
-                    Intent intent = new Intent("CONTACTS-UPDATE");
-                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-                }
-                catch (JSONException e){
-                    Log.e(TAG, "Error parsing contacts JSON: " + e);
-                }
+                Intent intent = new Intent("CONTACTS-UPDATE");
+                LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
             }
         };
         cb.header("authorizationtoken", authorizationToken);

@@ -705,7 +705,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                         MainApplication.userAccount = null;
                         MainApplication.dashboard = null;
                         MainApplication.contacts = null;
-                        MainApplication.mapping = null;
                         MainApplication.places = null;
                         MainApplication.iDontWantToSee = new JSONObject();
                         MainApplication.firstTimeZoom = true;

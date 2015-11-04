@@ -32,15 +32,18 @@ import com.androidquery.callback.AjaxStatus;
 
 import org.json.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.Map;
 
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.avatar.AvatarLoader;
 import cc.softwarefactory.lokki.android.datasources.contacts.ContactDataSource;
 import cc.softwarefactory.lokki.android.datasources.contacts.DefaultContactDataSource;
+import cc.softwarefactory.lokki.android.models.Contact;
 import cc.softwarefactory.lokki.android.services.DataService;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 import cc.softwarefactory.lokki.android.utilities.ContactUtils;
@@ -174,45 +177,42 @@ public class AddContactsFragment extends Fragment {
         }
     }
 
-    private class getAllEmailAddressesAsync extends AsyncTask<Void, Void, JSONObject> {
+    private class getAllEmailAddressesAsync extends AsyncTask<Void, Void, MainApplication.Contacts> {
 
         @Override
-        protected JSONObject doInBackground(Void... params) {
-            return mContactDataSource.getContactsJson(context);
+        protected MainApplication.Contacts doInBackground(Void... params) {
+            return mContactDataSource.getContacts(context);
         }
 
         @Override
-        protected void onPostExecute(JSONObject contactsResult) {
+        protected void onPostExecute(MainApplication.Contacts contactsResult) {
 
             if (contactsResult == null || !isAdded() || cancelAsynTasks) {
                 super.onPostExecute(MainApplication.contacts);
                 return;
             }
-            Log.d(TAG, "Number of contacts: " + (contactsResult.length() - 1));
+            Log.d(TAG, "Number of contacts: " + (contactsResult.size() - 1));
             Log.d(TAG, "Contacts: " + contactsResult);
 
-            try {
-                // If contacts don't exist already, use data source result
-                if (MainApplication.contacts == null){
-                    MainApplication.contacts = contactsResult;
-                } else {
-                    // If contacts already exist, combine data source result with existing data
-                    Iterator<String> iter = contactsResult.keys();
-                    while(iter.hasNext()){
-                        String key = iter.next();
-                        if(!MainApplication.contacts.has(key)){
-                            MainApplication.contacts.put(key,contactsResult.getJSONObject(key));
-                            String name = contactsResult.getJSONObject(key).getString("name");
-                            MainApplication.contacts.getJSONObject("mapping").put(name,contactsResult.getJSONObject("mapping").getString(name)) ;
-                        }
+            // If contacts don't exist already, use data source result
+            if (MainApplication.contacts == null){
+                MainApplication.contacts = contactsResult;
+            } else {
+                // If contacts already exist, combine data source result with existing data
+                for (Map.Entry<String, Contact> contactEntry : contactsResult.entrySet()) {
+                    String email = contactEntry.getKey();
+                    if (!MainApplication.contacts.hasEmail(email)) {
+                        Contact contact = contactsResult.getContactByEmail(email);
+                        MainApplication.contacts.put(email, contact);
                     }
                 }
-                //Synchronize mapping JSON with contacts
-                MainApplication.mapping = MainApplication.contacts.getJSONObject("mapping");
-                PreferenceUtils.setString(context, PreferenceUtils.KEY_CONTACTS, MainApplication.contacts.toString());
+            }
 
-            } catch (JSONException e) {
-                Log.e(TAG, "Exception while parsing contacts results: " + e.getMessage());
+            //Synchronize mapping JSON with contacts
+            try {
+                PreferenceUtils.setString(context, PreferenceUtils.KEY_CONTACTS, MainApplication.contacts.serialize());
+            } catch (IOException e) {
+                Log.e(TAG, "Exception while serializing contacts results to JSON: " + e.getMessage());
             }
             new prepareAdapterAsync().execute();
             super.onPostExecute(MainApplication.contacts);
@@ -223,26 +223,18 @@ public class AddContactsFragment extends Fragment {
 
         contactList = new ArrayList<>();
 
-        if (MainApplication.mapping == null){
-            MainApplication.mapping = new JSONObject();
-        }
-        JSONArray keys = MainApplication.mapping.names();
+        Map<String, Contact> contacts = MainApplication.contacts;
 
-        if (keys == null) {
+        if (contacts == null)
             return;
-        }
-        int contactCount = keys.length();
 
-        for (int i = 0; i < contactCount; i++) {
-            try {
-                String name = keys.getString(i);
-                if (alreadyAdded(MainApplication.mapping.getString(name))) {
-                    continue;
-                }
-                contactList.add(name);
-            } catch (JSONException e) {
-                Log.e(TAG, e.getMessage());
-            }
+        for (Map.Entry<String, Contact> contactEntry : contacts.entrySet()) {
+            String email = contactEntry.getKey();
+            Contact contact = contactEntry.getValue();
+
+            if (alreadyAdded(email))
+                continue;
+            contactList.add(contact.getName());
         }
         Collections.sort(contactList);
         Log.d(TAG, "Adapter ContactList: " + contactList);
@@ -270,6 +262,7 @@ public class AddContactsFragment extends Fragment {
 
     private void setListAdapter() {
 
+        //TODO: array adapter should be a list of Contacts instead of names. Current implementation will cause bugs if there are contacts with same name.
         adapter = new ArrayAdapter<String>(getActivity(), R.layout.add_people_row_layout, contactList) {
 
             @Override
@@ -289,77 +282,73 @@ public class AddContactsFragment extends Fragment {
                     holder = (ViewHolder) convertView.getTag();
                 }
 
-                try {
-                    AQuery aq = new AQuery(convertView);
-                    String contactName = getItem(position);
-                    final String email = MainApplication.mapping.getString(contactName);
+                AQuery aq = new AQuery(convertView);
+                String contactName = getItem(position);
+                final String email = MainApplication.contacts.getEmailByName(contactName);
 
-                    inputSearch.setEnabled(true);
-                    inputSearch.setAlpha(1);
-                    noContactsMessage.setAlpha(0);
+                inputSearch.setEnabled(true);
+                inputSearch.setAlpha(1);
+                noContactsMessage.setAlpha(0);
 
-                    avatarLoader.load(email, holder.photo);
+                avatarLoader.load(email, holder.photo);
 
-                    aq.id(holder.name).text(contactName);
-                    aq.id(holder.email).text(email);
-                    holder.position = position;
+                aq.id(holder.name).text(contactName);
+                aq.id(holder.email).text(email);
+                holder.position = position;
 
-                    convertView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
-                                    getString(R.string.analytics_action_click),
-                                    getString(R.string.analytics_label_contact_in_list));
-                            final Context context = getContext();
-                            String title = getString(R.string.add_contact);
-                            String message = getString(R.string.add_contact_dialog_save, email);
-                            new AlertDialog.Builder(context)
-                                    .setTitle(title)
-                                    .setMessage(message)
-                                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
-                                                    getString(R.string.analytics_action_click),
-                                                    getString(R.string.analytics_label_confirm_contact_add_from_list_dialog));
+                convertView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                                getString(R.string.analytics_action_click),
+                                getString(R.string.analytics_label_contact_in_list));
+                        final Context context = getContext();
+                        String title = getString(R.string.add_contact);
+                        String message = getString(R.string.add_contact_dialog_save, email);
+                        new AlertDialog.Builder(context)
+                                .setTitle(title)
+                                .setMessage(message)
+                                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                                                getString(R.string.analytics_action_click),
+                                                getString(R.string.analytics_label_confirm_contact_add_from_list_dialog));
 
-                                            if(ContactUtils.isSelf(context, email)) {
-                                                Toast.makeText(context, R.string.cant_add_self_as_contact, Toast.LENGTH_LONG).show();
-                                            } else {
-                                                ServerApi.allowPeople(context, email, new AjaxCallback<String>() {
-                                                    @Override
-                                                    public void callback(String url, String result, AjaxStatus status)  {
-                                                        ServerApi.logStatus("allowPeople", status);
-                                                        if(status.getError() != null)
-                                                            Toast.makeText(context, R.string.unable_to_add_contact, Toast.LENGTH_LONG).show();
-                                                        else {
-                                                            ContactUtils.addLocalContact(context, email);
-                                                            contactList.remove(position);
-                                                            notifyDataSetChanged();
-                                                            DataService.getDashboard(context);
-                                                            Toast.makeText(context, R.string.contact_added, Toast.LENGTH_SHORT).show();
-                                                        }
+                                        if(ContactUtils.isSelf(context, email)) {
+                                            Toast.makeText(context, R.string.cant_add_self_as_contact, Toast.LENGTH_LONG).show();
+                                        } else {
+                                            ServerApi.allowPeople(context, email, new AjaxCallback<String>() {
+                                                                              @Override
+                                                                              public void callback(String url, String result, AjaxStatus status)  {
+                                                    ServerApi.logStatus("allowPeople", status);
+                                                    if(status.getError() != null)
+                                                        Toast.makeText(context, R.string.unable_to_add_contact, Toast.LENGTH_LONG).show();
+                                                    else {
+                                                        ContactUtils.addLocalContact(context, email);
+                                                        contactList.remove(position);
+                                                        notifyDataSetChanged();
+                                                        DataService.getDashboard(context);
+                                                        Toast.makeText(context, R.string.contact_added, Toast.LENGTH_SHORT).show();
                                                     }
-                                                });
                                             }
+                                        });
                                         }
-                                    })
-                                    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
-                                                    getString(R.string.analytics_action_click),
-                                                    getString(R.string.analytics_label_cancel_contact_add_from_list_dialog));
+                                    }
+                                })
+                                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                                         @Override
+                                                         public void onClick(DialogInterface dialog, int which) {
+                                        AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                                                getString(R.string.analytics_action_click),
+                                                getString(R.string.analytics_label_cancel_contact_add_from_list_dialog));
 
-                                        }
-                                    })
-                                    .show();
-                        }
-                    });
+                                }
+                            })
+                                .show();
+                    }
+                });
 
-                } catch (JSONException e) {
-                    Log.e(TAG, e.getMessage());
-                }
                 return convertView;
             }
         };
