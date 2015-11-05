@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Set;
 
 import cc.softwarefactory.lokki.android.models.Contact;
+import cc.softwarefactory.lokki.android.models.JSONMap;
 import cc.softwarefactory.lokki.android.models.JSONModel;
 import cc.softwarefactory.lokki.android.models.Place;
 import cc.softwarefactory.lokki.android.models.User;
@@ -152,9 +153,14 @@ public class MainApplication extends Application {
      * User's contacts is a map, where key is email (which is id) and value is the contact.
      */
     @JsonIgnoreProperties("mapping")
-    public static class Contacts extends JSONModel implements Map<String, Contact> {
+    public static class Contacts extends JSONMap<Contact> {
 
         private HashMap<String, Contact> contacts = new HashMap<>();
+
+        @Override
+        protected Map<String, Contact> getMap() {
+            return contacts;
+        }
 
         /**
          * Handles functionality of the mapping-field. nameToEmail is not mapped from JSON,
@@ -183,86 +189,39 @@ public class MainApplication extends Application {
             return contacts.get(email);
         }
 
-        public Contact getContactByName(String name) {
-            return contacts.get(nameToEmail.get(name));
-        }
-
         public String getEmailByName(String name) {
             return nameToEmail.get(name);
         }
 
         public void update(String email, Contact contact) {
-            contacts.put(email, contact);
             nameToEmail.put(contact.getName(), email);
+            super.put(email, contact);
         }
 
         @Override
         public void clear() {
-            contacts.clear();
+            super.clear();
             nameToEmail.clear();
-        }
-
-        @Override
-        public boolean containsKey(Object key) {
-            return contacts.containsKey(key);
-        }
-
-        @Override
-        public boolean containsValue(Object value) {
-            return contacts.containsValue(value);
-        }
-
-        @NonNull
-        @Override
-        public Set<Entry<String, Contact>> entrySet() {
-            return contacts.entrySet();
-        }
-
-        @Override
-        public Contact get(Object key) {
-            return contacts.get(key);
-        }
-
-        @Override
-        public boolean isEmpty() {
-            return contacts.isEmpty();
-        }
-
-        @NonNull
-        @Override
-        public Set<String> keySet() {
-            return contacts.keySet();
         }
 
         @Override
         public Contact put(String key, Contact value) {
             nameToEmail.put(value.getName(), key);
-            return contacts.put(key, value);
+            return super.put(key, value);
         }
 
         @Override
         public void putAll(Map<? extends String, ? extends Contact> map) {
-            contacts.putAll(map);
             for (Entry<? extends String, ? extends Contact> entry : map.entrySet()) {
                 nameToEmail.put(entry.getValue().getName(), entry.getKey());
             }
+            super.putAll(map);
         }
 
         @Override
         public Contact remove(Object key) {
-            nameToEmail.remove(contacts.get(key).getName());
-            return contacts.remove(key);
-        }
-
-        @Override
-        public int size() {
-            return contacts.size();
-        }
-
-        @NonNull
-        @Override
-        public Collection<Contact> values() {
-            return contacts.values();
+            nameToEmail.remove(super.get(key).getName());
+            return super.remove(key);
         }
     }
     public static Contacts contacts;
@@ -284,9 +243,14 @@ public class MainApplication extends Application {
     /**
      * User's places is a map, where key is ID and value is the place.
      */
-    public static class Places extends JSONModel implements Map<String, Place> {
+    public static class Places extends JSONMap<Place> {
 
-        private HashMap<String, Place> places = new HashMap<>();
+        private Map<String, Place> places = new HashMap<>();
+
+        @Override
+        protected Map<String, Place> getMap() {
+            return places;
+        }
 
         public Place getPlaceById(String id) {
             return places.get(id);
@@ -303,76 +267,6 @@ public class MainApplication extends Application {
             return places.values();
         }
 
-        public Place getPlaceByName(String name) {
-            return places.get(this.getPlaceIdByName(name));
-        }
-
-        public void update(String id, Place place) {
-            places.put(id, place);
-        }
-
-        @Override
-        public void clear() {
-            places.clear();
-        }
-
-        @Override
-        public boolean containsKey(Object key) {
-            return places.containsKey(key);
-        }
-
-        @Override
-        public boolean containsValue(Object value) {
-            return places.containsValue(value);
-        }
-
-        @NonNull
-        @Override
-        public Set<Entry<String, Place>> entrySet() {
-            return places.entrySet();
-        }
-
-        @Override
-        public Place get(Object key) {
-            return places.get(key);
-        }
-
-        @Override
-        public boolean isEmpty() {
-            return places.isEmpty();
-        }
-
-        @NonNull
-        @Override
-        public Set<String> keySet() {
-            return places.keySet();
-        }
-
-        @Override
-        public Place put(String key, Place value) {
-            return places.put(key, value);
-        }
-
-        @Override
-        public void putAll(Map<? extends String, ? extends Place> map) {
-            places.putAll(map);
-        }
-
-        @Override
-        public Place remove(Object key) {
-            return places.remove(key);
-        }
-
-        @Override
-        public int size() {
-            return places.size();
-        }
-
-        @NonNull
-        @Override
-        public Collection<Place> values() {
-            return places.values();
-        }
     }
 
     public static Places places;
