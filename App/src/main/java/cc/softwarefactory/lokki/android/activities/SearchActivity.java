@@ -17,6 +17,7 @@ import android.widget.Button;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -206,7 +207,12 @@ public class SearchActivity extends ListActivity {
             return;
         }
         // Loop through all user places
-        Log.d(TAG, MainApplication.places.toString());
+        try {
+            Log.d(TAG, MainApplication.places.serialize());
+        } catch (JsonProcessingException e) {
+            Log.e(TAG, "Serializing places to JSON failed");
+            e.printStackTrace();
+        }
         for (Place place : MainApplication.places.getPlaces()) {
             try {
                 String name = place.getName();

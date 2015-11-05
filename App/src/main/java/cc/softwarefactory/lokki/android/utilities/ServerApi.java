@@ -24,7 +24,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -201,7 +200,7 @@ public class ServerApi {
                     ContactResponse contactResponse = JSONModel.createFromJson(json.toString(), ContactResponse.class);
 
                     //Store ignored users
-                    MainApplication.iDontWantToSee = new JSONObject();
+                    MainApplication.iDontWantToSee = new MainApplication.IDontWantToSee();
 
                     List<String> ignoreds = contactResponse.getIgnored();
                     Map<String, String> idMapping = contactResponse.getIdMapping();
@@ -212,7 +211,7 @@ public class ServerApi {
                             Log.e(TAG, "Ignore list containing unknown id: " + ignored);
                         MainApplication.iDontWantToSee.put(email, 1);
                     }
-                    PreferenceUtils.setString(context, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, MainApplication.iDontWantToSee.toString());
+                    PreferenceUtils.setString(context, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, MainApplication.iDontWantToSee.serialize());
 
                     MainApplication.dashboard.setiCanSee(contactResponse.getiCanSee());
                     MainApplication.dashboard.setCanSeeMe(contactResponse.getCanSeeMe());
@@ -243,7 +242,7 @@ public class ServerApi {
                 } catch (JsonProcessingException e) {
                     Log.e(TAG, "Serializing contacts to JSON failed");
                     e.printStackTrace();
-                } catch (JSONException | IOException e) {
+                } catch (IOException e) {
                     Log.e(TAG, "Error parsing contacts JSON");
                     e.printStackTrace();
                 }
@@ -324,7 +323,6 @@ public class ServerApi {
      * Prevents an user from showing up on the map
      * @param context           Context used to access data in preferences
      * @param email             The email address to be ignored
-     * @throws JSONException
      */
     public static void ignoreUsers(final Context context, String email) {
 
