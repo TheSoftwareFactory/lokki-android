@@ -8,7 +8,6 @@ import android.app.Application;
 import android.graphics.Bitmap;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.support.v4.util.LruCache;
 import android.util.Log;
 
@@ -18,17 +17,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.android.gms.maps.GoogleMap;
 
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import cc.softwarefactory.lokki.android.models.Contact;
 import cc.softwarefactory.lokki.android.models.JSONMap;
@@ -233,7 +228,16 @@ public class MainApplication extends Application {
      *      "family.member@example.com":1
      * }
      */
-    public static JSONObject iDontWantToSee;
+    public static class IDontWantToSee extends JSONMap<Integer> {
+
+        private Map<String, Integer> iDontWantToSee = new HashMap<>();
+
+        @Override
+        protected Map<String, Integer> getMap() {
+            return iDontWantToSee;
+        }
+    }
+    public static IDontWantToSee iDontWantToSee;
     /**
      * Is the user visible to others?
      */
@@ -299,13 +303,13 @@ public class MainApplication extends Application {
         String iDontWantToSeeString = PreferenceUtils.getString(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE);
         if (!iDontWantToSeeString.isEmpty()) {
             try {
-                MainApplication.iDontWantToSee = new JSONObject(iDontWantToSeeString);
-            } catch (JSONException e) {
+                MainApplication.iDontWantToSee = JSONModel.createFromJson(iDontWantToSeeString, IDontWantToSee.class);
+            } catch (IOException e) {
                 MainApplication.iDontWantToSee = null;
                 Log.e(TAG, e.getMessage());
             }
         } else {
-            MainApplication.iDontWantToSee = new JSONObject();
+            MainApplication.iDontWantToSee = new MainApplication.IDontWantToSee();
         }
         Log.d(TAG, "MainApplication.iDontWantToSee: " + MainApplication.iDontWantToSee);
 

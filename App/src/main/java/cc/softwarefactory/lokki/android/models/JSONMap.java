@@ -15,6 +15,10 @@ public abstract class JSONMap<V> extends JSONModel implements Map<String, V> {
         getMap().put(id, value);
     }
 
+    public boolean has(String key) {
+        return getMap().containsKey(key);
+    }
+
     @Override
     public void clear() {
         getMap().clear();

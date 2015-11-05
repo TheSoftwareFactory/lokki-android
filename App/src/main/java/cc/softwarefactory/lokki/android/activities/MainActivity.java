@@ -38,9 +38,9 @@ import android.widget.Toast;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
@@ -606,18 +606,24 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         String email = (String) checkBox.getTag();
         Log.d(TAG, "toggleIDontWantToSee: " + email + ", Checkbox is: " + allow);
         if (!allow) {
+            MainApplication.iDontWantToSee.put(email, 1);
             try {
-                MainApplication.iDontWantToSee.put(email, 1);
-                Log.d(TAG, MainApplication.iDontWantToSee.toString());
-                PreferenceUtils.setString(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, MainApplication.iDontWantToSee.toString());
-                ServerApi.ignoreUsers(this, email);
-            } catch (JSONException e) {
+                Log.d(TAG, MainApplication.iDontWantToSee.serialize());
+                PreferenceUtils.setString(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, MainApplication.iDontWantToSee.serialize());
+            } catch (JsonProcessingException e) {
+                Log.e(TAG, "Serializing iDontWantToSee to JSON failed");
                 e.printStackTrace();
             }
+            ServerApi.ignoreUsers(this, email);
         } else if (MainApplication.iDontWantToSee.has(email)) {
             Log.d(TAG, "unignoring user");
             MainApplication.iDontWantToSee.remove(email);
-            PreferenceUtils.setString(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, MainApplication.iDontWantToSee.toString());
+            try {
+                PreferenceUtils.setString(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, MainApplication.iDontWantToSee.serialize());
+            } catch (JsonProcessingException e) {
+                Log.e(TAG, "Serializing iDontWantToSee to JSON failed");
+                e.printStackTrace();
+            }
             ServerApi.unignoreUser(this, email);
         }
     }
@@ -706,7 +712,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                         MainApplication.dashboard = null;
                         MainApplication.contacts = null;
                         MainApplication.places = null;
-                        MainApplication.iDontWantToSee = new JSONObject();
+                        MainApplication.iDontWantToSee = new MainApplication.IDontWantToSee();
                         MainApplication.firstTimeZoom = true;
                         //Restart main activity to clear state
                         main.recreate();
