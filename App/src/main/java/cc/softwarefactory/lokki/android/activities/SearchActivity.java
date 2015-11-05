@@ -175,35 +175,24 @@ public class SearchActivity extends ListActivity {
      */
     protected void searchContacts(String query, ArrayList<SearchResult> resultList)
     {
-        try {
-            JSONObject icansee = MainApplication.dashboard.getJSONObject("icansee");
-            JSONObject idmapping =  MainApplication.dashboard.getJSONObject("idmapping");
-            MainApplication.Contacts contacts = MainApplication.contacts;
-            Iterator<String> it = icansee.keys();
+        MainApplication.Contacts contacts = MainApplication.contacts;
+        for (String id : MainApplication.dashboard.getUserIdsICanSee()) {
+            String email = MainApplication.dashboard.getEmailByUserId(id);
+            Contact contact = (contacts != null)? contacts.getContactByEmail(email) : null;
+            String name = "";
 
-            // Loop through everyone we can see
-            while (it.hasNext()) {
-                String id = it.next();
-                String email = idmapping.getString(id);
-                Contact contact = (contacts != null)? contacts.getContactByEmail(email) : null;
-                String name = "";
-
-                if (contact != null) {
-                    name = contact.getName();
-                }
-                if (email.toLowerCase().contains(query) || name.toLowerCase().contains(query)) {
-                    //Display either name or email depending on whether a name exists
-                    //Store contact data in the result's extra data for easy access
-                    if(!name.isEmpty())
-                        resultList.add(new SearchResult(ResultType.CONTACT, name, email));
-                    else
-                        resultList.add(new SearchResult(ResultType.CONTACT, email, email));
-
-                }
+            if (contact != null) {
+                name = contact.getName();
             }
+            if (email.toLowerCase().contains(query) || name.toLowerCase().contains(query)) {
+                //Display either name or email depending on whether a name exists
+                //Store contact data in the result's extra data for easy access
+                if(!name.isEmpty())
+                    resultList.add(new SearchResult(ResultType.CONTACT, name, email));
+                else
+                    resultList.add(new SearchResult(ResultType.CONTACT, email, email));
 
-        } catch (JSONException e) {
-            Log.e(TAG, "Error parsing contacts: " + e);
+            }
         }
     }
 

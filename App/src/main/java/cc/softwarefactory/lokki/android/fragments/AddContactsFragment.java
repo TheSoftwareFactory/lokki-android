@@ -245,19 +245,7 @@ public class AddContactsFragment extends Fragment {
         if (MainApplication.dashboard == null) {
             return false;
         }
-
-        try {
-            JSONObject data = MainApplication.dashboard.getJSONObject("idmapping");
-            Iterator<String> keys = data.keys();
-            while (keys.hasNext()) {
-                if (email.equals(data.getString(keys.next()))) {
-                    return true;
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return false;
+        return MainApplication.dashboard.containsEmail(email);
     }
 
     private void setListAdapter() {
