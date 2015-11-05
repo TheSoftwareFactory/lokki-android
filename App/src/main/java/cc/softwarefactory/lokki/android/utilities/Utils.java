@@ -36,12 +36,11 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 
 import static android.text.format.DateUtils.getRelativeTimeSpanString;
 
@@ -93,21 +92,15 @@ public class Utils {
             return null;
         }
 
-        try {
-            JSONObject idMapping = MainApplication.dashboard.getJSONObject("idmapping");
-            Iterator keys = idMapping.keys();
-            while (keys.hasNext()) {
-                String key = (String) keys.next();
-                String emailInObject = (String) idMapping.get(key);
-                if (email.equals(emailInObject)) {
-                    Log.d(TAG, "email: " + email + ", Id from mapping: " + key);
-                    return key;
-                }
+        Map<String, String> idMapping = MainApplication.dashboard.getIdMapping();
+        for (String userId : idMapping.keySet()) {
+            String emailInObject = idMapping.get(userId);
+            if (email.equals(emailInObject)) {
+                Log.d(TAG, "email: " + email + ", Id from mapping: " + userId);
+                return userId;
             }
-
-        } catch (JSONException e) {
-            Log.e(TAG, "getIdFromEmail - failed: " + email);
         }
+
         return null;
     }
 

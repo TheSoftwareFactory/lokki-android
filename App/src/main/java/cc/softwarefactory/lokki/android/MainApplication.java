@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.util.LruCache;
 import android.util.Log;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.android.gms.maps.GoogleMap;
@@ -32,6 +33,7 @@ import java.util.Set;
 import cc.softwarefactory.lokki.android.models.Contact;
 import cc.softwarefactory.lokki.android.models.JSONModel;
 import cc.softwarefactory.lokki.android.models.Place;
+import cc.softwarefactory.lokki.android.models.User;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 
@@ -77,34 +79,88 @@ public class MainApplication extends Application {
      *      "visibility":true
      * }
      */
-    public static JSONObject dashboard = null;
+    public static class Dashboard extends User {
+        /**
+         * List of user ids that can see me
+         */
+        @JsonProperty("canseeme")
+        private List<String> canSeeMe;
+
+        /**
+         * Map where key is user id and value is the user object. Users that I can see.
+         */
+        @JsonProperty("icansee")
+        private Map<String, User> iCanSee;
+
+        /**
+         * Map between user ids and email addresses.
+         */
+        @JsonProperty("idmapping")
+        private Map<String, String> idMapping;
+
+        public List<String> getUserIdsICanSee() {
+            return new ArrayList<String>(iCanSee.keySet());
+        }
+
+        public List<String> getUserIds() {
+            return new ArrayList<String>(idMapping.keySet());
+        }
+
+        public String getEmailByUserId(String userId) {
+            return idMapping.get(userId);
+        }
+
+        public boolean containsEmail(String email) {
+            for (String containedEmail : idMapping.values()) {
+                if (email.equals(containedEmail)) return true;
+            }
+            return false;
+        }
+
+        public User getUserICanSeeByUserId(String userId) {
+            return iCanSee.get(userId);
+        }
+
+        public List<String> getCanSeeMe() {
+            return canSeeMe;
+        }
+
+        public void setCanSeeMe(List<String> canSeeMe) {
+            this.canSeeMe = canSeeMe;
+        }
+
+        public Map<String, User> getiCanSee() {
+            return iCanSee;
+        }
+
+        public void setiCanSee(Map<String, User> iCanSee) {
+            this.iCanSee = iCanSee;
+        }
+
+        public Map<String, String> getIdMapping() {
+            return idMapping;
+        }
+
+        public void setIdMapping(Map<String, String> idMapping) {
+            this.idMapping = idMapping;
+        }
+    }
+    public static Dashboard dashboard = null;
     public static String userAccount; // Email
+
     /**
-     * User's contacts. Format:
-     * {
-     *      "test.friend@example.com": {
-     *          "id":1,
-     *          "name":"Test Friend"
-     *      },
-     *      "family.member@example.com":{
-     *          "id":2,
-     *          "name":"Family Member"
-     *      },
-     *      "work.buddy@example.com":{
-     *          "id":3,
-     *          "name":"Work Buddy"
-     *      },
-     *      "mapping":{
-     *          "Test Friend":"test.friend@example.com",
-     *          "Family Member":"family.member@example.com",
-     *          "Work Buddy":"work.buddy@example.com"
-     *      }
-     * }
+     * User's contacts is a map, where key is email (which is id) and value is the contact.
      */
     @JsonIgnoreProperties("mapping")
     public static class Contacts extends JSONModel implements Map<String, Contact> {
 
         private HashMap<String, Contact> contacts = new HashMap<>();
+
+        /**
+         * Handles functionality of the mapping-field. nameToEmail is not mapped from JSON,
+         * because it is easier to keep in sync if it's functionality is handled in this class.
+         */
+        @JsonIgnore
         private HashMap<String, String> nameToEmail = new HashMap<>();
 
         public boolean hasEmail(String email) {
@@ -114,6 +170,7 @@ public class MainApplication extends Application {
         public List<Contact> contacts() {
             return new ArrayList<Contact>(contacts.values());
         }
+
         public List<String> names() {
             return new ArrayList<String>(nameToEmail.keySet());
         }
@@ -209,15 +266,7 @@ public class MainApplication extends Application {
         }
     }
     public static Contacts contacts;
-    /**
-     * Format:
-     * {
-     *      "Test Friend":"test.friend@example.com",
-     *      "Family Member":"family.member@example.com",
-     *      "Work Buddy":"work.buddy@example.com"
-     * }
-     */
-//    public static JSONObject mapping;
+
     /**
      * Contacts that aren't shown on the map. Format:
      * {

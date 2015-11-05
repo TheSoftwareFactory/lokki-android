@@ -38,6 +38,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -49,6 +50,8 @@ import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.avatar.AvatarLoader;
 import cc.softwarefactory.lokki.android.models.Contact;
+import cc.softwarefactory.lokki.android.models.JSONModel;
+import cc.softwarefactory.lokki.android.models.User;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
@@ -219,30 +222,22 @@ public class ContactsFragment extends Fragment {
                 if (dashboardJsonAsString.isEmpty()) {
                     return;
                 }
-                MainApplication.dashboard = new JSONObject(dashboardJsonAsString);
+                MainApplication.dashboard = JSONModel.createFromJson(dashboardJsonAsString, MainApplication.Dashboard.class);
             }
 
-            JSONObject iCanSeeObj = MainApplication.dashboard.getJSONObject("icansee");
-            JSONArray canSeeMeArray = MainApplication.dashboard.getJSONArray("canseeme");
-            JSONObject idMappingObj = MainApplication.dashboard.getJSONObject("idmapping");
-
-            
-            Iterator keys = iCanSeeObj.keys();
-            while (keys.hasNext()) {
-                String key = (String) keys.next();
-                String email = (String) idMappingObj.get(key);
+            for (String userIdICanSee : MainApplication.dashboard.getUserIdsICanSee()) {
+                String email = MainApplication.dashboard.getEmailByUserId(userIdICanSee);
                 String name = Utils.getNameFromEmail(context, email);
-                if (iCanSeeObj.getJSONObject(key).getJSONObject("location").has("time")) {
-                    timestamps.put(name, iCanSeeObj.getJSONObject(key).getJSONObject("location").getLong("time"));
-                }
+                User.Location location = MainApplication.dashboard.getUserICanSeeByUserId(userIdICanSee).getLocation();
+            if  (location.getTime() != null)
+                    timestamps.put(name, location.getTime().getTime());
                 iCanSee.add(email);
                 mapping.put(name, email);
                 Log.d(TAG, "I can see: " + email);
             }
 
-            for (int i = 0; i < canSeeMeArray.length(); i++) {
-                String key = canSeeMeArray.getString(i);
-                String email = (String) idMappingObj.get(key);
+            for (String userId : MainApplication.dashboard.getCanSeeMe()) {
+                String email = MainApplication.dashboard.getEmailByUserId(userId);
                 String name = Utils.getNameFromEmail(context, email);
                 canSeeMe.add(email);
                 mapping.put(name, email);
@@ -260,7 +255,8 @@ public class ContactsFragment extends Fragment {
                 Log.d(TAG, "Local contact: " + email);
             }*/
 
-        } catch (JSONException e) {
+        } catch (IOException e) {
+            Log.e(TAG, "Parsing dashboard JSON failed");
             e.printStackTrace();
         }
 

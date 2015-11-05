@@ -56,11 +56,13 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.activities.FirstTimeActivity;
 import cc.softwarefactory.lokki.android.models.Place;
+import cc.softwarefactory.lokki.android.models.User;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 import cc.softwarefactory.lokki.android.utilities.DialogUtils;
 import cc.softwarefactory.lokki.android.utilities.Utils;
@@ -498,48 +500,40 @@ public class MapViewFragment extends Fragment {
         @Override
         protected HashMap<String, Location> doInBackground(MapUserTypes... params) {
 
-            if (MainApplication.dashboard == null) {
+            MainApplication.Dashboard dashboard = MainApplication.dashboard;
+
+            if (dashboard == null) {
                 return null;
             }
 
             MapUserTypes who = params[0];
             Log.d(TAG, "UpdateMap update for all users: " + who);
 
-            try {
-                JSONObject iCanSee = MainApplication.dashboard.getJSONObject("icansee");
-                JSONObject idMapping = MainApplication.dashboard.getJSONObject("idmapping");
-                HashMap<String, Location> markerData = new HashMap<>();
+            HashMap<String, Location> markerData = new HashMap<>();
 
-                if (who == MapUserTypes.User || who == MapUserTypes.All) {
-                    markerData.put(MainApplication.userAccount, convertToLocation(MainApplication.dashboard.getJSONObject("location"))); // User himself
-                }
+            if (who == MapUserTypes.User || who == MapUserTypes.All) {
+                markerData.put(MainApplication.userAccount, dashboard.getLocation().convertToAndroidLocation()); // User himself
+            }
 
-                if (who == MapUserTypes.Others || who == MapUserTypes.All) {
-                    Iterator keys = iCanSee.keys();
-                    while (keys.hasNext()) {
-                        String key = (String) keys.next();
-                        JSONObject data = iCanSee.getJSONObject(key);
-                        JSONObject location = data.getJSONObject("location");
-                        String email = (String) idMapping.get(key);
-                        Log.d(TAG, "I can see: " + email + " => " + data);
+            if (who == MapUserTypes.Others || who == MapUserTypes.All) {
+                for (String userId : dashboard.getUserIdsICanSee()) {
+                    User user = dashboard.getUserICanSeeByUserId(userId);
+                    User.Location location = user.getLocation();
+                    String email = dashboard.getEmailByUserId(userId);
+                    Log.d(TAG, "I can see: " + email + " => " + user);
 
-                        if (MainApplication.iDontWantToSee != null && MainApplication.iDontWantToSee.has(email)) {
-                            Log.d(TAG, "I dont want to see: " + email);
-                        } else {
-                            Location loc = convertToLocation(location);
-                            if (loc == null) {
-                                Log.w(TAG, "No location could be parsed for: " + email);
-                            }
-                            markerData.put(email, loc);
+                    if (MainApplication.iDontWantToSee != null && MainApplication.iDontWantToSee.has(email)) {
+                        Log.d(TAG, "I dont want to see: " + email);
+                    } else {
+                        Location loc = location.convertToAndroidLocation();
+                        if (loc == null) {
+                            Log.w(TAG, "No location could be parsed for: " + email);
                         }
+                        markerData.put(email, loc);
                     }
                 }
-                return markerData;
-
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
-            return null;
+            return markerData;
         }
 
         @Override
@@ -556,28 +550,6 @@ public class MapViewFragment extends Fragment {
                 }
             }
         }
-    }
-
-    private Location convertToLocation(JSONObject locationObj) {
-
-        Location myLocation = new Location("fused");
-        try {
-            if (locationObj.length() == 0) {
-                return null;
-            }
-            double lat = locationObj.getDouble("lat");
-            double lon = locationObj.getDouble("lon");
-            float acc = (float) locationObj.getDouble("acc");
-            Long time = locationObj.getLong("time");
-            myLocation.setLatitude(lat);
-            myLocation.setLongitude(lon);
-            myLocation.setAccuracy(acc);
-            myLocation.setTime(time);
-            return myLocation;
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     private class MyInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {

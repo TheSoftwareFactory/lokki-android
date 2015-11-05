@@ -35,6 +35,7 @@ import com.androidquery.AQuery;
 import cc.softwarefactory.lokki.android.activities.BuzzActivity;
 import cc.softwarefactory.lokki.android.models.JSONModel;
 import cc.softwarefactory.lokki.android.models.Place;
+import cc.softwarefactory.lokki.android.models.User;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
 import cc.softwarefactory.lokki.android.services.DataService;
@@ -50,7 +51,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
+import java.util.Map;
 
 
 public class PlacesFragment extends Fragment {
@@ -398,8 +399,7 @@ public class PlacesFragment extends Fragment {
                 return;
             }
 
-            JSONObject iCanSeeObj = MainApplication.dashboard.getJSONObject("icansee");
-            JSONObject idMappingObj = MainApplication.dashboard.getJSONObject("idmapping");
+            Map<String, User> iCanSee = MainApplication.dashboard.getiCanSee();
             JSONArray peopleInThisPlace = new JSONArray();
 
             Location placeLocation = new Location(place.getName());
@@ -408,10 +408,10 @@ public class PlacesFragment extends Fragment {
             placeLocation.setAccuracy(place.getRad());
 
             // Check myself
-            JSONObject userLocationObj = MainApplication.dashboard.getJSONObject("location");
+            User.Location userLocation = MainApplication.dashboard.getLocation();
             Location myLocation = new Location(MainApplication.userAccount);
-            myLocation.setLatitude(userLocationObj.getDouble("lat"));
-            myLocation.setLongitude(userLocationObj.getDouble("lon"));
+            myLocation.setLatitude(userLocation.getLat());
+            myLocation.setLongitude(userLocation.getLon());
             //Log.d(TAG, "userLocation: " + userLocation);
 
             // Compare location
@@ -422,24 +422,23 @@ public class PlacesFragment extends Fragment {
             }
 
             // Check for my contacts
-            Iterator<String> keys = iCanSeeObj.keys();
-            while (keys.hasNext()) {
-                String key = keys.next();
-                String email = idMappingObj.getString(key);
+//            Iterator<String> keys = iCanSee.keys();
+            for (String userId : iCanSee.keySet()) {
+                String email = MainApplication.dashboard.getEmailByUserId(userId);
 
-                JSONObject locationObj = iCanSeeObj.getJSONObject(key).getJSONObject("location");
-                Location userLocation = new Location(email);
+                User.Location userLocationObj = iCanSee.get(userId).getLocation();
+                Location location = new Location(email);
 
-                if (!locationObj.has("lat") || !locationObj.has("lon")) {
+                if (userLocationObj.getLat() == 0 || userLocationObj.getLon() == 0) {
                     continue;
                 }
 
-                userLocation.setLatitude(locationObj.getDouble("lat"));
-                userLocation.setLongitude(locationObj.getDouble("lon"));
+                location.setLatitude(userLocationObj.getLat());
+                location.setLongitude(userLocationObj.getLon());
                 //Log.d(TAG, "userLocation: " + userLocation);
 
                 // Compare location
-                float distance = placeLocation.distanceTo(userLocation);
+                float distance = placeLocation.distanceTo(location);
                 if (distance < placeLocation.getAccuracy()) {
                     //Log.d(TAG, email + " is in place: " + placeLocation.getProvider());
                     peopleInThisPlace.put(email);

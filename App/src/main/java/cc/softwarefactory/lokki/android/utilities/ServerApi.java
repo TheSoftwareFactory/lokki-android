@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -24,6 +25,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import cc.softwarefactory.lokki.android.MainApplication;
@@ -83,8 +85,13 @@ public class ServerApi {
 
                 } else if (json != null){
                     Log.d(TAG, "json returned: " + json);
-                    MainApplication.dashboard = json;
-                    PreferenceUtils.setString(context, PreferenceUtils.KEY_DASHBOARD, json.toString());
+                    try {
+                        MainApplication.dashboard = JSONModel.createFromJson(json.toString(), MainApplication.Dashboard.class);
+                        PreferenceUtils.setString(context, PreferenceUtils.KEY_DASHBOARD, MainApplication.dashboard.serialize());
+                    } catch (IOException e) {
+                        Log.e(TAG, "Parsing JSON failed!");
+                        e.printStackTrace();
+                    }
                     Intent intent = new Intent("LOCATION-UPDATE");
                     LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
@@ -134,6 +141,38 @@ public class ServerApi {
     }
 
     /**
+     * Model for JSON response.
+     */
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    private static class ContactResponse extends MainApplication.Dashboard {
+        /**
+         * Map between user ids and names. Needed for backwards compability.
+         */
+        private Map<String, String> nameMapping;
+
+        /**
+         * List containing ignored user ids.
+         */
+        private List<String> ignored;
+
+        public Map<String, String> getNameMapping() {
+            return nameMapping;
+        }
+
+        public void setNameMapping(Map<String, String> nameMapping) {
+            this.nameMapping = nameMapping;
+        }
+
+        public List<String> getIgnored() {
+            return ignored;
+        }
+
+        public void setIgnored(List<String> ignored) {
+            this.ignored = ignored;
+        }
+    }
+
+    /**
      * Fetch all contact data from server
      * @param context   The context used to store data into preferences
      */
@@ -146,6 +185,7 @@ public class ServerApi {
         String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
         String url = ApiUrl + "user/" + userId + "/contacts";
 
+
         AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>(){
             @Override
             public void callback(String url, JSONObject json, AjaxStatus status) {
@@ -156,45 +196,41 @@ public class ServerApi {
                     return;
                 }
                 Log.d(TAG, "contacts JSON returned: " + json);
+
                 try {
+                    ContactResponse contactResponse = JSONModel.createFromJson(json.toString(), ContactResponse.class);
+
                     //Store ignored users
                     MainApplication.iDontWantToSee = new JSONObject();
-                    JSONArray ignored = json.getJSONArray("ignored");
-                    JSONObject idmapping = json.getJSONObject("idmapping");
-                    for (int i = 0; i < ignored.length(); i++){
-                        String email;
-                        try {
-                            email = idmapping.getString(ignored.getString(i));
-                            MainApplication.iDontWantToSee.put(email, 1);
-                        }
-                        catch (JSONException e){
-                            Log.w(TAG, "Ignore list contained unknown id: " + ignored.getString(i));
-                        }
+
+                    List<String> ignoreds = contactResponse.getIgnored();
+                    Map<String, String> idMapping = contactResponse.getIdMapping();
+
+                    for (String ignored : ignoreds) {
+                        String email = idMapping.get(ignored);
+                        if (email == null)
+                            Log.e(TAG, "Ignore list containing unknown id: " + ignored);
+                        MainApplication.iDontWantToSee.put(email, 1);
                     }
                     PreferenceUtils.setString(context, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, MainApplication.iDontWantToSee.toString());
-                    //Write all other contact data into the user dashboard
-                    MainApplication.dashboard.remove("icansee");
-                    MainApplication.dashboard.put("icansee", json.getJSONObject("icansee"));
-                    MainApplication.dashboard.remove("canseeme");
-                    MainApplication.dashboard.put("canseeme", json.getJSONArray("canseeme"));
-                    MainApplication.dashboard.remove("idmapping");
-                    MainApplication.dashboard.put("idmapping", json.getJSONObject("idmapping"));
-                    PreferenceUtils.setString(context, PreferenceUtils.KEY_DASHBOARD, MainApplication.dashboard.toString());
+
+                    MainApplication.dashboard.setiCanSee(contactResponse.getiCanSee());
+                    MainApplication.dashboard.setCanSeeMe(contactResponse.getCanSeeMe());
+                    MainApplication.dashboard.setIdMapping(contactResponse.getIdMapping());
+                    PreferenceUtils.setString(context, PreferenceUtils.KEY_DASHBOARD, MainApplication.dashboard.serialize());
 
                     // Write data into contacts
-                    JSONObject nameMapping = json.getJSONObject("nameMapping");
-                    if (MainApplication.contacts == null){
+                    Map<String, String> nameMapping = contactResponse.getNameMapping();
+                    if (MainApplication.contacts == null) {
                         MainApplication.contacts = new MainApplication.Contacts();
                     }
-                    Iterator<String> it = nameMapping.keys();
 
                     //Write every custom name into contacts and mapping
-                    while (it.hasNext()){
-                        String key = it.next();
-                        String email = MainApplication.dashboard.getJSONObject("idmapping").optString(key);
+                    for (String userId : contactResponse.getNameMapping().keySet()) {
+                        String email = MainApplication.dashboard.getIdMapping().get(userId);
                         if (email.isEmpty()) continue;
-                        String newName = nameMapping.getString(key);
-                        if(!MainApplication.contacts.hasEmail(email)) {
+                        String newName = nameMapping.get(userId);
+                        if (!MainApplication.contacts.hasEmail(email)) {
                             Contact contact = new Contact();
                             contact.setName(newName);
                             //TODO: figure out proper IDs or stop storing them if we don't need them
@@ -203,10 +239,11 @@ public class ServerApi {
                         }
                     }
                     PreferenceUtils.setString(context, PreferenceUtils.KEY_CONTACTS, MainApplication.contacts.serialize());
+
                 } catch (JsonProcessingException e) {
                     Log.e(TAG, "Serializing contacts to JSON failed");
                     e.printStackTrace();
-                } catch (JSONException e) {
+                } catch (JSONException | IOException e) {
                     Log.e(TAG, "Error parsing contacts JSON");
                     e.printStackTrace();
                 }
