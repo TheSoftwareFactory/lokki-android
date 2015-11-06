@@ -33,6 +33,7 @@ import android.widget.ListView;
 import com.androidquery.AQuery;
 
 import cc.softwarefactory.lokki.android.activities.BuzzActivity;
+import cc.softwarefactory.lokki.android.models.BuzzPlace;
 import cc.softwarefactory.lokki.android.models.JSONModel;
 import cc.softwarefactory.lokki.android.models.Place;
 import cc.softwarefactory.lokki.android.models.User;
@@ -174,17 +175,9 @@ public class PlacesFragment extends Fragment {
                     }
                 });
 
-                for (int i=0;i<MainApplication.buzzPlaces.length();i++)
-                {
-                    try {
-                        if (MainApplication.buzzPlaces.getJSONObject(i).getString("placeid").equals(placeId)) {
-
-                            aq.id(R.id.buzz_checkBox).checked(true);
-                        }
-                    } catch (JSONException e) {
-                        Log.e(TAG, "Error while checking the buzz places" + e);
-
-                    }
+                for (BuzzPlace buzzPlace : MainApplication.buzzPlaces) {
+                    if (buzzPlace.getPlaceId().equals(placeId))
+                        aq.id(R.id.buzz_checkBox).checked(true);
                 }
 
                 Log.d(TAG, "Place name: " + placeName);

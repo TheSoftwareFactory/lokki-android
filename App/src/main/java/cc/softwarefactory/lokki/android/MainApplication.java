@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cc.softwarefactory.lokki.android.models.BuzzPlace;
 import cc.softwarefactory.lokki.android.models.Contact;
 import cc.softwarefactory.lokki.android.models.JSONMap;
 import cc.softwarefactory.lokki.android.models.JSONModel;
@@ -275,7 +276,9 @@ public class MainApplication extends Application {
 
     public static Places places;
     public static boolean locationDisabledPromptShown;
-    public static JSONArray buzzPlaces;
+
+
+    public static List<BuzzPlace> buzzPlaces;
     public static boolean firstTimeZoom = true;
 
     @Override
@@ -327,7 +330,7 @@ public class MainApplication extends Application {
                     .build());
         }
 
-        buzzPlaces = new JSONArray();
+        buzzPlaces = new ArrayList<BuzzPlace>();
 
         super.onCreate();
     }
