@@ -24,6 +24,7 @@ import android.util.Log;
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.activities.BuzzActivity;
+import cc.softwarefactory.lokki.android.models.BuzzPlace;
 import cc.softwarefactory.lokki.android.models.Place;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
 import cc.softwarefactory.lokki.android.activities.MainActivity;
@@ -37,7 +38,6 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 public class LocationService extends Service implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener  {
 
@@ -282,7 +282,7 @@ public class LocationService extends Service implements LocationListener, Google
         Log.d(TAG, String.format("onLocationChanged - Location: %s", location));
         if (serviceRunning && mGoogleApiClient.isConnected() && location != null) {
             updateLokkiLocation(location);
-            checkBuzzplaces();
+            checkBuzzPlaces();
         } else {
             this.stopSelf();
             onDestroy();
@@ -336,54 +336,49 @@ public class LocationService extends Service implements LocationListener, Google
 
         @Override
         public void run() {
+            BuzzPlace buzzPlace = BuzzActivity.getBuzz(id);
             try {
-                while(true) {
-                    JSONObject placeBuzz = BuzzActivity.getBuzz(id);
-                    if(placeBuzz == null || placeBuzz.getInt("buzzcount") <= 0) {
-                        break;
-                    }
+                while (buzzPlace != null && buzzPlace.getBuzzCount() > 0) {
                     Log.d(TAG, "Vibrating...");
                     Vibrator v = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
                     v.vibrate(1000);
-                    Thread.sleep(2500);
-                    placeBuzz.put("buzzcount", placeBuzz.getInt("buzzcount") - 1);
+                        Thread.sleep(2500);
+                    buzzPlace.decBuzzCount();
                 }
-            } catch (Exception e) {
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private void triggerBuzzing(final JSONObject placeBuzz) throws JSONException {
-        if(placeBuzz.getInt("buzzcount") > 0) {
+    private void triggerBuzzing(final BuzzPlace buzzPlace) throws JSONException {
+        if (buzzPlace.getBuzzCount() <= 0 || buzzPlace.isActivated()) return;
 
-            if(!placeBuzz.optBoolean("activated", false)) {
-                placeBuzz.put("activated", true);
-                Intent i = new Intent();
-                i.setClass(this, BuzzActivity.class);
-                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(i);
-                showArrivalNotification();
+        buzzPlace.setActivated(false);
+        Intent i = new Intent();
+        i.setClass(this, BuzzActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(i);
+        showArrivalNotification();
 
-                Log.d(TAG, "Starting vibration...");
-                new Thread(new VibrationThread(placeBuzz.getString("placeid"))).start();
-            }
-        }
+        Log.d(TAG, "Starting vibration...");
+        new Thread(new VibrationThread(buzzPlace.getPlaceId())).start();
     }
 
-    private void checkBuzzplaces() {
-        for (int i=0; i < MainApplication.buzzPlaces.length(); i++) {
+    private void checkBuzzPlaces() {
+        for (BuzzPlace buzzPlace : MainApplication.buzzPlaces) {
             try {
-                JSONObject placeBuzz = MainApplication.buzzPlaces.getJSONObject(i);
-                String placeId = placeBuzz.getString("placeid");
+                String placeId = buzzPlace.getPlaceId();
                 Place place = MainApplication.places.getPlaceById(placeId);
                 Location placeLocation = new Location(placeId);
                 placeLocation.setLatitude(place.getLat());
                 placeLocation.setLongitude((place.getLon()));
                 if (placeLocation.distanceTo(lastLocation) < place.getRad())
-                    triggerBuzzing(placeBuzz);
-                else
-                    placeBuzz.put("buzzcount", 5).put("activated", false);
+                    triggerBuzzing(buzzPlace);
+                else {
+                    buzzPlace.setBuzzCount(5);
+                    buzzPlace.setActivated(false);
+                }
             } catch (JSONException e) {
                 Log.e(TAG,"Error in checking buzz places" + e);
             }

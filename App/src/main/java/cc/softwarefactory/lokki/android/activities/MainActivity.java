@@ -280,7 +280,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
      * Call setLocationServiceAccuracyLevel() afterwards to send it to the service.
      */
     private void setBackgroundLocationAccuracy(){
-        if (MainApplication.buzzPlaces.length() > 0){
+        if (MainApplication.buzzPlaces.size() > 0){
             currentAccuracy = LocationService.LocationAccuracy.BGACCURATE;
         }
         else {

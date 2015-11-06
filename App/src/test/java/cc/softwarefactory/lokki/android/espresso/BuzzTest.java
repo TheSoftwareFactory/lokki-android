@@ -10,6 +10,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import cc.softwarefactory.lokki.android.MainApplication;
@@ -40,7 +41,7 @@ public class BuzzTest extends LoggedInBaseTest {
 
     public void setUp() throws Exception {
         super.setUp();
-        MainApplication.buzzPlaces= new JSONArray();
+        MainApplication.buzzPlaces = new ArrayList<>();
     }
 
     private void enterContactsScreen() {
