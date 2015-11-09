@@ -415,7 +415,6 @@ public class PlacesFragment extends Fragment {
             }
 
             // Check for my contacts
-//            Iterator<String> keys = iCanSee.keys();
             for (String userId : iCanSee.keySet()) {
                 String email = MainApplication.dashboard.getEmailByUserId(userId);
 
