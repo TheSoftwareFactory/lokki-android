@@ -77,7 +77,7 @@ public class SearchScreenTest extends LoggedInBaseTest{
     private void waitForPlaces() throws InterruptedException, JsonProcessingException {
         int counter = 0;    //If we still don't have places after 1 second, let the test fail
         forcePlacesLoad();
-        while (counter < 10 && MainApplication.places.serialize().equals("{}")){
+        while (counter < 10 && MainApplication.places.serialize().equals("{}")) {
             counter++;
             Log.d(TAG, "No places, waiting");
             Thread.sleep(100);
