@@ -342,7 +342,7 @@ public class LocationService extends Service implements LocationListener, Google
                     Log.d(TAG, "Vibrating...");
                     Vibrator v = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
                     v.vibrate(1000);
-                        Thread.sleep(2500);
+                    Thread.sleep(2500);
                     buzzPlace.decBuzzCount();
                 }
             } catch (InterruptedException e) {

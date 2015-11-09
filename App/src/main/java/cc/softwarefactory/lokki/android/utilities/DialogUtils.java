@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONException;
@@ -93,7 +94,8 @@ public class DialogUtils {
                                         context.getString(R.string.analytics_label_confirm_name_new_place_dialog_successful));
                                 try {
                                     ServerApi.addPlace(context, value.toString(), latLng, radius);
-                                } catch (Exception e) {
+                                } catch (JSONException | JsonProcessingException e) {
+                                    Log.e(TAG, "adding place failed");
                                     e.printStackTrace();
                                 }
 

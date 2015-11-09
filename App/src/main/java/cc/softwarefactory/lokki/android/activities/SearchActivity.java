@@ -185,13 +185,14 @@ public class SearchActivity extends ListActivity {
             if (contact != null) {
                 name = contact.getName();
             }
-            if (email.toLowerCase().contains(query) || name.toLowerCase().contains(query)) {
+            if (email.toLowerCase().contains(query.toLowerCase()) || name.toLowerCase().contains(query.toLowerCase())) {
                 //Display either name or email depending on whether a name exists
                 //Store contact data in the result's extra data for easy access
-                if(!name.isEmpty())
+                if (!name.isEmpty()) {
                     resultList.add(new SearchResult(ResultType.CONTACT, name, email));
-                else
+                } else {
                     resultList.add(new SearchResult(ResultType.CONTACT, email, email));
+                }
 
             }
         }

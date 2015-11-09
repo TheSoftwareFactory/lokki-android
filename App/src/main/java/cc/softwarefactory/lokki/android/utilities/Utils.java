@@ -80,6 +80,7 @@ public class Utils {
             MainApplication.contacts = JSONModel.createFromJson(jsonData, MainApplication.Contacts.class);
         } catch (IOException e) {
             MainApplication.contacts = new MainApplication.Contacts();
+            Log.e(TAG, "Reading contacts from JSON failed. Empty contacts created.");
             e.printStackTrace();
             return false;
         }
