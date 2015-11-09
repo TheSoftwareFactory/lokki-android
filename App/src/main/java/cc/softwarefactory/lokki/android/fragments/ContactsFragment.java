@@ -32,11 +32,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androidquery.AQuery;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -47,13 +49,15 @@ import java.util.Set;
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.avatar.AvatarLoader;
+import cc.softwarefactory.lokki.android.models.Contact;
+import cc.softwarefactory.lokki.android.models.JSONModel;
+import cc.softwarefactory.lokki.android.models.User;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
 import cc.softwarefactory.lokki.android.utilities.Utils;
 
 import static cc.softwarefactory.lokki.android.R.string.analytics_label_confirm_rename_contact_dialog;
-
 
 public class ContactsFragment extends Fragment {
 
@@ -188,12 +192,8 @@ public class ContactsFragment extends Fragment {
         //By default, the contact's name is their email
         String email = name;
         //If the contact has been assigned a different name, it's in mapping
-        if (MainApplication.mapping != null && MainApplication.mapping.has(name)){
-            try {
-                email = MainApplication.mapping.getString(name);
-            } catch (JSONException e) {
-                Log.wtf(TAG, "Contact mysteriously vanished from mapping! " + e);
-            }
+        if (MainApplication.contacts != null && MainApplication.contacts.hasName(name)) {
+            email = MainApplication.contacts.getEmailByName(name);
         }
         //Delete the contact
         ServerApi.removeContact(context, email);
@@ -222,30 +222,22 @@ public class ContactsFragment extends Fragment {
                 if (dashboardJsonAsString.isEmpty()) {
                     return;
                 }
-                MainApplication.dashboard = new JSONObject(dashboardJsonAsString);
+                MainApplication.dashboard = JSONModel.createFromJson(dashboardJsonAsString, MainApplication.Dashboard.class);
             }
 
-            JSONObject iCanSeeObj = MainApplication.dashboard.getJSONObject("icansee");
-            JSONArray canSeeMeArray = MainApplication.dashboard.getJSONArray("canseeme");
-            JSONObject idMappingObj = MainApplication.dashboard.getJSONObject("idmapping");
-
-            
-            Iterator keys = iCanSeeObj.keys();
-            while (keys.hasNext()) {
-                String key = (String) keys.next();
-                String email = (String) idMappingObj.get(key);
+            for (String userIdICanSee : MainApplication.dashboard.getUserIdsICanSee()) {
+                String email = MainApplication.dashboard.getEmailByUserId(userIdICanSee);
                 String name = Utils.getNameFromEmail(context, email);
-                if (iCanSeeObj.getJSONObject(key).getJSONObject("location").has("time")) {
-                    timestamps.put(name, iCanSeeObj.getJSONObject(key).getJSONObject("location").getLong("time"));
-                }
+                User.Location location = MainApplication.dashboard.getUserICanSeeByUserId(userIdICanSee).getLocation();
+            if  (location.getTime() != null)
+                    timestamps.put(name, location.getTime().getTime());
                 iCanSee.add(email);
                 mapping.put(name, email);
                 Log.d(TAG, "I can see: " + email);
             }
 
-            for (int i = 0; i < canSeeMeArray.length(); i++) {
-                String key = canSeeMeArray.getString(i);
-                String email = (String) idMappingObj.get(key);
+            for (String userId : MainApplication.dashboard.getCanSeeMe()) {
+                String email = MainApplication.dashboard.getEmailByUserId(userId);
                 String name = Utils.getNameFromEmail(context, email);
                 canSeeMe.add(email);
                 mapping.put(name, email);
@@ -263,7 +255,8 @@ public class ContactsFragment extends Fragment {
                 Log.d(TAG, "Local contact: " + email);
             }*/
 
-        } catch (JSONException e) {
+        } catch (IOException e) {
+            Log.e(TAG, "Parsing dashboard JSON failed");
             e.printStackTrace();
         }
 
@@ -416,30 +409,31 @@ public class ContactsFragment extends Fragment {
             }
         }
         //Set new name in the main application's contacts JSON
-        try {
-            if (MainApplication.contacts == null){
-                MainApplication.contacts = new JSONObject();
-            }
-            if (MainApplication.mapping == null){
-                MainApplication.mapping = new JSONObject();
-            }
-            if(!MainApplication.contacts.has(email)){
-                MainApplication.contacts.put(email ,new JSONObject());
-            }
-            MainApplication.contacts.getJSONObject(email).put("name", newName);
-            //TODO: fix IDs or remove them if we don't need them
-            MainApplication.contacts.getJSONObject(email).put("id", 0);
-            MainApplication.mapping.put(newName, email);
-            MainApplication.contacts.put("mapping", MainApplication.mapping);
-            PreferenceUtils.setString(context, PreferenceUtils.KEY_CONTACTS, MainApplication.contacts.toString());
-
-        } catch (JSONException e) {
-            Log.e(TAG, "rename failed" + e);
+        if (MainApplication.contacts == null) {
+            MainApplication.contacts = new MainApplication.Contacts();
         }
+        if(!MainApplication.contacts.hasEmail(email)) {
+            Contact contact = new Contact();
+            contact.setName(newName);
+            //TODO: fix IDs or remove them if we don't need them
+            contact.setId(0);
+            MainApplication.contacts.put(email, contact);
+        }
+        try {
+            PreferenceUtils.setString(context, PreferenceUtils.KEY_CONTACTS, MainApplication.contacts.serialize());
+        } catch (JsonProcessingException e) {
+            Log.e(TAG, "serializing contacts JSON failed");
+            e.printStackTrace();
+        }
+
         //Set new name on the server
         ServerApi.renameContact(context, email, newName);
-        Log.d(TAG, MainApplication.contacts.toString());
-        Log.d(TAG, MainApplication.mapping.toString());
+        try {
+            Log.d(TAG, MainApplication.contacts.serialize());
+        } catch (JsonProcessingException e) {
+            Log.e(TAG, "serializing contacts JSON failed");
+            e.printStackTrace();
+        }
     }
 
     static class ViewHolder {

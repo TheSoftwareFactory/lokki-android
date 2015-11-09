@@ -8,14 +8,16 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import cc.softwarefactory.lokki.android.MainApplication;
+import cc.softwarefactory.lokki.android.models.Contact;
+
 public class DefaultContactDataSource implements ContactDataSource {
 
     private static final String TAG = "DefaultContactDataSrc";
 
-    public JSONObject getContactsJson(Context context) {
+    public MainApplication.Contacts getContacts(Context context) {
 
-        JSONObject contactsObj = new JSONObject();
-        JSONObject mapping = new JSONObject();
+        MainApplication.Contacts contacts = new MainApplication.Contacts();
 
         Cursor emailsCursor = context.getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null, null, null, null);
         if (emailsCursor == null) {
@@ -27,39 +29,29 @@ public class DefaultContactDataSource implements ContactDataSource {
             String email = emailsCursor.getString(emailsCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
             long contactId = emailsCursor.getLong(emailsCursor.getColumnIndex(ContactsContract.CommonDataKinds.Identity.CONTACT_ID));
 
-            if (email == null || email.isEmpty() || email.equals(name) || contactsObj.has(email)) {
+            if (email == null || email.isEmpty() || email.equals(name) || contacts.hasEmail(email)) {
                 continue;
             }
 
             email = email.toLowerCase();
-            try {
-                int i = 2;
-                String newName = name = name.substring(0, 1).toUpperCase() + name.substring(1);
-                while (mapping.has(newName)) {
-                    newName = name + " " + i;
-                    i++;
-                }
 
-                JSONObject contact = new JSONObject()
-                        .put("id", contactId)
-                        .put("name", newName);
-
-                contactsObj.put(email, contact);
-                mapping.put(newName, email);
-
-            } catch (JSONException e) {
-                Log.e(TAG, e.getMessage());
+            int i = 2;
+            String newName = name = name.substring(0, 1).toUpperCase() + name.substring(1);
+            while (contacts.hasName(newName)) {
+                newName = name + " " + i;
+                i++;
             }
-        }
 
-        try {
-            contactsObj.put("mapping", mapping);
-        } catch (JSONException e) {
-            Log.e(TAG, e.getMessage());
+            Contact contact = new Contact();
+            contact.setName(newName);
+            contact.setId(contactId);
+
+            contacts.put(email, contact);
+
         }
         emailsCursor.close();
 
-        return contactsObj;
+        return contacts;
     }
 
 }

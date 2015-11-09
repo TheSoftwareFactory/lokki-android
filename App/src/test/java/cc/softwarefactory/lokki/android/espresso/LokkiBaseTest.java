@@ -63,10 +63,10 @@ public abstract class LokkiBaseTest extends ActivityInstrumentationTestCase2<Mai
     }
 
     public static void clearJSONData(JSONObject object) {
-        if(object == null)
+        if (object == null)
             return;
         Iterator<String> it = object.keys();
-        while(it.hasNext()) {
+        while (it.hasNext()) {
             it.next();
             it.remove();
         }
@@ -80,8 +80,8 @@ public abstract class LokkiBaseTest extends ActivityInstrumentationTestCase2<Mai
         // if user is running application normally after running tests
         TestUtils.clearAppData(getInstrumentation().getTargetContext());
 
-        clearJSONData(MainApplication.contacts);
-        clearJSONData(MainApplication.places);
+        MainApplication.contacts = null;
+        MainApplication.places = null;
         super.tearDown();
     }
 

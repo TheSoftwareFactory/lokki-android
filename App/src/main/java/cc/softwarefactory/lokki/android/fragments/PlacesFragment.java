@@ -33,13 +33,16 @@ import android.widget.ListView;
 import com.androidquery.AQuery;
 
 import cc.softwarefactory.lokki.android.activities.BuzzActivity;
+import cc.softwarefactory.lokki.android.models.BuzzPlace;
+import cc.softwarefactory.lokki.android.models.JSONModel;
+import cc.softwarefactory.lokki.android.models.Place;
+import cc.softwarefactory.lokki.android.models.User;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
 import cc.softwarefactory.lokki.android.services.DataService;
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
-import cc.softwarefactory.lokki.android.utilities.Utils;
 
 import com.makeramen.roundedimageview.RoundedImageView;
 
@@ -49,7 +52,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
+import java.util.Map;
 
 
 public class PlacesFragment extends Fragment {
@@ -101,6 +104,7 @@ public class PlacesFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
 
+
             Log.d(TAG, "BroadcastReceiver onReceive");
             showPlaces();
         }
@@ -129,22 +133,7 @@ public class PlacesFragment extends Fragment {
                     }
                 });
                 Log.d(TAG, "Setting up checkbox callback");
-                Iterator<String> keys = MainApplication.places.keys();
-                String tempId = "";
-                while(keys.hasNext()) {
-                    String key = keys.next();
-                    try {
-                        JSONObject place = MainApplication.places.getJSONObject(key);
-                        if (place.getString("name").equals(placeName)) {
-                            tempId = key;
-                        }
-                    }
-                    catch (JSONException e)
-                    {
-                        Log.e(TAG, " Error while loading place id" + e);
-                    }
-                }
-                final String id = tempId;
+                final String placeId = MainApplication.places.getPlaceIdByName(placeName);
 
                 aq.id(R.id.buzz_checkBox).clicked(new View.OnClickListener() {
                     @Override
@@ -153,7 +142,7 @@ public class PlacesFragment extends Fragment {
                         if (((CheckBox) view).isChecked()) {
                             // This ensures that automatic UI refresh won't uncheck the checkbox
                             // while the the dialog is still open.
-                            BuzzActivity.setBuzz(id, 0);
+                            BuzzActivity.setBuzz(placeId, 0);
 
                             Dialog dialog = new AlertDialog.Builder(getActivity())
                                     .setMessage(R.string.confirm_buzz)
@@ -163,13 +152,13 @@ public class PlacesFragment extends Fragment {
                                             AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
                                                 getString(R.string.analytics_action_click),
                                                 getString(R.string.analytics_label_buzz_turn_on));
-                                            BuzzActivity.setBuzz(id, 5);
+                                            BuzzActivity.setBuzz(placeId, 5);
                                         }
                                     })
                                     .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int which) {
-                                            BuzzActivity.removeBuzz(id);
+                                            BuzzActivity.removeBuzz(placeId);
                                             ((CheckBox) view).setChecked(false);
                                             placesFragment.showPlaces();  // Update UI for tests
                                             AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
@@ -180,23 +169,15 @@ public class PlacesFragment extends Fragment {
                             dialog.setCanceledOnTouchOutside(false);
                             dialog.show();
                         } else {
-                            BuzzActivity.removeBuzz(id);
+                            BuzzActivity.removeBuzz(placeId);
                         }
 
                     }
                 });
 
-                for (int i=0;i<MainApplication.buzzPlaces.length();i++)
-                {
-                    try {
-                        if (MainApplication.buzzPlaces.getJSONObject(i).getString("placeid").equals(id)) {
-
-                            aq.id(R.id.buzz_checkBox).checked(true);
-                        }
-                    } catch (JSONException e) {
-                        Log.e(TAG, "Error while checking the buzz places" + e);
-
-                    }
+                for (BuzzPlace buzzPlace : MainApplication.buzzPlaces) {
+                    if (buzzPlace.getPlaceId().equals(placeId))
+                        aq.id(R.id.buzz_checkBox).checked(true);
                 }
 
                 Log.d(TAG, "Place name: " + placeName);
@@ -301,22 +282,10 @@ public class PlacesFragment extends Fragment {
     }
 
     private void deletePlace(String name) {
-
         Log.d(TAG, "deletePlace");
-        try {
-            Iterator<String> keys = MainApplication.places.keys();
-            while (keys.hasNext()) {
-                String key = keys.next();
-                JSONObject placeObj = MainApplication.places.getJSONObject(key);
-                if (name.equals(placeObj.getString("name"))) {
-                    Log.d(TAG, "Place ID to be deleted: " + key);
-                    ServerApi.removePlace(context, key);
-                    break;
-                }
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        String placeId = MainApplication.places.getPlaceIdByName(name);
+        Log.d(TAG, "Place ID to be deleted: " + placeId);
+        ServerApi.removePlace(context, placeId);
     }
 
     private void renamePlaceDialog(final String placeName) {
@@ -351,29 +320,11 @@ public class PlacesFragment extends Fragment {
                 .show();
     }
 
-    static public void renamePlaceLocally(final String key, JSONObject placeObj) {
-        try {
-            MainApplication.places.remove(key);
-            MainApplication.places.put(key, placeObj);
-        } catch(Exception e) {
-            Log.e(TAG, "renamePlaceLocally() failed.");
-        }
-    }
-
     private void renamePlace(final String oldName, final String newName) {
-
         Log.d(TAG, "renamePlace");
+        String placeId = MainApplication.places.getPlaceIdByName(oldName);
         try {
-            Iterator<String> keys = MainApplication.places.keys();
-            while (keys.hasNext()) {
-                String key = keys.next();
-                JSONObject placeObj = MainApplication.places.getJSONObject(key);
-                if (oldName.equals(placeObj.getString("name"))) {
-                    Log.d(TAG, "Place ID to be renamed: " + key);
-                    ServerApi.renamePlace(context, key, newName);
-                    break;
-                }
-            }
+            ServerApi.renamePlace(context, placeId, newName);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -415,20 +366,15 @@ public class PlacesFragment extends Fragment {
                 if (PreferenceUtils.getString(context, PreferenceUtils.KEY_PLACES).isEmpty()) {
                     return;
                 }
-                MainApplication.places = new JSONObject(PreferenceUtils.getString(context, PreferenceUtils.KEY_PLACES));
+                MainApplication.places = JSONModel.createFromJson(PreferenceUtils.getString(context, PreferenceUtils.KEY_PLACES), MainApplication.Places.class);
             }
 
             Log.d(TAG, "Places json: " + MainApplication.places);
-            Iterator<String> keys = MainApplication.places.keys();
-            while (keys.hasNext()) {
-                String key = keys.next();
-                JSONObject placeObj = MainApplication.places.getJSONObject(key);
-                String placeName = placeObj.getString("name");
-                placesList.add(placeName);
 
-                calculatePeopleInside(placeObj);
+            for (Place place : MainApplication.places.getPlaces()) {
+                placesList.add(place.getName());
+                calculatePeopleInside(place);
             }
-
             Log.d(TAG, "peopleInsidePlace: " + peopleInsidePlace);
             Collections.sort(placesList);
             setListAdapter();
@@ -439,27 +385,26 @@ public class PlacesFragment extends Fragment {
         }
     }
 
-    private void calculatePeopleInside(JSONObject placeObj) {
+    private void calculatePeopleInside(Place place) {
 
         try {
             if (MainApplication.dashboard == null) {
                 return;
             }
 
-            JSONObject iCanSeeObj = MainApplication.dashboard.getJSONObject("icansee");
-            JSONObject idMappingObj = MainApplication.dashboard.getJSONObject("idmapping");
+            Map<String, User> iCanSee = MainApplication.dashboard.getiCanSee();
             JSONArray peopleInThisPlace = new JSONArray();
 
-            Location placeLocation = new Location(placeObj.getString("name"));
-            placeLocation.setLatitude(placeObj.getDouble("lat"));
-            placeLocation.setLongitude(placeObj.getDouble("lon"));
-            placeLocation.setAccuracy(placeObj.getInt("rad"));
+            Location placeLocation = new Location(place.getName());
+            placeLocation.setLatitude(place.getLat());
+            placeLocation.setLongitude(place.getLon());
+            placeLocation.setAccuracy(place.getRad());
 
             // Check myself
-            JSONObject userLocationObj = MainApplication.dashboard.getJSONObject("location");
+            User.Location userLocation = MainApplication.dashboard.getLocation();
             Location myLocation = new Location(MainApplication.userAccount);
-            myLocation.setLatitude(userLocationObj.getDouble("lat"));
-            myLocation.setLongitude(userLocationObj.getDouble("lon"));
+            myLocation.setLatitude(userLocation.getLat());
+            myLocation.setLongitude(userLocation.getLon());
             //Log.d(TAG, "userLocation: " + userLocation);
 
             // Compare location
@@ -470,24 +415,22 @@ public class PlacesFragment extends Fragment {
             }
 
             // Check for my contacts
-            Iterator<String> keys = iCanSeeObj.keys();
-            while (keys.hasNext()) {
-                String key = keys.next();
-                String email = idMappingObj.getString(key);
+            for (String userId : iCanSee.keySet()) {
+                String email = MainApplication.dashboard.getEmailByUserId(userId);
 
-                JSONObject locationObj = iCanSeeObj.getJSONObject(key).getJSONObject("location");
-                Location userLocation = new Location(email);
+                User.Location userLocationObj = iCanSee.get(userId).getLocation();
+                Location location = new Location(email);
 
-                if (!locationObj.has("lat") || !locationObj.has("lon")) {
+                if (userLocationObj.getLat() == 0 || userLocationObj.getLon() == 0) {
                     continue;
                 }
 
-                userLocation.setLatitude(locationObj.getDouble("lat"));
-                userLocation.setLongitude(locationObj.getDouble("lon"));
+                location.setLatitude(userLocationObj.getLat());
+                location.setLongitude(userLocationObj.getLon());
                 //Log.d(TAG, "userLocation: " + userLocation);
 
                 // Compare location
-                float distance = placeLocation.distanceTo(userLocation);
+                float distance = placeLocation.distanceTo(location);
                 if (distance < placeLocation.getAccuracy()) {
                     //Log.d(TAG, email + " is in place: " + placeLocation.getProvider());
                     peopleInThisPlace.put(email);
@@ -496,7 +439,7 @@ public class PlacesFragment extends Fragment {
 
             if (peopleInThisPlace.length() > 0) {
                 //Log.d(TAG, "peopleInThisPlace: " + peopleInThisPlace);
-                peopleInsidePlace.put(placeObj.getString("name"), peopleInThisPlace);
+                peopleInsidePlace.put(place.getName(), peopleInThisPlace);
             }
 
 

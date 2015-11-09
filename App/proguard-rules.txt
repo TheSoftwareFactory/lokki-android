@@ -48,7 +48,7 @@
 }
 
 # We restrict a few more optimizations for the maps library. Building fails without !code/allocation/variable.
--optimizations !code/simplification/arithmetic,!field/*,!class/merging/*,!code/simplification/variable, !code/allocation/variable
+-optimizations !code/simplification/arithmetic,!field/*,!class/merging/*,!code/simplification/variable, !code/allocation/variable, !class/unboxing/enum
 
 -keep public class * extends android.app.Activity
 -keep public class * extends android.app.Application
@@ -122,3 +122,4 @@
 # Unused RoundedImageView dependancies
 -dontwarn com.squareup.picasso.Transformation
 
+-dontwarn org.w3c.dom.bootstrap.DOMImplementationRegistry

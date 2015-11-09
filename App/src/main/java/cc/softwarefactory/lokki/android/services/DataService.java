@@ -14,12 +14,16 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import cc.softwarefactory.lokki.android.MainApplication;
+import cc.softwarefactory.lokki.android.models.JSONModel;
+import cc.softwarefactory.lokki.android.models.User;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.io.IOException;
+import java.util.Date;
 
 
 public class DataService extends Service {
@@ -86,16 +90,16 @@ public class DataService extends Service {
         if (MainApplication.dashboard == null) {
             return;
         }
+        User.Location dashboardLocation = new User.Location();
+        dashboardLocation.setLat(location.getLatitude());
+        dashboardLocation.setLon(location.getLongitude());
+        dashboardLocation.setRad(location.getAccuracy());
+        dashboardLocation.setTime(new Date(location.getTime()));
+        MainApplication.dashboard.setLocation(dashboardLocation);
         try {
-            // TODO: hardcoded keys
-            JSONObject dashboardLocation = MainApplication.dashboard.getJSONObject("location");
-            dashboardLocation.put("lat", location.getLatitude());
-            dashboardLocation.put("lon", location.getLongitude());
-            dashboardLocation.put("acc", location.getAccuracy());
-            dashboardLocation.put("time", location.getTime());
-            MainApplication.dashboard.put("location", dashboardLocation);
-            Log.d(TAG, "new Dashboard: " + MainApplication.dashboard);
-        } catch (JSONException e) {
+            Log.d(TAG, "new Dashboard: " + MainApplication.dashboard.serialize());
+        } catch (JsonProcessingException e) {
+            Log.e(TAG, "Serializing dashboard to JSON failed");
             e.printStackTrace();
         }
     }
@@ -113,8 +117,8 @@ public class DataService extends Service {
         setTimer();
         serviceRunning = true;
         try {
-            MainApplication.dashboard = new JSONObject(PreferenceUtils.getString(this.getApplicationContext(), PreferenceUtils.KEY_DASHBOARD));
-        } catch (JSONException e) {
+            MainApplication.dashboard = JSONModel.createFromJson(PreferenceUtils.getString(this.getApplicationContext(), PreferenceUtils.KEY_DASHBOARD), MainApplication.Dashboard.class);
+        } catch (IOException e) {
             MainApplication.dashboard = null;
         }
         getPlaces();
