@@ -12,7 +12,9 @@ buildscript {
         classpath 'com.android.tools.build:gradle:1.2.3'
     }
 }
-
+plugins {
+    id "org.sonarqube" version "1.1"
+}
 allprojects {
     repositories {
         jcenter()
