@@ -9,6 +9,8 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Iterator;
+
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.fragments.PlacesFragment;
@@ -29,7 +31,8 @@ public class BuzzActivity extends AppCompatActivity {
     }
 
     public static void removeBuzz(String id) {
-        for (BuzzPlace buzzPlace : MainApplication.buzzPlaces) {
+        for (Iterator<BuzzPlace> it = MainApplication.buzzPlaces.iterator(); it.hasNext();) {
+            BuzzPlace buzzPlace = it.next();
             if (buzzPlace.getPlaceId().equals(id))
                 MainApplication.buzzPlaces.remove(buzzPlace);
         }

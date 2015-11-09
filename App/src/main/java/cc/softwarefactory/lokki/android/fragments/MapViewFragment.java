@@ -394,7 +394,8 @@ public class MapViewFragment extends Fragment {
     private void removeMarkers() {
 
         Log.d(TAG, "removeMarkers");
-        for (Marker m : markerMap.values()) {
+        for (Iterator<Marker> it = markerMap.values().iterator(); it.hasNext();) {
+            Marker m = it.next();
             m.remove();
         }
         markerMap.clear();
@@ -489,7 +490,8 @@ public class MapViewFragment extends Fragment {
     private void removePlaces() {
 
         Log.d(TAG, "removePlaces");
-        for (Circle circle : placesOverlay) {
+        for (Iterator<Circle> it = placesOverlay.iterator(); it.hasNext();) {
+            Circle circle = it.next();
             circle.remove();
         }
         placesOverlay.clear();
