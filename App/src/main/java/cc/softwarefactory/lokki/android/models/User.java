@@ -7,14 +7,14 @@ public class User extends JSONModel {
     public static class Location extends JSONModel {
         private double lat;
         private double lon;
-        private double rad;
+        private double acc;
         private Date time;
 
         public android.location.Location convertToAndroidLocation() {
             android.location.Location convertedLocation = new android.location.Location("fused");
             double lat = this.lat;
             double lon = this.lon;
-            float acc = (float) this.rad;
+            float acc = (float) this.acc;
             Long time = (this.time == null) ? 0 : this.time.getTime();
             convertedLocation.setLatitude(lat);
             convertedLocation.setLongitude(lon);
@@ -39,12 +39,12 @@ public class User extends JSONModel {
             this.lon = lon;
         }
 
-        public double getRad() {
-            return rad;
+        public double getAcc() {
+            return acc;
         }
 
-        public void setRad(double rad) {
-            this.rad = rad;
+        public void setAcc(double acc) {
+            this.acc = acc;
         }
 
         public Date getTime() {

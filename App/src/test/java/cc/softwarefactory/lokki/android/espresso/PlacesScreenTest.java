@@ -63,7 +63,7 @@ public class PlacesScreenTest extends LoggedInBaseTest {
         JSONObject location = new JSONObject();
         location.put("lat", "37.483477313364574") //Testplace1
                 .put("lon", "-122.14838393032551")
-                .put("rad", "100");
+                .put("acc", "100");
         JSONObject[] locations = new JSONObject[]{location};
         getMockDispatcher().setDashboardResponse(new MockResponse().setBody(MockJsonUtils
                 .getDashboardJsonContactsUserLocation(contactEmails, locations, location)));
@@ -79,7 +79,7 @@ public class PlacesScreenTest extends LoggedInBaseTest {
         JSONObject location = new JSONObject();
         location.put("lat", "37.483477313364574") //Testplace1
                 .put("lon", "-122.14838393032551")
-                .put("rad", "100");
+                .put("acc", "100");
         JSONObject[] locations = new JSONObject[]{location};
         getMockDispatcher().setDashboardResponse(new MockResponse().setBody(MockJsonUtils
                 .getDashboardJsonContactsUserLocation(contactEmails, locations, location)));
