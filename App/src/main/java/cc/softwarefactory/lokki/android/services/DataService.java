@@ -93,7 +93,7 @@ public class DataService extends Service {
         User.Location dashboardLocation = new User.Location();
         dashboardLocation.setLat(location.getLatitude());
         dashboardLocation.setLon(location.getLongitude());
-        dashboardLocation.setRad(location.getAccuracy());
+        dashboardLocation.setAcc(location.getAccuracy());
         dashboardLocation.setTime(new Date(location.getTime()));
         MainApplication.dashboard.setLocation(dashboardLocation);
         try {
