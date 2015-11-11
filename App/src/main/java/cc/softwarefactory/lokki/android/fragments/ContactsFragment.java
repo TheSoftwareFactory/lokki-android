@@ -34,16 +34,11 @@ import android.widget.Toast;
 import com.androidquery.AQuery;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import cc.softwarefactory.lokki.android.MainApplication;
@@ -243,18 +238,6 @@ public class ContactsFragment extends Fragment {
                 mapping.put(name, email);
                 Log.d(TAG, "Can see me: " + email);
             }
-
-            // Don't actually add local contacts to mapping because it screws with deleting contacts
-            // (Why do local contacts even exist?)
-            // Add local contacts to mapping
-            /*JSONArray localContacts = ContactUtils.getLocalContactsJsonArray(context);
-            for (int i = 0; i < localContacts.length(); i++) {
-                String email = localContacts.getString(i);
-                String name = Utils.getNameFromEmail(context, email);
-                mapping.put(name, email);
-                Log.d(TAG, "Local contact: " + email);
-            }*/
-
         } catch (IOException e) {
             Log.e(TAG, "Parsing dashboard JSON failed");
             e.printStackTrace();
@@ -412,13 +395,14 @@ public class ContactsFragment extends Fragment {
         if (MainApplication.contacts == null) {
             MainApplication.contacts = new MainApplication.Contacts();
         }
-        if(!MainApplication.contacts.hasEmail(email)) {
-            Contact contact = new Contact();
-            contact.setName(newName);
-            //TODO: fix IDs or remove them if we don't need them
-            contact.setId(0);
-            MainApplication.contacts.put(email, contact);
-        }
+
+        Contact contact = new Contact();
+        contact.setName(newName);
+        //TODO: fix IDs or remove them if we don't need them
+        contact.setId(0);
+        MainApplication.contacts.put(email, contact);
+
+
         try {
             PreferenceUtils.setString(context, PreferenceUtils.KEY_CONTACTS, MainApplication.contacts.serialize());
         } catch (JsonProcessingException e) {
