@@ -50,17 +50,12 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
-import cc.softwarefactory.lokki.android.activities.FirstTimeActivity;
 import cc.softwarefactory.lokki.android.models.Place;
 import cc.softwarefactory.lokki.android.models.User;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
@@ -722,16 +717,6 @@ public class MapViewFragment extends Fragment {
         cancelAsyncTasks = true;
         super.onDestroy();
     }
-
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-        Log.w(TAG, "---------------------------------------------------------");
-        Log.w(TAG, "onLowMemory");
-        Log.w(TAG, "---------------------------------------------------------");
-        startActivityForResult(new Intent(context, FirstTimeActivity.class), -1);
-    }
-
     private class AddPlaceCircleDrawable extends Drawable {
 
         public static final int STROKE_WIDTH = 12;
