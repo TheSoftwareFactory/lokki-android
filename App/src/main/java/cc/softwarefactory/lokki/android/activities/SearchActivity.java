@@ -18,6 +18,7 @@ import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -209,12 +210,12 @@ public class SearchActivity extends ListActivity {
         }
         // Loop through all user places
         try {
-            Log.d(TAG, MainApplication.places.serialize());
+            Log.d(TAG, new ObjectMapper().writeValueAsString(MainApplication.places));
         } catch (JsonProcessingException e) {
             Log.e(TAG, "Serializing places to JSON failed");
             e.printStackTrace();
         }
-        for (Place place : MainApplication.places.getPlaces()) {
+        for (Place place : MainApplication.places) {
             try {
                 String name = place.getName();
                 Log.d(TAG, "place: " + name);

@@ -16,11 +16,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.android.gms.maps.GoogleMap;
 
-import org.json.JSONArray;
-
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -245,36 +242,8 @@ public class MainApplication extends Application {
     public static Boolean visible = true;
     public static LruCache<String, Bitmap> avatarCache;
 
-    /**
-     * User's places is a map, where key is ID and value is the place.
-     */
-    public static class Places extends JSONMap<Place> {
+    public static List<Place> places;
 
-        private Map<String, Place> places = new HashMap<>();
-
-        @Override
-        protected Map<String, Place> getMap() {
-            return places;
-        }
-
-        public Place getPlaceById(String id) {
-            return places.get(id);
-        }
-
-        public String getPlaceIdByName(String name) {
-            for (Entry<String, Place> entrySet : places.entrySet()) {
-                if (entrySet.getValue().getName().equals(name)) return entrySet.getKey();
-            }
-            return null;
-        }
-
-        public Collection<Place> getPlaces() {
-            return places.values();
-        }
-
-    }
-
-    public static Places places;
     public static boolean locationDisabledPromptShown;
 
 

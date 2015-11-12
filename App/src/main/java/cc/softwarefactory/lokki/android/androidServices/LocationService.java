@@ -2,7 +2,7 @@
 Copyright (c) 2014-2015 F-Secure
 See LICENSE for details
 */
-package cc.softwarefactory.lokki.android.services;
+package cc.softwarefactory.lokki.android.androidServices;
 
 import android.app.AlarmManager;
 import android.app.NotificationManager;
@@ -26,6 +26,7 @@ import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.activities.BuzzActivity;
 import cc.softwarefactory.lokki.android.models.BuzzPlace;
 import cc.softwarefactory.lokki.android.models.Place;
+import cc.softwarefactory.lokki.android.services.PlaceService;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
 import cc.softwarefactory.lokki.android.activities.MainActivity;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
@@ -88,6 +89,8 @@ public class LocationService extends Service implements LocationListener, Google
      */
     private LocationAccuracy currentAccuracy = LocationAccuracy.BGINACCURATE;
 
+    private static PlaceService placeService;
+
     /**
      * Location polling accuracy levels:
      * ACCURATE: App running in foreground
@@ -96,9 +99,12 @@ public class LocationService extends Service implements LocationListener, Google
      */
     public enum LocationAccuracy{ACCURATE, BGACCURATE, BGINACCURATE}
 
+
     public static void start(Context context) {
 
         Log.d(TAG, "start Service called");
+
+        placeService = new PlaceService(context);
 
         if (serviceRunning) { // If service is running, no need to start it again.
             Log.w(TAG, "Service already running...");
@@ -369,7 +375,7 @@ public class LocationService extends Service implements LocationListener, Google
         for (BuzzPlace buzzPlace : MainApplication.buzzPlaces) {
             try {
                 String placeId = buzzPlace.getPlaceId();
-                Place place = MainApplication.places.getPlaceById(placeId);
+                Place place = placeService.getPlaceById(placeId);
                 Location placeLocation = new Location(placeId);
                 placeLocation.setLatitude(place.getLat());
                 placeLocation.setLongitude((place.getLon()));
