@@ -77,8 +77,8 @@ public abstract class ApiService {
         createAjax("ajax", uri, callback);
     }
 
-    protected void put(String uri, AjaxCallback<JSONObject> callback) {
-        createAjax("put", uri, callback);
+    protected void put(String uri, JSONModel param, AjaxCallback<JSONObject> callback) {
+        createAjaxWithBody("put", uri, callback, param);
     }
 
     protected void delete(String uri, AjaxCallback<JSONObject> callback) {

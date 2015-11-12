@@ -218,7 +218,7 @@ public class PlaceService extends ApiService {
         cleanName = cleanName.substring(0, 1).toUpperCase() + cleanName.substring(1).toLowerCase();
         place.setName(cleanName);
 
-        ServerApi.put(context, "place/" + placeId, place, new AjaxCallback<JSONObject>() {
+        put("place/" + placeId, place, new AjaxCallback<JSONObject>() {
             @Override
             public void callback(String url, JSONObject result, AjaxStatus status) {
                 ServerApi.logStatus("renamePlace", status);
