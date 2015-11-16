@@ -10,7 +10,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import cc.softwarefactory.lokki.android.MainApplication;
-import cc.softwarefactory.lokki.android.services.LocationService;
+import cc.softwarefactory.lokki.android.androidServices.LocationService;
 
 public class GcmBroadcastReceiver extends BroadcastReceiver {
 

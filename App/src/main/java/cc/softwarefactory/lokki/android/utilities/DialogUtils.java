@@ -20,6 +20,7 @@ import org.json.JSONException;
 
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
+import cc.softwarefactory.lokki.android.services.PlaceService;
 
 public class DialogUtils {
     private static final String TAG = "DialogUtils";
@@ -93,7 +94,7 @@ public class DialogUtils {
                                         context.getString(R.string.analytics_action_click),
                                         context.getString(R.string.analytics_label_confirm_name_new_place_dialog_successful));
                                 try {
-                                    ServerApi.addPlace(context, value.toString(), latLng, radius);
+                                    new PlaceService(context).addPlace(value.toString(), latLng, radius);
                                 } catch (JSONException | JsonProcessingException e) {
                                     Log.e(TAG, "adding place failed");
                                     e.printStackTrace();

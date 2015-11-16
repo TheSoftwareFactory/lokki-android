@@ -3,6 +3,7 @@ package cc.softwarefactory.lokki.android.espresso;
 
 import android.widget.ImageView;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 
 import org.json.JSONException;
@@ -50,14 +51,14 @@ public class PlacesScreenTest extends LoggedInBaseTest {
     }
 
 
-    public void testPlacesOnPlacesScreen() throws JSONException {
+    public void testPlacesOnPlacesScreen() throws JSONException, JsonProcessingException {
         getMockDispatcher().setPlacesResponse(new MockResponse().setBody(MockJsonUtils.getPlacesJson()));
         enterPlacesScreen();
         onView(withText("Testplace1")).check(matches(isDisplayed()));
     }
 
 
-    public void testContactAppearsInPlace() throws JSONException {
+    public void testContactAppearsInPlace() throws JSONException, JsonProcessingException {
         getMockDispatcher().setPlacesResponse(new MockResponse().setBody(MockJsonUtils.getPlacesJson()));
         String[] contactEmails = new String[]{"family.member@example.com"};
         JSONObject location = new JSONObject();
@@ -73,7 +74,7 @@ public class PlacesScreenTest extends LoggedInBaseTest {
     }
 
 
-    public void testClickContactOpensMap() throws JSONException, InterruptedException {
+    public void testClickContactOpensMap() throws JSONException, InterruptedException, JsonProcessingException {
         getMockDispatcher().setPlacesResponse(new MockResponse().setBody(MockJsonUtils.getPlacesJson()));
         String[] contactEmails = new String[]{"family.member@example.com"};
         JSONObject location = new JSONObject();
@@ -89,7 +90,7 @@ public class PlacesScreenTest extends LoggedInBaseTest {
         onView(withId(R.id.map)).check(matches(isDisplayed()));
     }
 
-    public void testDeletePlaces() throws JSONException, InterruptedException {
+    public void testDeletePlaces() throws JSONException, InterruptedException, JsonProcessingException {
         getMockDispatcher().setPlacesResponse(new MockResponse().setBody(MockJsonUtils.getPlacesJson()));
         getMockDispatcher().setPlacesDeleteResponse(new MockResponse().setResponseCode(200), "cb693820-3ce7-4c95-af2f-1f079d2841b1");
 
@@ -104,7 +105,7 @@ public class PlacesScreenTest extends LoggedInBaseTest {
         onView(withText("Testplace1")).check(doesNotExist());
     }
 
-    public void testRenamePlaces() throws JSONException, InterruptedException {
+    public void testRenamePlaces() throws JSONException, InterruptedException, JsonProcessingException {
         getMockDispatcher().setPlacesResponse(new MockResponse().setBody(MockJsonUtils.getPlacesJson()));
         getMockDispatcher().setPlacesRenameResponse(new MockResponse().setResponseCode(200), "cb693820-3ce7-4c95-af2f-1f079d2841b1");
 

@@ -9,14 +9,12 @@ import android.content.Intent;
 import android.location.Location;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,13 +26,10 @@ import java.util.List;
 import java.util.Map;
 
 import cc.softwarefactory.lokki.android.MainApplication;
-import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.constants.Constants;
-import cc.softwarefactory.lokki.android.errors.PlaceError;
 import cc.softwarefactory.lokki.android.models.Contact;
 import cc.softwarefactory.lokki.android.models.JSONModel;
-import cc.softwarefactory.lokki.android.models.Place;
-import cc.softwarefactory.lokki.android.services.DataService;
+import cc.softwarefactory.lokki.android.androidServices.DataService;
 
 
 public class ServerApi {
@@ -96,42 +91,6 @@ public class ServerApi {
 
                 } else {
                     Log.e(TAG, "Error: " + status.getCode() + " - " + status.getMessage());
-                }
-            }
-        };
-        cb.header("authorizationtoken", authorizationToken);
-        aq.ajax(url, JSONObject.class, cb);
-    }
-
-    public static void getPlaces(final Context context) {
-
-        Log.d(TAG, "getPlaces");
-        AQuery aq = new AQuery(context);
-
-        String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
-        String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
-        String url = ApiUrl + "user/" + userId + "/places";
-
-        AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>() {
-            @Override
-            public void callback(String url, JSONObject json, AjaxStatus status) {
-                Log.d(TAG, "placesCallback");
-
-                if (json == null) {
-                    Log.e(TAG, "Error: " + status.getCode() + " - " + status.getMessage());
-                    return;
-                }
-                Log.d(TAG, "json returned: " + json);
-                try {
-                    MainApplication.Places places;
-                    places = JSONModel.createFromJson(json.toString(), MainApplication.Places.class);
-                    MainApplication.places = places;
-                    PreferenceUtils.setString(context, PreferenceUtils.KEY_PLACES, places.serialize());
-                    Intent intent = new Intent("PLACES-UPDATE");
-                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-                } catch (IOException e) {
-                    Log.e(TAG, "Error: Failed to parse places JSON.");
-                    e.printStackTrace();
                 }
             }
         };
@@ -580,130 +539,9 @@ public class ServerApi {
         aq.put(url, JSONdata, String.class, cb);
     }
 
-    public static void displayPlaceError(final Context context, final AjaxStatus status) {
-        PlaceError error = PlaceError.getEnum(status.getError());
-        if (error != null) {
-            Toast.makeText(context, context.getString(error.getErrorMessage()), Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    public static void addPlace(final Context context, String name, LatLng latLng, int radius) throws JSONException, JsonProcessingException {
-
-        Log.d(TAG, "addPlace");
-        AQuery aq = new AQuery(context);
-
-        String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
-        String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
-        String url = ApiUrl + "user/" + userId + "/place";
-
-        String cleanName = name.trim();
-        cleanName = cleanName.substring(0, 1).toUpperCase() + cleanName.substring(1).toLowerCase();
-
-        Place place = new Place();
-        place.setName(cleanName);
-        place.setImg("");
-        place.setLat(latLng.latitude);
-        place.setLon(latLng.longitude);
-        place.setRad(radius);
-
-        AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>() {
-            @Override
-            public void callback(String url, JSONObject object, AjaxStatus status) {
-                logStatus("addPlace", status);
-
-                if (status.getError() != null) {
-                    displayPlaceError(context, status);
-                    return;
-                }
-
-                Log.d(TAG, "No error, place created.");
-                Toast.makeText(context, context.getString(R.string.place_created), Toast.LENGTH_SHORT).show();
-                DataService.getPlaces(context);
-            }
-        };
-
-        cb.header("authorizationtoken", authorizationToken);
-        aq.post(url, place.toJSONObject(), JSONObject.class, cb);
-    }
-
-    public static void removePlace(final Context context, final String placeId) {
-
-        Log.d(TAG, "removePlace");
-        AQuery aq = new AQuery(context);
-
-        String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
-        String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
-        String url = ApiUrl + "user/" + userId + "/place/" + placeId;
-
-        AjaxCallback<String> cb = new AjaxCallback<String>() {
-            @Override
-            public void callback(String url, String result, AjaxStatus status) {
-                logStatus("removePlace", status);
-                if (status.getError() == null) {
-                    Log.d(TAG, "No error, continuing deletion.");
-                    MainApplication.places.remove(placeId);
-                    Toast.makeText(context, context.getString(R.string.place_removed), Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent("PLACES-UPDATE");
-                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-                }
-            }
-        };
-
-        cb.header("authorizationtoken", authorizationToken);
-        aq.delete(url, String.class, cb);
-    }
-
-    public static void renamePlace(final Context context, final String placeId,
-                                   final String newName) throws JSONException, IOException {
-        Log.d(TAG, "renamePlace");
-        AQuery aq = new AQuery(context);
-
-        String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
-        String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
-        String url = ApiUrl + "user/" + userId + "/place/" + placeId;
-
-        String cleanName = newName.trim();
-        cleanName = cleanName.substring(0, 1).toUpperCase() + cleanName.substring(1).toLowerCase();
-
-        // Get place info
-        if (MainApplication.places == null) { // Read them from cache
-            if (PreferenceUtils.getString(context, PreferenceUtils.KEY_PLACES).isEmpty()) {
-                return;
-            }
-            MainApplication.places = JSONModel.createFromJson(PreferenceUtils.getString(context, PreferenceUtils.KEY_PLACES), MainApplication.Places.class);
-        }
-        Place place = MainApplication.places.getPlaceById(placeId);
-        place.setName(cleanName);
-        final Place finalPlace = place;
-
-        AjaxCallback<String> cb = new AjaxCallback<String>() {
-            @Override
-            public void callback(String url, String result, AjaxStatus status) {
-                logStatus("renamePlace", status);
-
-                if(status.getError() != null) {
-                    displayPlaceError(context, status);
-                    return;
-                }
-
-                DataService.getPlaces(context);
-                Intent intent = new Intent("PLACES-UPDATE");
-                LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-                MainApplication.places.update(placeId, finalPlace);
-                Toast.makeText(context, R.string.place_renamed, Toast.LENGTH_SHORT).show();
-            }
-        };
-
-        cb.header("authorizationtoken", authorizationToken);
-        aq.put(url, place.toJSONObject(), String.class, cb);
-    }
-
-
-    // For dependency injection
     public static void setApiUrl(String mockUrl) {
         ApiUrl = mockUrl;
     }
-
 }
 
 
