@@ -9,23 +9,18 @@ import android.widget.Toast;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.errors.PlaceError;
-import cc.softwarefactory.lokki.android.models.JSONMap;
 import cc.softwarefactory.lokki.android.models.JSONModel;
 import cc.softwarefactory.lokki.android.models.Place;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
@@ -47,59 +42,20 @@ public class PlaceService extends ApiService {
         return PreferenceUtils.KEY_PLACES;
     }
 
-    /**
-     * User's places is a map, where key is ID and value is the place.
-     * Places in the format they are received from the server.
-     */
-    private static class PlacesResponse extends JSONMap<Place> {
-
-        private Map<String, Place> places = new HashMap<>();
-
-        @Override
-        protected Map<String, Place> getMap() {
-            return places;
-        }
-
-        public Collection<Place> getPlaces() {
-            return places.values();
-        }
-
-    }
-
     private static class AddResponse {
         public String id;
     }
 
-    public List<Place> placesResponseToPlaces(PlacesResponse placesResponse) {
-        List<Place> places = new ArrayList<>();
-
-        for (Map.Entry<String, Place> placeResponseEntry : placesResponse.entrySet()) {
-            Place place = placeResponseEntry.getValue();
-            place.setId(placeResponseEntry.getKey());
-            places.add(place);
-        }
-        return places;
-    }
-
-    public PlacesResponse placesToPlacesResponse(List<Place> places) {
-        PlacesResponse placesResponse = new PlacesResponse();
-        for (Place place : places) {
-            String id = place.getId();
-            place.setId(null);
-            placesResponse.put(id, place);
-        }
-        return placesResponse;
-    }
-
-
     private static final String TAG = "ServerApi";
+
+    private String restPath = "places";
 
     public void getPlaces() {
         Log.d(TAG, "getPlaces");
 
-        get("places", new AjaxCallback<JSONObject>() {
+        get(restPath, new AjaxCallback<String>() {
             @Override
-            public void callback(String url, JSONObject json, AjaxStatus status) {
+            public void callback(String url, String json, AjaxStatus status) {
                 Log.d(TAG, "placesCallback");
 
                 if (json == null) {
@@ -108,9 +64,8 @@ public class PlaceService extends ApiService {
                 }
                 Log.d(TAG, "json returned: " + json);
                 try {
-                    PlacesResponse placesResponse = JSONModel.createFromJson(json.toString(), PlacesResponse.class);
-                    MainApplication.places = placesResponseToPlaces(placesResponse);
-                    updateCache(placesResponse);
+                    MainApplication.places = JSONModel.createListFromJson(json.toString(), Place.class);
+                    updateCache();
                     Intent intent = new Intent("PLACES-UPDATE");
                     LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                 } catch (IOException e) {
@@ -122,11 +77,16 @@ public class PlaceService extends ApiService {
     }
 
     public List<Place> getFromCache() throws IOException {
-        return placesResponseToPlaces(JSONModel.createFromJson(PreferenceUtils.getString(context, PreferenceUtils.KEY_PLACES), PlacesResponse.class));
+        return JSONModel.createFromJson(PreferenceUtils.getString(context, PreferenceUtils.KEY_PLACES), List.class);
     }
 
     private void updateCache() {
-        updateCache(placesToPlacesResponse(MainApplication.places));
+        try {
+            updateCache(new ObjectMapper().writeValueAsString(MainApplication.places));
+        } catch (JsonProcessingException e) {
+            Log.e(TAG, "Serializing places to JSON failed");
+            e.printStackTrace();
+        }
     }
 
     private void displayPlaceError(final AjaxStatus status) {
@@ -146,13 +106,11 @@ public class PlaceService extends ApiService {
         final Place place = new Place();
         place.setName(cleanName);
         place.setImg("");
-        place.setLat(latLng.latitude);
-        place.setLon(latLng.longitude);
-        place.setRad(radius);
+        place.setLocation(new Place.Location(latLng, radius));
 
-        post("place", place, new AjaxCallback<JSONObject>() {
+        post("place", place, new AjaxCallback<String>() {
             @Override
-            public void callback(String url, JSONObject object, AjaxStatus status) {
+            public void callback(String url, String object, AjaxStatus status) {
                 ServerApi.logStatus("addPlace", status);
 
                 if (status.getError() != null) {
@@ -185,9 +143,9 @@ public class PlaceService extends ApiService {
 
         final String placeId = place.getId();
 
-        delete("place/" + placeId, new AjaxCallback<JSONObject>() {
+        delete(restPath + "/" + placeId, new AjaxCallback<String>() {
             @Override
-            public void callback(String url, JSONObject result, AjaxStatus status) {
+            public void callback(String url, String result, AjaxStatus status) {
                 ServerApi.logStatus("removePlace", status);
                 if (status.getError() == null) {
                     Log.d(TAG, "No error, continuing deletion.");
@@ -218,9 +176,9 @@ public class PlaceService extends ApiService {
         cleanName = cleanName.substring(0, 1).toUpperCase() + cleanName.substring(1).toLowerCase();
         place.setName(cleanName);
 
-        put("place/" + placeId, place, new AjaxCallback<JSONObject>() {
+        put(restPath + "/" + placeId, place, new AjaxCallback<String>() {
             @Override
-            public void callback(String url, JSONObject result, AjaxStatus status) {
+            public void callback(String url, String result, AjaxStatus status) {
                 ServerApi.logStatus("renamePlace", status);
 
                 if (status.getError() != null) {

@@ -377,9 +377,9 @@ public class LocationService extends Service implements LocationListener, Google
                 String placeId = buzzPlace.getPlaceId();
                 Place place = placeService.getPlaceById(placeId);
                 Location placeLocation = new Location(placeId);
-                placeLocation.setLatitude(place.getLat());
-                placeLocation.setLongitude((place.getLon()));
-                if (placeLocation.distanceTo(lastLocation) < place.getRad())
+                placeLocation.setLatitude(place.getLocation().getLat());
+                placeLocation.setLongitude((place.getLocation().getLon()));
+                if (placeLocation.distanceTo(lastLocation) < place.getLocation().getRad())
                     triggerBuzzing(buzzPlace);
                 else {
                     buzzPlace.setBuzzCount(5);

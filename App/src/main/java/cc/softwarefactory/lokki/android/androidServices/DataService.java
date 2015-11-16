@@ -42,11 +42,7 @@ public class DataService extends Service {
 
     private static PlaceService placeService;
 
-
     public static void start(Context context) {
-
-        placeService = new PlaceService(context);
-
         Log.d(TAG, "start Service called");
         if (serviceRunning) { // If service is running, no need to start it again.
             Log.w(TAG, "Service already running...");
@@ -127,6 +123,9 @@ public class DataService extends Service {
         } catch (IOException e) {
             MainApplication.dashboard = null;
         }
+
+        placeService = new PlaceService(getApplicationContext());
+
         getPlaces();
         getContacts();
     }
