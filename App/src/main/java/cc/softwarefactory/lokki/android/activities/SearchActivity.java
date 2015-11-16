@@ -221,7 +221,7 @@ public class SearchActivity extends ListActivity {
                 Log.d(TAG, "place: " + name);
                 if (name.toLowerCase().contains(query)){
                     //Store place coordinates in the result's extra data for easy access
-                    String coords = place.getLat() + "," + place.getLon();
+                    String coords = place.getLocation().getLat() + "," + place.getLocation().getLon();
                     resultList.add(new SearchResult(ResultType.PLACE, name, coords));
                 }
 

@@ -44,11 +44,9 @@ import cc.softwarefactory.lokki.android.R;
 
 import com.makeramen.roundedimageview.RoundedImageView;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -57,8 +55,8 @@ public class PlacesFragment extends Fragment {
 
     private static final String TAG = "PlacesFragment";
     private Context context;
-    private ArrayList<Place> placesList;
-    private JSONObject peopleInsidePlace;
+    private List<Place> placesList;
+    private Map<String, List<String>> peopleInsidePlace;
     private ListView listView;
     private PlaceService placeService;
 
@@ -181,18 +179,18 @@ public class PlacesFragment extends Fragment {
                 }
 
                 Log.d(TAG, "Place name: " + place.getName());
-                Log.d(TAG, "peopleInsidePlace? " + peopleInsidePlace.has(place.getName()));
+                Log.d(TAG, "peopleInsidePlace? " + peopleInsidePlace.containsKey(place.getId()));
 
-                if (peopleInsidePlace.has(place.getName())) { // People are inside this place
+                if (peopleInsidePlace.containsKey(place.getId())) { // People are inside this place
                     Log.d(TAG, "Inside loop");
                     try {
-                        JSONArray people = peopleInsidePlace.getJSONArray(place.getName());
+                        List<String> people = peopleInsidePlace.get(place.getId());
                         LinearLayout avatarRow = (LinearLayout) convertView.findViewById(R.id.avatar_row);
                         avatarRow.removeAllViewsInLayout(); // Deletes old avatars, if any.
 
-                        for (int i = 0; i < people.length(); i++) {
+                        for (int i = 0; i < people.size(); i++) {
 
-                            final String email = people.getString(i);
+                            final String email = people.get(i);
                             if (MainApplication.iDontWantToSee.has(email)) {
                                 continue;
                             }
@@ -356,7 +354,7 @@ public class PlacesFragment extends Fragment {
     private void showPlaces() {
 
         Log.d(TAG, "showPlaces");
-        peopleInsidePlace = new JSONObject();
+        peopleInsidePlace = new HashMap<>();
 
         try {
             if (MainApplication.places == null) { // Read them from cache
@@ -392,12 +390,12 @@ public class PlacesFragment extends Fragment {
             }
 
             Map<String, User> iCanSee = MainApplication.dashboard.getiCanSee();
-            JSONArray peopleInThisPlace = new JSONArray();
+            List<String> peopleInThisPlace = new ArrayList<>();
 
             Location placeLocation = new Location(place.getName());
-            placeLocation.setLatitude(place.getLat());
-            placeLocation.setLongitude(place.getLon());
-            placeLocation.setAccuracy(place.getRad());
+            placeLocation.setLatitude(place.getLocation().getLat());
+            placeLocation.setLongitude(place.getLocation().getLon());
+            placeLocation.setAccuracy(place.getLocation().getRad());
 
             // Check myself
             User.Location userLocation = MainApplication.dashboard.getLocation();
@@ -410,7 +408,7 @@ public class PlacesFragment extends Fragment {
             float myDistance = placeLocation.distanceTo(myLocation);
             if (myDistance < placeLocation.getAccuracy()) {
                 //Log.d(TAG, email + " is in place: " + placeLocation.getProvider());
-                peopleInThisPlace.put(MainApplication.userAccount);
+                peopleInThisPlace.add(MainApplication.userAccount);
             }
 
             // Check for my contacts
@@ -432,13 +430,13 @@ public class PlacesFragment extends Fragment {
                 float distance = placeLocation.distanceTo(location);
                 if (distance < placeLocation.getAccuracy()) {
                     //Log.d(TAG, email + " is in place: " + placeLocation.getProvider());
-                    peopleInThisPlace.put(email);
+                    peopleInThisPlace.add(email);
                 }
             }
 
-            if (peopleInThisPlace.length() > 0) {
+            if (peopleInThisPlace.size() > 0) {
                 //Log.d(TAG, "peopleInThisPlace: " + peopleInThisPlace);
-                peopleInsidePlace.put(place.getName(), peopleInThisPlace);
+                peopleInsidePlace.put(place.getId(), peopleInThisPlace);
             }
 
 

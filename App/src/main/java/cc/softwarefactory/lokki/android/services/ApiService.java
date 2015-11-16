@@ -7,18 +7,21 @@ import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 
 import cc.softwarefactory.lokki.android.constants.Constants;
 import cc.softwarefactory.lokki.android.models.JSONModel;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 
 /**
- *
+ * Base class for all API services. Implementing classes should handle objects CRUD-operations and cache.
+ * Currently it is assumed, that all JSON is sent as objects. JSON can be gotten as lists also.
  */
 public abstract class ApiService {
 
@@ -37,64 +40,59 @@ public abstract class ApiService {
         return url;
     }
 
-    private void authorize(AjaxCallback<JSONObject> callback) {
+    private void authorize(AjaxCallback<String> callback) {
         String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
         callback.header("authorizationtoken", authorizationToken);
     }
 
-    protected void createAjax(String methodName, String uri, AjaxCallback<JSONObject> callback) {
+    protected void createAjax(String methodName, String uri, AjaxCallback<String> callback) {
         Log.d(getTag(), uri);
         String url = generateUrl(uri);
         authorize(callback);
 
         try {
             Method method = AQuery.class.getMethod(methodName, String.class, Class.class, AjaxCallback.class);
-            method.invoke(new AQuery(context), url, JSONObject.class, callback);
+            method.invoke(new AQuery(context), url, String.class, callback);
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             Log.e(getTag(), "Reflecting ajax method '" + methodName + "' failed");
             e.printStackTrace();
         }
     }
 
-    protected void createAjaxWithBody(String methodName, String uri, AjaxCallback<JSONObject> callback, JSONModel body) {
+    protected void createAjaxWithBody(String methodName, String uri, AjaxCallback<String> callback, JSONModel body) {
         Log.d(getTag(), uri);
         String url = generateUrl(uri);
         authorize(callback);
 
         try {
             Method method = AQuery.class.getMethod(methodName, String.class, JSONObject.class, Class.class, AjaxCallback.class);
-            method.invoke(new AQuery(context), url, body.toJSONObject(), JSONObject.class, callback);
+            method.invoke(new AQuery(context), url, body.toJSONObject(), String.class, callback);
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             Log.e(getTag(), "Reflecting ajax method failed");
             e.printStackTrace();
-        } catch (JsonProcessingException | JSONException e) {
+        } catch (JSONException | JsonProcessingException e) {
             Log.e(getTag(), "Converting JSONModel to JSONObject failed.");
             e.printStackTrace();
         }
     }
 
-    protected void get(String uri, AjaxCallback<JSONObject> callback) {
+    protected void get(String uri, AjaxCallback<String> callback) {
         createAjax("ajax", uri, callback);
     }
 
-    protected void put(String uri, JSONModel param, AjaxCallback<JSONObject> callback) {
+    protected void put(String uri, JSONModel param, AjaxCallback<String> callback) {
         createAjaxWithBody("put", uri, callback, param);
     }
 
-    protected void delete(String uri, AjaxCallback<JSONObject> callback) {
+    protected void delete(String uri, AjaxCallback<String> callback) {
         createAjax("delete", uri, callback);
     }
 
-    protected void post(String uri, JSONModel param, AjaxCallback<JSONObject> callback) throws JsonProcessingException, JSONException {
+    protected void post(String uri, JSONModel param, AjaxCallback<String> callback) throws JsonProcessingException, JSONException {
         createAjaxWithBody("post", uri, callback, param);
     }
 
-    public void updateCache(JSONModel json) {
-        try {
-            PreferenceUtils.setString(context, getCacheKey(), json.serialize());
-        } catch (JsonProcessingException e) {
-            Log.e(getTag(), "serializing object to JSON failed.");
-            e.printStackTrace();
-        }
+    public void updateCache(String json) {
+        PreferenceUtils.setString(context, getCacheKey(), json);
     }
 }
