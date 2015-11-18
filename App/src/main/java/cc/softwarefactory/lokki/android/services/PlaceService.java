@@ -23,6 +23,7 @@ import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.errors.PlaceError;
 import cc.softwarefactory.lokki.android.models.JSONModel;
 import cc.softwarefactory.lokki.android.models.Place;
+import cc.softwarefactory.lokki.android.models.UserLocation;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
 
@@ -106,7 +107,7 @@ public class PlaceService extends ApiService {
         final Place place = new Place();
         place.setName(cleanName);
         place.setImg("");
-        place.setLocation(new Place.Location(latLng, radius));
+        place.setUserLocation(new UserLocation(latLng, radius));
 
         post("place", place, new AjaxCallback<String>() {
             @Override
