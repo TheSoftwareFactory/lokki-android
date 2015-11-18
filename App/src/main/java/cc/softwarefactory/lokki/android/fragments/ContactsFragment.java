@@ -46,7 +46,7 @@ import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.avatar.AvatarLoader;
 import cc.softwarefactory.lokki.android.models.Contact;
 import cc.softwarefactory.lokki.android.models.JSONModel;
-import cc.softwarefactory.lokki.android.models.User;
+import cc.softwarefactory.lokki.android.models.UserLocation;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
@@ -223,7 +223,7 @@ public class ContactsFragment extends Fragment {
             for (String userIdICanSee : MainApplication.dashboard.getUserIdsICanSee()) {
                 String email = MainApplication.dashboard.getEmailByUserId(userIdICanSee);
                 String name = Utils.getNameFromEmail(context, email);
-                User.Location location = MainApplication.dashboard.getUserICanSeeByUserId(userIdICanSee).getLocation();
+                UserLocation location = MainApplication.dashboard.getUserICanSeeByUserId(userIdICanSee).getUserLocation();
             if  (location.getTime() != null)
                     timestamps.put(name, location.getTime().getTime());
                 iCanSee.add(email);

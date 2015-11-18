@@ -21,17 +21,6 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import cc.softwarefactory.lokki.android.MainApplication;
-import cc.softwarefactory.lokki.android.R;
-import cc.softwarefactory.lokki.android.activities.BuzzActivity;
-import cc.softwarefactory.lokki.android.models.BuzzPlace;
-import cc.softwarefactory.lokki.android.models.Place;
-import cc.softwarefactory.lokki.android.services.PlaceService;
-import cc.softwarefactory.lokki.android.utilities.ServerApi;
-import cc.softwarefactory.lokki.android.activities.MainActivity;
-import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
-import cc.softwarefactory.lokki.android.utilities.map.MapUtils;
-import cc.softwarefactory.lokki.android.utilities.Utils;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -39,6 +28,18 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import org.json.JSONException;
+
+import cc.softwarefactory.lokki.android.MainApplication;
+import cc.softwarefactory.lokki.android.R;
+import cc.softwarefactory.lokki.android.activities.BuzzActivity;
+import cc.softwarefactory.lokki.android.activities.MainActivity;
+import cc.softwarefactory.lokki.android.models.BuzzPlace;
+import cc.softwarefactory.lokki.android.models.Place;
+import cc.softwarefactory.lokki.android.services.PlaceService;
+import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
+import cc.softwarefactory.lokki.android.utilities.ServerApi;
+import cc.softwarefactory.lokki.android.utilities.Utils;
+import cc.softwarefactory.lokki.android.utilities.map.MapUtils;
 
 public class LocationService extends Service implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener  {
 
@@ -379,7 +380,7 @@ public class LocationService extends Service implements LocationListener, Google
                 Location placeLocation = new Location(placeId);
                 placeLocation.setLatitude(place.getLocation().getLat());
                 placeLocation.setLongitude((place.getLocation().getLon()));
-                if (placeLocation.distanceTo(lastLocation) < place.getLocation().getRad())
+                if (placeLocation.distanceTo(lastLocation) < place.getLocation().getAcc())
                     triggerBuzzing(buzzPlace);
                 else {
                     buzzPlace.setBuzzCount(5);

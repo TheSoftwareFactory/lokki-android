@@ -58,6 +58,7 @@ import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.models.Place;
 import cc.softwarefactory.lokki.android.models.User;
+import cc.softwarefactory.lokki.android.models.UserLocation;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 import cc.softwarefactory.lokki.android.utilities.DialogUtils;
 import cc.softwarefactory.lokki.android.utilities.Utils;
@@ -473,7 +474,7 @@ public class MapViewFragment extends Fragment {
         for (Place place : MainApplication.places) {
             Circle circle = map.addCircle(new CircleOptions()
                     .center(new LatLng(place.getLocation().getLat(), place.getLocation().getLon()))
-                    .radius(place.getLocation().getRad())
+                    .radius(place.getLocation().getAcc())
                     .strokeWidth(0)
                     .fillColor(getResources().getColor(R.color.place_circle)));
             placesOverlay.add(circle);
@@ -509,13 +510,13 @@ public class MapViewFragment extends Fragment {
             HashMap<String, Location> markerData = new HashMap<>();
 
             if (who == MapUserTypes.User || who == MapUserTypes.All) {
-                markerData.put(MainApplication.userAccount, dashboard.getLocation().convertToAndroidLocation()); // User himself
+                markerData.put(MainApplication.userAccount, dashboard.getUserLocation().convertToAndroidLocation()); // User himself
             }
 
             if (who == MapUserTypes.Others || who == MapUserTypes.All) {
                 for (String userId : dashboard.getUserIdsICanSee()) {
                     User user = dashboard.getUserICanSeeByUserId(userId);
-                    User.Location location = user.getLocation();
+                    UserLocation location = user.getUserLocation();
                     String email = dashboard.getEmailByUserId(userId);
                     Log.d(TAG, "I can see: " + email + " => " + user);
 
