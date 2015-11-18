@@ -6,19 +6,25 @@ import java.util.Date;
 
 /**
  * Created by panchamu on 18.11.2015.
+ * Model Class for Tracking Locatin/Places
  */
 public class UserLocation {
-    private double lat;
-    private double lon;
-    private int acc;
-    private Date time;
+    private double lat; //latitude
+    private double lon; //longitude
+    private int acc;    //Accuracy(dist) rounded to nearby integer
+    private Date time;  //time required for converting to Andriod Location
 
     public UserLocation() {}
 
-    public UserLocation(LatLng latLng, int rad) {
+    /**
+     * creates UserLocation from LatLng and accuracy
+     * @param latLng
+     * @param acc
+     */
+    public UserLocation(LatLng latLng, int acc) {
         this.lat = latLng.latitude;
         this.lon = latLng.longitude;
-        this.acc = rad;
+        this.acc = acc;
     }
 
     public double getLat() {
@@ -45,6 +51,10 @@ public class UserLocation {
         this.acc = (int)acc;
     }
 
+    /**
+     * create fused location using AndriodLocation
+     * @return convertedLocation
+     */
     public android.location.Location convertToAndroidLocation() {
         android.location.Location convertedLocation = new android.location.Location("fused");
         double lat = this.lat;

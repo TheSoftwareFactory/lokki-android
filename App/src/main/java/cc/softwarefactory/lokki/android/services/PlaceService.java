@@ -107,6 +107,7 @@ public class PlaceService extends ApiService {
         final Place place = new Place();
         place.setName(cleanName);
         place.setImg("");
+        //updated to setUserLocation
         place.setUserLocation(new UserLocation(latLng, radius));
 
         post("place", place, new AjaxCallback<String>() {

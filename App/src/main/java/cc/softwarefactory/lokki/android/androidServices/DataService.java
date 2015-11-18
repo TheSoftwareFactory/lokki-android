@@ -92,6 +92,7 @@ public class DataService extends Service {
         if (MainApplication.dashboard == null) {
             return;
         }
+        // create user location from Android location info
         UserLocation dashboardLocation = new UserLocation();
         dashboardLocation.setLat(location.getLatitude());
         dashboardLocation.setLon(location.getLongitude());

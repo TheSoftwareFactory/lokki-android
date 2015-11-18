@@ -395,7 +395,7 @@ public class PlacesFragment extends Fragment {
             Location placeLocation = new Location(place.getName());
             placeLocation.setLatitude(place.getLocation().getLat());
             placeLocation.setLongitude(place.getLocation().getLon());
-            placeLocation.setAccuracy(place.getLocation().getAcc());
+            placeLocation.setAccuracy(place.getLocation().getAcc()); //updated to getAcc from getRad
 
             // Check myself
             UserLocation userLocation = MainApplication.dashboard.getUserLocation();

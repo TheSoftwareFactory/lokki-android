@@ -1,12 +1,15 @@
 package cc.softwarefactory.lokki.android.models;
 
-
+/**
+ * Model class for User
+ * @author panchamukhi
+ */
 public class User extends JSONModel {
 
 
-    private UserLocation location;
-    private boolean visibility;
-    private String battery;
+    private UserLocation location; // track user location
+    private boolean visibility;   // define visibility scope
+    private String battery;      // battery status house keeping info
 
     public String getBattery() {
         return battery;

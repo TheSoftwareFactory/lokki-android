@@ -39,7 +39,7 @@ public class MockJsonUtils {
 
         Place place = new Place();
         place.setId("cb693820-3ce7-4c95-af2f-1f079d2841b1");
-        UserLocation location = new UserLocation();
+        UserLocation location = new UserLocation(); //updated to UserLocation from Place.Location
         location.setLat(37.483477313364574);
         location.setLon(-122.14838393032551);
         location.setAcc(100);
@@ -49,7 +49,7 @@ public class MockJsonUtils {
 
         Place place2 = new Place();
         place2.setId("105df9a7-33cc-4880-9001-66aab110c3dd");
-        UserLocation location2 = new UserLocation();
+        UserLocation location2 = new UserLocation(); //updated to UserLocation from Place.Location
         location2.setLat(40.2290817553899);
         location2.setLon(-116.64331555366516);
         location2.setAcc(100);

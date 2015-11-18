@@ -1,11 +1,14 @@
 package cc.softwarefactory.lokki.android.models;
 
+/**
+ * Model Class for Tracking Place on Map
+ */
 public class Place extends JSONModel implements Comparable<Place> {
 
-    private String id;
-    private String name;
-    private String img;
-    private UserLocation location;
+    private String id; // place id
+    private String name; // place name
+    private String img;  // Place image
+    private UserLocation location; // place location
 
 
 

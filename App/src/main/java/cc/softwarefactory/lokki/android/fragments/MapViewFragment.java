@@ -474,7 +474,7 @@ public class MapViewFragment extends Fragment {
         for (Place place : MainApplication.places) {
             Circle circle = map.addCircle(new CircleOptions()
                     .center(new LatLng(place.getLocation().getLat(), place.getLocation().getLon()))
-                    .radius(place.getLocation().getAcc())
+                    .radius(place.getLocation().getAcc()) //updated to getAcc from getRad
                     .strokeWidth(0)
                     .fillColor(getResources().getColor(R.color.place_circle)));
             placesOverlay.add(circle);

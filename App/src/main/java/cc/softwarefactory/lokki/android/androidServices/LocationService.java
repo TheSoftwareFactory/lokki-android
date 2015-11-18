@@ -377,6 +377,7 @@ public class LocationService extends Service implements LocationListener, Google
             try {
                 String placeId = buzzPlace.getPlaceId();
                 Place place = placeService.getPlaceById(placeId);
+                //create android location from Place location information
                 Location placeLocation = new Location(placeId);
                 placeLocation.setLatitude(place.getLocation().getLat());
                 placeLocation.setLongitude((place.getLocation().getLon()));
