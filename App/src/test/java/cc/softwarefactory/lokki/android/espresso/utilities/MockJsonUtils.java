@@ -12,8 +12,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import cc.softwarefactory.lokki.android.models.JSONModel;
 import cc.softwarefactory.lokki.android.models.Place;
+import cc.softwarefactory.lokki.android.models.UserLocation;
 
 public class MockJsonUtils {
 
@@ -39,21 +39,21 @@ public class MockJsonUtils {
 
         Place place = new Place();
         place.setId("cb693820-3ce7-4c95-af2f-1f079d2841b1");
-        Place.Location location = new Place.Location();
+        UserLocation location = new UserLocation();
         location.setLat(37.483477313364574);
         location.setLon(-122.14838393032551);
-        location.setRad(100);
-        place.setLocation(location);
+        location.setAcc(100);
+        place.setUserLocation(location);
         place.setName("Testplace1");
         place.setImg("");
 
         Place place2 = new Place();
         place2.setId("105df9a7-33cc-4880-9001-66aab110c3dd");
-        Place.Location location2 = new Place.Location();
+        UserLocation location2 = new UserLocation();
         location2.setLat(40.2290817553899);
         location2.setLon(-116.64331555366516);
-        location2.setRad(100);
-        place2.setLocation(location2);
+        location2.setAcc(100);
+        place2.setUserLocation(location2);
         place2.setName("Testplace2");
         place2.setImg("");
 
