@@ -232,7 +232,13 @@ public class Utils {
         }
         return null;
     }
-
+    public static Bitmap addBorderToBitMap(Bitmap bmp, int borderSize, int color) {
+        Bitmap bmpWithBorder = Bitmap.createBitmap(bmp.getWidth() + borderSize * 2, bmp.getHeight() + borderSize * 2, bmp.getConfig());
+        Canvas canvas = new Canvas(bmpWithBorder);
+        canvas.drawColor(color);
+        canvas.drawBitmap(bmp, borderSize, borderSize, null);
+        return bmpWithBorder;
+    }
     public static boolean checkGooglePlayServices(Context context) {
 
         if (context == null) {
