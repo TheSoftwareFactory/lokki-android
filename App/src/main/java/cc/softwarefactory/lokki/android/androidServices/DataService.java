@@ -2,7 +2,7 @@
 Copyright (c) 2014-2015 F-Secure
 See LICENSE for details
 */
-package cc.softwarefactory.lokki.android.services;
+package cc.softwarefactory.lokki.android.androidServices;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -19,6 +19,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.models.JSONModel;
 import cc.softwarefactory.lokki.android.models.User;
+import cc.softwarefactory.lokki.android.services.PlaceService;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 
@@ -39,14 +40,15 @@ public class DataService extends Service {
     private PendingIntent alarmCallback;
     private static Boolean serviceRunning = false;
 
+    private static PlaceService placeService;
 
     public static void start(Context context) {
-
         Log.d(TAG, "start Service called");
         if (serviceRunning) { // If service is running, no need to start it again.
             Log.w(TAG, "Service already running...");
             return;
         }
+
         context.startService(new Intent(context, DataService.class));
     }
 
@@ -121,6 +123,9 @@ public class DataService extends Service {
         } catch (IOException e) {
             MainApplication.dashboard = null;
         }
+
+        placeService = new PlaceService(getApplicationContext());
+
         getPlaces();
         getContacts();
     }
@@ -161,9 +166,8 @@ public class DataService extends Service {
     }
 
     private void getPlaces() {
-
         Log.d(TAG, "getPlaces");
-        ServerApi.getPlaces(this);
+        placeService.getPlaces();
     }
 
     private void getContacts() {

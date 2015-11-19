@@ -29,7 +29,7 @@ import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.models.Contact;
 import cc.softwarefactory.lokki.android.models.JSONModel;
-import cc.softwarefactory.lokki.android.services.LocationService;
+import cc.softwarefactory.lokki.android.androidServices.LocationService;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.android.gms.common.ConnectionResult;

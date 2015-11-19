@@ -2,9 +2,18 @@ package cc.softwarefactory.lokki.android.espresso.utilities;
 
 
 import com.android.support.test.deps.guava.hash.Hashing;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import cc.softwarefactory.lokki.android.models.JSONModel;
+import cc.softwarefactory.lokki.android.models.Place;
 
 public class MockJsonUtils {
 
@@ -25,23 +34,32 @@ public class MockJsonUtils {
 
 
 
-    public static String getPlacesJson() throws JSONException {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("cb693820-3ce7-4c95-af2f-1f079d2841b1", new JSONObject()
-                        .put("lat", "37.483477313364574")
-                        .put("lon", "-122.14838393032551")
-                        .put("rad", "100")
-                        .put("name", "Testplace1")
-                        .put("img", ""));
+    public static String getPlacesJson() throws JSONException, JsonProcessingException {
+        List<Place> places = new ArrayList<>();
 
-        jsonObject.put("105df9a7-33cc-4880-9001-66aab110c3dd", new JSONObject()
-                        .put("lat", "40.2290817553899")
-                        .put("lon", "-116.64331555366516")
-                        .put("rad", "100")
-                        .put("name", "Testplace2")
-                        .put("img", ""));
+        Place place = new Place();
+        place.setId("cb693820-3ce7-4c95-af2f-1f079d2841b1");
+        Place.Location location = new Place.Location();
+        location.setLat(37.483477313364574);
+        location.setLon(-122.14838393032551);
+        location.setRad(100);
+        place.setLocation(location);
+        place.setName("Testplace1");
+        place.setImg("");
 
-        return jsonObject.toString();
+        Place place2 = new Place();
+        place2.setId("105df9a7-33cc-4880-9001-66aab110c3dd");
+        Place.Location location2 = new Place.Location();
+        location2.setLat(40.2290817553899);
+        location2.setLon(-116.64331555366516);
+        location2.setRad(100);
+        place2.setLocation(location2);
+        place2.setName("Testplace2");
+        place2.setImg("");
+
+        places.add(place);
+        places.add(place2);
+        return new ObjectMapper().writeValueAsString(places);
     }
 
     public static String getEmptyDashboardJson() throws JSONException {

@@ -30,12 +30,9 @@ import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 
-import org.json.*;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Map;
 
 import cc.softwarefactory.lokki.android.MainApplication;
@@ -44,7 +41,7 @@ import cc.softwarefactory.lokki.android.avatar.AvatarLoader;
 import cc.softwarefactory.lokki.android.datasources.contacts.ContactDataSource;
 import cc.softwarefactory.lokki.android.datasources.contacts.DefaultContactDataSource;
 import cc.softwarefactory.lokki.android.models.Contact;
-import cc.softwarefactory.lokki.android.services.DataService;
+import cc.softwarefactory.lokki.android.androidServices.DataService;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 import cc.softwarefactory.lokki.android.utilities.ContactUtils;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;

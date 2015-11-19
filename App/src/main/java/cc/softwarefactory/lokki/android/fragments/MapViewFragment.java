@@ -456,10 +456,10 @@ public class MapViewFragment extends Fragment {
 
         removePlaces();
 
-        for (Place place : MainApplication.places.getPlaces()) {
+        for (Place place : MainApplication.places) {
             Circle circle = map.addCircle(new CircleOptions()
-                    .center(new LatLng(place.getLat(), place.getLon()))
-                    .radius(place.getRad())
+                    .center(new LatLng(place.getLocation().getLat(), place.getLocation().getLon()))
+                    .radius(place.getLocation().getRad())
                     .strokeWidth(0)
                     .fillColor(getResources().getColor(R.color.place_circle)));
             placesOverlay.add(circle);

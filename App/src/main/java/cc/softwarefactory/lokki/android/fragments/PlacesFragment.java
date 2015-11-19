@@ -34,24 +34,20 @@ import com.androidquery.AQuery;
 
 import cc.softwarefactory.lokki.android.activities.BuzzActivity;
 import cc.softwarefactory.lokki.android.models.BuzzPlace;
-import cc.softwarefactory.lokki.android.models.JSONModel;
 import cc.softwarefactory.lokki.android.models.Place;
 import cc.softwarefactory.lokki.android.models.User;
+import cc.softwarefactory.lokki.android.services.PlaceService;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
-import cc.softwarefactory.lokki.android.utilities.ServerApi;
-import cc.softwarefactory.lokki.android.services.DataService;
+import cc.softwarefactory.lokki.android.androidServices.DataService;
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
-import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 
 import com.makeramen.roundedimageview.RoundedImageView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -59,14 +55,16 @@ public class PlacesFragment extends Fragment {
 
     private static final String TAG = "PlacesFragment";
     private Context context;
-    private ArrayList<String> placesList;
-    private JSONObject peopleInsidePlace;
+    private List<Place> placesList;
+    private Map<String, List<String>> peopleInsidePlace;
     private ListView listView;
+    private PlaceService placeService;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         context = getActivity().getApplicationContext();
+        placeService = new PlaceService(context);
         View rootView = inflater.inflate(R.layout.fragment_places, container, false);
         listView = (ListView) rootView.findViewById(R.id.listView1);
         registerForContextMenu(listView);
@@ -115,7 +113,7 @@ public class PlacesFragment extends Fragment {
         Log.d(TAG, "setListAdapter");
 
         final PlacesFragment placesFragment = this;
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, R.layout.places_row_layout, placesList) {
+        ArrayAdapter<Place> adapter = new ArrayAdapter<Place>(context, R.layout.places_row_layout, placesList) {
 
             @Override
             public View getView(int position, View unusedView, ViewGroup parent) {
@@ -123,8 +121,8 @@ public class PlacesFragment extends Fragment {
                 View convertView = getActivity().getLayoutInflater().inflate(R.layout.places_row_layout, parent, false);
                 AQuery aq = new AQuery(getActivity(), convertView);
 
-                final String placeName = getItem(position);
-                aq.id(R.id.place_name).text(placeName);
+                final Place place = getItem(position);
+                aq.id(R.id.place_name).text(place.getName());
 
                 aq.id(R.id.places_context_menu_button).clicked(new View.OnClickListener() {
                     @Override
@@ -133,7 +131,7 @@ public class PlacesFragment extends Fragment {
                     }
                 });
                 Log.d(TAG, "Setting up checkbox callback");
-                final String placeId = MainApplication.places.getPlaceIdByName(placeName);
+                final String placeId = place.getId();
 
                 aq.id(R.id.buzz_checkBox).clicked(new View.OnClickListener() {
                     @Override
@@ -180,19 +178,19 @@ public class PlacesFragment extends Fragment {
                         aq.id(R.id.buzz_checkBox).checked(true);
                 }
 
-                Log.d(TAG, "Place name: " + placeName);
-                Log.d(TAG, "peopleInsidePlace? " + peopleInsidePlace.has(placeName));
+                Log.d(TAG, "Place name: " + place.getName());
+                Log.d(TAG, "peopleInsidePlace? " + peopleInsidePlace.containsKey(place.getId()));
 
-                if (peopleInsidePlace.has(placeName)) { // People are inside this place
+                if (peopleInsidePlace.containsKey(place.getId())) { // People are inside this place
                     Log.d(TAG, "Inside loop");
                     try {
-                        JSONArray people = peopleInsidePlace.getJSONArray(placeName);
+                        List<String> people = peopleInsidePlace.get(place.getId());
                         LinearLayout avatarRow = (LinearLayout) convertView.findViewById(R.id.avatar_row);
                         avatarRow.removeAllViewsInLayout(); // Deletes old avatars, if any.
 
-                        for (int i = 0; i < people.length(); i++) {
+                        for (int i = 0; i < people.size(); i++) {
 
-                            final String email = people.getString(i);
+                            final String email = people.get(i);
                             if (MainApplication.iDontWantToSee.has(email)) {
                                 continue;
                             }
@@ -234,39 +232,39 @@ public class PlacesFragment extends Fragment {
     public boolean onContextItemSelected(MenuItem item) {
         AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
         int position = info.position;
-        String placeName = placesList.get(position);
+        Place place = placesList.get(position);
 
         switch(item.getItemId()) {
             case R.id.places_context_menu_rename:
                 AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
                         getString(R.string.analytics_action_click),
                         getString(R.string.analytics_label_rename_place));
-                renamePlaceDialog(placeName);
+                renamePlaceDialog(place);
                 return true;
             case R.id.places_context_menu_delete:
                 AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
                         getString(R.string.analytics_action_click),
                         getString(R.string.analytics_label_delete_place));
-                deletePlaceDialog(placeName);
+                deletePlaceDialog(place);
                 return true;
         }
 
         return super.onContextItemSelected(item);
     }
 
-    private void deletePlaceDialog(final String name) {
+    private void deletePlaceDialog(final Place place) {
 
         Log.d(TAG, "deletePlaceDialog");
         new AlertDialog.Builder(getActivity())
                 .setTitle(getString(R.string.delete_place))
-                .setMessage(name + " " + getString(R.string.will_be_deleted_from_places))
+                .setMessage(place + " " + getString(R.string.will_be_deleted_from_places))
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
                                 getString(R.string.analytics_action_click),
                                 getString(R.string.analytics_label_confirm_delete_place_dialog));
-                        deletePlace(name);
+                        deletePlace(place);
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -281,19 +279,18 @@ public class PlacesFragment extends Fragment {
 
     }
 
-    private void deletePlace(String name) {
+    private void deletePlace(Place place) {
         Log.d(TAG, "deletePlace");
-        String placeId = MainApplication.places.getPlaceIdByName(name);
-        Log.d(TAG, "Place ID to be deleted: " + placeId);
-        ServerApi.removePlace(context, placeId);
+        Log.d(TAG, "Place ID to be deleted: " + place.getId());
+        placeService.removePlace(place);
     }
 
-    private void renamePlaceDialog(final String placeName) {
+    private void renamePlaceDialog(final Place place) {
 
         Log.d(TAG, "renamePlaceDialog");
         final EditText input = new EditText(getActivity());
         String titleFormat = getString(R.string.rename_prompt);
-        String title = String.format(titleFormat, placeName);
+        String title = String.format(titleFormat, place.getName());
 
         new AlertDialog.Builder(getActivity())
                 .setTitle(title)
@@ -306,7 +303,7 @@ public class PlacesFragment extends Fragment {
                                 getString(R.string.analytics_action_click),
                                 getString(R.string.analytics_label_confirm_rename_place_dialog));
                         String newName = input.getText().toString();
-                        renamePlace(placeName, newName);
+                        renamePlace(place, newName);
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -320,11 +317,10 @@ public class PlacesFragment extends Fragment {
                 .show();
     }
 
-    private void renamePlace(final String oldName, final String newName) {
+    private void renamePlace(Place place, final String newName) {
         Log.d(TAG, "renamePlace");
-        String placeId = MainApplication.places.getPlaceIdByName(oldName);
         try {
-            ServerApi.renamePlace(context, placeId, newName);
+            placeService.renamePlace(place, newName);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -358,24 +354,25 @@ public class PlacesFragment extends Fragment {
     private void showPlaces() {
 
         Log.d(TAG, "showPlaces");
-        placesList = new ArrayList<>();
-        peopleInsidePlace = new JSONObject();
+        peopleInsidePlace = new HashMap<>();
 
         try {
             if (MainApplication.places == null) { // Read them from cache
-                if (PreferenceUtils.getString(context, PreferenceUtils.KEY_PLACES).isEmpty()) {
+                List<Place> places = placeService.getFromCache();
+                if (places.isEmpty()) {
                     return;
                 }
-                MainApplication.places = JSONModel.createFromJson(PreferenceUtils.getString(context, PreferenceUtils.KEY_PLACES), MainApplication.Places.class);
+                MainApplication.places = places;
             }
 
             Log.d(TAG, "Places json: " + MainApplication.places);
 
-            for (Place place : MainApplication.places.getPlaces()) {
-                placesList.add(place.getName());
+            for (Place place : MainApplication.places) {
                 calculatePeopleInside(place);
             }
             Log.d(TAG, "peopleInsidePlace: " + peopleInsidePlace);
+
+            placesList = new ArrayList<>(MainApplication.places);
             Collections.sort(placesList);
             setListAdapter();
 
@@ -393,12 +390,12 @@ public class PlacesFragment extends Fragment {
             }
 
             Map<String, User> iCanSee = MainApplication.dashboard.getiCanSee();
-            JSONArray peopleInThisPlace = new JSONArray();
+            List<String> peopleInThisPlace = new ArrayList<>();
 
             Location placeLocation = new Location(place.getName());
-            placeLocation.setLatitude(place.getLat());
-            placeLocation.setLongitude(place.getLon());
-            placeLocation.setAccuracy(place.getRad());
+            placeLocation.setLatitude(place.getLocation().getLat());
+            placeLocation.setLongitude(place.getLocation().getLon());
+            placeLocation.setAccuracy(place.getLocation().getRad());
 
             // Check myself
             User.Location userLocation = MainApplication.dashboard.getLocation();
@@ -411,7 +408,7 @@ public class PlacesFragment extends Fragment {
             float myDistance = placeLocation.distanceTo(myLocation);
             if (myDistance < placeLocation.getAccuracy()) {
                 //Log.d(TAG, email + " is in place: " + placeLocation.getProvider());
-                peopleInThisPlace.put(MainApplication.userAccount);
+                peopleInThisPlace.add(MainApplication.userAccount);
             }
 
             // Check for my contacts
@@ -433,13 +430,13 @@ public class PlacesFragment extends Fragment {
                 float distance = placeLocation.distanceTo(location);
                 if (distance < placeLocation.getAccuracy()) {
                     //Log.d(TAG, email + " is in place: " + placeLocation.getProvider());
-                    peopleInThisPlace.put(email);
+                    peopleInThisPlace.add(email);
                 }
             }
 
-            if (peopleInThisPlace.length() > 0) {
+            if (peopleInThisPlace.size() > 0) {
                 //Log.d(TAG, "peopleInThisPlace: " + peopleInThisPlace);
-                peopleInsidePlace.put(place.getName(), peopleInThisPlace);
+                peopleInsidePlace.put(place.getId(), peopleInThisPlace);
             }
 
 
