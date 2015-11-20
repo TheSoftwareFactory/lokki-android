@@ -65,6 +65,7 @@ public class CustomNonHierarchicalDistanceBasedAlgorithm<T extends ClusterItem> 
 
     @Override
     public void removeItem(T item) {
+
         final QuadItem<T> quadItem = new QuadItem<T>(item);
         synchronized (mQuadTree) {
             mItems.remove(quadItem);

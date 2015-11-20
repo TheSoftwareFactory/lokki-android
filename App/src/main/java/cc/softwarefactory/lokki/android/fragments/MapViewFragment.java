@@ -200,6 +200,7 @@ public class MapViewFragment extends Fragment {
             startLocation = null;
         }
         setUpClusterManager();
+        markerMap.clear();
     }
 
 
@@ -246,8 +247,6 @@ public class MapViewFragment extends Fragment {
             Log.e(TAG, "Could not create map!");
             return;
         }
-
-        removeMarkers();
 
         map.setMapType(MainApplication.mapTypes[MainApplication.mapType]);
         map.setMyLocationEnabled(true);
@@ -366,16 +365,6 @@ public class MapViewFragment extends Fragment {
         int mapCenterY = (fragment.getView().getHeight() - getView().findViewById(R.id.add_place_buttons).getHeight()) / 2;
 
         return new Point(mapCenterX, mapCenterY);
-    }
-
-    private void removeMarkers() {
-
-        Log.d(TAG, "removeMarkers");
-        for (Iterator<Person> it = markerMap.values().iterator(); it.hasNext();) {
-            Person marker = it.next();
-            clusterManager.removeItem(marker);
-        }
-        markerMap.clear();
     }
 
     @Override
@@ -607,10 +596,9 @@ public class MapViewFragment extends Fragment {
                 Log.d(TAG, "onPostExecute - updating marker: " + email);
                 markerMap.remove(marker);
                 clusterManager.removeItem(marker);
-
                 Person p = new Person(latLng, email, time, bitmapResult);
-                clusterManager.addItem(p);
                 markerMap.put(email, p);
+                clusterManager.addItem(p);
             } else {
                 Log.d(TAG, "onPostExecute - creating marker: " + email);
                 marker = new Person(latLng, email, time, bitmapResult);
