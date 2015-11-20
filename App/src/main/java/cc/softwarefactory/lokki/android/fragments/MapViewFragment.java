@@ -4,13 +4,11 @@ See LICENSE for details
 */
 package cc.softwarefactory.lokki.android.fragments;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -46,13 +44,10 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
-import com.google.maps.android.clustering.algo.GridBasedAlgorithm;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -64,10 +59,11 @@ import cc.softwarefactory.lokki.android.models.User;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 import cc.softwarefactory.lokki.android.utilities.DialogUtils;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
-import cc.softwarefactory.lokki.android.utilities.map.PersonRenderer;
 import cc.softwarefactory.lokki.android.utilities.Utils;
+import cc.softwarefactory.lokki.android.utilities.map.CustomNonHierarchicalDistanceBasedAlgorithm;
 import cc.softwarefactory.lokki.android.utilities.map.MapUserTypes;
 import cc.softwarefactory.lokki.android.utilities.map.MapUtils;
+import cc.softwarefactory.lokki.android.utilities.map.PersonRenderer;
 
 
 public class MapViewFragment extends Fragment {
@@ -653,14 +649,14 @@ public class MapViewFragment extends Fragment {
             setUpMap();
         }
         clusterManager = new ClusterManager<>(context, googleMap);
-        clusterManager.setAlgorithm(new GridBasedAlgorithm<Person>());
+        clusterManager.setAlgorithm(new CustomNonHierarchicalDistanceBasedAlgorithm<Person>());
         clusterManager.setRenderer(new PersonRenderer(context, map, clusterManager));
         clusterManager.setOnClusterClickListener(new ClusterManager.OnClusterClickListener<Person>() {
             @Override
             public boolean onClusterClick(Cluster<Person> cluster) {
                 String email = cluster.getItems().iterator().next().getTitle();
                 String name = Utils.getNameFromEmail(context, email);
-                Toast.makeText(context, cluster.getSize() + " (including " + name + ")", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, cluster.getSize() + " people including " + name , Toast.LENGTH_SHORT).show();
                 return true;
             }
         });
