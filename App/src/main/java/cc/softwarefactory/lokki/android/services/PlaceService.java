@@ -77,7 +77,7 @@ public class PlaceService extends ApiService {
     }
 
     public List<Place> getFromCache() throws IOException {
-        return JSONModel.createFromJson(PreferenceUtils.getString(context, PreferenceUtils.KEY_PLACES), List.class);
+        return JSONModel.createListFromJson(PreferenceUtils.getString(context, PreferenceUtils.KEY_PLACES), Place.class);
     }
 
     private void updateCache() {
