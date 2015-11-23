@@ -21,6 +21,8 @@ public class PreferenceUtils {
     public static final String KEY_SETTING_ANALYTICS_OPT_IN = "settingAnalyticsOptIn";
     public static final String KEY_SETTING_EXPERIMENTS_OPT_IN = "settingExperimentsOptIn";
     public static final String KEY_NOT_FIRST_TIME_LAUNCH = "notFirstTimeLaunch";
+    public static final String KEY_LAT = "lat";
+    public static final String KEY_LON = "lon";
 
     /**
      * Get a string value from default shared preferences
@@ -54,10 +56,6 @@ public class PreferenceUtils {
         return prefs.getBoolean(key, false);
     }
 
-
-
-
-
     public static void setString(Context context, String key, String value) {
 
         if (context == null) {
@@ -76,5 +74,23 @@ public class PreferenceUtils {
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         prefs.edit().putBoolean(key, value).apply();
+    }
+
+    public static void setDouble(Context context, String key, Double value){
+
+        if(context == null){
+            return;
+        }
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        prefs.edit().putString(key, Double.toString(value)).apply();
+    }
+
+    public static double getDouble(Context context, String key){
+
+        if(context == null){
+            return 0.0;
+        }
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return Double.parseDouble(prefs.getString(key, "0.0"));
     }
 }

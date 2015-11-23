@@ -223,26 +223,32 @@ public class ContactsFragment extends Fragment {
             for (String userIdICanSee : MainApplication.dashboard.getUserIdsICanSee()) {
                 String email = MainApplication.dashboard.getEmailByUserId(userIdICanSee);
                 String name = Utils.getNameFromEmail(context, email);
+                if(name !=null &&  email !=null){
+                    iCanSee.add(email);
+                    mapping.put(name, email);
+                    Log.d(TAG, "I can see: " + email);
+                }
+
                 User.Location location = MainApplication.dashboard.getUserICanSeeByUserId(userIdICanSee).getLocation();
-            if  (location.getTime() != null)
-                    timestamps.put(name, location.getTime().getTime());
-                iCanSee.add(email);
-                mapping.put(name, email);
-                Log.d(TAG, "I can see: " + email);
+                if  (location.getTime() != null){
+                        timestamps.put(name, location.getTime().getTime());
+                }
+
             }
 
             for (String userId : MainApplication.dashboard.getCanSeeMe()) {
                 String email = MainApplication.dashboard.getEmailByUserId(userId);
                 String name = Utils.getNameFromEmail(context, email);
-                canSeeMe.add(email);
-                mapping.put(name, email);
-                Log.d(TAG, "Can see me: " + email);
+                if(name !=null &&  email !=null){
+                    canSeeMe.add(email);
+                    mapping.put(name, email);
+                    Log.d(TAG, "Can see me: " + email);
+                }
             }
         } catch (IOException e) {
             Log.e(TAG, "Parsing dashboard JSON failed");
             e.printStackTrace();
         }
-
         peopleList.addAll(mapping.keySet());
         Collections.sort(peopleList);
         Log.d(TAG, "Contact list: " + peopleList);
