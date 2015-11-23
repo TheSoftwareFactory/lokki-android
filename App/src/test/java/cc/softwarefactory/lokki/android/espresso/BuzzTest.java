@@ -4,12 +4,14 @@ import android.support.test.espresso.ViewAssertion;
 import android.support.test.espresso.matcher.ViewMatchers;
 import android.util.Log;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import cc.softwarefactory.lokki.android.MainApplication;
@@ -40,7 +42,7 @@ public class BuzzTest extends LoggedInBaseTest {
 
     public void setUp() throws Exception {
         super.setUp();
-        MainApplication.buzzPlaces= new JSONArray();
+        MainApplication.buzzPlaces = new ArrayList<>();
     }
 
     private void enterContactsScreen() {
@@ -77,32 +79,32 @@ public class BuzzTest extends LoggedInBaseTest {
         }
     }
 
-    public void testClickingBuzzShowsDialog() throws JSONException {
+    public void testClickingBuzzShowsDialog() throws JSONException, JsonProcessingException {
         getMockDispatcher().setPlacesResponse(new MockResponse().setBody(MockJsonUtils.getPlacesJson()));
         enterPlacesScreen();
         openDialogForTestplace1();
     }
 
-    public void setBuzzToTestplace1() throws JSONException {
+    public void setBuzzToTestplace1() throws JSONException, JsonProcessingException {
         getMockDispatcher().setPlacesResponse(new MockResponse().setBody(MockJsonUtils.getPlacesJson()));
         enterPlacesScreen();
         openDialogForTestplace1();
         onView(withText(R.string.yes)).perform(click());
     }
 
-    public void testConfirmBuzzworks() throws  JSONException {
+    public void testConfirmBuzzworks() throws JSONException, JsonProcessingException {
         setBuzzToTestplace1();
         onView(allOf(withId(R.id.buzz_checkBox), hasSibling(withText("Testplace1")))).check(matches(isChecked()));
     }
 
-    public void testBuzzIsSelected() throws  JSONException {
+    public void testBuzzIsSelected() throws JSONException, JsonProcessingException {
         setBuzzToTestplace1();
         enterContactsScreen();
         enterPlacesScreen();
         onView(allOf(withId(R.id.buzz_checkBox), hasSibling(withText("Testplace1")))).check(matches(isChecked()));
     }
 
-    public void testNotConfirmingBuzzworks() throws  JSONException {
+    public void testNotConfirmingBuzzworks() throws JSONException, JsonProcessingException {
         getMockDispatcher().setPlacesResponse(new MockResponse().setBody(MockJsonUtils.getPlacesJson()));
         enterPlacesScreen();
         openDialogForTestplace1();
@@ -110,7 +112,7 @@ public class BuzzTest extends LoggedInBaseTest {
         onView(allOf(withId(R.id.buzz_checkBox), hasSibling(withText("Testplace1")))).check(matches(isNotChecked()));
     }
 
-    public void testBuzzRemainsAfterRenamingPlace() throws JSONException {
+    public void testBuzzRemainsAfterRenamingPlace() throws JSONException, JsonProcessingException {
         getMockDispatcher().setPlacesRenameResponse(new MockResponse().setResponseCode(200), "cb693820-3ce7-4c95-af2f-1f079d2841b1");
         setBuzzToTestplace1();
 

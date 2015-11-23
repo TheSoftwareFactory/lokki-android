@@ -14,8 +14,10 @@ import java.util.Iterator;
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.activities.MainActivity;
+import cc.softwarefactory.lokki.android.constants.Constants;
 import cc.softwarefactory.lokki.android.espresso.utilities.MockDispatcher;
 import cc.softwarefactory.lokki.android.espresso.utilities.TestUtils;
+import cc.softwarefactory.lokki.android.services.ApiService;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
 
 /**
@@ -60,13 +62,14 @@ public abstract class LokkiBaseTest extends ActivityInstrumentationTestCase2<Mai
 
         String mockUrl = mockWebServer.getUrl("/").toString();
         ServerApi.setApiUrl(mockUrl);
+        ApiService.apiUrl = mockUrl;
     }
 
     public static void clearJSONData(JSONObject object) {
-        if(object == null)
+        if (object == null)
             return;
         Iterator<String> it = object.keys();
-        while(it.hasNext()) {
+        while (it.hasNext()) {
             it.next();
             it.remove();
         }
@@ -80,8 +83,8 @@ public abstract class LokkiBaseTest extends ActivityInstrumentationTestCase2<Mai
         // if user is running application normally after running tests
         TestUtils.clearAppData(getInstrumentation().getTargetContext());
 
-        clearJSONData(MainApplication.contacts);
-        clearJSONData(MainApplication.places);
+        MainApplication.contacts = null;
+        MainApplication.places = null;
         super.tearDown();
     }
 

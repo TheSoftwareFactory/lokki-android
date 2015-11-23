@@ -2,7 +2,7 @@
 Copyright (c) 2014-2015 F-Secure
 See LICENSE for details
 */
-package cc.softwarefactory.lokki.android.services;
+package cc.softwarefactory.lokki.android.androidServices;
 
 import android.app.AlarmManager;
 import android.app.NotificationManager;
@@ -21,14 +21,6 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import cc.softwarefactory.lokki.android.MainApplication;
-import cc.softwarefactory.lokki.android.R;
-import cc.softwarefactory.lokki.android.activities.BuzzActivity;
-import cc.softwarefactory.lokki.android.utilities.ServerApi;
-import cc.softwarefactory.lokki.android.activities.MainActivity;
-import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
-import cc.softwarefactory.lokki.android.utilities.map.MapUtils;
-import cc.softwarefactory.lokki.android.utilities.Utils;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -36,9 +28,19 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.util.Iterator;
+import cc.softwarefactory.lokki.android.MainApplication;
+import cc.softwarefactory.lokki.android.R;
+import cc.softwarefactory.lokki.android.activities.BuzzActivity;
+import cc.softwarefactory.lokki.android.activities.MainActivity;
+import cc.softwarefactory.lokki.android.models.BuzzPlace;
+import cc.softwarefactory.lokki.android.models.Place;
+import cc.softwarefactory.lokki.android.services.PlaceService;
+import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
+import cc.softwarefactory.lokki.android.utilities.ServerApi;
+import cc.softwarefactory.lokki.android.utilities.Utils;
+import cc.softwarefactory.lokki.android.utilities.map.MapUtils;
+
 
 public class LocationService extends Service implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener  {
 
@@ -89,6 +91,8 @@ public class LocationService extends Service implements LocationListener, Google
      */
     private LocationAccuracy currentAccuracy = LocationAccuracy.BGINACCURATE;
 
+    private static PlaceService placeService;
+
     /**
      * Location polling accuracy levels:
      * ACCURATE: App running in foreground
@@ -97,9 +101,12 @@ public class LocationService extends Service implements LocationListener, Google
      */
     public enum LocationAccuracy{ACCURATE, BGACCURATE, BGINACCURATE}
 
+
     public static void start(Context context) {
 
         Log.d(TAG, "start Service called");
+
+        placeService = new PlaceService(context);
 
         if (serviceRunning) { // If service is running, no need to start it again.
             Log.w(TAG, "Service already running...");
@@ -283,7 +290,7 @@ public class LocationService extends Service implements LocationListener, Google
         Log.d(TAG, String.format("onLocationChanged - Location: %s", location));
         if (serviceRunning && mGoogleApiClient.isConnected() && location != null) {
             updateLokkiLocation(location);
-            checkBuzzplaces();
+            checkBuzzPlaces();
         } else {
             this.stopSelf();
             onDestroy();
@@ -337,72 +344,53 @@ public class LocationService extends Service implements LocationListener, Google
 
         @Override
         public void run() {
+            BuzzPlace buzzPlace = BuzzActivity.getBuzz(id);
             try {
-                while(true) {
-                    JSONObject placeBuzz = BuzzActivity.getBuzz(id);
-                    if(placeBuzz == null || placeBuzz.getInt("buzzcount") <= 0) {
-                        break;
-                    }
+                while (buzzPlace != null && buzzPlace.getBuzzCount() > 0) {
                     Log.d(TAG, "Vibrating...");
                     Vibrator v = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
                     v.vibrate(1000);
                     Thread.sleep(2500);
-                    placeBuzz.put("buzzcount", placeBuzz.getInt("buzzcount") - 1);
+                    buzzPlace.decBuzzCount();
                 }
-            } catch (Exception e) {
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private void triggerBuzzing(final JSONObject placeBuzz) throws JSONException {
-        if(placeBuzz.getInt("buzzcount") > 0) {
+    private void triggerBuzzing(final BuzzPlace buzzPlace) throws JSONException {
+        if (buzzPlace.getBuzzCount() <= 0 || buzzPlace.isActivated()) return;
 
-            if(!placeBuzz.optBoolean("activated", false)) {
-                placeBuzz.put("activated", true);
-                Intent i = new Intent();
-                i.setClass(this, BuzzActivity.class);
-                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(i);
-                showArrivalNotification();
+        buzzPlace.setActivated(false);
+        Intent i = new Intent();
+        i.setClass(this, BuzzActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(i);
+        showArrivalNotification();
 
-                Log.d(TAG, "Starting vibration...");
-                new Thread(new VibrationThread(placeBuzz.getString("placeid"))).start();
-            }
-        }
+        Log.d(TAG, "Starting vibration...");
+        new Thread(new VibrationThread(buzzPlace.getPlaceId())).start();
     }
 
-    private void checkBuzzplaces()
-    {
-        for (int i=0;i<MainApplication.buzzPlaces.length();i++)
-        {
-            Iterator<String> keys = MainApplication.places.keys();
-            while(keys.hasNext())
-            {
-                String key = keys.next();
-                try {
-                    JSONObject placeBuzz = MainApplication.buzzPlaces.getJSONObject(i);
-
-                    if (key.equals(placeBuzz.getString("placeid"))) {
-
-                        JSONObject place = MainApplication.places.getJSONObject(key);
-                        Location placeLocation = new Location(key);
-                        placeLocation.setLatitude(place.getDouble("lat"));
-                        placeLocation.setLongitude((place.getDouble("lon")));
-
-                        if (placeLocation.distanceTo(lastLocation) < place.getInt("rad"))
-                            triggerBuzzing(placeBuzz);
-                        else
-                            placeBuzz.put("buzzcount", 5).put("activated", false);
-                    }
+    private void checkBuzzPlaces() {
+        for (BuzzPlace buzzPlace : MainApplication.buzzPlaces) {
+            try {
+                String placeId = buzzPlace.getPlaceId();
+                Place place = placeService.getPlaceById(placeId);
+                //create android location from Place location information
+                Location placeLocation = new Location(placeId);
+                placeLocation.setLatitude(place.getLocation().getLat());
+                placeLocation.setLongitude((place.getLocation().getLon()));
+                if (placeLocation.distanceTo(lastLocation) < place.getLocation().getAcc())
+                    triggerBuzzing(buzzPlace);
+                else {
+                    buzzPlace.setBuzzCount(5);
+                    buzzPlace.setActivated(false);
                 }
-                catch (JSONException e)
-                {
-                    Log.e(TAG,"Error in checking buzz places"+e);
-                }
-
+            } catch (JSONException e) {
+                Log.e(TAG,"Error in checking buzz places" + e);
             }
-
         }
 
     }

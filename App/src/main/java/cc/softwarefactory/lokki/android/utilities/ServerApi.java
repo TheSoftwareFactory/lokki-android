@@ -9,27 +9,27 @@ import android.content.Intent;
 import android.location.Location;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
-import com.google.android.gms.maps.model.LatLng;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import cc.softwarefactory.lokki.android.MainApplication;
-import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.constants.Constants;
-import cc.softwarefactory.lokki.android.errors.PlaceError;
-import cc.softwarefactory.lokki.android.fragments.PlacesFragment;
-import cc.softwarefactory.lokki.android.services.DataService;
+import cc.softwarefactory.lokki.android.models.Contact;
+import cc.softwarefactory.lokki.android.models.JSONModel;
+import cc.softwarefactory.lokki.android.androidServices.DataService;
 
 
 public class ServerApi {
@@ -79,8 +79,13 @@ public class ServerApi {
 
                 } else if (json != null){
                     Log.d(TAG, "json returned: " + json);
-                    MainApplication.dashboard = json;
-                    PreferenceUtils.setString(context, PreferenceUtils.KEY_DASHBOARD, json.toString());
+                    try {
+                        MainApplication.dashboard = JSONModel.createFromJson(json.toString(), MainApplication.Dashboard.class);
+                        PreferenceUtils.setString(context, PreferenceUtils.KEY_DASHBOARD, MainApplication.dashboard.serialize());
+                    } catch (IOException e) {
+                        Log.e(TAG, "Parsing JSON failed!");
+                        e.printStackTrace();
+                    }
                     Intent intent = new Intent("LOCATION-UPDATE");
                     LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
@@ -93,33 +98,36 @@ public class ServerApi {
         aq.ajax(url, JSONObject.class, cb);
     }
 
-    public static void getPlaces(final Context context) {
+    /**
+     * Model for JSON response.
+     */
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    private static class ContactResponse extends MainApplication.Dashboard {
+        /**
+         * Map between user ids and names. Needed for backwards compability.
+         */
+        private Map<String, String> nameMapping;
 
-        Log.d(TAG, "getPlaces");
-        AQuery aq = new AQuery(context);
+        /**
+         * List containing ignored user ids.
+         */
+        private List<String> ignored;
 
-        String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
-        String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
-        String url = ApiUrl + "user/" + userId + "/places";
+        public Map<String, String> getNameMapping() {
+            return nameMapping;
+        }
 
-        AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>(){
-            @Override
-            public void callback(String url, JSONObject json, AjaxStatus status) {
-                Log.d(TAG, "placesCallback");
+        public void setNameMapping(Map<String, String> nameMapping) {
+            this.nameMapping = nameMapping;
+        }
 
-                if (json == null) {
-                    Log.e(TAG, "Error: " + status.getCode() + " - " + status.getMessage());
-                    return;
-                }
-                Log.d(TAG, "json returned: " + json);
-                MainApplication.places = json;
-                PreferenceUtils.setString(context, PreferenceUtils.KEY_PLACES, json.toString());
-                Intent intent = new Intent("PLACES-UPDATE");
-                LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-            }
-        };
-        cb.header("authorizationtoken", authorizationToken);
-        aq.ajax(url, JSONObject.class, cb);
+        public List<String> getIgnored() {
+            return ignored;
+        }
+
+        public void setIgnored(List<String> ignored) {
+            this.ignored = ignored;
+        }
     }
 
     /**
@@ -129,11 +137,12 @@ public class ServerApi {
     public static void getContacts(final Context context) {
 
         Log.d(TAG, "getContacts");
-        AQuery aq = new AQuery(context);
+        final AQuery aq = new AQuery(context);
 
         String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
         String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
         String url = ApiUrl + "user/" + userId + "/contacts";
+
 
         AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>(){
             @Override
@@ -145,65 +154,60 @@ public class ServerApi {
                     return;
                 }
                 Log.d(TAG, "contacts JSON returned: " + json);
+
                 try {
+                    ContactResponse contactResponse = JSONModel.createFromJson(json.toString(), ContactResponse.class);
+
                     //Store ignored users
-                    MainApplication.iDontWantToSee = new JSONObject();
-                    JSONArray ignored = json.getJSONArray("ignored");
-                    JSONObject idmapping = json.getJSONObject("idmapping");
-                    for (int i = 0; i < ignored.length(); i++){
-                        String email;
-                        try {
-                            email = idmapping.getString(ignored.getString(i));
-                            MainApplication.iDontWantToSee.put(email, 1);
-                        }
-                        catch (JSONException e){
-                            Log.w(TAG, "Ignore list contained unknown id: " + ignored.getString(i));
-                        }
+                    MainApplication.iDontWantToSee = new MainApplication.IDontWantToSee();
+
+                    List<String> ignoreds = contactResponse.getIgnored();
+                    Map<String, String> idMapping = contactResponse.getIdMapping();
+
+                    for (String ignored : ignoreds) {
+                        String email = idMapping.get(ignored);
+                        if (email == null)
+                            Log.e(TAG, "Ignore list containing unknown id: " + ignored);
+                        MainApplication.iDontWantToSee.put(email, 1);
                     }
-                    PreferenceUtils.setString(context, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, MainApplication.iDontWantToSee.toString());
-                    //Write all other contact data into the user dashboard
-                    MainApplication.dashboard.remove("icansee");
-                    MainApplication.dashboard.put("icansee", json.getJSONObject("icansee"));
-                    MainApplication.dashboard.remove("canseeme");
-                    MainApplication.dashboard.put("canseeme", json.getJSONArray("canseeme"));
-                    MainApplication.dashboard.remove("idmapping");
-                    MainApplication.dashboard.put("idmapping", json.getJSONObject("idmapping"));
-                    PreferenceUtils.setString(context, PreferenceUtils.KEY_DASHBOARD, MainApplication.dashboard.toString());
+                    PreferenceUtils.setString(context, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, MainApplication.iDontWantToSee.serialize());
+
+                    MainApplication.dashboard.setiCanSee(contactResponse.getiCanSee());
+                    MainApplication.dashboard.setCanSeeMe(contactResponse.getCanSeeMe());
+                    MainApplication.dashboard.setIdMapping(contactResponse.getIdMapping());
+                    PreferenceUtils.setString(context, PreferenceUtils.KEY_DASHBOARD, MainApplication.dashboard.serialize());
 
                     // Write data into contacts
-                    JSONObject nameMapping = json.getJSONObject("nameMapping");
-                    if (MainApplication.contacts == null){
-                        MainApplication.contacts = new JSONObject();
+                    Map<String, String> nameMapping = contactResponse.getNameMapping();
+                    if (MainApplication.contacts == null) {
+                        MainApplication.contacts = new MainApplication.Contacts();
                     }
-                    if (MainApplication.mapping == null){
-                        MainApplication.mapping = new JSONObject();
-                    }
-                    Iterator<String> it = nameMapping.keys();
 
                     //Write every custom name into contacts and mapping
-                    while (it.hasNext()){
-                        String key = it.next();
-                        String email = MainApplication.dashboard.getJSONObject("idmapping").optString(key);
+                    for (String userId : contactResponse.getNameMapping().keySet()) {
+                        String email = MainApplication.dashboard.getIdMapping().get(userId);
                         if (email.isEmpty()) continue;
-                        String newName = nameMapping.getString(key);
-
-                        if(!MainApplication.contacts.has(email)){
-                            MainApplication.contacts.put(email, new JSONObject());
+                        String newName = nameMapping.get(userId);
+                        if (!MainApplication.contacts.hasEmail(email)) {
+                            Contact contact = new Contact();
+                            contact.setName(newName);
+                            //TODO: figure out proper IDs or stop storing them if we don't need them
+                            contact.setId(0);
+                            MainApplication.contacts.put(email, contact);
                         }
-                        MainApplication.contacts.getJSONObject(email).put("name", newName);
-                        //TODO: figure out proper IDs or stop storing them if we don't need them
-                        MainApplication.contacts.getJSONObject(email).put("id", 0);
-                        MainApplication.mapping.put(newName, email);
                     }
-                    MainApplication.contacts.put("mapping", MainApplication.mapping);
-                    PreferenceUtils.setString(context, PreferenceUtils.KEY_CONTACTS, MainApplication.contacts.toString());
+                    PreferenceUtils.setString(context, PreferenceUtils.KEY_CONTACTS, MainApplication.contacts.serialize());
 
-                    Intent intent = new Intent("CONTACTS-UPDATE");
-                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+                } catch (JsonProcessingException e) {
+                    Log.e(TAG, "Serializing contacts to JSON failed");
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    Log.e(TAG, "Error parsing contacts JSON");
+                    e.printStackTrace();
                 }
-                catch (JSONException e){
-                    Log.e(TAG, "Error parsing contacts JSON: " + e);
-                }
+
+                Intent intent = new Intent("CONTACTS-UPDATE");
+                LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
             }
         };
         cb.header("authorizationtoken", authorizationToken);
@@ -278,7 +282,6 @@ public class ServerApi {
      * Prevents an user from showing up on the map
      * @param context           Context used to access data in preferences
      * @param email             The email address to be ignored
-     * @throws JSONException
      */
     public static void ignoreUsers(final Context context, String email) {
 
@@ -536,136 +539,9 @@ public class ServerApi {
         aq.put(url, JSONdata, String.class, cb);
     }
 
-    public static void displayPlaceError(final Context context, final AjaxStatus status) {
-        PlaceError error = PlaceError.getEnum(status.getError());
-        if (error != null) {
-            Toast.makeText(context, context.getString(error.getErrorMessage()), Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    public static void addPlace(final Context context, String name, LatLng latLng, int radius) throws JSONException {
-
-        Log.d(TAG, "addPlace");
-        AQuery aq = new AQuery(context);
-
-        String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
-        String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
-        String url = ApiUrl + "user/" + userId + "/place";
-
-        String cleanName = name.trim();
-        cleanName = cleanName.substring(0, 1).toUpperCase() + cleanName.substring(1).toLowerCase();
-
-        JSONObject JSONdata = new JSONObject()
-                .put("lat", latLng.latitude)
-                .put("lon", latLng.longitude)
-                .put("rad", radius)
-                .put("img", "")
-                .put("name", cleanName);
-
-        AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>() {
-            @Override
-            public void callback(String url, JSONObject object, AjaxStatus status) {
-                logStatus("addPlace", status);
-
-                if (status.getError() != null) {
-                    displayPlaceError(context, status);
-                    return;
-                }
-
-                Log.d(TAG, "No error, place created.");
-                Toast.makeText(context, context.getString(R.string.place_created), Toast.LENGTH_SHORT).show();
-                DataService.getPlaces(context);
-            }
-        };
-
-        cb.header("authorizationtoken", authorizationToken);
-        aq.post(url, JSONdata, JSONObject.class, cb);
-    }
-
-    public static void removePlace(final Context context, final String placeId) {
-
-        Log.d(TAG, "removePlace");
-        AQuery aq = new AQuery(context);
-
-        String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
-        String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
-        String url = ApiUrl + "user/" + userId + "/place/" + placeId;
-
-        AjaxCallback<String> cb = new AjaxCallback<String>() {
-            @Override
-            public void callback(String url, String result, AjaxStatus status) {
-                logStatus("removePlace", status);
-                if (status.getError() == null) {
-                    Log.d(TAG, "No error, continuing deletion.");
-                    MainApplication.places.remove(placeId);
-                    Toast.makeText(context, context.getString(R.string.place_removed), Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent("PLACES-UPDATE");
-                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-                }
-            }
-        };
-
-        cb.header("authorizationtoken", authorizationToken);
-        aq.delete(url, String.class, cb);
-    }
-
-    public static void renamePlace(final Context context, final String placeId,
-                                   final String newName) throws JSONException {
-        Log.d(TAG, "renamePlace");
-        AQuery aq = new AQuery(context);
-
-        String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
-        String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
-        String url = ApiUrl + "user/" + userId + "/place/" + placeId;
-
-        String cleanName = newName.trim();
-        cleanName = cleanName.substring(0, 1).toUpperCase() + cleanName.substring(1).toLowerCase();
-
-        // Get place info
-        if (MainApplication.places == null) { // Read them from cache
-            if (PreferenceUtils.getString(context, PreferenceUtils.KEY_PLACES).isEmpty()) {
-                return;
-            }
-            MainApplication.places = new JSONObject(PreferenceUtils.
-                    getString(context, PreferenceUtils.KEY_PLACES));
-        }
-        final JSONObject placeObj = MainApplication.places.getJSONObject(placeId);
-
-        final JSONObject JSONdata = new JSONObject()
-                .put("lat", placeObj.getString("lat"))
-                .put("lon", placeObj.getString("lon"))
-                .put("rad", placeObj.getString("rad"))
-                .put("img", placeObj.getString("img"))
-                .put("name", cleanName);
-
-        AjaxCallback<String> cb = new AjaxCallback<String>() {
-            @Override
-            public void callback(String url, String result, AjaxStatus status) {
-                logStatus("renamePlace", status);
-
-                if(status.getError() != null) {
-                    displayPlaceError(context, status);
-                    return;
-                }
-
-                DataService.getPlaces(context);
-                Intent intent = new Intent("PLACES-UPDATE");
-                LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-                PlacesFragment.renamePlaceLocally(placeId, JSONdata);
-                Toast.makeText(context, R.string.place_renamed, Toast.LENGTH_SHORT).show();
-            }
-        };
-
-        cb.header("authorizationtoken", authorizationToken);
-        aq.put(url, JSONdata, String.class, cb);
-    }
-
-
-    // For dependency injection
     public static void setApiUrl(String mockUrl) {
         ApiUrl = mockUrl;
     }
-
 }
 
 

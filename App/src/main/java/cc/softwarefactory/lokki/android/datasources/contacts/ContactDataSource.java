@@ -4,8 +4,10 @@ import android.content.Context;
 
 import org.json.JSONObject;
 
+import cc.softwarefactory.lokki.android.MainApplication;
+
 public interface ContactDataSource {
 
-    JSONObject getContactsJson(Context context);
+    MainApplication.Contacts getContacts(Context context);
 
 }

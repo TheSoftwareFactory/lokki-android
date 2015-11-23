@@ -50,16 +50,15 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
-import cc.softwarefactory.lokki.android.activities.FirstTimeActivity;
+import cc.softwarefactory.lokki.android.models.Place;
+import cc.softwarefactory.lokki.android.models.User;
+import cc.softwarefactory.lokki.android.models.UserLocation;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 import cc.softwarefactory.lokki.android.utilities.DialogUtils;
 import cc.softwarefactory.lokki.android.utilities.Utils;
@@ -108,8 +107,7 @@ public class MapViewFragment extends Fragment {
         boolean placeIsBeingAdded = getView() != null && getView().findViewById(R.id.addPlaceCircle) != null &&
             ((ImageView) getView().findViewById(R.id.addPlaceCircle)).getDrawable() != null;
 
-        boolean noPlacesAdded = MainApplication.places != null && (MainApplication.places.names() == null ||
-                MainApplication.places.names().length() == 0);
+        boolean noPlacesAdded = MainApplication.places != null && MainApplication.places.size() > 0;
 
         placeAddingTip.setAlpha(noPlacesAdded && !placeIsBeingAdded ? 1 : 0);
     }
@@ -392,7 +390,8 @@ public class MapViewFragment extends Fragment {
     private void removeMarkers() {
 
         Log.d(TAG, "removeMarkers");
-        for (Marker m : markerMap.values()) {
+        for (Iterator<Marker> it = markerMap.values().iterator(); it.hasNext();) {
+            Marker m = it.next();
             m.remove();
         }
         markerMap.clear();
@@ -472,20 +471,13 @@ public class MapViewFragment extends Fragment {
 
         removePlaces();
 
-        try {
-            Iterator<String> keys = MainApplication.places.keys();
-            while (keys.hasNext()) {
-                String key = keys.next();
-                JSONObject placeObj = MainApplication.places.getJSONObject(key);
-                Circle circle = map.addCircle(new CircleOptions()
-                        .center(new LatLng(placeObj.getDouble("lat"), placeObj.getDouble("lon")))
-                        .radius(placeObj.getInt("rad"))
-                        .strokeWidth(0)
-                        .fillColor(getResources().getColor(R.color.place_circle)));
-                placesOverlay.add(circle);
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        for (Place place : MainApplication.places) {
+            Circle circle = map.addCircle(new CircleOptions()
+                    .center(new LatLng(place.getLocation().getLat(), place.getLocation().getLon()))
+                    .radius(place.getLocation().getAcc()) //updated to getAcc from getRad
+                    .strokeWidth(0)
+                    .fillColor(getResources().getColor(R.color.place_circle)));
+            placesOverlay.add(circle);
         }
 
         updatePlaceAddingTipVisibility();
@@ -494,7 +486,8 @@ public class MapViewFragment extends Fragment {
     private void removePlaces() {
 
         Log.d(TAG, "removePlaces");
-        for (Circle circle : placesOverlay) {
+        for (Iterator<Circle> it = placesOverlay.iterator(); it.hasNext();) {
+            Circle circle = it.next();
             circle.remove();
         }
         placesOverlay.clear();
@@ -505,48 +498,42 @@ public class MapViewFragment extends Fragment {
         @Override
         protected HashMap<String, Location> doInBackground(MapUserTypes... params) {
 
-            if (MainApplication.dashboard == null) {
+            MainApplication.Dashboard dashboard = MainApplication.dashboard;
+
+            if (dashboard == null) {
                 return null;
             }
 
             MapUserTypes who = params[0];
             Log.d(TAG, "UpdateMap update for all users: " + who);
 
-            try {
-                JSONObject iCanSee = MainApplication.dashboard.getJSONObject("icansee");
-                JSONObject idMapping = MainApplication.dashboard.getJSONObject("idmapping");
-                HashMap<String, Location> markerData = new HashMap<>();
+            HashMap<String, Location> markerData = new HashMap<>();
 
-                if (who == MapUserTypes.User || who == MapUserTypes.All) {
-                    markerData.put(MainApplication.userAccount, convertToLocation(MainApplication.dashboard.getJSONObject("location"))); // User himself
-                }
+            if (who == MapUserTypes.User || who == MapUserTypes.All) {
+                markerData.put(MainApplication.userAccount, dashboard.getUserLocation().convertToAndroidLocation()); // User himself
+                markerData.put(MainApplication.userAccount, dashboard.getLocation().convertToAndroidLocation()); // User himself
 
-                if (who == MapUserTypes.Others || who == MapUserTypes.All) {
-                    Iterator keys = iCanSee.keys();
-                    while (keys.hasNext()) {
-                        String key = (String) keys.next();
-                        JSONObject data = iCanSee.getJSONObject(key);
-                        JSONObject location = data.getJSONObject("location");
-                        String email = (String) idMapping.get(key);
-                        Log.d(TAG, "I can see: " + email + " => " + data);
+            }
 
-                        if (MainApplication.iDontWantToSee != null && MainApplication.iDontWantToSee.has(email)) {
-                            Log.d(TAG, "I dont want to see: " + email);
-                        } else {
-                            Location loc = convertToLocation(location);
-                            if (loc == null) {
-                                Log.w(TAG, "No location could be parsed for: " + email);
-                            }
-                            markerData.put(email, loc);
+            if (who == MapUserTypes.Others || who == MapUserTypes.All) {
+                for (String userId : dashboard.getUserIdsICanSee()) {
+                    User user = dashboard.getUserICanSeeByUserId(userId);
+                    UserLocation location = user.getUserLocation();
+                    String email = dashboard.getEmailByUserId(userId);
+                    Log.d(TAG, "I can see: " + email + " => " + user);
+
+                    if (MainApplication.iDontWantToSee != null && MainApplication.iDontWantToSee.has(email)) {
+                        Log.d(TAG, "I dont want to see: " + email);
+                    } else {
+                        Location loc = location.convertToAndroidLocation();
+                        if (loc == null) {
+                            Log.w(TAG, "No location could be parsed for: " + email);
                         }
+                        markerData.put(email, loc);
                     }
                 }
-                return markerData;
-
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
-            return null;
+            return markerData;
         }
 
         @Override
@@ -563,28 +550,6 @@ public class MapViewFragment extends Fragment {
                 }
             }
         }
-    }
-
-    private Location convertToLocation(JSONObject locationObj) {
-
-        Location myLocation = new Location("fused");
-        try {
-            if (locationObj.length() == 0) {
-                return null;
-            }
-            double lat = locationObj.getDouble("lat");
-            double lon = locationObj.getDouble("lon");
-            float acc = (float) locationObj.getDouble("acc");
-            Long time = locationObj.getLong("time");
-            myLocation.setLatitude(lat);
-            myLocation.setLongitude(lon);
-            myLocation.setAccuracy(acc);
-            myLocation.setTime(time);
-            return myLocation;
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     private class MyInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
@@ -755,16 +720,6 @@ public class MapViewFragment extends Fragment {
         cancelAsyncTasks = true;
         super.onDestroy();
     }
-
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-        Log.w(TAG, "---------------------------------------------------------");
-        Log.w(TAG, "onLowMemory");
-        Log.w(TAG, "---------------------------------------------------------");
-        startActivityForResult(new Intent(context, FirstTimeActivity.class), -1);
-    }
-
     private class AddPlaceCircleDrawable extends Drawable {
 
         public static final int STROKE_WIDTH = 12;

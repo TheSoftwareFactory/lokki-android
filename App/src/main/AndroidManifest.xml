@@ -88,8 +88,8 @@
             android:name=".activities.BuzzActivity">
         </activity>
 
-        <service android:name=".services.LocationService" />
-        <service android:name=".services.DataService" />
+        <service android:name=".androidServices.LocationService" />
+        <service android:name=".androidServices.DataService" />
         <service android:name="com.google.android.gms.analytics.AnalyticsService"
             android:enabled="true"
             android:exported="false"/>

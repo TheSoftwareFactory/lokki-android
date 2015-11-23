@@ -2,7 +2,7 @@
 Copyright (c) 2014-2015 F-Secure
 See LICENSE for details
 */
-package cc.softwarefactory.lokki.android.services;
+package cc.softwarefactory.lokki.android.androidServices;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -14,12 +14,17 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
-import cc.softwarefactory.lokki.android.MainApplication;
-import cc.softwarefactory.lokki.android.utilities.ServerApi;
-import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.io.IOException;
+import java.util.Date;
+
+import cc.softwarefactory.lokki.android.MainApplication;
+import cc.softwarefactory.lokki.android.models.JSONModel;
+import cc.softwarefactory.lokki.android.models.UserLocation;
+import cc.softwarefactory.lokki.android.services.PlaceService;
+import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
+import cc.softwarefactory.lokki.android.utilities.ServerApi;
 
 
 public class DataService extends Service {
@@ -35,14 +40,15 @@ public class DataService extends Service {
     private PendingIntent alarmCallback;
     private static Boolean serviceRunning = false;
 
+    private static PlaceService placeService;
 
     public static void start(Context context) {
-
         Log.d(TAG, "start Service called");
         if (serviceRunning) { // If service is running, no need to start it again.
             Log.w(TAG, "Service already running...");
             return;
         }
+
         context.startService(new Intent(context, DataService.class));
     }
 
@@ -86,16 +92,19 @@ public class DataService extends Service {
         if (MainApplication.dashboard == null) {
             return;
         }
+
+        // create user location from Android location info
+        UserLocation dashboardLocation = new UserLocation();
+
+        dashboardLocation.setLat(location.getLatitude());
+        dashboardLocation.setLon(location.getLongitude());
+        dashboardLocation.setAcc(location.getAccuracy());
+        dashboardLocation.setTime(new Date(location.getTime()));
+        MainApplication.dashboard.setUserLocation(dashboardLocation);
         try {
-            // TODO: hardcoded keys
-            JSONObject dashboardLocation = MainApplication.dashboard.getJSONObject("location");
-            dashboardLocation.put("lat", location.getLatitude());
-            dashboardLocation.put("lon", location.getLongitude());
-            dashboardLocation.put("acc", location.getAccuracy());
-            dashboardLocation.put("time", location.getTime());
-            MainApplication.dashboard.put("location", dashboardLocation);
-            Log.d(TAG, "new Dashboard: " + MainApplication.dashboard);
-        } catch (JSONException e) {
+            Log.d(TAG, "new Dashboard: " + MainApplication.dashboard.serialize());
+        } catch (JsonProcessingException e) {
+            Log.e(TAG, "Serializing dashboard to JSON failed");
             e.printStackTrace();
         }
     }
@@ -113,10 +122,13 @@ public class DataService extends Service {
         setTimer();
         serviceRunning = true;
         try {
-            MainApplication.dashboard = new JSONObject(PreferenceUtils.getString(this.getApplicationContext(), PreferenceUtils.KEY_DASHBOARD));
-        } catch (JSONException e) {
+            MainApplication.dashboard = JSONModel.createFromJson(PreferenceUtils.getString(this.getApplicationContext(), PreferenceUtils.KEY_DASHBOARD), MainApplication.Dashboard.class);
+        } catch (IOException e) {
             MainApplication.dashboard = null;
         }
+
+        placeService = new PlaceService(getApplicationContext());
+
         getPlaces();
         getContacts();
     }
@@ -157,9 +169,8 @@ public class DataService extends Service {
     }
 
     private void getPlaces() {
-
         Log.d(TAG, "getPlaces");
-        ServerApi.getPlaces(this);
+        placeService.getPlaces();
     }
 
     private void getContacts() {

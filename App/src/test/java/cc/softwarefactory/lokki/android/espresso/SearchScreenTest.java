@@ -4,6 +4,7 @@ package cc.softwarefactory.lokki.android.espresso;
 import android.util.Log;
 import android.view.KeyEvent;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 
 import org.json.JSONException;
@@ -13,16 +14,12 @@ import java.util.concurrent.TimeoutException;
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.espresso.utilities.MockJsonUtils;
-import cc.softwarefactory.lokki.android.espresso.utilities.RequestsHandle;
 import cc.softwarefactory.lokki.android.espresso.utilities.TestUtils;
-import cc.softwarefactory.lokki.android.services.DataService;
-import cc.softwarefactory.lokki.android.utilities.ServerApi;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.action.ViewActions.clearText;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.pressKey;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
@@ -77,10 +74,10 @@ public class SearchScreenTest extends LoggedInBaseTest{
      * Helper method to ensure that places are loaded before searching, otherwise tests may fail randomly
      * @throws InterruptedException
      */
-    private void waitForPlaces() throws InterruptedException {
+    private void waitForPlaces() throws InterruptedException, JsonProcessingException {
         int counter = 0;    //If we still don't have places after 1 second, let the test fail
         forcePlacesLoad();
-        while (counter < 10 && MainApplication.places.toString().equals("{}")){
+        while (counter < 10 && MainApplication.places.size() == 0) {
             counter++;
             Log.d(TAG, "No places, waiting");
             Thread.sleep(100);
@@ -145,7 +142,7 @@ public class SearchScreenTest extends LoggedInBaseTest{
         onView(withText("work.buddy@example.com")).check(doesNotExist());
     }
 
-    public void testSearchFindsPlaces() throws InterruptedException, JSONException, TimeoutException {
+    public void testSearchFindsPlaces() throws InterruptedException, JSONException, TimeoutException, JsonProcessingException {
         getMockDispatcher().setPlacesResponse(new MockResponse().setBody(MockJsonUtils.getPlacesJson()));
 
         getActivity();
@@ -156,7 +153,7 @@ public class SearchScreenTest extends LoggedInBaseTest{
         onView(withText("Testplace2")).check(matches(isDisplayed()));
     }
 
-    public void testSearchFindsOnlyMatchingPlaces() throws InterruptedException, JSONException, TimeoutException {
+    public void testSearchFindsOnlyMatchingPlaces() throws InterruptedException, JSONException, TimeoutException, JsonProcessingException {
         getMockDispatcher().setPlacesResponse(new MockResponse().setBody(MockJsonUtils.getPlacesJson()));
 
         getActivity();
@@ -167,7 +164,7 @@ public class SearchScreenTest extends LoggedInBaseTest{
         onView(withText("Testplace2")).check(doesNotExist());
     }
 
-    public void testSearchFindsContactsAndPlaces() throws InterruptedException, JSONException, TimeoutException {
+    public void testSearchFindsContactsAndPlaces() throws InterruptedException, JSONException, TimeoutException, JsonProcessingException {
 
         String firstContactEmail = "family.member@test.com";
         String secondContactEmail = "work.buddy@test.com";

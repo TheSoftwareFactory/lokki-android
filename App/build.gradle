@@ -1,4 +1,7 @@
 apply plugin: 'com.android.application'
+
+apply from: '../jacoco.gradle'
+
 //build it !
 android {
     compileSdkVersion 22
@@ -43,7 +46,12 @@ android {
                 signingConfig signingConfigs.release
             }
         }
+        debug {
+            testCoverageEnabled = true
+        }
+
     }
+
 
     productFlavors {
         development {}
@@ -54,10 +62,13 @@ android {
         androidTest {
             setRoot('src/test')
         }
+
     }
 
     packagingOptions {
         exclude 'LICENSE.txt'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
     }
 
     applicationVariants.all { variant ->
@@ -80,6 +91,16 @@ android {
     }
 }
 
+jacoco {
+    toolVersion = "0.7.1.201405082137"
+    reportsDir = file("$buildDir/customJacocoReportDir")
+}
+
+task showClasspath << {
+    buildscript.configurations.classpath.each { println it.name }
+}
+
+
 dependencies {
     compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'com.google.android.gms:play-services-gcm:7.5.0'
@@ -90,14 +111,26 @@ dependencies {
     compile files('libs/android-query.0.26.7.jar')
     compile(name:'android-support-v4-preferencefragment-master-release', ext:'aar')
 
-    compile 'com.android.support:support-annotations:21.0.3'
+    compile 'com.android.support:support-annotations:22.0.1'
+
+    compile 'com.fasterxml.jackson.core:jackson-core:2.6.3'
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.6.3'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.6.3'
+
+    compile 'com.fasterxml.jackson.core:jackson-core:2.6.3'
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.6.3'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.6.3'
 
     // Espresso
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.0'
     androidTestCompile 'com.android.support.test:testing-support-lib:0.1'
     androidTestCompile('com.android.support.test.espresso:espresso-contrib:2.0') {
         exclude group: 'com.android.support'
+
+
     }
+
+
 
     // Mockito
     androidTestCompile 'org.mockito:mockito-core:1.9.5'
@@ -109,4 +142,7 @@ dependencies {
 
     // Android-compatible but recent version of HttpClient
     androidTestCompile group: 'org.apache.httpcomponents' , name: 'httpclient-android' , version: '4.3.5.1'
+
+
+
 }

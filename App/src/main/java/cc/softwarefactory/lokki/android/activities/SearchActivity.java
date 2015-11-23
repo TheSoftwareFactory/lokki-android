@@ -17,6 +17,8 @@ import android.widget.Button;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,6 +30,8 @@ import java.util.Iterator;
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.fragments.MapViewFragment;
+import cc.softwarefactory.lokki.android.models.Contact;
+import cc.softwarefactory.lokki.android.models.Place;
 
 /**
  * An activity for performing searches and displaying their results
@@ -173,37 +177,25 @@ public class SearchActivity extends ListActivity {
      */
     protected void searchContacts(String query, ArrayList<SearchResult> resultList)
     {
-        try {
-            JSONObject icansee = MainApplication.dashboard.getJSONObject("icansee");
-            JSONObject idmapping =  MainApplication.dashboard.getJSONObject("idmapping");
-            JSONObject contacts = MainApplication.contacts;
-            Iterator<String> it = icansee.keys();
+        MainApplication.Contacts contacts = MainApplication.contacts;
+        for (String id : MainApplication.dashboard.getUserIdsICanSee()) {
+            String email = MainApplication.dashboard.getEmailByUserId(id);
+            Contact contact = (contacts != null)? contacts.getContactByEmail(email) : null;
+            String name = "";
 
-            // Loop through everyone we can see
-            while(it.hasNext())
-            {
-                String id = it.next();
-                String email = idmapping.getString(id);
-                JSONObject contact = (contacts != null)? contacts.optJSONObject(email) : null;
-                String name ="";
-
-                if(contact!=null){
-                    name=contact.optString("name");
-                }
-                if(email.toLowerCase().contains(query)||name.toLowerCase().contains(query))
-                {
-                    //Display either name or email depending on whether a name exists
-                    //Store contact data in the result's extra data for easy access
-                    if(!name.isEmpty())
-                        resultList.add(new SearchResult(ResultType.CONTACT, name, email));
-                    else
-                        resultList.add(new SearchResult(ResultType.CONTACT, email, email));
-
-                }
+            if (contact != null) {
+                name = contact.getName();
             }
+            if (email.toLowerCase().contains(query.toLowerCase()) || name.toLowerCase().contains(query.toLowerCase())) {
+                //Display either name or email depending on whether a name exists
+                //Store contact data in the result's extra data for easy access
+                if (!name.isEmpty()) {
+                    resultList.add(new SearchResult(ResultType.CONTACT, name, email));
+                } else {
+                    resultList.add(new SearchResult(ResultType.CONTACT, email, email));
+                }
 
-        } catch (JSONException e) {
-            Log.e(TAG, "Error parsing contacts: " + e);
+            }
         }
     }
 
@@ -217,21 +209,23 @@ public class SearchActivity extends ListActivity {
             return;
         }
         // Loop through all user places
-        Iterator<String> it = MainApplication.places.keys();
-        Log.d(TAG, MainApplication.places.toString());
-        while (it.hasNext()){
-            String id = it.next();
+        try {
+            Log.d(TAG, new ObjectMapper().writeValueAsString(MainApplication.places));
+        } catch (JsonProcessingException e) {
+            Log.e(TAG, "Serializing places to JSON failed");
+            e.printStackTrace();
+        }
+        for (Place place : MainApplication.places) {
             try {
-                JSONObject location = MainApplication.places.getJSONObject(id);
-                String name = location.getString("name");
+                String name = place.getName();
                 Log.d(TAG, "place: " + name);
                 if (name.toLowerCase().contains(query)){
                     //Store place coordinates in the result's extra data for easy access
-                    String coords = location.getDouble("lat") + "," + location.getDouble("lon");
+                    String coords = place.getLocation().getLat() + "," + place.getLocation().getLon();
                     resultList.add(new SearchResult(ResultType.PLACE, name, coords));
                 }
 
-            } catch (JSONException e) {
+            } catch (Exception e) {
                 Log.e(TAG, "Error parsing places: " + e);
             }
         }

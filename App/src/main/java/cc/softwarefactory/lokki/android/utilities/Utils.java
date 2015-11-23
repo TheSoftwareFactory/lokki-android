@@ -27,18 +27,21 @@ import android.widget.Toast;
 
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
-import cc.softwarefactory.lokki.android.services.LocationService;
+import cc.softwarefactory.lokki.android.models.Contact;
+import cc.softwarefactory.lokki.android.models.JSONModel;
+import cc.softwarefactory.lokki.android.androidServices.LocationService;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
-import java.util.Iterator;
+import java.io.IOException;
 import java.util.Locale;
+import java.util.Map;
 
 import static android.text.format.DateUtils.getRelativeTimeSpanString;
 
@@ -75,10 +78,11 @@ public class Utils {
             return false;
         }
         try {
-            MainApplication.contacts = new JSONObject(jsonData);
-            MainApplication.mapping = MainApplication.contacts.getJSONObject("mapping");
-        } catch (JSONException e) {
-            MainApplication.contacts = new JSONObject();
+            MainApplication.contacts = JSONModel.createFromJson(jsonData, MainApplication.Contacts.class);
+        } catch (IOException e) {
+            MainApplication.contacts = new MainApplication.Contacts();
+            Log.e(TAG, "Reading contacts from JSON failed. Empty contacts created.");
+            e.printStackTrace();
             return false;
         }
         return true;
@@ -90,21 +94,15 @@ public class Utils {
             return null;
         }
 
-        try {
-            JSONObject idMapping = MainApplication.dashboard.getJSONObject("idmapping");
-            Iterator keys = idMapping.keys();
-            while (keys.hasNext()) {
-                String key = (String) keys.next();
-                String emailInObject = (String) idMapping.get(key);
-                if (email.equals(emailInObject)) {
-                    Log.d(TAG, "email: " + email + ", Id from mapping: " + key);
-                    return key;
-                }
+        Map<String, String> idMapping = MainApplication.dashboard.getIdMapping();
+        for (String userId : idMapping.keySet()) {
+            String emailInObject = idMapping.get(userId);
+            if (email.equals(emailInObject)) {
+                Log.d(TAG, "email: " + email + ", Id from mapping: " + userId);
+                return userId;
             }
-
-        } catch (JSONException e) {
-            Log.e(TAG, "getIdFromEmail - failed: " + email);
         }
+
         return null;
     }
 
@@ -116,12 +114,16 @@ public class Utils {
 
         if (loadContacts(context)) {
             try {
-                Log.d(TAG, MainApplication.contacts.toString());
-                String name = MainApplication.contacts.getJSONObject(email).getString("name");
+                Log.d(TAG, MainApplication.contacts.serialize());
+                Contact contact = MainApplication.contacts.getContactByEmail(email);
+                String name = contact.getName();
                 Log.d(TAG, "getNameFromEmail - Email: " + email + ", Name: " + name);
                 return name;
-            } catch (JSONException e) {
-                Log.e(TAG, "getNameFromEmail - failed: " + email);
+            } catch (NullPointerException e) {
+                Log.e(TAG, "getNameFromEmail - failed (contact was null): " + email);
+            } catch (JsonProcessingException e) {
+                Log.e(TAG, "serializing contacts to JSON failed");
+                e.printStackTrace();
             }
         }
 
@@ -153,11 +155,13 @@ public class Utils {
         }
 
         if (loadContacts(context)) {
+            Contact contact = MainApplication.contacts.getContactByEmail(email);
             try {
-                Log.d(TAG, "getPhotoFromEmail - Email: " + email + ", id: " + MainApplication.contacts.getJSONObject(email).getLong("id"));
-                result = openPhoto(context, MainApplication.contacts.getJSONObject(email).getLong("id"));
-            } catch (JSONException e) {
-                Log.e(TAG, "getPhotoFromEmail - failed: " + email);
+                long id = contact.getId();
+                Log.d(TAG, "getPhotoFromEmail - Email: " + email + ", id: " + id);
+                result = openPhoto(context, id);
+            } catch (NullPointerException e) {
+                Log.e(TAG, "getNameFromEmail - failed (contact was null): " + email);
             }
         } else {
             Log.d(TAG, "getPhotoFromEmail - id queried: " + email);
