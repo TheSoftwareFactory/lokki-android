@@ -19,27 +19,27 @@ public class User extends JSONModel {
         this.battery = battery;
     }
 
+
     public UserLocation getUserLocation() {
         return location;
     }
 
     public void setUserLocation(UserLocation location) {
+
         this.location = location;
     }
 
     public boolean isVisibility() {
         return visibility;
     }
-
     public void setVisibility(boolean visibility) {
         this.visibility = visibility;
     }
-
     public UserLocation getLocation() {
         return location;
     }
-
     public void setLocation(UserLocation location) {
         this.location = location;
     }
+
 }

@@ -11,7 +11,6 @@ public class Place extends JSONModel implements Comparable<Place> {
     private UserLocation location; // place location
 
 
-
     public String getId() {
         return id;
     }
@@ -27,6 +26,7 @@ public class Place extends JSONModel implements Comparable<Place> {
     public void setName(String name) {
         this.name = name;
     }
+
 
     public UserLocation getLocation() {
         return location;

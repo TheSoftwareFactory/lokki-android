@@ -223,8 +223,9 @@ public class ContactsFragment extends Fragment {
             for (String userIdICanSee : MainApplication.dashboard.getUserIdsICanSee()) {
                 String email = MainApplication.dashboard.getEmailByUserId(userIdICanSee);
                 String name = Utils.getNameFromEmail(context, email);
-                //updated to UserLocation from User,Location
+                // updated to UserLocation from User,Location
                 UserLocation location = MainApplication.dashboard.getUserICanSeeByUserId(userIdICanSee).getUserLocation();
+
             if  (location.getTime() != null)
                     timestamps.put(name, location.getTime().getTime());
                 iCanSee.add(email);

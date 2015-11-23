@@ -41,6 +41,7 @@ import cc.softwarefactory.lokki.android.utilities.ServerApi;
 import cc.softwarefactory.lokki.android.utilities.Utils;
 import cc.softwarefactory.lokki.android.utilities.map.MapUtils;
 
+
 public class LocationService extends Service implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener  {
 
     // INTERVALS

@@ -110,6 +110,8 @@ public class PlaceService extends ApiService {
         //updated to setUserLocation
         place.setUserLocation(new UserLocation(latLng, radius));
 
+
+
         post("place", place, new AjaxCallback<String>() {
             @Override
             public void callback(String url, String object, AjaxStatus status) {

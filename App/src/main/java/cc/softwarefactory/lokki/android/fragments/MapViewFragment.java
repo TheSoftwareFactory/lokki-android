@@ -511,6 +511,8 @@ public class MapViewFragment extends Fragment {
 
             if (who == MapUserTypes.User || who == MapUserTypes.All) {
                 markerData.put(MainApplication.userAccount, dashboard.getUserLocation().convertToAndroidLocation()); // User himself
+                markerData.put(MainApplication.userAccount, dashboard.getLocation().convertToAndroidLocation()); // User himself
+
             }
 
             if (who == MapUserTypes.Others || who == MapUserTypes.All) {

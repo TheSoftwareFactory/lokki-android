@@ -414,7 +414,6 @@ public class PlacesFragment extends Fragment {
             // Check for my contacts
             for (String userId : iCanSee.keySet()) {
                 String email = MainApplication.dashboard.getEmailByUserId(userId);
-
                 UserLocation userLocationObj = iCanSee.get(userId).getUserLocation();
                 Location location = new Location(email);
 

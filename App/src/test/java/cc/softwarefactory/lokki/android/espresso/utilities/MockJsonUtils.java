@@ -15,6 +15,7 @@ import java.util.List;
 import cc.softwarefactory.lokki.android.models.Place;
 import cc.softwarefactory.lokki.android.models.UserLocation;
 
+
 public class MockJsonUtils {
 
 
