@@ -365,7 +365,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                 finish();
             }
         } else { // User already logged-in
-            MainApplication.userAccount = PreferenceUtils.getString(this, PreferenceUtils.KEY_USER_ACCOUNT);
+            MainApplication.user.setEmail(PreferenceUtils.getString(this, PreferenceUtils.KEY_USER_ACCOUNT));
             GcmHelper.start(getApplicationContext()); // Register to GCM
         }
     }
@@ -662,7 +662,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
             alertDialog.setTitle(getString(R.string.app_name));
-            String message = getString(R.string.security_sign_up, MainApplication.userAccount);
+            String message = getString(R.string.security_sign_up, MainApplication.user.getEmail());
             alertDialog.setMessage(message)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
@@ -708,7 +708,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                         PreferenceUtils.setString(main, PreferenceUtils.KEY_DASHBOARD, null);
                         PreferenceUtils.setString(main, PreferenceUtils.KEY_LOCAL_CONTACTS, null);
                         PreferenceUtils.setString(main, PreferenceUtils.KEY_PLACES, null);
-                        MainApplication.userAccount = null;
+                        MainApplication.user = null;
                         MainApplication.dashboard = null;
                         MainApplication.contacts = null;
                         MainApplication.places = null;

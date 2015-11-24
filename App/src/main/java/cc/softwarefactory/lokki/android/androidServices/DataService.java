@@ -9,19 +9,15 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.io.IOException;
-import java.util.Date;
 
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.models.JSONModel;
-import cc.softwarefactory.lokki.android.models.UserLocation;
 import cc.softwarefactory.lokki.android.services.PlaceService;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
@@ -84,29 +80,6 @@ public class DataService extends Service {
         Intent placesIntent = new Intent(context, DataService.class);
         placesIntent.putExtra(ALARM_TIMER, 1);
         context.startService(placesIntent);
-    }
-
-    public static void updateDashboard(Location location) {
-
-        Log.d(TAG, "updateDashboard");
-        if (MainApplication.dashboard == null) {
-            return;
-        }
-
-        // create user location from Android location info
-        UserLocation dashboardLocation = new UserLocation();
-
-        dashboardLocation.setLat(location.getLatitude());
-        dashboardLocation.setLon(location.getLongitude());
-        dashboardLocation.setAcc(location.getAccuracy());
-        dashboardLocation.setTime(new Date(location.getTime()));
-        MainApplication.dashboard.setUserLocation(dashboardLocation);
-        try {
-            Log.d(TAG, "new Dashboard: " + MainApplication.dashboard.serialize());
-        } catch (JsonProcessingException e) {
-            Log.e(TAG, "Serializing dashboard to JSON failed");
-            e.printStackTrace();
-        }
     }
 
     @Override

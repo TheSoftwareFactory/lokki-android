@@ -82,6 +82,7 @@ public class ServerApi {
                     try {
                         MainApplication.dashboard = JSONModel.createFromJson(json.toString(), MainApplication.Dashboard.class);
                         PreferenceUtils.setString(context, PreferenceUtils.KEY_DASHBOARD, MainApplication.dashboard.serialize());
+                        MainApplication.user.setLocation(MainApplication.dashboard.getLocation());
                     } catch (IOException e) {
                         Log.e(TAG, "Parsing JSON failed!");
                         e.printStackTrace();

@@ -14,7 +14,6 @@ import java.util.Iterator;
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.activities.MainActivity;
-import cc.softwarefactory.lokki.android.constants.Constants;
 import cc.softwarefactory.lokki.android.espresso.utilities.MockDispatcher;
 import cc.softwarefactory.lokki.android.espresso.utilities.TestUtils;
 import cc.softwarefactory.lokki.android.services.ApiService;

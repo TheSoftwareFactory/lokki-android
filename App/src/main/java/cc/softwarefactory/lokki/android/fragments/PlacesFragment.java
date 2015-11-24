@@ -398,8 +398,8 @@ public class PlacesFragment extends Fragment {
             placeLocation.setAccuracy(place.getLocation().getAcc()); //updated to getAcc from getRad
 
             // Check myself
-            UserLocation userLocation = MainApplication.dashboard.getUserLocation();
-            Location myLocation = new Location(MainApplication.userAccount);
+            UserLocation userLocation = MainApplication.user.getLocation();
+            Location myLocation = new Location(MainApplication.user.getEmail());
             myLocation.setLatitude(userLocation.getLat());
             myLocation.setLongitude(userLocation.getLon());
             //Log.d(TAG, "userLocation: " + userLocation);
@@ -408,7 +408,7 @@ public class PlacesFragment extends Fragment {
             float myDistance = placeLocation.distanceTo(myLocation);
             if (myDistance < placeLocation.getAccuracy()) {
                 //Log.d(TAG, email + " is in place: " + placeLocation.getProvider());
-                peopleInThisPlace.add(MainApplication.userAccount);
+                peopleInThisPlace.add(MainApplication.user.getEmail());
             }
 
             // Check for my contacts

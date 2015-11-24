@@ -481,9 +481,7 @@ public class MapViewFragment extends Fragment {
             HashMap<String, Location> markerData = new HashMap<>();
 
             if (who == MapUserTypes.User || who == MapUserTypes.All) {
-                markerData.put(MainApplication.userAccount, dashboard.getUserLocation().convertToAndroidLocation()); // User himself
-                markerData.put(MainApplication.userAccount, dashboard.getLocation().convertToAndroidLocation()); // User himself
-
+                markerData.put(MainApplication.user.getEmail(), MainApplication.user.getLocation().convertToAndroidLocation()); // User himself
             }
 
             if (who == MapUserTypes.Others || who == MapUserTypes.All) {
@@ -540,7 +538,7 @@ public class MapViewFragment extends Fragment {
         }
 
         Log.d(TAG, "userImage setting borders ");
-        if (email.equals(MainApplication.userAccount)) {
+        if (email.equals(MainApplication.user.getEmail())) {
            userImage = Utils.addBorderToBitMap(userImage, 10, Color.GREEN);
         } else if (!recent || !accurate) {
             userImage = Utils.addBorderToBitMap(userImage, 10, Color.YELLOW);
@@ -617,7 +615,7 @@ public class MapViewFragment extends Fragment {
                 } else {
                     map.moveCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
                 }
-            } else if (MainApplication.firstTimeZoom && MainApplication.emailBeingTracked == null && MainApplication.userAccount != null && marker.getTitle().equals(MainApplication.userAccount)) {
+            } else if (MainApplication.firstTimeZoom && MainApplication.emailBeingTracked == null && MainApplication.user.getEmail() != null && marker.getTitle().equals(MainApplication.user.getEmail())) {
                 MainApplication.firstTimeZoom = false;
                 map.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), DEFAULT_ZOOM));
             }
