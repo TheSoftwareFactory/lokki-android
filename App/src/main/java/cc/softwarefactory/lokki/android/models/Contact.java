@@ -1,6 +1,6 @@
 package cc.softwarefactory.lokki.android.models;
 
-public class Contact extends JSONModel {
+public class Contact {
     private String name;
     private long id;
 

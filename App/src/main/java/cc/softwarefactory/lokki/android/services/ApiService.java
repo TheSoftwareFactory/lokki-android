@@ -7,16 +7,13 @@ import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
 
 import cc.softwarefactory.lokki.android.constants.Constants;
-import cc.softwarefactory.lokki.android.models.JSONModel;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 
 /**
@@ -59,19 +56,16 @@ public abstract class ApiService {
         }
     }
 
-    protected void createAjaxWithBody(String methodName, String uri, AjaxCallback<String> callback, JSONModel body) {
+    protected void createAjaxWithBody(String methodName, String uri, AjaxCallback<String> callback, JSONObject body) {
         Log.d(getTag(), uri);
         String url = generateUrl(uri);
         authorize(callback);
 
         try {
             Method method = AQuery.class.getMethod(methodName, String.class, JSONObject.class, Class.class, AjaxCallback.class);
-            method.invoke(new AQuery(context), url, body.toJSONObject(), String.class, callback);
+            method.invoke(new AQuery(context), url, body, String.class, callback);
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             Log.e(getTag(), "Reflecting ajax method failed");
-            e.printStackTrace();
-        } catch (JSONException | JsonProcessingException e) {
-            Log.e(getTag(), "Converting JSONModel to JSONObject failed.");
             e.printStackTrace();
         }
     }
@@ -80,7 +74,7 @@ public abstract class ApiService {
         createAjax("ajax", uri, callback);
     }
 
-    protected void put(String uri, JSONModel param, AjaxCallback<String> callback) {
+    protected void put(String uri, JSONObject param, AjaxCallback<String> callback) {
         createAjaxWithBody("put", uri, callback, param);
     }
 
@@ -88,7 +82,7 @@ public abstract class ApiService {
         createAjax("delete", uri, callback);
     }
 
-    protected void post(String uri, JSONModel param, AjaxCallback<String> callback) throws JsonProcessingException, JSONException {
+    protected void post(String uri, JSONObject param, AjaxCallback<String> callback) throws JsonProcessingException, JSONException {
         createAjaxWithBody("post", uri, callback, param);
     }
 

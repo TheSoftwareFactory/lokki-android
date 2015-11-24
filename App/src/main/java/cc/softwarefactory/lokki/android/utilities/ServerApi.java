@@ -28,7 +28,6 @@ import java.util.Map;
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.constants.Constants;
 import cc.softwarefactory.lokki.android.models.Contact;
-import cc.softwarefactory.lokki.android.models.JSONModel;
 import cc.softwarefactory.lokki.android.androidServices.DataService;
 
 
@@ -80,8 +79,8 @@ public class ServerApi {
                 } else if (json != null){
                     Log.d(TAG, "json returned: " + json);
                     try {
-                        MainApplication.dashboard = JSONModel.createFromJson(json.toString(), MainApplication.Dashboard.class);
-                        PreferenceUtils.setString(context, PreferenceUtils.KEY_DASHBOARD, MainApplication.dashboard.serialize());
+                        MainApplication.dashboard = JsonUtils.createFromJson(json.toString(), MainApplication.Dashboard.class);
+                        PreferenceUtils.setString(context, PreferenceUtils.KEY_DASHBOARD, JsonUtils.serialize(MainApplication.dashboard));
                         MainApplication.user.setLocation(MainApplication.dashboard.getLocation());
                     } catch (IOException e) {
                         Log.e(TAG, "Parsing JSON failed!");
@@ -157,7 +156,7 @@ public class ServerApi {
                 Log.d(TAG, "contacts JSON returned: " + json);
 
                 try {
-                    ContactResponse contactResponse = JSONModel.createFromJson(json.toString(), ContactResponse.class);
+                    ContactResponse contactResponse = JsonUtils.createFromJson(json.toString(), ContactResponse.class);
 
                     //Store ignored users
                     MainApplication.iDontWantToSee = new MainApplication.IDontWantToSee();
@@ -171,12 +170,12 @@ public class ServerApi {
                             Log.e(TAG, "Ignore list containing unknown id: " + ignored);
                         MainApplication.iDontWantToSee.put(email, 1);
                     }
-                    PreferenceUtils.setString(context, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, MainApplication.iDontWantToSee.serialize());
+                    PreferenceUtils.setString(context, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, JsonUtils.serialize(MainApplication.iDontWantToSee));
 
                     MainApplication.dashboard.setiCanSee(contactResponse.getiCanSee());
                     MainApplication.dashboard.setCanSeeMe(contactResponse.getCanSeeMe());
                     MainApplication.dashboard.setIdMapping(contactResponse.getIdMapping());
-                    PreferenceUtils.setString(context, PreferenceUtils.KEY_DASHBOARD, MainApplication.dashboard.serialize());
+                    PreferenceUtils.setString(context, PreferenceUtils.KEY_DASHBOARD, JsonUtils.serialize(MainApplication.dashboard));
 
                     // Write data into contacts
                     Map<String, String> nameMapping = contactResponse.getNameMapping();
@@ -197,7 +196,7 @@ public class ServerApi {
                             MainApplication.contacts.put(email, contact);
                         }
                     }
-                    PreferenceUtils.setString(context, PreferenceUtils.KEY_CONTACTS, MainApplication.contacts.serialize());
+                    PreferenceUtils.setString(context, PreferenceUtils.KEY_CONTACTS, JsonUtils.serialize(MainApplication.contacts));
 
                 } catch (JsonProcessingException e) {
                     Log.e(TAG, "Serializing contacts to JSON failed");

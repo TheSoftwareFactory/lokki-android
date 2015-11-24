@@ -17,8 +17,8 @@ import android.util.Log;
 import java.io.IOException;
 
 import cc.softwarefactory.lokki.android.MainApplication;
-import cc.softwarefactory.lokki.android.models.JSONModel;
 import cc.softwarefactory.lokki.android.services.PlaceService;
+import cc.softwarefactory.lokki.android.utilities.JsonUtils;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
 
@@ -95,7 +95,7 @@ public class DataService extends Service {
         setTimer();
         serviceRunning = true;
         try {
-            MainApplication.dashboard = JSONModel.createFromJson(PreferenceUtils.getString(this.getApplicationContext(), PreferenceUtils.KEY_DASHBOARD), MainApplication.Dashboard.class);
+            MainApplication.dashboard = JsonUtils.createFromJson(PreferenceUtils.getString(this.getApplicationContext(), PreferenceUtils.KEY_DASHBOARD), MainApplication.Dashboard.class);
         } catch (IOException e) {
             MainApplication.dashboard = null;
         }

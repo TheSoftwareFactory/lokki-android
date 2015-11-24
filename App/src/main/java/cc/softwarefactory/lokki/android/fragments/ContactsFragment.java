@@ -45,9 +45,9 @@ import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.avatar.AvatarLoader;
 import cc.softwarefactory.lokki.android.models.Contact;
-import cc.softwarefactory.lokki.android.models.JSONModel;
 import cc.softwarefactory.lokki.android.models.UserLocation;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
+import cc.softwarefactory.lokki.android.utilities.JsonUtils;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
 import cc.softwarefactory.lokki.android.utilities.Utils;
@@ -217,7 +217,7 @@ public class ContactsFragment extends Fragment {
                 if (dashboardJsonAsString.isEmpty()) {
                     return;
                 }
-                MainApplication.dashboard = JSONModel.createFromJson(dashboardJsonAsString, MainApplication.Dashboard.class);
+                MainApplication.dashboard = JsonUtils.createFromJson(dashboardJsonAsString, MainApplication.Dashboard.class);
             }
 
             for (String userIdICanSee : MainApplication.dashboard.getUserIdsICanSee()) {
@@ -414,7 +414,7 @@ public class ContactsFragment extends Fragment {
 
 
         try {
-            PreferenceUtils.setString(context, PreferenceUtils.KEY_CONTACTS, MainApplication.contacts.serialize());
+            PreferenceUtils.setString(context, PreferenceUtils.KEY_CONTACTS, JsonUtils.serialize(MainApplication.contacts));
         } catch (JsonProcessingException e) {
             Log.e(TAG, "serializing contacts JSON failed");
             e.printStackTrace();
@@ -423,7 +423,7 @@ public class ContactsFragment extends Fragment {
         //Set new name on the server
         ServerApi.renameContact(context, email, newName);
         try {
-            Log.d(TAG, MainApplication.contacts.serialize());
+            Log.d(TAG, JsonUtils.serialize(MainApplication.contacts));
         } catch (JsonProcessingException e) {
             Log.e(TAG, "serializing contacts JSON failed");
             e.printStackTrace();

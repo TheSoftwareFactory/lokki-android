@@ -3,10 +3,6 @@ package cc.softwarefactory.lokki.android.datasources.contacts;
 import android.content.Context;
 import android.database.Cursor;
 import android.provider.ContactsContract;
-import android.util.Log;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.models.Contact;

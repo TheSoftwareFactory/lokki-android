@@ -28,7 +28,6 @@ import android.widget.Toast;
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.models.Contact;
-import cc.softwarefactory.lokki.android.models.JSONModel;
 import cc.softwarefactory.lokki.android.androidServices.LocationService;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -78,7 +77,7 @@ public class Utils {
             return false;
         }
         try {
-            MainApplication.contacts = JSONModel.createFromJson(jsonData, MainApplication.Contacts.class);
+            MainApplication.contacts = JsonUtils.createFromJson(jsonData, MainApplication.Contacts.class);
         } catch (IOException e) {
             MainApplication.contacts = new MainApplication.Contacts();
             Log.e(TAG, "Reading contacts from JSON failed. Empty contacts created.");
@@ -114,7 +113,7 @@ public class Utils {
 
         if (loadContacts(context)) {
             try {
-                Log.d(TAG, MainApplication.contacts.serialize());
+                Log.d(TAG, JsonUtils.serialize(MainApplication.contacts));
                 Contact contact = MainApplication.contacts.getContactByEmail(email);
                 String name = contact.getName();
                 Log.d(TAG, "getNameFromEmail - Email: " + email + ", Name: " + name);

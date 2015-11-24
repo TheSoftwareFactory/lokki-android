@@ -56,6 +56,7 @@ import cc.softwarefactory.lokki.android.fragments.PreferencesFragment;
 import cc.softwarefactory.lokki.android.androidServices.DataService;
 import cc.softwarefactory.lokki.android.androidServices.LocationService;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
+import cc.softwarefactory.lokki.android.utilities.JsonUtils;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
 import cc.softwarefactory.lokki.android.utilities.Utils;
@@ -608,8 +609,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         if (!allow) {
             MainApplication.iDontWantToSee.put(email, 1);
             try {
-                Log.d(TAG, MainApplication.iDontWantToSee.serialize());
-                PreferenceUtils.setString(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, MainApplication.iDontWantToSee.serialize());
+                Log.d(TAG, JsonUtils.serialize(MainApplication.iDontWantToSee));
+                PreferenceUtils.setString(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, JsonUtils.serialize(MainApplication.iDontWantToSee));
             } catch (JsonProcessingException e) {
                 Log.e(TAG, "Serializing iDontWantToSee to JSON failed");
                 e.printStackTrace();
@@ -619,7 +620,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
             Log.d(TAG, "unignoring user");
             MainApplication.iDontWantToSee.remove(email);
             try {
-                PreferenceUtils.setString(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, MainApplication.iDontWantToSee.serialize());
+                PreferenceUtils.setString(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, JsonUtils.serialize(MainApplication.iDontWantToSee));
             } catch (JsonProcessingException e) {
                 Log.e(TAG, "Serializing iDontWantToSee to JSON failed");
                 e.printStackTrace();

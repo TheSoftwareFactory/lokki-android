@@ -25,11 +25,11 @@ import java.util.Map;
 import cc.softwarefactory.lokki.android.models.BuzzPlace;
 import cc.softwarefactory.lokki.android.models.Contact;
 import cc.softwarefactory.lokki.android.models.JSONMap;
-import cc.softwarefactory.lokki.android.models.JSONModel;
 import cc.softwarefactory.lokki.android.models.MainUser;
 import cc.softwarefactory.lokki.android.models.Place;
 import cc.softwarefactory.lokki.android.models.User;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
+import cc.softwarefactory.lokki.android.utilities.JsonUtils;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 
 public class MainApplication extends Application {
@@ -277,7 +277,7 @@ public class MainApplication extends Application {
         String iDontWantToSeeString = PreferenceUtils.getString(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE);
         if (!iDontWantToSeeString.isEmpty()) {
             try {
-                MainApplication.iDontWantToSee = JSONModel.createFromJson(iDontWantToSeeString, IDontWantToSee.class);
+                MainApplication.iDontWantToSee = JsonUtils.createFromJson(iDontWantToSeeString, IDontWantToSee.class);
             } catch (IOException e) {
                 MainApplication.iDontWantToSee = null;
                 Log.e(TAG, e.getMessage());

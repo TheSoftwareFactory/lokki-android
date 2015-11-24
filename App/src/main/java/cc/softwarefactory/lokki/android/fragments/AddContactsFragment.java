@@ -44,6 +44,7 @@ import cc.softwarefactory.lokki.android.models.Contact;
 import cc.softwarefactory.lokki.android.androidServices.DataService;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 import cc.softwarefactory.lokki.android.utilities.ContactUtils;
+import cc.softwarefactory.lokki.android.utilities.JsonUtils;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
 
@@ -207,7 +208,7 @@ public class AddContactsFragment extends Fragment {
 
             //Synchronize mapping JSON with contacts
             try {
-                PreferenceUtils.setString(context, PreferenceUtils.KEY_CONTACTS, MainApplication.contacts.serialize());
+                PreferenceUtils.setString(context, PreferenceUtils.KEY_CONTACTS, JsonUtils.serialize(MainApplication.contacts));
             } catch (IOException e) {
                 Log.e(TAG, "Exception while serializing contacts results to JSON: " + e.getMessage());
             }
