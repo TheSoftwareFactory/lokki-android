@@ -16,15 +16,15 @@ import android.util.Log;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import cc.softwarefactory.lokki.android.MainApplication;
-import cc.softwarefactory.lokki.android.models.JSONModel;
-import cc.softwarefactory.lokki.android.models.User;
-import cc.softwarefactory.lokki.android.services.PlaceService;
-import cc.softwarefactory.lokki.android.utilities.ServerApi;
-import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
-
 import java.io.IOException;
 import java.util.Date;
+
+import cc.softwarefactory.lokki.android.MainApplication;
+import cc.softwarefactory.lokki.android.models.JSONModel;
+import cc.softwarefactory.lokki.android.models.UserLocation;
+import cc.softwarefactory.lokki.android.services.PlaceService;
+import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
+import cc.softwarefactory.lokki.android.utilities.ServerApi;
 
 
 public class DataService extends Service {
@@ -92,12 +92,15 @@ public class DataService extends Service {
         if (MainApplication.dashboard == null) {
             return;
         }
-        User.Location dashboardLocation = new User.Location();
+
+        // create user location from Android location info
+        UserLocation dashboardLocation = new UserLocation();
+
         dashboardLocation.setLat(location.getLatitude());
         dashboardLocation.setLon(location.getLongitude());
         dashboardLocation.setAcc(location.getAccuracy());
         dashboardLocation.setTime(new Date(location.getTime()));
-        MainApplication.dashboard.setLocation(dashboardLocation);
+        MainApplication.dashboard.setUserLocation(dashboardLocation);
         try {
             Log.d(TAG, "new Dashboard: " + MainApplication.dashboard.serialize());
         } catch (JsonProcessingException e) {

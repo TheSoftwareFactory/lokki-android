@@ -5,7 +5,6 @@ See LICENSE for details
 package cc.softwarefactory.lokki.android.fragments;
 
 import android.app.Dialog;
-import android.support.v7.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -15,6 +14,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.ContextMenu;
@@ -31,17 +31,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.androidquery.AQuery;
-
-import cc.softwarefactory.lokki.android.activities.BuzzActivity;
-import cc.softwarefactory.lokki.android.models.BuzzPlace;
-import cc.softwarefactory.lokki.android.models.Place;
-import cc.softwarefactory.lokki.android.models.User;
-import cc.softwarefactory.lokki.android.services.PlaceService;
-import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
-import cc.softwarefactory.lokki.android.androidServices.DataService;
-import cc.softwarefactory.lokki.android.MainApplication;
-import cc.softwarefactory.lokki.android.R;
-
 import com.makeramen.roundedimageview.RoundedImageView;
 
 import java.util.ArrayList;
@@ -49,6 +38,17 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import cc.softwarefactory.lokki.android.MainApplication;
+import cc.softwarefactory.lokki.android.R;
+import cc.softwarefactory.lokki.android.activities.BuzzActivity;
+import cc.softwarefactory.lokki.android.androidServices.DataService;
+import cc.softwarefactory.lokki.android.models.BuzzPlace;
+import cc.softwarefactory.lokki.android.models.Place;
+import cc.softwarefactory.lokki.android.models.User;
+import cc.softwarefactory.lokki.android.models.UserLocation;
+import cc.softwarefactory.lokki.android.services.PlaceService;
+import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 
 
 public class PlacesFragment extends Fragment {
@@ -395,10 +395,10 @@ public class PlacesFragment extends Fragment {
             Location placeLocation = new Location(place.getName());
             placeLocation.setLatitude(place.getLocation().getLat());
             placeLocation.setLongitude(place.getLocation().getLon());
-            placeLocation.setAccuracy(place.getLocation().getRad());
+            placeLocation.setAccuracy(place.getLocation().getAcc()); //updated to getAcc from getRad
 
             // Check myself
-            User.Location userLocation = MainApplication.dashboard.getLocation();
+            UserLocation userLocation = MainApplication.dashboard.getUserLocation();
             Location myLocation = new Location(MainApplication.userAccount);
             myLocation.setLatitude(userLocation.getLat());
             myLocation.setLongitude(userLocation.getLon());
@@ -414,8 +414,7 @@ public class PlacesFragment extends Fragment {
             // Check for my contacts
             for (String userId : iCanSee.keySet()) {
                 String email = MainApplication.dashboard.getEmailByUserId(userId);
-
-                User.Location userLocationObj = iCanSee.get(userId).getLocation();
+                UserLocation userLocationObj = iCanSee.get(userId).getUserLocation();
                 Location location = new Location(email);
 
                 if (userLocationObj.getLat() == 0 || userLocationObj.getLon() == 0) {

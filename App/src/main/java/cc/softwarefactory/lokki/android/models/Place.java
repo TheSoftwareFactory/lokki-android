@@ -1,51 +1,15 @@
 package cc.softwarefactory.lokki.android.models;
 
-import com.google.android.gms.maps.model.LatLng;
-
+/**
+ * Model Class for Tracking Place on Map
+ */
 public class Place extends JSONModel implements Comparable<Place> {
 
-    private String id;
-    private String name;
-    private String img;
-    private Location location;
+    private String id; // place id
+    private String name; // place name
+    private String img;  // Place image
+    private UserLocation location; // place location
 
-    public static class Location {
-        private double lat;
-        private double lon;
-        private int rad;
-
-        public Location() {}
-
-        public Location(LatLng latLng, int rad) {
-            this.lat = latLng.latitude;
-            this.lon = latLng.longitude;
-            this.rad = rad;
-        }
-
-        public double getLat() {
-            return lat;
-        }
-
-        public void setLat(double lat) {
-            this.lat = lat;
-        }
-
-        public double getLon() {
-            return lon;
-        }
-
-        public void setLon(double lon) {
-            this.lon = lon;
-        }
-
-        public int getRad() {
-            return rad;
-        }
-
-        public void setRad(int rad) {
-            this.rad = rad;
-        }
-    }
 
     public String getId() {
         return id;
@@ -63,11 +27,16 @@ public class Place extends JSONModel implements Comparable<Place> {
         this.name = name;
     }
 
-    public Location getLocation() {
+
+    public UserLocation getLocation() {
         return location;
     }
 
-    public void setLocation(Location location) {
+    public void setLocation(UserLocation location) {
+        this.location = location;
+    }
+
+    public void setUserLocation(UserLocation location) {
         this.location = location;
     }
 
