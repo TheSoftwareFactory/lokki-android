@@ -207,7 +207,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         startServices();
         LocalBroadcastManager.getInstance(this).registerReceiver(exitMessageReceiver, new IntentFilter("EXIT"));
         LocalBroadcastManager.getInstance(this).registerReceiver(switchToMapReceiver, new IntentFilter("GO-TO-MAP"));
-        LocalBroadcastManager.getInstance(this).registerReceiver(serverMessageReceiver, new IntentFilter("MESSAGE"));
+
 
         Log.i(TAG, "onResume - check if dashboard is null");
         if (MainApplication.dashboard == null) {
@@ -333,7 +333,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         //DataService.stop(this.getApplicationContext());
         LocalBroadcastManager.getInstance(this).unregisterReceiver(switchToMapReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(exitMessageReceiver);
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(serverMessageReceiver);
         super.onPause();
         //Set location update accuracy to low if the service has been initialized
         if (mBoundLocationService != null) {
@@ -664,30 +663,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
             alertDialog.setTitle(getString(R.string.app_name));
             String message = getString(R.string.security_sign_up, MainApplication.userAccount);
-            alertDialog.setMessage(message)
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                            finish();
-                        }
-                    })
-                    .setCancelable(false);
-            alertDialog.show();
-        }
-    };
-
-    private BroadcastReceiver serverMessageReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.d(TAG, "serverMessageReceiver onReceive");
-
-            LocationService.stop(MainActivity.this.getApplicationContext());
-            DataService.stop(MainActivity.this.getApplicationContext());
-
-            AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
-            alertDialog.setTitle(getString(R.string.app_name));
-            String message = intent.getStringExtra("message");
             alertDialog.setMessage(message)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
