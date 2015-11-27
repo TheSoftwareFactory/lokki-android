@@ -14,12 +14,12 @@ import org.mockito.Mockito;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
-import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.datasources.contacts.ContactDataSource;
 import cc.softwarefactory.lokki.android.espresso.utilities.MockJsonUtils;
 import cc.softwarefactory.lokki.android.espresso.utilities.RequestsHandle;
 import cc.softwarefactory.lokki.android.espresso.utilities.TestUtils;
+import cc.softwarefactory.lokki.android.models.Contact;
 import cc.softwarefactory.lokki.android.utilities.JsonUtils;
 
 import static android.support.test.espresso.Espresso.onView;
@@ -50,8 +50,8 @@ public class AddContactsScreenTest extends LoggedInBaseTest {
 
     private void setMockContacts() throws IOException, JSONException {
         ContactDataSource mockContactDataSource = Mockito.mock(ContactDataSource.class);
-        JSONObject testJSONObject = new JSONObject(MockJsonUtils.getContactsJson());
-        when(mockContactDataSource.getContacts(any(Context.class))).thenReturn(JsonUtils.createFromJson(testJSONObject.toString(), MainApplication.Contacts.class));
+        JSONArray testJSONArray = new JSONArray(MockJsonUtils.getContactsJson());
+        when(mockContactDataSource.getContacts(any(Context.class))).thenReturn(JsonUtils.createListFromJson(testJSONArray.toString(), Contact.class));
         getActivity().setContactUtils(mockContactDataSource);
     }
 
@@ -192,7 +192,7 @@ public class AddContactsScreenTest extends LoggedInBaseTest {
 
         requests.waitUntilAnyRequests();
         RecordedRequest request = requests.getRequests().get(0);
-        String expectedPath = "/user/" + TestUtils.VALUE_TEST_USER_ID + "/allow";
+        String expectedPath = "/user/" + TestUtils.VALUE_TEST_USER_ID + "/contacts/allow";
         assertEquals(expectedPath, request.getPath());
     }
 
@@ -209,7 +209,7 @@ public class AddContactsScreenTest extends LoggedInBaseTest {
 
         requests.waitUntilAnyRequests();
         RecordedRequest request = requests.getRequests().get(0);
-        String expectedPath = "/user/" + TestUtils.VALUE_TEST_USER_ID + "/allow";
+        String expectedPath = "/user/" + TestUtils.VALUE_TEST_USER_ID + "/contacts/allow";
         assertEquals(expectedPath, request.getPath());
     }
 }

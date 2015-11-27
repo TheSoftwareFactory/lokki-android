@@ -7,9 +7,8 @@ import android.support.test.espresso.NoMatchingViewException;
 import android.util.Log;
 
 import cc.softwarefactory.lokki.android.MainApplication;
-import cc.softwarefactory.lokki.android.activities.MainActivity;
 import cc.softwarefactory.lokki.android.R;
-import cc.softwarefactory.lokki.android.models.MainUser;
+import cc.softwarefactory.lokki.android.models.Main;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 
 import static android.support.test.espresso.Espresso.onView;
@@ -27,14 +26,14 @@ public class TestUtils {
     public static void clearAppData(Context targetContext) {
         PreferenceUtils.setBoolean(targetContext, PreferenceUtils.KEY_NOT_FIRST_TIME_LAUNCH, false);
         MainApplication.dashboard = null;
-        MainApplication.user = new MainUser(targetContext);
+        MainApplication.user = new Main(targetContext);
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(targetContext).edit();
         editor.clear();
         editor.commit();
     }
 
     public static void setUserRegistrationData(Context targetContext) {
-        MainApplication.user = new MainUser(targetContext);
+        MainApplication.user = new Main(targetContext);
         MainApplication.user.setEmail(VALUE_TEST_USER_ACCOUNT);
         MainApplication.user.setUserId(VALUE_TEST_USER_ID);
         PreferenceUtils.setBoolean(targetContext, PreferenceUtils.KEY_NOT_FIRST_TIME_LAUNCH, true);

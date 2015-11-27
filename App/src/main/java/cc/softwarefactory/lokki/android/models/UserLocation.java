@@ -1,5 +1,6 @@
 package cc.softwarefactory.lokki.android.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Date;
@@ -8,6 +9,7 @@ import java.util.Date;
  * Created by panchamu on 18.11.2015.
  * Model Class for Tracking Locatin/Places
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UserLocation {
     private double lat; //latitude
     private double lon; //longitude
@@ -48,7 +50,7 @@ public class UserLocation {
     }
 
     public void setAcc(float acc) {
-        this.acc = (int)acc;
+        this.acc = (int) acc;
     }
 
     /**
@@ -74,5 +76,9 @@ public class UserLocation {
 
     public void setTime(Date time) {
         this.time = time;
+    }
+
+    public boolean isEmpty() {
+        return (this.lat == 0 && this.lon == 0 && this.acc == 0  && this.time == null);
     }
 }

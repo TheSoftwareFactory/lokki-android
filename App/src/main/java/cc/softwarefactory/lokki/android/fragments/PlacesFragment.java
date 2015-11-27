@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -44,9 +45,10 @@ import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.activities.BuzzActivity;
 import cc.softwarefactory.lokki.android.androidServices.DataService;
 import cc.softwarefactory.lokki.android.models.BuzzPlace;
+import cc.softwarefactory.lokki.android.models.Contact;
 import cc.softwarefactory.lokki.android.models.Place;
-import cc.softwarefactory.lokki.android.models.User;
-import cc.softwarefactory.lokki.android.models.UserLocation;
+import cc.softwarefactory.lokki.android.models.Person;
+import cc.softwarefactory.lokki.android.services.ContactService;
 import cc.softwarefactory.lokki.android.services.PlaceService;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 
@@ -56,15 +58,17 @@ public class PlacesFragment extends Fragment {
     private static final String TAG = "PlacesFragment";
     private Context context;
     private List<Place> placesList;
-    private Map<String, List<String>> peopleInsidePlace;
+    private Map<Place, List<Person>> peopleInsidePlace;
     private ListView listView;
     private PlaceService placeService;
+    private ContactService contactService;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         context = getActivity().getApplicationContext();
         placeService = new PlaceService(context);
+        contactService = new ContactService(context);
         View rootView = inflater.inflate(R.layout.fragment_places, container, false);
         listView = (ListView) rootView.findViewById(R.id.listView1);
         registerForContextMenu(listView);
@@ -179,32 +183,39 @@ public class PlacesFragment extends Fragment {
                 }
 
                 Log.d(TAG, "Place name: " + place.getName());
-                Log.d(TAG, "peopleInsidePlace? " + peopleInsidePlace.containsKey(place.getId()));
+                Log.d(TAG, "peopleInsidePlace? " + peopleInsidePlace.containsKey(place));
 
-                if (peopleInsidePlace.containsKey(place.getId())) { // People are inside this place
+                if (peopleInsidePlace.containsKey(place)) { // People are inside this place
                     Log.d(TAG, "Inside loop");
                     try {
-                        List<String> people = peopleInsidePlace.get(place.getId());
+                        List<Person> people = peopleInsidePlace.get(place);
                         LinearLayout avatarRow = (LinearLayout) convertView.findViewById(R.id.avatar_row);
                         avatarRow.removeAllViewsInLayout(); // Deletes old avatars, if any.
 
                         for (int i = 0; i < people.size(); i++) {
 
-                            final String email = people.get(i);
-                            if (MainApplication.iDontWantToSee.has(email)) {
-                                continue;
-                            }
-                            RoundedImageView image = createAvatar(email);
+                            final Person person = people.get(i);
 
-                            if (MainApplication.avatarCache.get(email) != null) {
-                                image.setImageBitmap(MainApplication.avatarCache.get(email));
+                            if (person instanceof Contact) {
+                                final Contact contact = (Contact) person;
+                                if (contact.isIgnored() || !contact.isVisibleToMe()) {
+                                    continue;
+                                }
+                            }
+
+                            RoundedImageView image = createAvatar(person);
+
+                            Bitmap photo = person.getPhoto();
+                            if (photo != null) {
+                                image.setImageBitmap(photo);
                             } else {
-                                Log.d(TAG, "Avatar not in cache, email: " + email);
+                                Log.d(TAG, "Person didn't have photo stored. " + person.toString());
                                 image.setImageResource(R.drawable.default_avatar);
                             }
-                            image.setContentDescription(email);
+                            image.setContentDescription(person.getEmail());
 
                             avatarRow.addView(image);
+
                         }
 
                     } catch (Exception ex) {
@@ -326,11 +337,11 @@ public class PlacesFragment extends Fragment {
         }
     }
 
-    private RoundedImageView createAvatar(final String email) {
+    private RoundedImageView createAvatar(final Person person) {
 
         int sizeInDip = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, (float) 65, getResources().getDisplayMetrics());
         RoundedImageView image = new RoundedImageView(getActivity());
-        image.setTag(email);
+        image.setTag(person.getEmail());
         image.setCornerRadius(100f);
         image.setBorderWidth(0f);
         image.setPadding(20, 0, 0, 0);
@@ -342,7 +353,7 @@ public class PlacesFragment extends Fragment {
                 AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
                         getString(R.string.analytics_action_click),
                         getString(R.string.analytics_label_avatar_show_user));
-                MainApplication.emailBeingTracked = email;
+                MainApplication.emailBeingTracked = person.getEmail();
                 LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(new Intent("LOCATION-UPDATE"));
                 LocalBroadcastManager.getInstance(getActivity()).sendBroadcast(new Intent("GO-TO-MAP"));
             }
@@ -385,57 +396,37 @@ public class PlacesFragment extends Fragment {
     private void calculatePeopleInside(Place place) {
 
         try {
-            if (MainApplication.dashboard == null) {
-                return;
-            }
+            List<Person> peopleInThisPlace = new ArrayList<>();
 
-            Map<String, User> iCanSee = MainApplication.dashboard.getiCanSee();
-            List<String> peopleInThisPlace = new ArrayList<>();
-
-            Location placeLocation = new Location(place.getName());
-            placeLocation.setLatitude(place.getLocation().getLat());
-            placeLocation.setLongitude(place.getLocation().getLon());
-            placeLocation.setAccuracy(place.getLocation().getAcc()); //updated to getAcc from getRad
+            Location placeLocation = place.getLocation().convertToAndroidLocation();
 
             // Check myself
-            UserLocation userLocation = MainApplication.user.getLocation();
-            Location myLocation = new Location(MainApplication.user.getEmail());
-            myLocation.setLatitude(userLocation.getLat());
-            myLocation.setLongitude(userLocation.getLon());
-            //Log.d(TAG, "userLocation: " + userLocation);
+            Location userLocation = MainApplication.user.getLocation().convertToAndroidLocation();
 
             // Compare location
-            float myDistance = placeLocation.distanceTo(myLocation);
+            float myDistance = placeLocation.distanceTo(userLocation);
             if (myDistance < placeLocation.getAccuracy()) {
-                //Log.d(TAG, email + " is in place: " + placeLocation.getProvider());
-                peopleInThisPlace.add(MainApplication.user.getEmail());
+                peopleInThisPlace.add(MainApplication.user);
             }
 
             // Check for my contacts
-            for (String userId : iCanSee.keySet()) {
-                String email = MainApplication.dashboard.getEmailByUserId(userId);
-                UserLocation userLocationObj = iCanSee.get(userId).getUserLocation();
-                Location location = new Location(email);
+            for (Contact contact : contactService.getContactsVisibleToMe()) {
+                Location contactLocation = contact.getLocation().convertToAndroidLocation();
 
-                if (userLocationObj.getLat() == 0 || userLocationObj.getLon() == 0) {
+                if (contactLocation.getLatitude() == 0 || contactLocation.getLongitude() == 0) {
                     continue;
                 }
 
-                location.setLatitude(userLocationObj.getLat());
-                location.setLongitude(userLocationObj.getLon());
-                //Log.d(TAG, "userLocation: " + userLocation);
-
                 // Compare location
-                float distance = placeLocation.distanceTo(location);
+                float distance = placeLocation.distanceTo(contactLocation);
                 if (distance < placeLocation.getAccuracy()) {
                     //Log.d(TAG, email + " is in place: " + placeLocation.getProvider());
-                    peopleInThisPlace.add(email);
+                    peopleInThisPlace.add(contact);
                 }
             }
 
             if (peopleInThisPlace.size() > 0) {
-                //Log.d(TAG, "peopleInThisPlace: " + peopleInThisPlace);
-                peopleInsidePlace.put(place.getId(), peopleInThisPlace);
+                peopleInsidePlace.put(place, peopleInThisPlace);
             }
 
 

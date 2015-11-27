@@ -26,12 +26,14 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.fragments.MapViewFragment;
 import cc.softwarefactory.lokki.android.models.Contact;
 import cc.softwarefactory.lokki.android.models.Place;
+import cc.softwarefactory.lokki.android.services.ContactService;
 
 /**
  * An activity for performing searches and displaying their results
@@ -55,6 +57,8 @@ public class SearchActivity extends ListActivity {
     private Drawable contactIcon = null;
     private Drawable placeIcon = null;
     private Drawable mapIcon = null;
+
+    private ContactService contactService;
 
     /**
      * The different possible result types:
@@ -94,7 +98,8 @@ public class SearchActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "searchActivityOnCreate");
         setContentView(R.layout.activity_search);
-        context= getApplicationContext();
+        context = getApplicationContext();
+        contactService = new ContactService(context);
         Intent intent = getIntent();
         //Get the user's query from the intent
         String queryMessage = intent.getStringExtra(QUERY_MESSAGE);
@@ -177,24 +182,11 @@ public class SearchActivity extends ListActivity {
      */
     protected void searchContacts(String query, ArrayList<SearchResult> resultList)
     {
-        MainApplication.Contacts contacts = MainApplication.contacts;
-        for (String id : MainApplication.dashboard.getUserIdsICanSee()) {
-            String email = MainApplication.dashboard.getEmailByUserId(id);
-            Contact contact = (contacts != null)? contacts.getContactByEmail(email) : null;
-            String name = "";
-
-            if (contact != null) {
-                name = contact.getName();
-            }
-            if (email.toLowerCase().contains(query.toLowerCase()) || name.toLowerCase().contains(query.toLowerCase())) {
+        for (Contact contact : contactService.getContactsVisibleToMe()) {
+            if (contact.getEmail().toLowerCase().contains(query.toLowerCase()) || (contact.getName() != null && contact.getName().toLowerCase().contains(query.toLowerCase()))) {
                 //Display either name or email depending on whether a name exists
                 //Store contact data in the result's extra data for easy access
-                if (!name.isEmpty()) {
-                    resultList.add(new SearchResult(ResultType.CONTACT, name, email));
-                } else {
-                    resultList.add(new SearchResult(ResultType.CONTACT, email, email));
-                }
-
+                resultList.add(new SearchResult(ResultType.CONTACT, contact.toString(), contact.getEmail()));
             }
         }
     }

@@ -22,7 +22,7 @@ import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
  */
 public abstract class ApiService {
 
-    public Context context;
+    protected Context context;
     public static String apiUrl = Constants.API_URL;
     abstract String getTag();
     abstract String getCacheKey();

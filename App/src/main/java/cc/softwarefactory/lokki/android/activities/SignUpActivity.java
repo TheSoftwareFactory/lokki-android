@@ -27,6 +27,7 @@ import org.json.JSONObject;
 
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
+import cc.softwarefactory.lokki.android.models.Main;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 import cc.softwarefactory.lokki.android.utilities.DialogUtils;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
@@ -110,6 +111,7 @@ public class SignUpActivity extends AppCompatActivity {
             aq.id(R.id.email).getEditText().setError(errorMessage);
             return;
         }
+        if (MainApplication.user == null) MainApplication.user = new Main(getApplicationContext());
         MainApplication.user.setEmail(accountName);
         PreferenceUtils.setString(this, PreferenceUtils.KEY_DEVICE_ID, Utils.getDeviceId());
 

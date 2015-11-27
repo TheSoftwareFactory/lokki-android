@@ -39,6 +39,7 @@ import org.json.JSONException;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Map;
 
@@ -63,174 +64,6 @@ public class Utils {
                 Build.USER.length() % 10; //13 digits
     }
 
-    private static Boolean loadContacts(Context context) {
-
-        if (context == null) {
-            return false;
-        }
-        if (MainApplication.contacts != null) {
-            return true;
-        }
-
-        String jsonData = PreferenceUtils.getString(context, PreferenceUtils.KEY_CONTACTS);
-        if (jsonData.isEmpty()) {
-            return false;
-        }
-        try {
-            MainApplication.contacts = JsonUtils.createFromJson(jsonData, MainApplication.Contacts.class);
-        } catch (IOException e) {
-            MainApplication.contacts = new MainApplication.Contacts();
-            Log.e(TAG, "Reading contacts from JSON failed. Empty contacts created.");
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
-
-    public static String getIdFromEmail(Context context, String email) {
-
-        if (context == null || MainApplication.dashboard == null) {
-            return null;
-        }
-
-        Map<String, String> idMapping = MainApplication.dashboard.getIdMapping();
-        for (String userId : idMapping.keySet()) {
-            String emailInObject = idMapping.get(userId);
-            if (email.equals(emailInObject)) {
-                Log.d(TAG, "email: " + email + ", Id from mapping: " + userId);
-                return userId;
-            }
-        }
-
-        return null;
-    }
-
-    public static String getNameFromEmail(Context context, String email) {
-
-        if (context == null) {
-            return null;
-        }
-
-        if (loadContacts(context)) {
-            try {
-                Log.d(TAG, JsonUtils.serialize(MainApplication.contacts));
-                Contact contact = MainApplication.contacts.getContactByEmail(email);
-                String name = contact.getName();
-                Log.d(TAG, "getNameFromEmail - Email: " + email + ", Name: " + name);
-                return name;
-            } catch (NullPointerException e) {
-                Log.e(TAG, "getNameFromEmail - failed (contact was null): " + email);
-            } catch (JsonProcessingException e) {
-                Log.e(TAG, "serializing contacts to JSON failed");
-                e.printStackTrace();
-            }
-        }
-
-        Log.d(TAG, "getNameFromEmail - Name queried: " + email);
-        Cursor emailCursor = context.getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null, "lower(" + ContactsContract.CommonDataKinds.Email.DATA + ")=lower('" + email + "')", null, null);
-        if (emailCursor == null) {
-            return "???";
-        }
-        if (emailCursor.moveToNext()) {
-            String name = emailCursor.getString(emailCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.DISPLAY_NAME_PRIMARY));
-            Log.d(TAG, "getNameFromEmail - Email: " + email + ", Name: " + name);
-            emailCursor.close();
-            return name;
-        }
-        emailCursor.close();
-        return email;
-    }
-
-    public static Bitmap getPhotoFromEmail(Context context, String email) {
-
-        if (context == null || email == null) {
-            return null;
-        }
-
-        Bitmap result = MainApplication.avatarCache.get(email);
-        if (result != null) {
-            Log.d(TAG, "getPhotoFromEmail IN cache, Email: " + email);
-            return result;
-        }
-
-        if (loadContacts(context)) {
-            Contact contact = MainApplication.contacts.getContactByEmail(email);
-            try {
-                long id = contact.getId();
-                Log.d(TAG, "getPhotoFromEmail - Email: " + email + ", id: " + id);
-                result = openPhoto(context, id);
-            } catch (NullPointerException e) {
-                Log.e(TAG, "getNameFromEmail - failed (contact was null): " + email);
-            }
-        } else {
-            Log.d(TAG, "getPhotoFromEmail - id queried: " + email);
-            Cursor emailCursor = context.getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null, "lower(" + ContactsContract.CommonDataKinds.Email.DATA + ")=lower('" + email + "')", null, null);
-            while (emailCursor != null && emailCursor.moveToNext()) {
-                Long contactId = Long.valueOf(emailCursor.getString(emailCursor.getColumnIndex(ContactsContract.CommonDataKinds.Email.CONTACT_ID)));
-                result = openPhoto(context, contactId);
-            }
-            if (emailCursor != null) {
-                emailCursor.close();
-            }
-        }
-
-        if (result == null) {
-            String name = getNameFromEmail(context, email);
-            result = Utils.getDefaultAvatarInitials(context, name);
-        }
-
-        MainApplication.avatarCache.put(email, result);
-        return result;
-    }
-
-    public static Bitmap getRoundedCornerBitmap(Bitmap bitmap, float pixels) {
-        if (bitmap == null) {
-            Log.w(TAG, "getRoundedCornerBitmap - null bitmap");
-            return null;
-        }
-
-        Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(output);
-        final int color = 0xff424242;
-        final Paint paint = new Paint();
-        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-        final RectF rectF = new RectF(rect);
-        paint.setAntiAlias(true);
-        canvas.drawARGB(0, 0, 0, 0);
-        paint.setColor(color);
-        canvas.drawRoundRect(rectF, pixels, pixels, paint);
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-        canvas.drawBitmap(bitmap, rect, rect, paint);
-
-        return output;
-    }
-
-    private static Bitmap openPhoto(Context context, long contactId) {
-
-        Log.d(TAG, "openPhoto");
-        if (context == null) {
-            return null;
-        }
-
-        Uri contactUri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, contactId);
-        Uri photoUri = Uri.withAppendedPath(contactUri, ContactsContract.Contacts.Photo.CONTENT_DIRECTORY);
-        Cursor cursor = context.getContentResolver().query(photoUri, new String[]{ContactsContract.Contacts.Photo.PHOTO}, null, null, null);
-        if (cursor == null) {
-            return null;
-        }
-
-        try {
-            if (cursor.moveToFirst()) {
-                byte[] data = cursor.getBlob(0);
-                if (data != null) {
-                    return BitmapFactory.decodeStream(new ByteArrayInputStream(data));
-                }
-            }
-        } finally {
-            cursor.close();
-        }
-        return null;
-    }
     public static Bitmap addBorderToBitMap(Bitmap bmp, int borderSize, int color) {
         Bitmap bmpWithBorder = Bitmap.createBitmap(bmp.getWidth() + borderSize * 2, bmp.getHeight() + borderSize * 2, bmp.getConfig());
         Canvas canvas = new Canvas(bmpWithBorder);
@@ -293,7 +126,7 @@ public class Utils {
         return Locale.getDefault().getLanguage();
     }
 
-    private static Bitmap getDefaultAvatarInitials(Context context, String text) {
+    public static Bitmap getDefaultAvatarInitials(Context context, String text) {
 
         Log.d(TAG, "getDefaultAvatarInitials");
 
@@ -344,23 +177,4 @@ public class Utils {
             Log.e(TAG, "Could not set visibility:" + ex.getMessage());
         }
     }
-    public static JSONArray removeFromJSONArray(JSONArray input,int index)
-    {
-        JSONArray output=new JSONArray();
-        for(int i=0;i<(input.length());i++)
-        {
-            if(index!=i)
-            {
-                try {
-                    output.put(input.get(i));
-
-                } catch (JSONException e) {
-
-                Log.e(TAG,"Error in moving items into new JSON Array" +e);
-                }
-            }
-        }
-        return output;
-    }
-
 }

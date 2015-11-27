@@ -4,6 +4,7 @@ package cc.softwarefactory.lokki.android.espresso;
 import android.widget.ImageView;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.android.gms.maps.model.LatLng;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 
 import org.json.JSONException;
@@ -12,6 +13,8 @@ import org.json.JSONObject;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.espresso.utilities.MockJsonUtils;
 import cc.softwarefactory.lokki.android.espresso.utilities.TestUtils;
+import cc.softwarefactory.lokki.android.models.Contact;
+import cc.softwarefactory.lokki.android.models.UserLocation;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -76,16 +79,14 @@ public class PlacesScreenTest extends LoggedInBaseTest {
 
     public void testClickContactOpensMap() throws JSONException, InterruptedException, JsonProcessingException {
         getMockDispatcher().setPlacesResponse(new MockResponse().setBody(MockJsonUtils.getPlacesJson()));
-        String[] contactEmails = new String[]{"family.member@example.com"};
-        JSONObject location = new JSONObject();
-        location.put("lat", "37.483477313364574") //Testplace1
-                .put("lon", "-122.14838393032551")
-                .put("acc", "100");
-        JSONObject[] locations = new JSONObject[]{location};
-        getMockDispatcher().setDashboardResponse(new MockResponse().setBody(MockJsonUtils
-                .getDashboardJsonContactsUserLocation(contactEmails, locations, location)));
+
+        String email = "family.member@example.com";
+        Contact contact = MockJsonUtils.createContact(email);
+        contact.setLocation(new UserLocation(new LatLng(37.483477313364574, -122.14838393032551), 100));
+        getMockDispatcher().setGetContactsResponse(new MockResponse().setBody(MockJsonUtils.getContactsJsonWith(contact)));
+
         enterPlacesScreen();
-        onView(withContentDescription("family.member@example.com")).perform(click());
+        onView(withContentDescription(email)).perform(click());
 
         onView(withId(R.id.map)).check(matches(isDisplayed()));
     }

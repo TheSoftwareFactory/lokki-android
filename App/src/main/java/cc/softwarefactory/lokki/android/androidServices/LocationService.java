@@ -306,7 +306,7 @@ public class LocationService extends Service implements LocationListener, Google
 
         Log.d(TAG, "New location taken into use.");
         lastLocation = location;
-        MainApplication.user.setLocation(location);
+        MainApplication.user.setLocationFromAndroidLocation(location);
         Intent intent = new Intent("LOCATION-UPDATE");
         intent.putExtra("current-location", 1);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);

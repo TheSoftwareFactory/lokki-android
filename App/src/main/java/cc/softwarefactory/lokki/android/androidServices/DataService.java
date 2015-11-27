@@ -17,6 +17,7 @@ import android.util.Log;
 import java.io.IOException;
 
 import cc.softwarefactory.lokki.android.MainApplication;
+import cc.softwarefactory.lokki.android.services.ContactService;
 import cc.softwarefactory.lokki.android.services.PlaceService;
 import cc.softwarefactory.lokki.android.utilities.JsonUtils;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
@@ -37,6 +38,7 @@ public class DataService extends Service {
     private static Boolean serviceRunning = false;
 
     private static PlaceService placeService;
+    private static ContactService contactService;
 
     public static void start(Context context) {
         Log.d(TAG, "start Service called");
@@ -62,26 +64,6 @@ public class DataService extends Service {
         context.startService(placesIntent);
     }
 
-    /**
-     * Schedules the data service to load contacts in the background
-     * @param context
-     */
-    public static void getContacts(Context context) {
-
-        Log.d(TAG, "getContacts");
-        Intent contactIntent = new Intent(context, DataService.class);
-        contactIntent.putExtra(GET_CONTACTS, 1);
-        context.startService(contactIntent);
-    }
-
-    public static void getDashboard(Context context) {
-
-        Log.d(TAG, "getDashboard");
-        Intent placesIntent = new Intent(context, DataService.class);
-        placesIntent.putExtra(ALARM_TIMER, 1);
-        context.startService(placesIntent);
-    }
-
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -101,6 +83,7 @@ public class DataService extends Service {
         }
 
         placeService = new PlaceService(getApplicationContext());
+        contactService = new ContactService(getApplicationContext());
 
         getPlaces();
         getContacts();
@@ -148,7 +131,7 @@ public class DataService extends Service {
 
     private void getContacts() {
         Log.d(TAG, "getContacts");
-        ServerApi.getContacts(this);
+        contactService.getContacts();
     }
 
     private void fetchDashboard() {

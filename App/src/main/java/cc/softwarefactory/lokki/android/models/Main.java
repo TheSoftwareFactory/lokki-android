@@ -3,12 +3,13 @@ package cc.softwarefactory.lokki.android.models;
 import android.content.Context;
 
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
+import cc.softwarefactory.lokki.android.utilities.Utils;
 
-public class MainUser extends UserPerson {
+public class Main extends Person {
 
     private Context context;
 
-    public MainUser(Context context) {
+    public Main(Context context) {
         this.context = context;
     }
 
@@ -22,5 +23,11 @@ public class MainUser extends UserPerson {
     public void setEmail(String email) {
         PreferenceUtils.setString(this.context, PreferenceUtils.KEY_USER_ACCOUNT, email);
         super.setEmail(email);
+        setPhoto(Utils.getDefaultAvatarInitials(context, getEmail()));
+    }
+
+    @Override
+    public String toString() {
+        return getEmail();
     }
 }
