@@ -25,7 +25,7 @@ import java.util.Map;
 import cc.softwarefactory.lokki.android.models.BuzzPlace;
 import cc.softwarefactory.lokki.android.models.Contact;
 import cc.softwarefactory.lokki.android.models.JSONMap;
-import cc.softwarefactory.lokki.android.models.Main;
+import cc.softwarefactory.lokki.android.models.MainUser;
 import cc.softwarefactory.lokki.android.models.Place;
 import cc.softwarefactory.lokki.android.models.User;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
@@ -142,7 +142,7 @@ public class MainApplication extends Application {
     }
     public static Dashboard dashboard = null;
 
-    public static Main user;
+    public static MainUser user;
 
     /**
      * User's contacts is a map, where key is email (which is id) and value is the contact.
@@ -303,7 +303,7 @@ public class MainApplication extends Application {
 
         buzzPlaces = new ArrayList<BuzzPlace>();
 
-        user = new Main(this);
+        user = new MainUser(this);
 
         super.onCreate();
     }

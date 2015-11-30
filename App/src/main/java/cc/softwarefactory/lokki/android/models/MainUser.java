@@ -5,11 +5,11 @@ import android.content.Context;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 import cc.softwarefactory.lokki.android.utilities.Utils;
 
-public class Main extends Person {
+public class MainUser extends Person {
 
     private Context context;
 
-    public Main(Context context) {
+    public MainUser(Context context) {
         this.context = context;
     }
 

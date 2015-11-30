@@ -13,7 +13,11 @@ public abstract class Person implements ClusterItem {
     private String userId;
     private String email;
     private UserLocation location;
+
+    @JsonIgnore
     private Bitmap photo;
+
+    @JsonIgnore
     private Bitmap markerPhoto;
 
     public String getUserId() {
