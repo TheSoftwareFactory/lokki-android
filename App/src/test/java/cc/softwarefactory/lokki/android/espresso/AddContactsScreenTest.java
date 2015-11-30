@@ -47,11 +47,9 @@ public class AddContactsScreenTest extends LoggedInBaseTest {
         enterContactsScreen();
     }
 
-
     private void setMockContacts() throws IOException, JSONException {
         ContactDataSource mockContactDataSource = Mockito.mock(ContactDataSource.class);
-        JSONArray testJSONArray = new JSONArray(MockJsonUtils.getContactsJson());
-        when(mockContactDataSource.getContacts(any(Context.class))).thenReturn(JsonUtils.createListFromJson(testJSONArray.toString(), Contact.class));
+        when(mockContactDataSource.getContacts(any(Context.class))).thenReturn(JsonUtils.createListFromJson(MockJsonUtils.getContactsJson(), Contact.class));
         getActivity().setContactUtils(mockContactDataSource);
     }
 
@@ -179,10 +177,6 @@ public class AddContactsScreenTest extends LoggedInBaseTest {
 
     public void testAddingCustomContactSendsAllowRequest() throws JSONException, TimeoutException, InterruptedException{
         String contactEmail = "family.member@example.com";
-        String dashboardJsonString = MockJsonUtils.getDashboardJsonWithContacts(contactEmail);
-        JSONObject dashboardJson = new JSONObject(dashboardJsonString);
-        dashboardJson.put("canseeme", new JSONArray());
-        getMockDispatcher().setDashboardResponse(new MockResponse().setBody(dashboardJson.toString()));
         RequestsHandle requests = getMockDispatcher().setAllowPostResponse(new MockResponse().setResponseCode(200));
 
         enterAddContactsScreen();
@@ -198,10 +192,6 @@ public class AddContactsScreenTest extends LoggedInBaseTest {
 
     public void testAddingContactFromListSendsAllowRequest() throws JSONException, TimeoutException, InterruptedException{
         String contactEmail = "family.member@example.com";
-        String dashboardJsonString = MockJsonUtils.getDashboardJsonWithContacts(contactEmail);
-        JSONObject dashboardJson = new JSONObject(dashboardJsonString);
-        dashboardJson.put("canseeme", new JSONArray());
-        getMockDispatcher().setDashboardResponse(new MockResponse().setBody(dashboardJson.toString()));
         RequestsHandle requests = getMockDispatcher().setAllowPostResponse(new MockResponse().setResponseCode(200));
 
         enterAddContactsScreen();

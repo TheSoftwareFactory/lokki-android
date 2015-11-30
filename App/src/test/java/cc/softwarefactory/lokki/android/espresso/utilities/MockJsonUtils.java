@@ -15,36 +15,28 @@ import java.util.List;
 import cc.softwarefactory.lokki.android.models.Contact;
 import cc.softwarefactory.lokki.android.models.Place;
 import cc.softwarefactory.lokki.android.models.UserLocation;
-import cc.softwarefactory.lokki.android.utilities.JsonUtils;
 
 
 public class MockJsonUtils {
 
 
-    public static String getContactsJson() throws JSONException {
-        JSONObject contact = new JSONObject();
-        contact.put("email", "test.friend@example.com");
-        contact.put("name", "Test Friend");
-        contact.put("canSeeMe", "true");
-        contact.put("isIgnored", "false");
+    public static String getContactsJson() throws JSONException, JsonProcessingException {
+        Contact contact = new Contact();
+        contact.setEmail("test.friend@example.com");
+        contact.setName("Test Friend");
+        contact.setCanSeeMe(true);
 
-        JSONObject contact2 = new JSONObject();
-        contact2.put("email", "family.member@example.com");
-        contact2.put("name", "Family Member");
-        contact2.put("canSeeMe", "true");
-        contact2.put("isIgnored", "false");
+        Contact contact2 = new Contact();
+        contact2.setEmail("family.member@example.com");
+        contact2.setName("Family Member");
+        contact2.setCanSeeMe(true);
 
-        JSONObject contact3 = new JSONObject();
-        contact3.put("email", "work.buddy@example.com");
-        contact3.put("name", "Work Buddy");
-        contact3.put("canSeeMe", "true");
-        contact3.put("isIgnored", "false");
-        JSONArray array = new JSONArray();
-        array.put(contact);
-        array.put(contact2);
-        array.put(contact3);
+        Contact contact3 = new Contact();
+        contact3.setEmail("work.buddy@example.com");
+        contact3.setName("Work Buddy");
+        contact3.setCanSeeMe(true);
 
-        return array.toString();
+        return getContactsJsonWith(new Contact[] {contact, contact2, contact3});
     }
 
 
@@ -90,38 +82,6 @@ public class MockJsonUtils {
         return jsonObject.toString();
     }
 
-
-    public static String getDashboardJsonWithContacts(String... contactEmails) throws JSONException {
-        JSONArray canseemeJsonArray = new JSONArray();
-        JSONObject icanseeJsonObject = new JSONObject();
-        JSONObject idmappingJsonObject = new JSONObject().put(TestUtils.VALUE_TEST_USER_ID, TestUtils.VALUE_TEST_USER_ACCOUNT);
-
-        for (String contactEmail : contactEmails) {
-            String contactId = Hashing.sha1().hashString(contactEmail).toString();
-
-            canseemeJsonArray.put(contactId);
-
-            icanseeJsonObject.put(contactId, new JSONObject()
-                    .put("battery", "")
-                    .put("location", new JSONObject())
-                    .put("visibility", true));
-
-            idmappingJsonObject.put(contactId, contactEmail);
-        }
-
-
-        JSONObject jsonObject = new JSONObject();
-        jsonObject
-                .put("battery", "")
-                .put("canseeme", canseemeJsonArray)
-                .put("icansee", icanseeJsonObject)
-                .put("idmapping", idmappingJsonObject)
-                .put("location", new JSONObject())
-                .put("visibility", true);
-
-        return jsonObject.toString();
-    }
-
     public static String getContactsJsonWith(Contact... contacts) throws JSONException, JsonProcessingException {
         JSONArray array = new JSONArray();
         for (Contact contact : contacts) {
@@ -138,7 +98,6 @@ public class MockJsonUtils {
                 location.put("lat", userLocation.getLat());
                 location.put("lon", userLocation.getLon());
                 location.put("time", userLocation.getTime());
-//                contactJSON.put("location", JsonUtils.serialize(contact.getLocation()));
                 contactJSON.put("location", location);
             }
             array.put(contactJSON);
