@@ -27,6 +27,7 @@ import org.json.JSONObject;
 
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
+import cc.softwarefactory.lokki.android.models.MainUser;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 import cc.softwarefactory.lokki.android.utilities.DialogUtils;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
@@ -110,9 +111,9 @@ public class SignUpActivity extends AppCompatActivity {
             aq.id(R.id.email).getEditText().setError(errorMessage);
             return;
         }
-        PreferenceUtils.setString(this, PreferenceUtils.KEY_USER_ACCOUNT, accountName);
+        if (MainApplication.user == null) MainApplication.user = new MainUser(getApplicationContext());
+        MainApplication.user.setEmail(accountName);
         PreferenceUtils.setString(this, PreferenceUtils.KEY_DEVICE_ID, Utils.getDeviceId());
-        MainApplication.userAccount = accountName;
 
         ServerApi.signUp(this, new SignUpCallback());
         toggleLoading(true);
@@ -154,13 +155,11 @@ public class SignUpActivity extends AppCompatActivity {
             String id = json.optString("id");
             String authorizationToken = json.optString("authorizationtoken");
             String userType = json.optString("userType");
-            PreferenceUtils.setString(SignUpActivity.this, PreferenceUtils.KEY_USER_ID, id);
+            MainApplication.user.setUserId(id);
             PreferenceUtils.setString(SignUpActivity.this, PreferenceUtils.KEY_AUTH_TOKEN, authorizationToken);
             Log.d(TAG, "User id: " + id);
             Log.d(TAG, "authorizationToken: " + authorizationToken);
             checkUserType(userType);
-
-
         }
 
         private boolean successfulSignUp(JSONObject json, AjaxStatus status) {

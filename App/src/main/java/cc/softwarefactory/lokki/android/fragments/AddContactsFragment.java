@@ -30,9 +30,10 @@ import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import cc.softwarefactory.lokki.android.MainApplication;
@@ -41,10 +42,8 @@ import cc.softwarefactory.lokki.android.avatar.AvatarLoader;
 import cc.softwarefactory.lokki.android.datasources.contacts.ContactDataSource;
 import cc.softwarefactory.lokki.android.datasources.contacts.DefaultContactDataSource;
 import cc.softwarefactory.lokki.android.models.Contact;
-import cc.softwarefactory.lokki.android.androidServices.DataService;
+import cc.softwarefactory.lokki.android.services.ContactService;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
-import cc.softwarefactory.lokki.android.utilities.ContactUtils;
-import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
 
 
@@ -52,15 +51,16 @@ public class AddContactsFragment extends Fragment {
 
     private static final String TAG = "AddContacts";
     private ContactDataSource mContactDataSource;
-    private ArrayList<String> contactList;
+    private List<Contact> contactList;
     private AQuery aq;
     private Boolean cancelAsynTasks = false;
     private Context context;
     private AvatarLoader avatarLoader;
     private EditText inputSearch;
     private Button clearFilter;
-    private ArrayAdapter<String> adapter;
+    private ArrayAdapter<Contact> adapter;
     private TextView noContactsMessage;
+    private ContactService contactService;
 
     public AddContactsFragment() {
         contactList = new ArrayList<>();
@@ -74,7 +74,8 @@ public class AddContactsFragment extends Fragment {
         aq = new AQuery(getActivity(), rootView);
         cancelAsynTasks = false;
         context = getActivity().getApplicationContext();
-        avatarLoader = new AvatarLoader(context);
+        avatarLoader = new AvatarLoader();
+        contactService = new ContactService(context);
         inputSearch = (EditText) rootView.findViewById(R.id.add_contact_search);
         inputSearch.setEnabled(false);
         inputSearch.setAlpha(0);
@@ -153,102 +154,39 @@ public class AddContactsFragment extends Fragment {
         this.mContactDataSource = contactDataSource;
     }
 
-    private class prepareAdapterAsync extends AsyncTask<Void, Void, Boolean> {
+    private class getAllEmailAddressesAsync extends AsyncTask<Void, Void, List<Contact>> {
 
         @Override
-        protected Boolean doInBackground(Void... params) {
-
-            Log.d(TAG, "prepareAdapterAsync");
-            getContactList();
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean contactsExist) {
-
-            if (isAdded()) {
-                Log.d(TAG, "prepareAdapterAsync - ContactList: " + contactList);
-                setListAdapter();
-            }
-            super.onPostExecute(contactsExist);
-        }
-    }
-
-    private class getAllEmailAddressesAsync extends AsyncTask<Void, Void, MainApplication.Contacts> {
-
-        @Override
-        protected MainApplication.Contacts doInBackground(Void... params) {
+        protected List<Contact> doInBackground(Void... params) {
             return mContactDataSource.getContacts(context);
         }
 
         @Override
-        protected void onPostExecute(MainApplication.Contacts contactsResult) {
+        protected void onPostExecute(List<Contact> phoneContacts) {
+         Log.d(TAG, "Number of contacts: " + phoneContacts.size());
+            Log.d(TAG, "Contacts: " + phoneContacts);
 
-            if (contactsResult == null || !isAdded() || cancelAsynTasks) {
-                super.onPostExecute(MainApplication.contacts);
-                return;
+            // We create a dictionary for performance.
+            Map<String, Contact> savedContacts = new HashMap<>();
+            for (Contact contact : MainApplication.contacts) {
+                savedContacts.put(contact.getEmail(), contact);
             }
-            Log.d(TAG, "Number of contacts: " + (contactsResult.size() - 1));
-            Log.d(TAG, "Contacts: " + contactsResult);
 
-            // If contacts don't exist already, use data source result
-            if (MainApplication.contacts == null){
-                MainApplication.contacts = contactsResult;
-            } else {
-                // If contacts already exist, combine data source result with existing data
-                for (Map.Entry<String, Contact> contactEntry : contactsResult.entrySet()) {
-                    String email = contactEntry.getKey();
-                    if (!MainApplication.contacts.hasEmail(email)) {
-                        Contact contact = contactsResult.getContactByEmail(email);
-                        MainApplication.contacts.put(email, contact);
-                    }
+            for (Contact contact : phoneContacts) {
+                String email = contact.getEmail();
+                if (!savedContacts.containsKey(email)) {
+                    contactList.add(contact);
                 }
             }
 
-            //Synchronize mapping JSON with contacts
-            try {
-                PreferenceUtils.setString(context, PreferenceUtils.KEY_CONTACTS, MainApplication.contacts.serialize());
-            } catch (IOException e) {
-                Log.e(TAG, "Exception while serializing contacts results to JSON: " + e.getMessage());
-            }
-            new prepareAdapterAsync().execute();
-            super.onPostExecute(MainApplication.contacts);
+            setListAdapter();
+            super.onPostExecute(contactList);
         }
-    }
-
-    private void getContactList() {
-
-        contactList = new ArrayList<>();
-
-        Map<String, Contact> contacts = MainApplication.contacts;
-
-        if (contacts == null)
-            return;
-
-        for (Map.Entry<String, Contact> contactEntry : contacts.entrySet()) {
-            String email = contactEntry.getKey();
-            Contact contact = contactEntry.getValue();
-
-            if (alreadyAdded(email))
-                continue;
-            contactList.add(contact.getName());
-        }
-        Collections.sort(contactList);
-        Log.d(TAG, "Adapter ContactList: " + contactList);
-    }
-
-    private boolean alreadyAdded(String email) {
-
-        if (MainApplication.dashboard == null) {
-            return false;
-        }
-        return MainApplication.dashboard.containsEmail(email);
     }
 
     private void setListAdapter() {
 
-        //TODO: array adapter should be a list of Contacts instead of names. Current implementation will cause bugs if there are contacts with same name.
-        adapter = new ArrayAdapter<String>(getActivity(), R.layout.add_people_row_layout, contactList) {
+        adapter = new ArrayAdapter<Contact>(getActivity(), R.layout.add_people_row_layout, contactList) {
 
             @Override
             public View getView(final int position, View convertView, ViewGroup parent) {
@@ -268,17 +206,16 @@ public class AddContactsFragment extends Fragment {
                 }
 
                 AQuery aq = new AQuery(convertView);
-                String contactName = getItem(position);
-                final String email = MainApplication.contacts.getEmailByName(contactName);
+                final Contact contact = getItem(position);
 
                 inputSearch.setEnabled(true);
                 inputSearch.setAlpha(1);
                 noContactsMessage.setAlpha(0);
 
-                avatarLoader.load(email, holder.photo);
+                avatarLoader.load(contact, holder.photo);
 
-                aq.id(holder.name).text(contactName);
-                aq.id(holder.email).text(email);
+                aq.id(holder.name).text(contact.toString());
+                aq.id(holder.email).text(contact.getEmail());
                 holder.position = position;
 
                 convertView.setOnClickListener(new View.OnClickListener() {
@@ -289,7 +226,7 @@ public class AddContactsFragment extends Fragment {
                                 getString(R.string.analytics_label_contact_in_list));
                         final Context context = getContext();
                         String title = getString(R.string.add_contact);
-                        String message = getString(R.string.add_contact_dialog_save, email);
+                        String message = getString(R.string.add_contact_dialog_save, contact.getEmail());
                         new AlertDialog.Builder(context)
                                 .setTitle(title)
                                 .setMessage(message)
@@ -300,20 +237,19 @@ public class AddContactsFragment extends Fragment {
                                                 getString(R.string.analytics_action_click),
                                                 getString(R.string.analytics_label_confirm_contact_add_from_list_dialog));
 
-                                        if(ContactUtils.isSelf(context, email)) {
+                                        if (contact.emailIsSameAs(MainApplication.user.getEmail())) {
                                             Toast.makeText(context, R.string.cant_add_self_as_contact, Toast.LENGTH_LONG).show();
                                         } else {
-                                            ServerApi.allowPeople(context, email, new AjaxCallback<String>() {
-                                                                              @Override
-                                                                              public void callback(String url, String result, AjaxStatus status)  {
+                                            contactService.allowContacts(Arrays.asList(contact), new AjaxCallback<String>() {
+                                                @Override
+                                                public void callback(String url, String result, AjaxStatus status)  {
                                                     ServerApi.logStatus("allowPeople", status);
                                                     if(status.getError() != null)
                                                         Toast.makeText(context, R.string.unable_to_add_contact, Toast.LENGTH_LONG).show();
                                                     else {
-                                                        ContactUtils.addLocalContact(context, email);
                                                         contactList.remove(position);
                                                         notifyDataSetChanged();
-                                                        DataService.getDashboard(context);
+                                                        contactService.getContacts();
                                                         Toast.makeText(context, R.string.contact_added, Toast.LENGTH_SHORT).show();
                                                     }
                                             }
@@ -380,19 +316,21 @@ public class AddContactsFragment extends Fragment {
                                 context.getString(R.string.analytics_action_click),
                                 context.getString(R.string.analytics_label_confirm_contact_add_from_email_dialog_successful));
                         final String email = value.toString();
+                        Contact contact = new Contact();
+                        contact.setEmail(email);
 
-                        if(ContactUtils.isSelf(context, email)) {
+                        if (contact.emailIsSameAs(MainApplication.user.getEmail())) {
                             Toast.makeText(context, R.string.cant_add_self_as_contact, Toast.LENGTH_LONG).show();
                         } else {
-                            ServerApi.allowPeople(context, email, new AjaxCallback<String>() {
+                            final ContactService contactService = new ContactService(context);
+                            contactService.allowContacts(Arrays.asList(contact), new AjaxCallback<String>() {
                                 @Override
-                                public void callback(String url, String result, AjaxStatus status)  {
+                                public void callback(String url, String result, AjaxStatus status) {
                                     ServerApi.logStatus("allowPeople", status);
                                     if(status.getError() != null)
                                         Toast.makeText(context, R.string.unable_to_add_contact, Toast.LENGTH_LONG).show();
                                     else {
-                                        ContactUtils.addLocalContact(context, email);
-                                        DataService.getDashboard(context);
+                                        contactService.getContacts();
                                         Toast.makeText(context, R.string.contact_added, Toast.LENGTH_SHORT).show();
                                     }
                                 }

@@ -1,8 +1,19 @@
 package cc.softwarefactory.lokki.android.models;
 
-public class Contact extends JSONModel {
+/**
+ * Contact model. Getting field synchronizes fields with phone's contacts.
+ */
+public class Contact extends Person implements Comparable<Contact> {
     private String name;
-    private long id;
+    private boolean isIgnored;
+    private boolean canSeeMe;
+
+    @Override
+    public int compareTo(Contact another) {
+        if (this.getName() != null && another.getName() != null)
+            return this.getName().compareTo(another.getName());
+        return this.getEmail().compareTo(another.getEmail());
+    }
 
     public String getName() {
         return name;
@@ -12,11 +23,37 @@ public class Contact extends JSONModel {
         this.name = name;
     }
 
-    public long getId() {
-        return id;
+    public boolean isIgnored() {
+        return isIgnored;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setIsIgnored(boolean isIgnored) {
+        this.isIgnored = isIgnored;
+    }
+
+    public boolean isCanSeeMe() {
+        return canSeeMe;
+    }
+
+    public void setCanSeeMe(boolean canSeeMe) {
+        this.canSeeMe = canSeeMe;
+    }
+
+    public boolean isVisibleToMe() {
+        return (this.getLocation() != null);
+    }
+
+    @Override
+    public String toString() {
+        if (name == null) return this.getEmail();
+        return name;
+    }
+
+    private String getUnambiguousEmail(String addr) {
+        return addr.trim().toLowerCase();
+    }
+
+    public boolean emailIsSameAs(String email) {
+        return getUnambiguousEmail(this.getEmail()).equals(getUnambiguousEmail(email));
     }
 }

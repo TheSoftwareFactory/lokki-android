@@ -14,13 +14,13 @@ import org.mockito.Mockito;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
-import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.datasources.contacts.ContactDataSource;
 import cc.softwarefactory.lokki.android.espresso.utilities.MockJsonUtils;
 import cc.softwarefactory.lokki.android.espresso.utilities.RequestsHandle;
 import cc.softwarefactory.lokki.android.espresso.utilities.TestUtils;
-import cc.softwarefactory.lokki.android.models.JSONModel;
+import cc.softwarefactory.lokki.android.models.Contact;
+import cc.softwarefactory.lokki.android.utilities.JsonUtils;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.pressBack;
@@ -47,11 +47,9 @@ public class AddContactsScreenTest extends LoggedInBaseTest {
         enterContactsScreen();
     }
 
-
     private void setMockContacts() throws IOException, JSONException {
         ContactDataSource mockContactDataSource = Mockito.mock(ContactDataSource.class);
-        JSONObject testJSONObject = new JSONObject(MockJsonUtils.getContactsJson());
-        when(mockContactDataSource.getContacts(any(Context.class))).thenReturn(JSONModel.createFromJson(testJSONObject.toString(), MainApplication.Contacts.class));
+        when(mockContactDataSource.getContacts(any(Context.class))).thenReturn(JsonUtils.createListFromJson(MockJsonUtils.getContactsJson(), Contact.class));
         getActivity().setContactUtils(mockContactDataSource);
     }
 
@@ -179,10 +177,6 @@ public class AddContactsScreenTest extends LoggedInBaseTest {
 
     public void testAddingCustomContactSendsAllowRequest() throws JSONException, TimeoutException, InterruptedException{
         String contactEmail = "family.member@example.com";
-        String dashboardJsonString = MockJsonUtils.getDashboardJsonWithContacts(contactEmail);
-        JSONObject dashboardJson = new JSONObject(dashboardJsonString);
-        dashboardJson.put("canseeme", new JSONArray());
-        getMockDispatcher().setDashboardResponse(new MockResponse().setBody(dashboardJson.toString()));
         RequestsHandle requests = getMockDispatcher().setAllowPostResponse(new MockResponse().setResponseCode(200));
 
         enterAddContactsScreen();
@@ -192,16 +186,12 @@ public class AddContactsScreenTest extends LoggedInBaseTest {
 
         requests.waitUntilAnyRequests();
         RecordedRequest request = requests.getRequests().get(0);
-        String expectedPath = "/user/" + TestUtils.VALUE_TEST_USER_ID + "/allow";
+        String expectedPath = "/user/" + TestUtils.VALUE_TEST_USER_ID + "/contacts/allow";
         assertEquals(expectedPath, request.getPath());
     }
 
     public void testAddingContactFromListSendsAllowRequest() throws JSONException, TimeoutException, InterruptedException{
         String contactEmail = "family.member@example.com";
-        String dashboardJsonString = MockJsonUtils.getDashboardJsonWithContacts(contactEmail);
-        JSONObject dashboardJson = new JSONObject(dashboardJsonString);
-        dashboardJson.put("canseeme", new JSONArray());
-        getMockDispatcher().setDashboardResponse(new MockResponse().setBody(dashboardJson.toString()));
         RequestsHandle requests = getMockDispatcher().setAllowPostResponse(new MockResponse().setResponseCode(200));
 
         enterAddContactsScreen();
@@ -209,7 +199,7 @@ public class AddContactsScreenTest extends LoggedInBaseTest {
 
         requests.waitUntilAnyRequests();
         RecordedRequest request = requests.getRequests().get(0);
-        String expectedPath = "/user/" + TestUtils.VALUE_TEST_USER_ID + "/allow";
+        String expectedPath = "/user/" + TestUtils.VALUE_TEST_USER_ID + "/contacts/allow";
         assertEquals(expectedPath, request.getPath());
     }
 }

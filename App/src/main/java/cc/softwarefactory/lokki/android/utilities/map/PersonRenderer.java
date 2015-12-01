@@ -54,11 +54,14 @@ public class PersonRenderer extends DefaultClusterRenderer<Person> {
 
     @Override
     protected void onBeforeClusterItemRendered(Person person, MarkerOptions markerOptions) {
-        mImageView.setImageBitmap(person.getProfilePhoto());
+        mImageView.setImageBitmap(person.getMarkerPhoto());
         Bitmap icon = mIconGenerator.makeIcon();
-        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(Utils.getNameFromEmail(mContext, person.getTitle()));
-        markerOptions.snippet(Utils.timestampText(person.getSnippet()));
+        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(person.toString());
+        long time = 0;
+        if (person.getLocation() != null && person.getLocation().getTime() != null) time = person.getLocation().getTime().getTime();
+        markerOptions.snippet(Utils.timestampText(String.valueOf(time)));
     }
+
     @Override
     protected void onBeforeClusterRendered(Cluster<Person> cluster, MarkerOptions markerOptions) {
         List<Drawable> profilePhotos = new ArrayList<Drawable>(Math.min(4, cluster.getSize()));
@@ -68,7 +71,7 @@ public class PersonRenderer extends DefaultClusterRenderer<Person> {
         for (Person p : cluster.getItems()) {
             // Draw 4 at most.
             if (profilePhotos.size() == 4) break;
-            Drawable drawable = new BitmapDrawable(mContext.getResources(), p.getProfilePhoto());
+            Drawable drawable = new BitmapDrawable(mContext.getResources(), p.getPhoto());
             drawable.setBounds(0, 0, width, height);
             profilePhotos.add(drawable);
         }
