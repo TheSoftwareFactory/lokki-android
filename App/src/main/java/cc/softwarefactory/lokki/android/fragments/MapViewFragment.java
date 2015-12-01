@@ -563,6 +563,9 @@ public class MapViewFragment extends Fragment {
             if (!markers.contains(marker)) {
                 markers.add(marker);
                 clusterManager.addItem(marker);
+            } else {
+                clusterManager.removeItem(marker);
+                clusterManager.addItem(marker);
             }
 
             if (marker.getEmail().equals(MainApplication.emailBeingTracked)) {
