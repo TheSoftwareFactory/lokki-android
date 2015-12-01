@@ -4,10 +4,13 @@ import android.content.Context;
 
 import org.json.JSONObject;
 
+import java.util.List;
+
 import cc.softwarefactory.lokki.android.MainApplication;
+import cc.softwarefactory.lokki.android.models.Contact;
 
 public interface ContactDataSource {
 
-    MainApplication.Contacts getContacts(Context context);
+    List<Contact> getContacts(Context context);
 
 }

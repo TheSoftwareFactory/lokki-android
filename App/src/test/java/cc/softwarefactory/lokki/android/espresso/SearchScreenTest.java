@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.android.gms.maps.model.LatLng;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 
 import org.json.JSONException;
@@ -15,6 +16,8 @@ import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.espresso.utilities.MockJsonUtils;
 import cc.softwarefactory.lokki.android.espresso.utilities.TestUtils;
+import cc.softwarefactory.lokki.android.models.Contact;
+import cc.softwarefactory.lokki.android.models.UserLocation;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.pressBack;
@@ -31,11 +34,21 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 public class SearchScreenTest extends LoggedInBaseTest{
     private static String TAG = "SearchScreenTest";
 
+    private final String EMAIL = "family.member@example.com";
+    private final String EMAIL2 = "work.buddy@example.com";
+
+    private Contact contact;
+    private Contact contact2;
 
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        getMockDispatcher().setGetContactsResponse(new MockResponse().setResponseCode(200));
+        contact = MockJsonUtils.createContact(EMAIL);
+        contact2 = MockJsonUtils.createContact(EMAIL2);
+
+        for (Contact c : new Contact[]{contact, contact2}) {
+            c.setLocation(new UserLocation(new LatLng(60, 24), 100));
+        }
     }
 
     @Override
@@ -77,7 +90,7 @@ public class SearchScreenTest extends LoggedInBaseTest{
     private void waitForPlaces() throws InterruptedException, JsonProcessingException {
         int counter = 0;    //If we still don't have places after 1 second, let the test fail
         forcePlacesLoad();
-        while (counter < 10 && MainApplication.places.size() == 0) {
+        while (counter < 10 && (MainApplication.places == null || MainApplication.places.size() == 0)) {
             counter++;
             Log.d(TAG, "No places, waiting");
             Thread.sleep(100);
@@ -119,27 +132,23 @@ public class SearchScreenTest extends LoggedInBaseTest{
         onView(withId(R.id.map)).check(matches(isDisplayed()));
     }*/
 
-    public void testSearchFindsContacts() throws InterruptedException, JSONException {
-        String firstContactEmail = "family.member@example.com";
-        String secondContactEmail = "work.buddy@example.com";
-        getMockDispatcher().setDashboardResponse(new MockResponse().setBody(MockJsonUtils.getDashboardJsonWithContacts(firstContactEmail, secondContactEmail)));
+    public void testSearchFindsContacts() throws InterruptedException, JSONException, JsonProcessingException {
+        getMockDispatcher().setGetContactsResponse(new MockResponse().setBody(MockJsonUtils.getContactsJsonWith(contact, contact2)));
 
         getActivity();
         enterQuery("example");
 
-        onView(withText("family.member@example.com")).check(matches(isDisplayed()));
-        onView(withText("work.buddy@example.com")).check(matches(isDisplayed()));
+        onView(withText(EMAIL)).check(matches(isDisplayed()));
+        onView(withText(EMAIL2)).check(matches(isDisplayed()));
     }
 
-    public void testSearchFindsOnlyMatchingContacts() throws InterruptedException, JSONException {
-        String firstContactEmail = "family.member@example.com";
-        String secondContactEmail = "work.buddy@example.com";
-        getMockDispatcher().setDashboardResponse(new MockResponse().setBody(MockJsonUtils.getDashboardJsonWithContacts(firstContactEmail, secondContactEmail)));
+    public void testSearchFindsOnlyMatchingContacts() throws InterruptedException, JSONException, JsonProcessingException {
+        getMockDispatcher().setGetContactsResponse(new MockResponse().setBody(MockJsonUtils.getContactsJsonWith(contact, contact2)));
 
         getActivity();
         enterQuery("family");
-        onView(withText("family.member@example.com")).check(matches(isDisplayed()));
-        onView(withText("work.buddy@example.com")).check(doesNotExist());
+        onView(withText(EMAIL)).check(matches(isDisplayed()));
+        onView(withText(EMAIL2)).check(doesNotExist());
     }
 
     public void testSearchFindsPlaces() throws InterruptedException, JSONException, TimeoutException, JsonProcessingException {
@@ -165,18 +174,20 @@ public class SearchScreenTest extends LoggedInBaseTest{
     }
 
     public void testSearchFindsContactsAndPlaces() throws InterruptedException, JSONException, TimeoutException, JsonProcessingException {
+        String testEmail = "family.member@test.com";
+        String testEmail2 = "work.buddy@test.com";
+        contact.setEmail(testEmail);
+        contact2.setEmail(testEmail2);
 
-        String firstContactEmail = "family.member@test.com";
-        String secondContactEmail = "work.buddy@test.com";
-        getMockDispatcher().setDashboardResponse(new MockResponse().setBody(MockJsonUtils.getDashboardJsonWithContacts(firstContactEmail, secondContactEmail)));
+        getMockDispatcher().setGetContactsResponse(new MockResponse().setBody(MockJsonUtils.getContactsJsonWith(contact, contact2)));
         getMockDispatcher().setPlacesResponse(new MockResponse().setBody(MockJsonUtils.getPlacesJson()));
 
         getActivity();
         waitForPlaces();
 
         enterQuery("test");
-        onView(withText("family.member@test.com")).check(matches(isDisplayed()));
-        onView(withText("work.buddy@test.com")).check(matches(isDisplayed()));
+        onView(withText(testEmail)).check(matches(isDisplayed()));
+        onView(withText(testEmail2)).check(matches(isDisplayed()));
         onView(withText("Testplace1")).check(matches(isDisplayed()));
         onView(withText("Testplace2")).check(matches(isDisplayed()));
     }

@@ -70,11 +70,11 @@ public class MockDispatcher extends Dispatcher {
     }
 
     public RequestsHandle setAllowPostResponse(MockResponse response) {
-        return installResponse(METHOD_POST, DEFAULT_USER_BASE_PATH + "allow", response);
+        return installResponse(METHOD_POST, DEFAULT_USER_BASE_PATH + "contacts/allow", response);
     }
 
     public RequestsHandle setAllowDeleteResponse(MockResponse response, String idToDelete) {
-        return installResponse(METHOD_DELETE, DEFAULT_USER_BASE_PATH + "allow/" + idToDelete, response);
+        return installResponse(METHOD_DELETE, DEFAULT_USER_BASE_PATH + "contacts/allow/" + idToDelete, response);
     }
 
     public RequestsHandle setGetContactsResponse(MockResponse response) {
@@ -86,7 +86,7 @@ public class MockDispatcher extends Dispatcher {
     }
 
     public RequestsHandle setRenameContactResponse(MockResponse response, String idToRename) {
-        return installResponse(METHOD_POST, DEFAULT_USER_BASE_PATH + "rename/" + idToRename, response);
+        return installResponse(METHOD_POST, DEFAULT_USER_BASE_PATH + "contacts/rename/" + idToRename, response);
     }
 
     public RequestsHandle setGcmTokenResponse(MockResponse response) {

@@ -48,15 +48,16 @@ import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
+import cc.softwarefactory.lokki.android.models.Contact;
 import cc.softwarefactory.lokki.android.models.Person;
 import cc.softwarefactory.lokki.android.models.Place;
-import cc.softwarefactory.lokki.android.models.User;
 import cc.softwarefactory.lokki.android.models.UserLocation;
+import cc.softwarefactory.lokki.android.services.ContactService;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 import cc.softwarefactory.lokki.android.utilities.DialogUtils;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
@@ -83,13 +84,15 @@ public class MapViewFragment extends Fragment {
     private Context context;
     private double radiusMultiplier = 0.9;  // Dont want to fill the screen from edge to edge...
     private GoogleMap map;
-    private HashMap<String, Person> markerMap;
+    private List<Person> markers;
     private LatLng startLocation = null;
     private SupportMapFragment fragment;
     private TextView placeAddingTip;
 
+    private ContactService contactService;
+
     public MapViewFragment() {
-        markerMap = new HashMap<>();
+        markers = new ArrayList<>();
         placesOverlay = new ArrayList<>();
     }
 
@@ -102,9 +105,9 @@ public class MapViewFragment extends Fragment {
 
         aq = new AQuery(getActivity(), rootView);
         context = getActivity().getApplicationContext();
+        contactService = new ContactService(context);
         LocalBroadcastManager.getInstance(context).registerReceiver(goToReceiver, new IntentFilter(BROADCAST_GO_TO));
         return rootView;
-
     }
 
     public void updatePlaceAddingTipVisibility() {
@@ -201,7 +204,7 @@ public class MapViewFragment extends Fragment {
             startLocation = null;
         }
         setUpClusterManager();
-        markerMap.clear();
+        markers.clear();
     }
 
 
@@ -464,121 +467,84 @@ public class MapViewFragment extends Fragment {
         placesOverlay.clear();
     }
 
-    private class UpdateMap extends AsyncTask<MapUserTypes, Void, HashMap<String, Location>> {
+    private class UpdateMap extends AsyncTask<MapUserTypes, Void, List<Person>> {
 
         @Override
-        protected HashMap<String, Location> doInBackground(MapUserTypes... params) {
-
-            MainApplication.Dashboard dashboard = MainApplication.dashboard;
-
-            if (dashboard == null) {
-                return null;
-            }
+        protected List<Person> doInBackground(MapUserTypes... params) {
+            List<Contact> visibleContacts = contactService.getContactsVisibleToMe();
 
             MapUserTypes who = params[0];
             Log.d(TAG, "UpdateMap update for all users: " + who);
 
-            HashMap<String, Location> markerData = new HashMap<>();
+            List<Person> markerData = new ArrayList<>();
 
             if (who == MapUserTypes.User || who == MapUserTypes.All) {
-                markerData.put(MainApplication.userAccount, dashboard.getUserLocation().convertToAndroidLocation()); // User himself
-                markerData.put(MainApplication.userAccount, dashboard.getLocation().convertToAndroidLocation()); // User himself
-
+                if (MainApplication.user != null && MainApplication.user.getEmail() != null) markerData.add(MainApplication.user);
             }
 
             if (who == MapUserTypes.Others || who == MapUserTypes.All) {
-                for (String userId : dashboard.getUserIdsICanSee()) {
-                    User user = dashboard.getUserICanSeeByUserId(userId);
-                    UserLocation location = user.getUserLocation();
-                    String email = dashboard.getEmailByUserId(userId);
-                    Log.d(TAG, "I can see: " + email + " => " + user);
-
-                    if (MainApplication.iDontWantToSee != null && MainApplication.iDontWantToSee.has(email)) {
-                        Log.d(TAG, "I dont want to see: " + email);
-                    } else {
-                        Location loc = location.convertToAndroidLocation();
-                        if (loc == null) {
-                            Log.w(TAG, "No location could be parsed for: " + email);
-                        }
-                        markerData.put(email, loc);
-                    }
+                for (Contact contact : visibleContacts) {
+                    markerData.add((contact));
                 }
             }
             return markerData;
         }
 
         @Override
-        protected void onPostExecute(HashMap<String, Location> markerDataResult) {
+        protected void onPostExecute(List<Person> markerDataResult) {
 
             Log.d(TAG, "cancelAsyncTasks: " + cancelAsyncTasks);
             super.onPostExecute(markerDataResult);
             if (markerDataResult != null && !cancelAsyncTasks && isAdded()) {
-                for (String email : markerDataResult.keySet()) {
-                    Log.d(TAG, "marker to update: " + email);
-                    if (markerDataResult.get(email) != null) {
-                        new LoadMarkerAsync(markerDataResult.get(email), email).execute();
+                for (Person person : markerDataResult) {
+                    Log.d(TAG, "marker to update: " + person.toString());
+                    if (person != null) {
+                        new LoadMarkerAsync(person).execute();
                     }
                 }
             }
         }
     }
 
-    private Bitmap getMarkerBitmap(String email, Boolean accurate, Boolean recent) {
+    private Bitmap getMarkerBitmap(Person person) {
+        if (person.getMarkerPhoto() != null) return person.getMarkerPhoto();
 
-        Log.d(TAG, "getMarkerBitmap");
-        // Add cache checking logic
-        Bitmap markerImage = MainApplication.avatarCache.get(email + ":" + accurate + ":" + recent);
-        if (markerImage != null) {
-            Log.d(TAG, "Marker IN cache: " + email + ":" + accurate + ":" + recent);
-            return markerImage;
-        }
-
-        Log.d(TAG, "AvatarLoader not in cache. Fetching it. Email: " + email);
-        Bitmap userImage = Utils.getPhotoFromEmail(context, email);
+        Bitmap userImage = person.getPhoto();
         if (userImage == null) {
             userImage = BitmapFactory.decodeResource(getResources(), R.drawable.default_avatar);
         }
 
         Log.d(TAG, "userImage setting borders ");
-        if (email.equals(MainApplication.userAccount)) {
+        if (person == MainApplication.user) {
            userImage = Utils.addBorderToBitMap(userImage, 10, Color.GREEN);
-        } else if (!recent || !accurate) {
-            userImage = Utils.addBorderToBitMap(userImage, 10, Color.YELLOW);
+        } else {
+            boolean accurate = Math.round(person.getLocation().getAcc()) < 100;
+            boolean recent = (System.currentTimeMillis() - person.getLocation().getTime().getTime()) < 60 * 60 * 1000;
+            if (!recent || !accurate) {
+                userImage = Utils.addBorderToBitMap(userImage, 10, Color.YELLOW);
+            }
         }
 
+        person.setMarkerPhoto(userImage);
         return userImage;
+
     }
 
 
     class LoadMarkerAsync extends AsyncTask<Void, Void, Bitmap> {
 
-        Location position;
-        LatLng latLng;
-        String email;
-        String time;
-        Boolean accurate;
-        Boolean recent;
+        Person person;
 
-        public LoadMarkerAsync(Location position, String email) {
-
-            this.email = email;
-            this.position = position;
+        public LoadMarkerAsync(Person person) {
+            this.person = person;
         }
 
         @Override
         protected Bitmap doInBackground(Void... params) {
-
-            if (position == null || email == null) {
-                return null;
-            }
-            Log.d(TAG, "LoadMarkerAsync - Email: " + email + ", Position: " + position);
-            latLng = new LatLng(position.getLatitude(), position.getLongitude());
-            time = String.valueOf(position.getTime());
-            accurate = Math.round(position.getAccuracy()) < 100;
-            recent = (System.currentTimeMillis() - position.getTime()) < 60 * 60 * 1000;
-
             try {
-                return getMarkerBitmap(email, accurate, recent);
+                UserLocation location = person.getLocation();
+                if (location == null || location.isEmpty()) return null;
+                return getMarkerBitmap(person);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -592,32 +558,20 @@ public class MapViewFragment extends Fragment {
             if (bitmapResult == null || cancelAsyncTasks || !isAdded() || map == null) {
                 return;
             }
-            Person marker = markerMap.get(email);
+            Person marker = person;
 
-            Boolean isNew = false;
-            if (marker != null) {
-                Log.d(TAG, "onPostExecute - updating marker: " + email);
-                markerMap.remove(marker);
-                clusterManager.removeItem(marker);
-                Person p = new Person(latLng, email, time, bitmapResult);
-                markerMap.put(email, p);
-                clusterManager.addItem(p);
-            } else {
-                Log.d(TAG, "onPostExecute - creating marker: " + email);
-                marker = new Person(latLng, email, time, bitmapResult);
+            if (!markers.contains(marker)) {
+                markers.add(marker);
                 clusterManager.addItem(marker);
-                markerMap.put(email, marker);
-                Log.d(TAG, "onPostExecute - marker in map stored. markerMap: " + markerMap.size());
-                isNew = true;
+            } else {
+                clusterManager.removeItem(marker);
+                clusterManager.addItem(marker);
             }
-            if (marker.getTitle().equals(MainApplication.emailBeingTracked)) {
+
+            if (marker.getEmail().equals(MainApplication.emailBeingTracked)) {
                 Log.d(TAG, "onPostExecute - showInfoWindow open");
-                if (isNew) {
-                    map.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), DEFAULT_ZOOM));
-                } else {
-                    map.moveCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
-                }
-            } else if (MainApplication.firstTimeZoom && MainApplication.emailBeingTracked == null && MainApplication.userAccount != null && marker.getTitle().equals(MainApplication.userAccount)) {
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), DEFAULT_ZOOM));
+            } else if (MainApplication.firstTimeZoom && MainApplication.emailBeingTracked == null && MainApplication.user.getEmail() != null && marker.getEmail().equals(MainApplication.user.getEmail()) && marker.getPosition() != null) {
                 MainApplication.firstTimeZoom = false;
                 map.moveCamera(CameraUpdateFactory.newLatLngZoom(marker.getPosition(), DEFAULT_ZOOM));
             }
@@ -645,20 +599,18 @@ public class MapViewFragment extends Fragment {
         clusterManager.setOnClusterClickListener(new ClusterManager.OnClusterClickListener<Person>() {
             @Override
             public boolean onClusterClick(Cluster<Person> cluster) {
-                String email = cluster.getItems().iterator().next().getTitle();
-                String name = Utils.getNameFromEmail(context, email);
-                Toast.makeText(context, cluster.getSize() + " people including " + name , Toast.LENGTH_SHORT).show();
+                Person person = cluster.getItems().iterator().next();
+                Toast.makeText(context, cluster.getSize() + " people including " + person.toString() , Toast.LENGTH_SHORT).show();
                 return true;
             }
         });
         clusterManager.setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener<Person>() {
             @Override
             public boolean onClusterItemClick(Person person) {
-                MainApplication.emailBeingTracked = person.getTitle();
+                MainApplication.emailBeingTracked = person.getEmail();
                 return false;
             }
         });
-        //clusterManager.
         googleMap.setOnCameraChangeListener(clusterManager);
         googleMap.setOnMarkerClickListener(clusterManager);
         googleMap.setOnInfoWindowClickListener(clusterManager);

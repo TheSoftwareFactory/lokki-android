@@ -1,6 +1,6 @@
 package cc.softwarefactory.lokki.android.models;
 
-public class BuzzPlace extends JSONModel {
+public class BuzzPlace {
     private String placeId;
     private int buzzCount;
     private boolean activated;

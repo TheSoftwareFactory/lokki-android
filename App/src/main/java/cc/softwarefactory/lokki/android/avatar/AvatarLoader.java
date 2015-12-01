@@ -5,29 +5,23 @@ See LICENSE for details
 package cc.softwarefactory.lokki.android.avatar;
 
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ImageView;
 
-import cc.softwarefactory.lokki.android.utilities.Utils;
+import cc.softwarefactory.lokki.android.models.Person;
 
 import java.lang.ref.WeakReference;
 
 public class AvatarLoader {
 
-    private Context context;
     private static final String TAG = "AvatarLoader";
 
-    public AvatarLoader(Context myContext) {
-
-        context = myContext;
-    }
-
-    public void load(String email, ImageView imageView) {
-        Log.d(TAG, "1) load: " + email);
-        if (!cancelPotentialWork(email, imageView)) {
+    public void load(Person person, ImageView imageView) {
+        if (person == null || person.getEmail() == null) return;
+        Log.d(TAG, "1) load: " + person.getEmail());
+        if (!cancelPotentialWork(person, imageView)) {
             return;
         }
 
@@ -35,13 +29,13 @@ public class AvatarLoader {
         final BitmapWorkerTask task = new BitmapWorkerTask(imageView);
         final WeakReference<BitmapWorkerTask> taskReference = new WeakReference<>(task);
         imageView.setTag(taskReference);
-        task.execute(email);
+        task.execute(person);
     }
 
-    class BitmapWorkerTask extends AsyncTask<String, Void, Bitmap> {
+    class BitmapWorkerTask extends AsyncTask<Person, Void, Bitmap> {
 
         private final WeakReference<ImageView> imageViewReference;
-        private String data = "";
+        private Person data;
 
         public BitmapWorkerTask(ImageView imageView) {
             // Use a WeakReference to ensure the ImageView can be garbage collected
@@ -50,7 +44,7 @@ public class AvatarLoader {
 
         // Decode image in background.
         @Override
-        protected Bitmap doInBackground(String... params) {
+        protected Bitmap doInBackground(Person... params) {
 
             Log.d(TAG, "BitmapWorkerTask: doInBackground: " + params[0]);
             data = params[0];
@@ -80,13 +74,12 @@ public class AvatarLoader {
         }
     }
 
-    private Bitmap processData(String email) {
-
+    private Bitmap processData(Person person) {
         Log.d(TAG, "processData");
-        return Utils.getPhotoFromEmail(context, email);
+        return person.getPhoto();
     }
 
-    private static boolean cancelPotentialWork(String data, ImageView imageView) {
+    private static boolean cancelPotentialWork(Person person, ImageView imageView) {
 
         BitmapWorkerTask task = getTaskFromView(imageView);
 
@@ -95,7 +88,7 @@ public class AvatarLoader {
             return true;
         }
 
-        if (!task.data.equals(data)) {
+        if (!task.data.getEmail().equals(person.getEmail())) {
             Log.e(TAG, "cancelPotentialWork: Cancel previous task"); // Cancel previous task
             task.cancel(true);
             return true;

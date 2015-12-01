@@ -4,7 +4,7 @@ package cc.softwarefactory.lokki.android.models;
  * Model class for User
  * @author panchamukhi
  */
-public class User extends JSONModel {
+public class User {
 
 
     private UserLocation location; // track user location
