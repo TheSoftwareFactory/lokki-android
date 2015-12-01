@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import cc.softwarefactory.lokki.android.BuildConfig;
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.constants.Constants;
 
@@ -56,7 +57,7 @@ public class ServerApi {
 
         String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
         final String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
-        String url = ApiUrl  + "user/" + userId + "/dashboard";
+        String url = ApiUrl  + "user/" + userId + "/version/" + BuildConfig.VERSION_CODE + "/dashboard";
 
         AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>() {
             @Override
@@ -72,10 +73,21 @@ public class ServerApi {
                 } else if (json != null) {
                     Log.d(TAG, "json returned: " + json);
                     try {
+                        if (json.has("serverMessage"))
+                        {
+                            String message = json.get("serverMessage").toString();
+                            Intent intent = new Intent("MESSAGE");
+                            intent.putExtra("message", message);
+                            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+                            return;
+                        }
                         MainApplication.dashboard = JsonUtils.createFromJson(json.toString(), MainApplication.Dashboard.class);
                         PreferenceUtils.setString(context, PreferenceUtils.KEY_DASHBOARD, JsonUtils.serialize(MainApplication.dashboard));
                         MainApplication.user.setLocation(MainApplication.dashboard.getLocation());
                     } catch (IOException e) {
+                        Log.e(TAG, "Parsing JSON failed!");
+                        e.printStackTrace();
+                    } catch (JSONException e) {
                         Log.e(TAG, "Parsing JSON failed!");
                         e.printStackTrace();
                     }

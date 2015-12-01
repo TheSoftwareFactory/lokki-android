@@ -3,6 +3,7 @@ package cc.softwarefactory.lokki.android.espresso.utilities;
 import com.squareup.okhttp.mockwebserver.Dispatcher;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.RecordedRequest;
+import cc.softwarefactory.lokki.android.BuildConfig;
 
 import org.json.JSONException;
 
@@ -57,7 +58,7 @@ public class MockDispatcher extends Dispatcher {
     }
 
     public RequestsHandle setDashboardResponse(MockResponse response) {
-        return installResponse(METHOD_GET, DEFAULT_USER_BASE_PATH + "dashboard", response);
+        return installResponse(METHOD_GET, DEFAULT_USER_BASE_PATH + "version/" + BuildConfig.VERSION_CODE + "/dashboard", response);
     }
 
     public RequestsHandle setUpdateLocationsResponse(MockResponse response) {
