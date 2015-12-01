@@ -42,6 +42,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import org.json.JSONException;
 
+import java.io.IOException;
+import java.util.Arrays;
+
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.datasources.contacts.ContactDataSource;
@@ -55,7 +58,10 @@ import cc.softwarefactory.lokki.android.fragments.PlacesFragment;
 import cc.softwarefactory.lokki.android.fragments.PreferencesFragment;
 import cc.softwarefactory.lokki.android.androidServices.DataService;
 import cc.softwarefactory.lokki.android.androidServices.LocationService;
+import cc.softwarefactory.lokki.android.models.Contact;
+import cc.softwarefactory.lokki.android.services.ContactService;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
+import cc.softwarefactory.lokki.android.utilities.JsonUtils;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
 import cc.softwarefactory.lokki.android.utilities.Utils;
@@ -82,6 +88,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     private int selectedOption = 0;
 
     private ContactDataSource mContactDataSource;
+
+    private ContactService contactService;
 
     //Is this activity currently paused?
     private boolean paused = true;
@@ -118,6 +126,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
             actionBar.setTitle(mTitle);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+
+        contactService = new ContactService(this);
     }
 
     /**
@@ -207,13 +217,17 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         startServices();
         LocalBroadcastManager.getInstance(this).registerReceiver(exitMessageReceiver, new IntentFilter("EXIT"));
         LocalBroadcastManager.getInstance(this).registerReceiver(switchToMapReceiver, new IntentFilter("GO-TO-MAP"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(serverMessageReceiver, new IntentFilter("MESSAGE"));
 
 
         Log.i(TAG, "onResume - check if dashboard is null");
         if (MainApplication.dashboard == null) {
-            Log.w(TAG, "onResume - dashboard was null, get dashboard & contacts from server");
+            Log.w(TAG, "onResume - dashboard was null, get dashboard from server");
             ServerApi.getDashboard(getApplicationContext());
-            ServerApi.getContacts(getApplicationContext());
+        }
+        if  (MainApplication.contacts == null) {
+            Log.w(TAG, "onResume - dashboard was null, get contacts from server");
+            contactService.getContacts();
         }
 
     }
@@ -333,6 +347,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         //DataService.stop(this.getApplicationContext());
         LocalBroadcastManager.getInstance(this).unregisterReceiver(switchToMapReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(exitMessageReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(serverMessageReceiver);
         super.onPause();
         //Set location update accuracy to low if the service has been initialized
         if (mBoundLocationService != null) {
@@ -355,7 +370,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
      * Ensures that the user is signed in by launching the SignUpActivity if they aren't
      */
     private void signUserIn() {
-
         if (!loggedIn()) {
             try {
                 startActivityForResult(new Intent(this, SignUpActivity.class), REQUEST_CODE_EMAIL);
@@ -365,7 +379,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                 finish();
             }
         } else { // User already logged-in
-            MainApplication.userAccount = PreferenceUtils.getString(this, PreferenceUtils.KEY_USER_ACCOUNT);
+            MainApplication.user.setEmail(PreferenceUtils.getString(this, PreferenceUtils.KEY_USER_ACCOUNT));
             GcmHelper.start(getApplicationContext()); // Register to GCM
         }
     }
@@ -583,14 +597,14 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
             return;
         }
         ImageView image = (ImageView) view;
-        String email = (String) image.getTag();
-        showUserInMap(email);
+        Contact contact = (Contact) image.getTag();
+        showUserInMap(contact);
     }
 
-    private void showUserInMap(String email) { // Used in Contacts
+    private void showUserInMap(Contact contact) { // Used in Contacts
 
-        Log.d(TAG, "showUserInMap: " + email);
-        MainApplication.emailBeingTracked = email;
+        Log.d(TAG, "showUserInMap: " + contact.toString());
+        MainApplication.emailBeingTracked = contact.getEmail();
         mNavigationDrawerFragment.selectNavDrawerItem(1); // Position 1 is the Map
     }
 
@@ -603,28 +617,28 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         }
         CheckBox checkBox = (CheckBox) view;
         Boolean allow = checkBox.isChecked();
-        String email = (String) checkBox.getTag();
-        Log.d(TAG, "toggleIDontWantToSee: " + email + ", Checkbox is: " + allow);
+        Contact contact = (Contact) checkBox.getTag();
+        Log.d(TAG, "toggleIDontWantToSee: " + contact.toString() + ", Checkbox is: " + allow);
         if (!allow) {
-            MainApplication.iDontWantToSee.put(email, 1);
+            MainApplication.iDontWantToSee.put(contact.getEmail(), 1);
             try {
-                Log.d(TAG, MainApplication.iDontWantToSee.serialize());
-                PreferenceUtils.setString(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, MainApplication.iDontWantToSee.serialize());
+                Log.d(TAG, JsonUtils.serialize(MainApplication.iDontWantToSee));
+                PreferenceUtils.setString(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, JsonUtils.serialize(MainApplication.iDontWantToSee));
             } catch (JsonProcessingException e) {
                 Log.e(TAG, "Serializing iDontWantToSee to JSON failed");
                 e.printStackTrace();
             }
-            ServerApi.ignoreUsers(this, email);
-        } else if (MainApplication.iDontWantToSee.has(email)) {
+            contactService.ignoreContact(contact);
+        } else if (MainApplication.iDontWantToSee.has(contact.getEmail())) {
             Log.d(TAG, "unignoring user");
-            MainApplication.iDontWantToSee.remove(email);
+            MainApplication.iDontWantToSee.remove(contact.getEmail());
             try {
-                PreferenceUtils.setString(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, MainApplication.iDontWantToSee.serialize());
+                PreferenceUtils.setString(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, JsonUtils.serialize(MainApplication.iDontWantToSee));
             } catch (JsonProcessingException e) {
                 Log.e(TAG, "Serializing iDontWantToSee to JSON failed");
                 e.printStackTrace();
             }
-            ServerApi.unignoreUser(this, email);
+            contactService.unignoreContact(contact);
         }
     }
 
@@ -635,16 +649,15 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         if (view != null) {
             CheckBox checkBox = (CheckBox) view;
             Boolean allow = checkBox.isChecked();
-            String email = (String) checkBox.getTag();
-            Log.d(TAG, "toggleUserCanSeeMe: " + email + ", Checkbox is: " + allow);
+            Contact contact = (Contact) checkBox.getTag();
+            Log.d(TAG, "toggleUserCanSeeMe: " + contact.getEmail() + ", Checkbox is: " + allow);
             if (!allow) {
-                ServerApi.disallowUser(this, email);
+                contactService.disallowContact(contact);
             } else {
-                final MainActivity activity = this;
-                ServerApi.allowPeople(this, email, new AjaxCallback<String>() {
+                contactService.allowContacts(Arrays.asList(contact), new AjaxCallback<String>() {
                     @Override
                     public void callback(String url, String result, AjaxStatus status) {
-                        DataService.getDashboard(activity);
+                        contactService.getContacts();
                     }
                 });
             }
@@ -662,7 +675,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
             alertDialog.setTitle(getString(R.string.app_name));
-            String message = getString(R.string.security_sign_up, MainApplication.userAccount);
+            String message = getString(R.string.security_sign_up, MainApplication.user.getEmail());
             alertDialog.setMessage(message)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
@@ -675,6 +688,31 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
             alertDialog.show();
         }
     };
+
+    private BroadcastReceiver serverMessageReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d(TAG, "serverMessageReceiver onReceive");
+
+            LocationService.stop(MainActivity.this.getApplicationContext());
+            DataService.stop(MainActivity.this.getApplicationContext());
+
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+            alertDialog.setTitle(getString(R.string.app_name));
+            String message = intent.getStringExtra("message");
+            alertDialog.setMessage(message)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            finish();
+                        }
+                    })
+                    .setCancelable(false);
+            alertDialog.show();
+        }
+    };
+
 
     private BroadcastReceiver switchToMapReceiver = new BroadcastReceiver() {
 
@@ -708,7 +746,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                         PreferenceUtils.setString(main, PreferenceUtils.KEY_DASHBOARD, null);
                         PreferenceUtils.setString(main, PreferenceUtils.KEY_LOCAL_CONTACTS, null);
                         PreferenceUtils.setString(main, PreferenceUtils.KEY_PLACES, null);
-                        MainApplication.userAccount = null;
+                        MainApplication.user = null;
                         MainApplication.dashboard = null;
                         MainApplication.contacts = null;
                         MainApplication.places = null;

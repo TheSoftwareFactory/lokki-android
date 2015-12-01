@@ -14,8 +14,8 @@ android {
     defaultConfig {
         minSdkVersion 15
         targetSdkVersion 22
-        versionCode 419
-        versionName "4.1.9"
+        versionCode 420
+        versionName "4.2.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
@@ -107,6 +107,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-maps:7.5.0'
     compile 'com.google.android.gms:play-services-location:7.5.0'
     compile 'com.google.android.gms:play-services-analytics:7.5.0'
+    compile 'com.google.maps.android:android-maps-utils:0.4+'
     compile 'com.makeramen:roundedimageview:2.0.1'
     compile files('libs/android-query.0.26.7.jar')
     compile(name:'android-support-v4-preferencefragment-master-release', ext:'aar')

@@ -32,24 +32,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androidquery.AQuery;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.avatar.AvatarLoader;
 import cc.softwarefactory.lokki.android.models.Contact;
-import cc.softwarefactory.lokki.android.models.JSONModel;
-import cc.softwarefactory.lokki.android.models.UserLocation;
+import cc.softwarefactory.lokki.android.services.ContactService;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
-import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
-import cc.softwarefactory.lokki.android.utilities.ServerApi;
 import cc.softwarefactory.lokki.android.utilities.Utils;
 
 import static cc.softwarefactory.lokki.android.R.string.analytics_label_confirm_rename_contact_dialog;
@@ -57,23 +50,15 @@ import static cc.softwarefactory.lokki.android.R.string.analytics_label_confirm_
 public class ContactsFragment extends Fragment {
 
     private static final String TAG = "Contacts";
-    private ArrayList<String> peopleList;
-    private Set<String> iCanSee;
-    private Set<String> canSeeMe;
-    private HashMap<String, String> mapping;
-    private HashMap<String, Long> timestamps;
+    private ArrayList<Contact> peopleList;
     private AQuery aq;
     private static Boolean cancelAsynTasks = false;
     private Context context;
     private AvatarLoader avatarLoader;
+    private ContactService contactService;
 
     public ContactsFragment() {
-
         peopleList = new ArrayList<>();
-        iCanSee = new HashSet<>();
-        canSeeMe = new HashSet<>();
-        mapping = new HashMap<>();
-        timestamps = new HashMap<>();
     }
 
     @Override
@@ -83,7 +68,8 @@ public class ContactsFragment extends Fragment {
         aq = new AQuery(getActivity(), rootView);
         cancelAsynTasks = false;
         context = getActivity().getApplicationContext();
-        avatarLoader = new AvatarLoader(context);
+        contactService = new ContactService(context);
+        avatarLoader = new AvatarLoader();
         new GetPeopleThatCanSeeMe().execute();
         ListView listView = aq.id(R.id.contacts_list_view).getListView();
         this.registerForContextMenu(listView);
@@ -130,7 +116,7 @@ public class ContactsFragment extends Fragment {
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
         int position = info.position;
-        String contactName = peopleList.get(position);
+        Contact contact = peopleList.get(position);
 
         switch(item.getItemId()) {
             // Remove contact
@@ -138,12 +124,11 @@ public class ContactsFragment extends Fragment {
                 AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
                         getString(R.string.analytics_action_click),
                         getString(R.string.analytics_label_delete_contact));
-                deleteContactDialog(contactName);
+                deleteContactDialog(contact);
                 return true;
             //Rename contact
             case R.id.contacts_context_menu_rename:
-                final String email = mapping.get(contactName);
-                showRenameDialog(email, contactName);
+                showRenameDialog(contact);
                 return true;
 
         }
@@ -153,19 +138,19 @@ public class ContactsFragment extends Fragment {
 
     /** Ask the user to confirm contact deletion
      *
-     * @param contactName   Name of the contact to be removed
+     * @param contact   The contact to be removed
      */
-    private void deleteContactDialog(final String contactName){
+    private void deleteContactDialog(final Contact contact){
         new AlertDialog.Builder(getActivity())
                 .setMessage(getString(R.string.delete_contact))
-                .setMessage(contactName + " " + getString(R.string.will_be_deleted_from_contacts))
+                .setMessage(contact.toString() + " " + getString(R.string.will_be_deleted_from_contacts))
                 .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
                                 getString(R.string.analytics_action_click),
                                 getString(R.string.analytics_label_confirm_delete_contact_dialog));
-                        deleteContact(contactName);
+                        deleteContact(contact);
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -181,17 +166,10 @@ public class ContactsFragment extends Fragment {
 
     /**Deletes a contact from the user's contacts
      *
-     * @param name  The name of the contact to be deleted
+     * @param contact  The contact to be deleted
      */
-    private void deleteContact(String name){
-        //By default, the contact's name is their email
-        String email = name;
-        //If the contact has been assigned a different name, it's in mapping
-        if (MainApplication.contacts != null && MainApplication.contacts.hasName(name)) {
-            email = MainApplication.contacts.getEmailByName(name);
-        }
-        //Delete the contact
-        ServerApi.removeContact(context, email);
+    private void deleteContact(Contact contact){
+        contactService.removeContact(contact);
     }
 
     /**
@@ -201,58 +179,26 @@ public class ContactsFragment extends Fragment {
         Log.d(TAG, "Refreshing contacts screen");
         //Empty all existing local data structures
         peopleList = new ArrayList<>();
-        iCanSee = new HashSet<>();
-        canSeeMe = new HashSet<>();
-        mapping = new HashMap<>();
-        timestamps = new HashMap<>();
         //Fill them with up-to-date data
         new GetPeopleThatCanSeeMe().execute();
     }
 
-    private void getPeopleThatCanSeeMe() {
-
-        try {
-            if (MainApplication.dashboard == null) {
-                String dashboardJsonAsString = PreferenceUtils.getString(context, PreferenceUtils.KEY_DASHBOARD);
-                if (dashboardJsonAsString.isEmpty()) {
-                    return;
-                }
-                MainApplication.dashboard = JSONModel.createFromJson(dashboardJsonAsString, MainApplication.Dashboard.class);
-            }
-
-            for (String userIdICanSee : MainApplication.dashboard.getUserIdsICanSee()) {
-                String email = MainApplication.dashboard.getEmailByUserId(userIdICanSee);
-                String name = Utils.getNameFromEmail(context, email);
-                // updated to UserLocation from User,Location
-                UserLocation location = MainApplication.dashboard.getUserICanSeeByUserId(userIdICanSee).getUserLocation();
-
-            if  (location.getTime() != null)
-                    timestamps.put(name, location.getTime().getTime());
-                iCanSee.add(email);
-                mapping.put(name, email);
-                Log.d(TAG, "I can see: " + email);
-            }
-
-            for (String userId : MainApplication.dashboard.getCanSeeMe()) {
-                String email = MainApplication.dashboard.getEmailByUserId(userId);
-                String name = Utils.getNameFromEmail(context, email);
-                canSeeMe.add(email);
-                mapping.put(name, email);
-                Log.d(TAG, "Can see me: " + email);
-            }
+    private void getPeopleList() {
+        if (MainApplication.contacts == null) try {
+            MainApplication.contacts = contactService.getFromCache();
         } catch (IOException e) {
-            Log.e(TAG, "Parsing dashboard JSON failed");
+            Log.e(TAG, "getting contacts from cache failed");
             e.printStackTrace();
+            MainApplication.contacts = new ArrayList<>();
         }
-
-        peopleList.addAll(mapping.keySet());
+        peopleList.addAll(MainApplication.contacts);
         Collections.sort(peopleList);
         Log.d(TAG, "Contact list: " + peopleList);
     }
 
     private void setListAdapter() {
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, R.layout.people_row_layout, peopleList) {
+        ArrayAdapter<Contact> adapter = new ArrayAdapter<Contact>(context, R.layout.people_row_layout, peopleList) {
 
             ViewHolder holder;
 
@@ -275,39 +221,32 @@ public class ContactsFragment extends Fragment {
                     holder = (ViewHolder) convertView.getTag();
                 }
 
-                final String contactName = getItem(position);
-                final String email = mapping.get(contactName);
+                final Contact contact = getItem(position);
 
                 //Allow user to rename contact by long pressing their bane
                 AQuery aq = new AQuery(convertView);
-                aq.id(holder.name).text(contactName).longClicked(new View.OnLongClickListener(){
+                aq.id(holder.name).text(contact.toString()).longClicked(new View.OnLongClickListener(){
                     @Override
                     public boolean onLongClick(View view){
-                        showRenameDialog(email, contactName);
+                        showRenameDialog(contact);
                         return true;
                     }
 
                 });
-                aq.id(holder.email).text(email);
+                aq.id(holder.email).text(contact.getEmail());
 
-                avatarLoader.load(email, holder.photo);
+                avatarLoader.load(contact, holder.photo);
 
-                aq.id(holder.lastReport).text(Utils.timestampText(timestamps.get(contactName)));
-                aq.id(holder.checkCanSeeMe).checked(canSeeMe.contains(email)).tag(email);
-                aq.id(holder.checkICanSee).tag(email);
+                aq.id(holder.lastReport).text((contact == null || contact.getLocation() == null || contact.getLocation().getTime() == null) ? "" : Utils.timestampText(contact.getLocation().getTime().getTime()));
+                aq.id(holder.checkCanSeeMe).checked(contact.isCanSeeMe()).tag(contact);
+                aq.id(holder.checkICanSee).tag(contact);
 
-                if (MainApplication.iDontWantToSee != null) {
-                    aq.id(holder.checkICanSee).checked(!MainApplication.iDontWantToSee.has(email));
-                    aq.id(holder.photo).clickable(!MainApplication.iDontWantToSee.has(email) && iCanSee.contains(email));
-
-                } else {
-                    aq.id(holder.photo).clickable(iCanSee.contains(email));
-                    aq.id(holder.checkICanSee).checked(iCanSee.contains(email)).clickable(iCanSee.contains(email));
-                }
+                aq.id(holder.checkICanSee).checked(!contact.isIgnored());
+                aq.id(holder.photo).clickable(!contact.isIgnored() && contact.isVisibleToMe());
 
                 holder.position = position;
 
-                if (!iCanSee.contains(email)) {
+                if (!contact.isVisibleToMe()) {
                     aq.id(holder.checkICanSee).enabled(true);
                     aq.id(holder.checkICanSee).checked(false);
                     aq.id(holder.checkICanSee).getView().setAlpha(0.1f);
@@ -344,13 +283,12 @@ public class ContactsFragment extends Fragment {
 
     /**
      * Shows a dialog window that allows the user to rename a contact
-     * @param email         The email address of the contact to be renamed
-     * @param contactName   The current name of the contact
+     * @param contact         The contact to be renamed
      */
-    private void showRenameDialog(final String email, final String contactName) {
+    private void showRenameDialog(final Contact contact) {
         final EditText input = new EditText(getActivity());
         String titleFormat = getString(R.string.rename_prompt);
-        final String title = String.format(titleFormat, contactName);
+        final String title = String.format(titleFormat, contact.toString());
 
         new AlertDialog.Builder(getActivity())
             .setTitle(title)
@@ -363,7 +301,7 @@ public class ContactsFragment extends Fragment {
                             getString(R.string.analytics_action_click),
                             getString(analytics_label_confirm_rename_contact_dialog));
                     String newName = input.getText().toString();
-                    renameContact(email, contactName, newName);
+                    renameContact(contact, newName);
                 }
             })
             .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -380,46 +318,13 @@ public class ContactsFragment extends Fragment {
 
     /**
      * Sets the custom display name for a contact
-     * @param email         The email of the contact to be renamed
-     * @param contactName   The current name of the contact
+     * @param contact       The contact
      * @param newName       A new name for the contact
      */
-    public void renameContact(String email, String contactName, String newName) {
+    public void renameContact(Contact contact, String newName) {
         //Set new name in local lists used by the contacts fragment
-        mapping.remove(contactName);
-        mapping.put(newName, email);
-        for (int i = 0; i < peopleList.size(); i++) {
-            if (peopleList.get(i).equals(contactName)) {
-                peopleList.set(i, newName);
-            }
-        }
-        //Set new name in the main application's contacts JSON
-        if (MainApplication.contacts == null) {
-            MainApplication.contacts = new MainApplication.Contacts();
-        }
-
-        Contact contact = new Contact();
         contact.setName(newName);
-        //TODO: fix IDs or remove them if we don't need them
-        contact.setId(0);
-        MainApplication.contacts.put(email, contact);
-
-
-        try {
-            PreferenceUtils.setString(context, PreferenceUtils.KEY_CONTACTS, MainApplication.contacts.serialize());
-        } catch (JsonProcessingException e) {
-            Log.e(TAG, "serializing contacts JSON failed");
-            e.printStackTrace();
-        }
-
-        //Set new name on the server
-        ServerApi.renameContact(context, email, newName);
-        try {
-            Log.d(TAG, MainApplication.contacts.serialize());
-        } catch (JsonProcessingException e) {
-            Log.e(TAG, "serializing contacts JSON failed");
-            e.printStackTrace();
-        }
+        contactService.renameContact(contact, newName);
     }
 
     static class ViewHolder {
@@ -438,7 +343,7 @@ public class ContactsFragment extends Fragment {
         @Override
         protected Void doInBackground(Void... params) {
 
-            getPeopleThatCanSeeMe();
+            getPeopleList();
             return null;
         }
 

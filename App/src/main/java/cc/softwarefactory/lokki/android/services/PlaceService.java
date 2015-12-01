@@ -21,9 +21,9 @@ import java.util.List;
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.errors.PlaceError;
-import cc.softwarefactory.lokki.android.models.JSONModel;
 import cc.softwarefactory.lokki.android.models.Place;
 import cc.softwarefactory.lokki.android.models.UserLocation;
+import cc.softwarefactory.lokki.android.utilities.JsonUtils;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
 
@@ -65,7 +65,7 @@ public class PlaceService extends ApiService {
                 }
                 Log.d(TAG, "json returned: " + json);
                 try {
-                    MainApplication.places = JSONModel.createListFromJson(json.toString(), Place.class);
+                    MainApplication.places = JsonUtils.createListFromJson(json.toString(), Place.class);
                     updateCache();
                     Intent intent = new Intent("PLACES-UPDATE");
                     LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
@@ -78,7 +78,7 @@ public class PlaceService extends ApiService {
     }
 
     public List<Place> getFromCache() throws IOException {
-        return JSONModel.createFromJson(PreferenceUtils.getString(context, PreferenceUtils.KEY_PLACES), List.class);
+        return JsonUtils.createListFromJson(PreferenceUtils.getString(context, PreferenceUtils.KEY_PLACES), Place.class);
     }
 
     private void updateCache() {
@@ -110,9 +110,7 @@ public class PlaceService extends ApiService {
         //updated to setUserLocation
         place.setUserLocation(new UserLocation(latLng, radius));
 
-
-
-        post("place", place, new AjaxCallback<String>() {
+        post(restPath, JsonUtils.toJSONObject(place), new AjaxCallback<String>() {
             @Override
             public void callback(String url, String object, AjaxStatus status) {
                 ServerApi.logStatus("addPlace", status);
@@ -126,7 +124,7 @@ public class PlaceService extends ApiService {
                 Toast.makeText(context, context.getString(R.string.place_created), Toast.LENGTH_SHORT).show();
 
                 try {
-                    AddResponse addResponse = JSONModel.createFromJson(object.toString(), AddResponse.class);
+                    AddResponse addResponse = JsonUtils.createFromJson(object.toString(), AddResponse.class);
                     place.setId(addResponse.id);
                     MainApplication.places.add(place);
                     updateCache();
@@ -180,7 +178,7 @@ public class PlaceService extends ApiService {
         cleanName = cleanName.substring(0, 1).toUpperCase() + cleanName.substring(1).toLowerCase();
         place.setName(cleanName);
 
-        put(restPath + "/" + placeId, place, new AjaxCallback<String>() {
+        put(restPath + "/" + placeId, JsonUtils.toJSONObject(place), new AjaxCallback<String>() {
             @Override
             public void callback(String url, String result, AjaxStatus status) {
                 ServerApi.logStatus("renamePlace", status);

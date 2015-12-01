@@ -1,21 +1,22 @@
 package cc.softwarefactory.lokki.android.espresso;
 
-import android.content.res.Resources;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.android.gms.maps.model.LatLng;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.RecordedRequest;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.util.Iterator;
+import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.espresso.utilities.MockJsonUtils;
 import cc.softwarefactory.lokki.android.espresso.utilities.RequestsHandle;
 import cc.softwarefactory.lokki.android.espresso.utilities.TestUtils;
+import cc.softwarefactory.lokki.android.models.Contact;
+import cc.softwarefactory.lokki.android.models.UserLocation;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -49,20 +50,6 @@ public class ContactsScreenTest extends LoggedInBaseTest {
         onView(withText(R.string.contacts)).perform(click());
     }
 
-    private String getContactId(String dashboardJsonString, String firstContactEmail) throws JSONException {
-        JSONObject dashboardJson = new JSONObject(dashboardJsonString);
-        JSONObject mapping = dashboardJson.getJSONObject("idmapping");
-        Iterator<String> keys = mapping.keys();
-        while (keys.hasNext()) {
-            String id = keys.next();
-            String emailFromMapping = mapping.getString(id);
-            if (emailFromMapping.equals(firstContactEmail)) {
-                return id;
-            }
-        }
-        throw new Resources.NotFoundException("Contact id was not found in mapping.");
-    }
-
     public void testNoContactsShownWhenNoContacts() {
         enterContactsScreen();
         onView(withId(R.id.contact_email)).check(doesNotExist());
@@ -74,18 +61,18 @@ public class ContactsScreenTest extends LoggedInBaseTest {
         onView(withText(R.string.can_see_me)).check(matches(isDisplayed()));
     }
 
-    public void testOneContactShownWhenOneContact() throws JSONException, InterruptedException {
+    public void testOneContactShownWhenOneContact() throws JSONException, InterruptedException, JsonProcessingException {
         String contactEmail = "family.member@example.com";
-        getMockDispatcher().setDashboardResponse(new MockResponse().setBody(MockJsonUtils.getDashboardJsonWithContacts(contactEmail)));
+        getMockDispatcher().setGetContactsResponse(new MockResponse().setBody(MockJsonUtils.getContactsJsonWith(MockJsonUtils.createContact(contactEmail))));
 
         enterContactsScreen();
 
         onView(allOf(withId(R.id.contact_email), withText(contactEmail))).check(matches(isDisplayed()));
     }
 
-    public void testAllCheckboxesShownWhenOneContact() throws JSONException, InterruptedException {
+    public void testAllCheckboxesShownWhenOneContact() throws JSONException, InterruptedException, JsonProcessingException {
         String contactEmail = "family.member@example.com";
-        getMockDispatcher().setDashboardResponse(new MockResponse().setBody(MockJsonUtils.getDashboardJsonWithContacts(contactEmail)));
+        getMockDispatcher().setGetContactsResponse(new MockResponse().setBody(MockJsonUtils.getContactsJsonWith(MockJsonUtils.createContact(contactEmail))));
 
         enterContactsScreen();
 
@@ -93,10 +80,10 @@ public class ContactsScreenTest extends LoggedInBaseTest {
         onView(allOf(withId(R.id.i_can_see), hasSibling(withText(contactEmail)))).check(matches(isDisplayed()));
     }
 
-    public void testTwoContactsShownWhenTwoContacts() throws JSONException, InterruptedException {
+    public void testTwoContactsShownWhenTwoContacts() throws JSONException, InterruptedException, JsonProcessingException {
         String firstContactEmail = "family.member@example.com";
         String secondContactEmail = "work.buddy@example.com";
-        getMockDispatcher().setDashboardResponse(new MockResponse().setBody(MockJsonUtils.getDashboardJsonWithContacts(firstContactEmail, secondContactEmail)));
+        getMockDispatcher().setGetContactsResponse(new MockResponse().setBody(MockJsonUtils.getContactsJsonWith(MockJsonUtils.createContact(firstContactEmail), MockJsonUtils.createContact(secondContactEmail))));
 
         enterContactsScreen();
 
@@ -104,10 +91,10 @@ public class ContactsScreenTest extends LoggedInBaseTest {
         onView(allOf(withId(R.id.contact_email), withText(secondContactEmail))).check(matches(isDisplayed()));
     }
 
-    public void testAllCheckboxesShownWhenTwoContacts() throws JSONException, InterruptedException {
+    public void testAllCheckboxesShownWhenTwoContacts() throws JSONException, InterruptedException, JsonProcessingException {
         String firstContactEmail = "family.member@example.com";
         String secondContactEmail = "work.buddy@example.com";
-        getMockDispatcher().setDashboardResponse(new MockResponse().setBody(MockJsonUtils.getDashboardJsonWithContacts(firstContactEmail, secondContactEmail)));
+        getMockDispatcher().setGetContactsResponse(new MockResponse().setBody(MockJsonUtils.getContactsJsonWith(MockJsonUtils.createContact(firstContactEmail), MockJsonUtils.createContact(secondContactEmail))));
 
         enterContactsScreen();
 
@@ -118,11 +105,12 @@ public class ContactsScreenTest extends LoggedInBaseTest {
         onView(allOf(withId(R.id.i_can_see), hasSibling(withText(secondContactEmail)))).check(matches(isDisplayed()));
     }
 
-    public void testCanSeeMeCheckboxSendsDisallowRequest() throws InterruptedException, JSONException, TimeoutException {
+    public void testCanSeeMeCheckboxSendsDisallowRequest() throws InterruptedException, TimeoutException, IOException, JSONException {
         String firstContactEmail = "family.member@example.com";
-        String dashboardJsonString = MockJsonUtils.getDashboardJsonWithContacts(firstContactEmail);
-        String firstContactId = getContactId(dashboardJsonString, firstContactEmail);
-        getMockDispatcher().setDashboardResponse(new MockResponse().setBody(dashboardJsonString));
+        Contact contact = MockJsonUtils.createContact(firstContactEmail);
+        String contactsJson = MockJsonUtils.getContactsJsonWith(contact);
+        String firstContactId = contact.getUserId();
+        getMockDispatcher().setGetContactsResponse(new MockResponse().setBody(contactsJson));
         RequestsHandle requests = getMockDispatcher().setAllowDeleteResponse(new MockResponse().setResponseCode(200), firstContactId);
 
         enterContactsScreen();
@@ -131,17 +119,17 @@ public class ContactsScreenTest extends LoggedInBaseTest {
 
         requests.waitUntilAnyRequests();
         RecordedRequest request = requests.getRequests().get(0);
-        String expectedPath = "/user/" + TestUtils.VALUE_TEST_USER_ID + "/allow/" + firstContactId;
+        String expectedPath = "/user/" + TestUtils.VALUE_TEST_USER_ID + "/contacts/allow/" + firstContactId;
         assertEquals(expectedPath, request.getPath());
     }
 
 
-    public void testCanSeeMeCheckboxSendsAllowRequest() throws InterruptedException, JSONException, TimeoutException {
+    public void testCanSeeMeCheckboxSendsAllowRequest() throws InterruptedException, JSONException, TimeoutException, JsonProcessingException {
         String firstContactEmail = "family.member@example.com";
-        String dashboardJsonString = MockJsonUtils.getDashboardJsonWithContacts(firstContactEmail);
-        JSONObject dashboardJson = new JSONObject(dashboardJsonString);
-        dashboardJson.put("canseeme", new JSONArray());
-        getMockDispatcher().setDashboardResponse(new MockResponse().setBody(dashboardJson.toString()));
+        Contact contact = MockJsonUtils.createContact(firstContactEmail);
+        contact.setCanSeeMe(false);
+        String contactsJson = MockJsonUtils.getContactsJsonWith(contact);
+        getMockDispatcher().setGetContactsResponse(new MockResponse().setBody(contactsJson));
         RequestsHandle requests = getMockDispatcher().setAllowPostResponse(new MockResponse().setResponseCode(200));
 
         enterContactsScreen();
@@ -150,20 +138,16 @@ public class ContactsScreenTest extends LoggedInBaseTest {
 
         requests.waitUntilAnyRequests();
         RecordedRequest request = requests.getRequests().get(0);
-        String expectedPath = "/user/" + TestUtils.VALUE_TEST_USER_ID + "/allow";
+        String expectedPath = "/user/" + TestUtils.VALUE_TEST_USER_ID + "/contacts/allow";
         assertEquals(expectedPath, request.getPath());
     }
 
-    public void testdeleteButtonSendsDeleteRequest() throws InterruptedException, JSONException, TimeoutException {
+    public void testdeleteButtonSendsDeleteRequest() throws InterruptedException, JSONException, TimeoutException, IOException {
         String firstContactEmail = "family.member@example.com";
-        String dashboardJsonString = MockJsonUtils.getDashboardJsonWithContacts(firstContactEmail);
-        String firstContactId = getContactId(dashboardJsonString, firstContactEmail);
-
-        JSONObject dashboardJson = new JSONObject(dashboardJsonString);
-        dashboardJson.put("canseeme", new JSONArray());
-        getMockDispatcher().setDashboardResponse(new MockResponse().setBody(dashboardJson.toString()));
+        Contact contact = MockJsonUtils.createContact(firstContactEmail);
+        String firstContactId = contact.getUserId();
+        getMockDispatcher().setGetContactsResponse(new MockResponse().setBody(MockJsonUtils.getContactsJsonWith(contact)));
         RequestsHandle requests = getMockDispatcher().setRemoveContactResponse(new MockResponse().setResponseCode(200), firstContactId);
-
 
         enterContactsScreen();
         assertEquals("There should be no requests to allow path before clicking the delete button.", requests.getRequests().size(), 0);
@@ -177,14 +161,12 @@ public class ContactsScreenTest extends LoggedInBaseTest {
         assertEquals(expectedPath, request.getPath());
     }
 
-    public void testRenameButtonSendsRenameRequest() throws InterruptedException, JSONException, TimeoutException {
+    public void testRenameButtonSendsRenameRequest() throws InterruptedException, JSONException, TimeoutException, IOException {
         String firstContactEmail = "family.member@example.com";
-        String dashboardJsonString = MockJsonUtils.getDashboardJsonWithContacts(firstContactEmail);
-        String firstContactId = getContactId(dashboardJsonString, firstContactEmail);
-
-        JSONObject dashboardJson = new JSONObject(dashboardJsonString);
-        dashboardJson.put("canseeme", new JSONArray());
-        getMockDispatcher().setDashboardResponse(new MockResponse().setBody(dashboardJson.toString()));
+        Contact contact = MockJsonUtils.createContact(firstContactEmail);
+        contact.setCanSeeMe(false);
+        String firstContactId = contact.getUserId();
+        getMockDispatcher().setGetContactsResponse(new MockResponse().setBody(MockJsonUtils.getContactsJsonWith(contact)));
         RequestsHandle requests = getMockDispatcher().setRenameContactResponse(new MockResponse().setResponseCode(200), firstContactId);
 
         enterContactsScreen();
@@ -196,23 +178,17 @@ public class ContactsScreenTest extends LoggedInBaseTest {
                 .perform(typeText("Renametext"));
         onView(withText(R.string.ok)).check(matches(isDisplayed())).perform(click());
 
-        updateSituation();
-        //Check local update
-        onView(allOf(withText("family.member@test.com"), withId(R.id.contact_name))).check(doesNotExist());
-        onView(withText("Renametext")).check(matches(isDisplayed()));
-
         requests.waitUntilAnyRequests();
         RecordedRequest request = requests.getRequests().get(0);
-        String expectedPath = "/user/" + TestUtils.VALUE_TEST_USER_ID + "/rename/" + firstContactId;
+        String expectedPath = "/user/" + TestUtils.VALUE_TEST_USER_ID + "/contacts/rename/" + firstContactId;
         assertEquals(expectedPath, request.getPath());
     }
 
-    public void testShowOnMapCheckboxIsDisabledWhenNotAllowedToSeeContact() throws InterruptedException, JSONException, TimeoutException {
+    public void testShowOnMapCheckboxIsDisabledWhenNotAllowedToSeeContact() throws InterruptedException, JSONException, TimeoutException, JsonProcessingException {
         String firstContactEmail = "family.member@example.com";
-        String dashboardJsonString = MockJsonUtils.getDashboardJsonWithContacts(firstContactEmail);
-        JSONObject dashboardJson = new JSONObject(dashboardJsonString);
-        dashboardJson.put("icansee", new JSONObject());
-        getMockDispatcher().setDashboardResponse(new MockResponse().setBody(dashboardJson.toString()));
+        Contact contact = MockJsonUtils.createContact(firstContactEmail);
+        contact.setCanSeeMe(false);
+        getMockDispatcher().setGetContactsResponse(new MockResponse().setBody(MockJsonUtils.getContactsJsonWith(contact)));
 
         enterContactsScreen();
         onView(allOf(withId(R.id.i_can_see), hasSibling(withText(firstContactEmail)))).check(matches(isNotChecked())).perform(click());
@@ -220,30 +196,29 @@ public class ContactsScreenTest extends LoggedInBaseTest {
     }
 
 
-    public void testShowOnMapCheckboxIsDisabledWhenTwoContacts() throws InterruptedException, JSONException, TimeoutException {
+    public void testShowOnMapCheckboxIsDisabledWhenTwoContacts() throws InterruptedException, JSONException, TimeoutException, JsonProcessingException {
         String firstContactEmail = "family.member@example.com";
+        Contact contact = MockJsonUtils.createContact(firstContactEmail);
+        contact.setCanSeeMe(false);
         String secondContactEmail = "work.buddy@example.com";
-        String dashboardJsonString = MockJsonUtils.getDashboardJsonWithContacts(firstContactEmail, secondContactEmail);
-        JSONObject dashboardJson = new JSONObject(dashboardJsonString);
-        JSONObject icanseeJO = dashboardJson.getJSONObject("icansee");
-        String contactHash = icanseeJO.names().getString(0);
-        icanseeJO.remove(contactHash);
-        getMockDispatcher().setDashboardResponse(new MockResponse().setBody(dashboardJson.toString()));
+        Contact contact2 = MockJsonUtils.createContact(secondContactEmail);
+        getMockDispatcher().setGetContactsResponse(new MockResponse().setBody(MockJsonUtils.getContactsJsonWith(contact, contact2)));
 
         enterContactsScreen();
         onView(allOf(withId(R.id.i_can_see), hasSibling(withText(firstContactEmail)))).check(matches(isNotChecked())).perform(click());
         onView(allOf(withId(R.id.i_can_see), hasSibling(withText(firstContactEmail)))).check(matches(isNotChecked()));
     }
 
-    public void testFirstShowOnMapCheckboxDoesNotEffectOtherContactCheckbox() throws InterruptedException, JSONException, TimeoutException {
+    public void testFirstShowOnMapCheckboxDoesNotEffectOtherContactCheckbox() throws InterruptedException, JSONException, TimeoutException, JsonProcessingException {
         String firstContactEmail = "family.member@example.com";
+        Contact contact = MockJsonUtils.createContact(firstContactEmail);
+        contact.setIsIgnored(true);
+        contact.setLocation(new UserLocation(new LatLng(60, 24), 100));
         String secondContactEmail = "work.buddy@example.com";
-        String dashboardJsonString = MockJsonUtils.getDashboardJsonWithContacts(firstContactEmail, secondContactEmail);
-        JSONObject dashboardJson = new JSONObject(dashboardJsonString);
-        JSONObject icanseeJO = dashboardJson.getJSONObject("icansee");
-        String contactHash = icanseeJO.names().getString(0);
-        icanseeJO.remove(contactHash);
-        getMockDispatcher().setDashboardResponse(new MockResponse().setBody(dashboardJson.toString()));
+        Contact contact2 = MockJsonUtils.createContact(secondContactEmail);
+        UserLocation location = new UserLocation(new LatLng(60, 24), 100);
+        contact2.setLocation(location);
+        getMockDispatcher().setGetContactsResponse(new MockResponse().setBody(MockJsonUtils.getContactsJsonWith(contact, contact2)));
 
         enterContactsScreen();
         onView(allOf(withId(R.id.i_can_see), hasSibling(withText(secondContactEmail)))).check(matches(isChecked()));

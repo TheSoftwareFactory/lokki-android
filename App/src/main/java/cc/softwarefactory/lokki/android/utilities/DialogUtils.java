@@ -29,7 +29,7 @@ public class DialogUtils {
 
         Log.d(TAG, "securitySignUp");
         String title = context.getString(R.string.app_name);
-        String message = context.getString(R.string.security_sign_up, MainApplication.userAccount);
+        String message = context.getString(R.string.security_sign_up, MainApplication.user.getEmail());
         showDialog(context, title, message);
     }
 

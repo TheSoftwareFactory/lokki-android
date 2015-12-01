@@ -14,4 +14,6 @@
     <dimen name="nav_drawer_top_padding">24dp</dimen>
     <dimen name="nav_drawer_icon_size">24dp</dimen>
     <dimen name="default_text_size">14sp</dimen>
+    <dimen name="custom_profile_image">50dp</dimen>
+    <dimen name="custom_profile_padding">2dp</dimen>
 </resources>

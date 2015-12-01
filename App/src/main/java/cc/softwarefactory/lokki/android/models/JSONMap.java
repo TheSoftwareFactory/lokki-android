@@ -6,7 +6,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-public abstract class JSONMap<V> extends JSONModel implements Map<String, V> {
+public abstract class JSONMap<V> implements Map<String, V> {
 
     //implementing class must handle mapping json key to map.
     protected abstract Map<String, V> getMap();

@@ -3,6 +3,7 @@ package cc.softwarefactory.lokki.android.espresso.utilities;
 import com.squareup.okhttp.mockwebserver.Dispatcher;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.RecordedRequest;
+import cc.softwarefactory.lokki.android.BuildConfig;
 
 import org.json.JSONException;
 
@@ -57,7 +58,7 @@ public class MockDispatcher extends Dispatcher {
     }
 
     public RequestsHandle setDashboardResponse(MockResponse response) {
-        return installResponse(METHOD_GET, DEFAULT_USER_BASE_PATH + "dashboard", response);
+        return installResponse(METHOD_GET, DEFAULT_USER_BASE_PATH + "version/" + BuildConfig.VERSION_CODE + "/dashboard", response);
     }
 
     public RequestsHandle setUpdateLocationsResponse(MockResponse response) {
@@ -69,11 +70,11 @@ public class MockDispatcher extends Dispatcher {
     }
 
     public RequestsHandle setAllowPostResponse(MockResponse response) {
-        return installResponse(METHOD_POST, DEFAULT_USER_BASE_PATH + "allow", response);
+        return installResponse(METHOD_POST, DEFAULT_USER_BASE_PATH + "contacts/allow", response);
     }
 
     public RequestsHandle setAllowDeleteResponse(MockResponse response, String idToDelete) {
-        return installResponse(METHOD_DELETE, DEFAULT_USER_BASE_PATH + "allow/" + idToDelete, response);
+        return installResponse(METHOD_DELETE, DEFAULT_USER_BASE_PATH + "contacts/allow/" + idToDelete, response);
     }
 
     public RequestsHandle setGetContactsResponse(MockResponse response) {
@@ -85,7 +86,7 @@ public class MockDispatcher extends Dispatcher {
     }
 
     public RequestsHandle setRenameContactResponse(MockResponse response, String idToRename) {
-        return installResponse(METHOD_POST, DEFAULT_USER_BASE_PATH + "rename/" + idToRename, response);
+        return installResponse(METHOD_POST, DEFAULT_USER_BASE_PATH + "contacts/rename/" + idToRename, response);
     }
 
     public RequestsHandle setGcmTokenResponse(MockResponse response) {

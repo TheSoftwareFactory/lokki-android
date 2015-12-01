@@ -27,6 +27,7 @@ import android.widget.ListView;
 
 import com.androidquery.AQuery;
 
+import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.avatar.AvatarLoader;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
@@ -104,10 +105,10 @@ public class NavigationDrawerFragment extends Fragment {
             AQuery aq = new AQuery(getActivity(), mListViewHeader);
 
             ImageView avatarImage = (ImageView) mListViewHeader.findViewById(R.id.avatar);
-            AvatarLoader avatarLoader = new AvatarLoader(getActivity());
+            AvatarLoader avatarLoader = new AvatarLoader();
 
             String email = PreferenceUtils.getString(getActivity(), PreferenceUtils.KEY_USER_ACCOUNT);
-            avatarLoader.load(email, avatarImage);
+            avatarLoader.load(MainApplication.user, avatarImage);
 
             aq.id(R.id.user_name).text(email);
         }

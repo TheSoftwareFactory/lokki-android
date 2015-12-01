@@ -25,10 +25,11 @@ import java.util.Map;
 import cc.softwarefactory.lokki.android.models.BuzzPlace;
 import cc.softwarefactory.lokki.android.models.Contact;
 import cc.softwarefactory.lokki.android.models.JSONMap;
-import cc.softwarefactory.lokki.android.models.JSONModel;
+import cc.softwarefactory.lokki.android.models.MainUser;
 import cc.softwarefactory.lokki.android.models.Place;
 import cc.softwarefactory.lokki.android.models.User;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
+import cc.softwarefactory.lokki.android.utilities.JsonUtils;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 
 public class MainApplication extends Application {
@@ -140,7 +141,8 @@ public class MainApplication extends Application {
         }
     }
     public static Dashboard dashboard = null;
-    public static String userAccount; // Email
+
+    public static MainUser user;
 
     /**
      * User's contacts is a map, where key is email (which is id) and value is the contact.
@@ -217,7 +219,7 @@ public class MainApplication extends Application {
             return super.remove(key);
         }
     }
-    public static Contacts contacts;
+    public static List<Contact> contacts;
 
     /**
      * Contacts that aren't shown on the map. Format:
@@ -275,7 +277,7 @@ public class MainApplication extends Application {
         String iDontWantToSeeString = PreferenceUtils.getString(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE);
         if (!iDontWantToSeeString.isEmpty()) {
             try {
-                MainApplication.iDontWantToSee = JSONModel.createFromJson(iDontWantToSeeString, IDontWantToSee.class);
+                MainApplication.iDontWantToSee = JsonUtils.createFromJson(iDontWantToSeeString, IDontWantToSee.class);
             } catch (IOException e) {
                 MainApplication.iDontWantToSee = null;
                 Log.e(TAG, e.getMessage());
@@ -300,6 +302,8 @@ public class MainApplication extends Application {
         }
 
         buzzPlaces = new ArrayList<BuzzPlace>();
+
+        user = new MainUser(this);
 
         super.onCreate();
     }
