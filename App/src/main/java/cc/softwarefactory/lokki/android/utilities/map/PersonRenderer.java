@@ -54,7 +54,7 @@ public class PersonRenderer extends DefaultClusterRenderer<Person> {
 
     @Override
     protected void onBeforeClusterItemRendered(Person person, MarkerOptions markerOptions) {
-        mImageView.setImageBitmap(person.getPhoto());
+        mImageView.setImageBitmap(person.getMarkerPhoto());
         Bitmap icon = mIconGenerator.makeIcon();
         markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon)).title(person.toString());
         long time = 0;
