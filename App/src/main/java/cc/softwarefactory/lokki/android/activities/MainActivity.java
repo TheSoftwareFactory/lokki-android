@@ -608,7 +608,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         mNavigationDrawerFragment.selectNavDrawerItem(1); // Position 1 is the Map
     }
 
-    public void toggleIDontWantToSee(View view) {
+    public void toggleIgnore(View view) {
         AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
                 getString(R.string.analytics_action_click),
                 getString(R.string.analytics_label_show_on_map_checkbox));
@@ -616,29 +616,12 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
             return;
         }
         CheckBox checkBox = (CheckBox) view;
-        Boolean allow = checkBox.isChecked();
         Contact contact = (Contact) checkBox.getTag();
-        Log.d(TAG, "toggleIDontWantToSee: " + contact.toString() + ", Checkbox is: " + allow);
-        if (!allow) {
-            MainApplication.iDontWantToSee.put(contact.getEmail(), 1);
-            try {
-                Log.d(TAG, JsonUtils.serialize(MainApplication.iDontWantToSee));
-                PreferenceUtils.setString(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, JsonUtils.serialize(MainApplication.iDontWantToSee));
-            } catch (JsonProcessingException e) {
-                Log.e(TAG, "Serializing iDontWantToSee to JSON failed");
-                e.printStackTrace();
-            }
-            contactService.ignoreContact(contact);
-        } else if (MainApplication.iDontWantToSee.has(contact.getEmail())) {
-            Log.d(TAG, "unignoring user");
-            MainApplication.iDontWantToSee.remove(contact.getEmail());
-            try {
-                PreferenceUtils.setString(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, JsonUtils.serialize(MainApplication.iDontWantToSee));
-            } catch (JsonProcessingException e) {
-                Log.e(TAG, "Serializing iDontWantToSee to JSON failed");
-                e.printStackTrace();
-            }
+        Log.d(TAG, "toggle ignore for contact : " + contact.toString() + ", isIgnored : " + contact.isIgnored());
+        if (contact.isIgnored()) {
             contactService.unignoreContact(contact);
+        } else {
+            contactService.ignoreContact(contact);
         }
     }
 
@@ -741,7 +724,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                         PreferenceUtils.setString(main, PreferenceUtils.KEY_USER_ACCOUNT, null);
                         PreferenceUtils.setString(main, PreferenceUtils.KEY_USER_ID, null);
                         PreferenceUtils.setString(main, PreferenceUtils.KEY_AUTH_TOKEN, null);
-                        PreferenceUtils.setString(main, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, null);
                         PreferenceUtils.setString(main, PreferenceUtils.KEY_CONTACTS, null);
                         PreferenceUtils.setString(main, PreferenceUtils.KEY_DASHBOARD, null);
                         PreferenceUtils.setString(main, PreferenceUtils.KEY_LOCAL_CONTACTS, null);
@@ -750,7 +732,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                         MainApplication.dashboard = null;
                         MainApplication.contacts = null;
                         MainApplication.places = null;
-                        MainApplication.iDontWantToSee = new MainApplication.IDontWantToSee();
                         MainApplication.firstTimeZoom = true;
                         //Restart main activity to clear state
                         main.recreate();

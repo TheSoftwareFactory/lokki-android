@@ -144,112 +144,20 @@ public class MainApplication extends Application {
 
     public static MainUser user;
 
-    /**
-     * User's contacts is a map, where key is email (which is id) and value is the contact.
-     */
-    @JsonIgnoreProperties("mapping")
-    public static class Contacts extends JSONMap<Contact> {
-
-        private HashMap<String, Contact> contacts = new HashMap<>();
-
-        @Override
-        protected Map<String, Contact> getMap() {
-            return contacts;
-        }
-
-        /**
-         * Handles functionality of the mapping-field. nameToEmail is not mapped from JSON,
-         * because it is easier to keep in sync if it's functionality is handled in this class.
-         */
-        @JsonIgnore
-        private HashMap<String, String> nameToEmail = new HashMap<>();
-
-        public boolean hasEmail(String email) {
-            return contacts.containsKey(email);
-        }
-
-        public List<Contact> contacts() {
-            return new ArrayList<Contact>(contacts.values());
-        }
-
-        public List<String> names() {
-            return new ArrayList<String>(nameToEmail.keySet());
-        }
-
-        public boolean hasName(String name) {
-            return nameToEmail.containsKey(name);
-        }
-
-        public Contact getContactByEmail(String email) {
-            return contacts.get(email);
-        }
-
-        public String getEmailByName(String name) {
-            return nameToEmail.get(name);
-        }
-
-        public void update(String email, Contact contact) {
-            nameToEmail.put(contact.getName(), email);
-            super.put(email, contact);
-        }
-
-        @Override
-        public void clear() {
-            super.clear();
-            nameToEmail.clear();
-        }
-
-        @Override
-        public Contact put(String key, Contact value) {
-            nameToEmail.put(value.getName(), key);
-            return super.put(key, value);
-        }
-
-        @Override
-        public void putAll(Map<? extends String, ? extends Contact> map) {
-            for (Entry<? extends String, ? extends Contact> entry : map.entrySet()) {
-                nameToEmail.put(entry.getValue().getName(), entry.getKey());
-            }
-            super.putAll(map);
-        }
-
-        @Override
-        public Contact remove(Object key) {
-            nameToEmail.remove(super.get(key).getName());
-            return super.remove(key);
-        }
-    }
     public static List<Contact> contacts;
-
-    /**
-     * Contacts that aren't shown on the map. Format:
-     * {
-     *      "test.friend@example.com":1,
-     *      "family.member@example.com":1
-     * }
-     */
-    public static class IDontWantToSee extends JSONMap<Integer> {
-
-        private Map<String, Integer> iDontWantToSee = new HashMap<>();
-
-        @Override
-        protected Map<String, Integer> getMap() {
-            return iDontWantToSee;
-        }
-    }
-    public static IDontWantToSee iDontWantToSee;
     /**
      * Is the user visible to others?
      */
     public static Boolean visible = true;
+
     public static LruCache<String, Bitmap> avatarCache;
 
     public static List<Place> places;
 
     public static boolean locationDisabledPromptShown;
 
-
     public static List<BuzzPlace> buzzPlaces;
+
     public static boolean firstTimeZoom = true;
 
     @Override
@@ -274,19 +182,6 @@ public class MainApplication extends Application {
             }
         };
 
-        String iDontWantToSeeString = PreferenceUtils.getString(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE);
-        if (!iDontWantToSeeString.isEmpty()) {
-            try {
-                MainApplication.iDontWantToSee = JsonUtils.createFromJson(iDontWantToSeeString, IDontWantToSee.class);
-            } catch (IOException e) {
-                MainApplication.iDontWantToSee = null;
-                Log.e(TAG, e.getMessage());
-            }
-        } else {
-            MainApplication.iDontWantToSee = new MainApplication.IDontWantToSee();
-        }
-        Log.d(TAG, "MainApplication.iDontWantToSee: " + MainApplication.iDontWantToSee);
-
         if (DEVELOPER_MODE) {
 
             StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
@@ -301,7 +196,7 @@ public class MainApplication extends Application {
                     .build());
         }
 
-        buzzPlaces = new ArrayList<BuzzPlace>();
+        buzzPlaces = new ArrayList<>();
 
         user = new MainUser(this);
 
