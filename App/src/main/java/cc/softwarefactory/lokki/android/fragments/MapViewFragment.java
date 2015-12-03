@@ -48,6 +48,7 @@ import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -84,7 +85,7 @@ public class MapViewFragment extends Fragment {
     private Context context;
     private double radiusMultiplier = 0.9;  // Dont want to fill the screen from edge to edge...
     private GoogleMap map;
-    private List<Person> markers;
+    private HashMap<String, Person> markers;
     private LatLng startLocation = null;
     private SupportMapFragment fragment;
     private TextView placeAddingTip;
@@ -92,7 +93,7 @@ public class MapViewFragment extends Fragment {
     private ContactService contactService;
 
     public MapViewFragment() {
-        markers = new ArrayList<>();
+        markers = new HashMap<String, Person>();
         placesOverlay = new ArrayList<>();
     }
 
@@ -558,14 +559,26 @@ public class MapViewFragment extends Fragment {
             if (bitmapResult == null || cancelAsyncTasks || !isAdded() || map == null) {
                 return;
             }
-            Person marker = person;
-
-            if (!markers.contains(marker)) {
-                markers.add(marker);
+            Person marker = null;
+            try{
+                marker = (Person) person.clone();
+            }
+            catch (CloneNotSupportedException e){
+                Log.e(TAG, e.getMessage());
+                return;
+            }
+            Person oldMarker = markers.get(marker.getEmail());
+            if (oldMarker ==null) {
+                Log.v(TAG, "Adding newmarker:" + marker.toString() + " Position:" + marker.getPosition().toString());
+                markers.put(marker.getEmail(), marker);
                 clusterManager.addItem(marker);
             } else {
-                clusterManager.removeItem(marker);
+                Log.v(TAG, "Removing old marker:" + marker.toString() + " Position:" + oldMarker.getPosition().toString());
+                clusterManager.removeItem(oldMarker);
+                markers.remove(oldMarker);
+                Log.v(TAG, "Updating marker:" + marker.toString() + " Position:" + marker.getPosition().toString());
                 clusterManager.addItem(marker);
+                markers.put(marker.getEmail(), marker);
             }
 
             if (marker.getEmail().equals(MainApplication.emailBeingTracked)) {
