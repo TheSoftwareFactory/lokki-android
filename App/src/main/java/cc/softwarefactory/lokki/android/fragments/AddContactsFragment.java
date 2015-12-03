@@ -236,7 +236,6 @@ public class AddContactsFragment extends Fragment {
                                         AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
                                                 getString(R.string.analytics_action_click),
                                                 getString(R.string.analytics_label_confirm_contact_add_from_list_dialog));
-
                                         if (contact.emailIsSameAs(MainApplication.user.getEmail())) {
                                             Toast.makeText(context, R.string.cant_add_self_as_contact, Toast.LENGTH_LONG).show();
                                         } else {
@@ -252,8 +251,8 @@ public class AddContactsFragment extends Fragment {
                                                         contactService.getContacts();
                                                         Toast.makeText(context, R.string.contact_added, Toast.LENGTH_SHORT).show();
                                                     }
-                                            }
-                                        });
+                                                }
+                                            });
                                         }
                                     }
                                 })
@@ -263,7 +262,6 @@ public class AddContactsFragment extends Fragment {
                                         AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
                                                 getString(R.string.analytics_action_click),
                                                 getString(R.string.analytics_label_cancel_contact_add_from_list_dialog));
-
                                 }
                             })
                                 .show();

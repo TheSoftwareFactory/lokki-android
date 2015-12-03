@@ -10,7 +10,6 @@ public class Place implements Comparable<Place> {
     private String img;  // Place image
     private UserLocation location; // place location
 
-
     public String getId() {
         return id;
     }
@@ -26,7 +25,6 @@ public class Place implements Comparable<Place> {
     public void setName(String name) {
         this.name = name;
     }
-
 
     public UserLocation getLocation() {
         return location;
