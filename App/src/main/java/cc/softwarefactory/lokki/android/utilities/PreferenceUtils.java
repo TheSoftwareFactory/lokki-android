@@ -11,7 +11,6 @@ public class PreferenceUtils {
     public static final String KEY_USER_ACCOUNT = "userAccount";
     public static final String KEY_USER_ID = "userId";
     public static final String KEY_CONTACTS = "contacts";
-    public static final String KEY_I_DONT_WANT_TO_SEE = "iDontWantToSee";
     public static final String KEY_DEVICE_ID = "deviceId";
     public static final String KEY_DASHBOARD = "dashboard";
     public static final String KEY_PLACES = "places";
