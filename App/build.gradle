@@ -34,10 +34,11 @@ android {
     buildTypes {
         debug {
             resValue "string", "personal_android_key", defaultKey
+            testCoverageEnabled = true
             if (file("personal-android-key.txt").exists()) {
                 resValue "string", "personal_android_key", file("personal-android-key.txt").getText()
+                testCoverageEnabled = false // local variables aren't shown when debugging if this is enabled, so we disable if this is developer environment
             }
-            testCoverageEnabled = true
         }
         release {
             resValue "string", "personal_android_key", defaultKey
