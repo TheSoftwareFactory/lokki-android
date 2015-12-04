@@ -1,25 +1,28 @@
 package cc.softwarefactory.lokki.android.espresso;
 
 import android.content.Context;
+import android.provider.ContactsContract;
 import android.support.test.espresso.action.ViewActions;
+import android.test.mock.MockContentProvider;
+import android.test.mock.MockContentResolver;
 
 import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.RecordedRequest;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.mockito.Mockito;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 import cc.softwarefactory.lokki.android.R;
-import cc.softwarefactory.lokki.android.datasources.contacts.ContactDataSource;
 import cc.softwarefactory.lokki.android.espresso.utilities.MockJsonUtils;
 import cc.softwarefactory.lokki.android.espresso.utilities.RequestsHandle;
 import cc.softwarefactory.lokki.android.espresso.utilities.TestUtils;
+import cc.softwarefactory.lokki.android.fragments.AddContactsFragment;
 import cc.softwarefactory.lokki.android.models.Contact;
+import cc.softwarefactory.lokki.android.services.ContactService;
 import cc.softwarefactory.lokki.android.utilities.JsonUtils;
 
 import static android.support.test.espresso.Espresso.onView;
@@ -34,8 +37,6 @@ import static android.support.test.espresso.matcher.ViewMatchers.withHint;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.allOf;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
 
 public class AddContactsScreenTest extends LoggedInBaseTest {
 
@@ -48,9 +49,8 @@ public class AddContactsScreenTest extends LoggedInBaseTest {
     }
 
     private void setMockContacts() throws IOException, JSONException {
-        ContactDataSource mockContactDataSource = Mockito.mock(ContactDataSource.class);
-        when(mockContactDataSource.getContacts(any(Context.class))).thenReturn(JsonUtils.createListFromJson(MockJsonUtils.getContactsJson(), Contact.class));
-        getActivity().setContactUtils(mockContactDataSource);
+        List<Contact> mockPhoneContacts = JsonUtils.createListFromJson(MockJsonUtils.getContactsJson(), Contact.class);
+        getActivity().setPhoneContacts(mockPhoneContacts);
     }
 
     private void enterContactsScreen() {

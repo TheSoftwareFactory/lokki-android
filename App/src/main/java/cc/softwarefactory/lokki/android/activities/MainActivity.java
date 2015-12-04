@@ -38,17 +38,14 @@ import android.widget.Toast;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import org.json.JSONException;
 
-import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
-import cc.softwarefactory.lokki.android.datasources.contacts.ContactDataSource;
-import cc.softwarefactory.lokki.android.datasources.contacts.DefaultContactDataSource;
 import cc.softwarefactory.lokki.android.fragments.AboutFragment;
 import cc.softwarefactory.lokki.android.fragments.AddContactsFragment;
 import cc.softwarefactory.lokki.android.fragments.ContactsFragment;
@@ -61,7 +58,6 @@ import cc.softwarefactory.lokki.android.androidServices.LocationService;
 import cc.softwarefactory.lokki.android.models.Contact;
 import cc.softwarefactory.lokki.android.services.ContactService;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
-import cc.softwarefactory.lokki.android.utilities.JsonUtils;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
 import cc.softwarefactory.lokki.android.utilities.Utils;
@@ -87,9 +83,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     private CharSequence mTitle;
     private int selectedOption = 0;
 
-    private ContactDataSource mContactDataSource;
-
     private ContactService contactService;
+    private List<Contact> phoneContacts;
 
     //Is this activity currently paused?
     private boolean paused = true;
@@ -98,7 +93,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     protected void onCreate(Bundle savedInstanceState) {
 
         Log.d(TAG, "onCreate");
-        mContactDataSource = new DefaultContactDataSource();
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -128,6 +122,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         }
 
         contactService = new ContactService(this);
+        phoneContacts = contactService.getPhoneContacts();
     }
 
     /**
@@ -430,7 +425,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         return true;
     }
 
@@ -501,8 +495,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
             case R.id.add_contacts: // In Contacts (to add new ones)
                 FragmentManager fragmentManager = getSupportFragmentManager();
 
-                AddContactsFragment acf = new AddContactsFragment();
-                acf.setContactUtils(mContactDataSource);
+                AddContactsFragment acf = new AddContactsFragment(this);
+                acf.setPhoneContacts(phoneContacts);
 
                 fragmentManager.beginTransaction().replace(R.id.container, acf, TAG_ADD_CONTACTS_FRAGMENT).commit();
                 selectedOption = -10;
@@ -608,7 +602,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         mNavigationDrawerFragment.selectNavDrawerItem(1); // Position 1 is the Map
     }
 
-    public void toggleIDontWantToSee(View view) {
+    public void toggleIgnore(View view) {
         AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
                 getString(R.string.analytics_action_click),
                 getString(R.string.analytics_label_show_on_map_checkbox));
@@ -616,29 +610,12 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
             return;
         }
         CheckBox checkBox = (CheckBox) view;
-        Boolean allow = checkBox.isChecked();
         Contact contact = (Contact) checkBox.getTag();
-        Log.d(TAG, "toggleIDontWantToSee: " + contact.toString() + ", Checkbox is: " + allow);
-        if (!allow) {
-            MainApplication.iDontWantToSee.put(contact.getEmail(), 1);
-            try {
-                Log.d(TAG, JsonUtils.serialize(MainApplication.iDontWantToSee));
-                PreferenceUtils.setString(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, JsonUtils.serialize(MainApplication.iDontWantToSee));
-            } catch (JsonProcessingException e) {
-                Log.e(TAG, "Serializing iDontWantToSee to JSON failed");
-                e.printStackTrace();
-            }
-            contactService.ignoreContact(contact);
-        } else if (MainApplication.iDontWantToSee.has(contact.getEmail())) {
-            Log.d(TAG, "unignoring user");
-            MainApplication.iDontWantToSee.remove(contact.getEmail());
-            try {
-                PreferenceUtils.setString(this, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, JsonUtils.serialize(MainApplication.iDontWantToSee));
-            } catch (JsonProcessingException e) {
-                Log.e(TAG, "Serializing iDontWantToSee to JSON failed");
-                e.printStackTrace();
-            }
+        Log.d(TAG, "toggle ignore for contact : " + contact.toString() + ", isIgnored : " + contact.isIgnored());
+        if (contact.isIgnored()) {
             contactService.unignoreContact(contact);
+        } else {
+            contactService.ignoreContact(contact);
         }
     }
 
@@ -647,11 +624,9 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                 getString(R.string.analytics_action_click),
                 getString(R.string.analytics_label_can_see_me_checkbox));
         if (view != null) {
-            CheckBox checkBox = (CheckBox) view;
-            Boolean allow = checkBox.isChecked();
-            Contact contact = (Contact) checkBox.getTag();
-            Log.d(TAG, "toggleUserCanSeeMe: " + contact.getEmail() + ", Checkbox is: " + allow);
-            if (!allow) {
+            Contact contact = (Contact) view.getTag();
+            Log.d(TAG, "toggleUserCanSeeMe: " + contact.getEmail() + ", Checkbox is: " + contact.isCanSeeMe());
+            if (contact.isCanSeeMe()) {
                 contactService.disallowContact(contact);
             } else {
                 contactService.allowContacts(Arrays.asList(contact), new AjaxCallback<String>() {
@@ -724,11 +699,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         }
     };
 
-    // For dependency injection
-    public void setContactUtils(ContactDataSource contactDataSource) {
-        this.mContactDataSource = contactDataSource;
-    }
-
     public void logout(){
         final MainActivity main = this;
         new AlertDialog.Builder(main)
@@ -741,7 +711,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                         PreferenceUtils.setString(main, PreferenceUtils.KEY_USER_ACCOUNT, null);
                         PreferenceUtils.setString(main, PreferenceUtils.KEY_USER_ID, null);
                         PreferenceUtils.setString(main, PreferenceUtils.KEY_AUTH_TOKEN, null);
-                        PreferenceUtils.setString(main, PreferenceUtils.KEY_I_DONT_WANT_TO_SEE, null);
                         PreferenceUtils.setString(main, PreferenceUtils.KEY_CONTACTS, null);
                         PreferenceUtils.setString(main, PreferenceUtils.KEY_DASHBOARD, null);
                         PreferenceUtils.setString(main, PreferenceUtils.KEY_LOCAL_CONTACTS, null);
@@ -750,7 +719,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                         MainApplication.dashboard = null;
                         MainApplication.contacts = null;
                         MainApplication.places = null;
-                        MainApplication.iDontWantToSee = new MainApplication.IDontWantToSee();
                         MainApplication.firstTimeZoom = true;
                         //Restart main activity to clear state
                         main.recreate();
@@ -758,6 +726,12 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                 })
                 .setNegativeButton(R.string.no, null)
                 .show();
+    }
+
+    public void setPhoneContacts(List<Contact> phoneContacts) {
+        this.phoneContacts = phoneContacts;
+        AddContactsFragment acf = new AddContactsFragment(this);
+        acf.setPhoneContacts(phoneContacts);
     }
 
 }

@@ -9,7 +9,7 @@ import com.google.maps.android.clustering.ClusterItem;
 
 import java.util.Date;
 
-public abstract class Person implements ClusterItem {
+public abstract class Person implements ClusterItem, Cloneable {
     private String userId;
     private String email;
     private UserLocation location;
@@ -74,5 +74,10 @@ public abstract class Person implements ClusterItem {
 
     public void setMarkerPhoto(Bitmap markerPhoto) {
         this.markerPhoto = markerPhoto;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }

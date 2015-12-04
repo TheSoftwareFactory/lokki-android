@@ -12,7 +12,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,8 +35,12 @@ public class ContactService extends ApiService {
 
     public ContactService(Context context) {
         super(context);
+        generatePhoneContactsMapFromList(new DefaultContactDataSource().getContacts(context));
+    }
+
+    private void generatePhoneContactsMapFromList(List<Contact> phoneContactsList) {
         phoneContacts = new HashMap<>();
-        for(Contact contact : new DefaultContactDataSource().getContacts(context)) {
+        for(Contact contact : phoneContactsList) {
             if (contact.getEmail() != null)
                 phoneContacts.put(contact.getEmail(), contact);
         }
@@ -58,7 +61,7 @@ public class ContactService extends ApiService {
         return (contact != null && contact.getUserId() != null);
     }
     private boolean contactRequestIsValid(ContactsRequest request) {
-        return (request.emails != null && request.emails.size() > 0);
+        return (request.getItems() != null && request.getItems().size() > 0);
     }
 
     public void getContacts() {
@@ -100,26 +103,80 @@ public class ContactService extends ApiService {
         return visible;
     }
 
-    private class ContactsRequest {
-        public List<String> emails = new ArrayList<>();
-
-        private void addEmail(Contact contact) {
-            if (contact != null && contact.getEmail() != null) emails.add(contact.getEmail());
-        }
+    private abstract class ContactsRequest {
+        protected abstract void addItem(Contact contact);
+        protected abstract List<String> getItems();
+        protected abstract void initalizeItems();
 
         public ContactsRequest(List<Contact> contacts) {
-            for (Contact contact : contacts) addEmail(contact);
+            initalizeItems();
+            for (Contact contact : contacts) addItem(contact);
         }
 
         public ContactsRequest(Contact contact) {
-            addEmail(contact);
+            initalizeItems();
+            addItem(contact);
+        }
+    }
+
+    private class AllowContactsRequest extends ContactsRequest {
+        public List<String> emails;
+
+        public AllowContactsRequest(List<Contact> contacts) {
+            super(contacts);
+        }
+
+        public AllowContactsRequest(Contact contact) {
+            super(contact);
+        }
+
+        @Override
+        protected void addItem(Contact contact) {
+           if (contact != null && contact.getEmail() != null) emails.add(contact.getEmail());
+        }
+
+        @Override
+        protected List<String> getItems() {
+            return emails;
+        }
+
+        @Override
+        protected void initalizeItems() {
+            emails = new ArrayList<>();
+        }
+    }
+
+    private class IgnoreContactsRequest extends ContactsRequest {
+        public List<String> ids;
+
+        public IgnoreContactsRequest(List<Contact> contacts) {
+            super(contacts);
+        }
+
+        public IgnoreContactsRequest(Contact contact) {
+            super(contact);
+        }
+
+        @Override
+        protected void addItem(Contact contact) {
+            if (contact != null && contact.getUserId() != null) ids.add(contact.getUserId());
+        }
+
+        @Override
+        protected List<String> getItems() {
+            return ids;
+        }
+
+        @Override
+        protected void initalizeItems() {
+            ids = new ArrayList<>();
         }
     }
 
     // If you call this, you must manually remember to update contacts with getContacts() in cb.
     public void allowContacts(List<Contact> contacts, AjaxCallback<String> cb) {
         Log.d(TAG, "allowPeople");
-        ContactsRequest request = new ContactsRequest(contacts);
+        ContactsRequest request = new AllowContactsRequest(contacts);
         if (!contactRequestIsValid(request)) {
             Log.e(TAG, "Attempted to allow 0 emails");
             return;
@@ -160,7 +217,7 @@ public class ContactService extends ApiService {
 
     public void ignoreContact(Contact contact) {
         Log.d(TAG, "ignoreUsers");
-        ContactsRequest request = new ContactsRequest(contact);
+        ContactsRequest request = new IgnoreContactsRequest(contact);
         if (!contactRequestIsValid(request)) {
             Log.e(TAG, "Attempted to ignore invalid email");
             return;
@@ -265,6 +322,15 @@ public class ContactService extends ApiService {
 
     public List<Contact> getFromCache() throws IOException {
         return JsonUtils.createListFromJson(PreferenceUtils.getString(context, getCacheKey()), Contact.class);
+    }
+
+    public List<Contact> getPhoneContacts() {
+        return new ArrayList(phoneContacts.values());
+    }
+
+    // for dependency injenction
+    public void setPhoneContacts(List<Contact> phoneContacts) {
+        generatePhoneContactsMapFromList(phoneContacts);
     }
 
     private Contact getSynchronizedWithPhone(Contact contact) {

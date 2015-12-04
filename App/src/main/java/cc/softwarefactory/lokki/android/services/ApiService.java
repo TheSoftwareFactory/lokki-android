@@ -18,7 +18,6 @@ import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 
 /**
  * Base class for all API services. Implementing classes should handle objects CRUD-operations and cache.
- * Currently it is assumed, that all JSON is sent as objects. JSON can be gotten as lists also.
  */
 public abstract class ApiService {
 
