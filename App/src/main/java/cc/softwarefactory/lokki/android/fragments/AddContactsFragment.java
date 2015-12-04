@@ -50,8 +50,8 @@ import cc.softwarefactory.lokki.android.utilities.ServerApi;
 public class AddContactsFragment extends Fragment {
 
     private static final String TAG = "AddContacts";
-    private ContactDataSource mContactDataSource;
     private List<Contact> contactList;
+    private List<Contact> phoneContacts;
     private AQuery aq;
     private Boolean cancelAsynTasks = false;
     private Context context;
@@ -62,20 +62,21 @@ public class AddContactsFragment extends Fragment {
     private TextView noContactsMessage;
     private ContactService contactService;
 
-    public AddContactsFragment() {
+    public AddContactsFragment(Context context) {
+        this.context = context;
+        this.contactService = new ContactService(context);
         contactList = new ArrayList<>();
-        mContactDataSource = new DefaultContactDataSource();
+        phoneContacts = new ArrayList<>();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         View rootView = inflater.inflate(R.layout.activity_add_contacts, container, false);
         aq = new AQuery(getActivity(), rootView);
         cancelAsynTasks = false;
         context = getActivity().getApplicationContext();
-        avatarLoader = new AvatarLoader();
         contactService = new ContactService(context);
+        avatarLoader = new AvatarLoader();
         inputSearch = (EditText) rootView.findViewById(R.id.add_contact_search);
         inputSearch.setEnabled(false);
         inputSearch.setAlpha(0);
@@ -102,6 +103,10 @@ public class AddContactsFragment extends Fragment {
         String[] loadingList = {getString(R.string.loading)};
         aq.id(R.id.add_contacts_list_view).adapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, loadingList));
         new getAllEmailAddressesAsync().execute();
+    }
+
+    public void setPhoneContacts(List<Contact> phoneContacts) {
+        this.phoneContacts = phoneContacts;
     }
 
     private void enableSearchFilter() {
@@ -149,21 +154,16 @@ public class AddContactsFragment extends Fragment {
         });
     }
 
-
-    public void setContactUtils(ContactDataSource contactDataSource) {
-        this.mContactDataSource = contactDataSource;
-    }
-
     private class getAllEmailAddressesAsync extends AsyncTask<Void, Void, List<Contact>> {
 
         @Override
         protected List<Contact> doInBackground(Void... params) {
-            return mContactDataSource.getContacts(context);
+            return phoneContacts;
         }
 
         @Override
         protected void onPostExecute(List<Contact> phoneContacts) {
-         Log.d(TAG, "Number of contacts: " + phoneContacts.size());
+            Log.d(TAG, "Number of contacts: " + phoneContacts.size());
             Log.d(TAG, "Contacts: " + phoneContacts);
 
             // We create a dictionary for performance.

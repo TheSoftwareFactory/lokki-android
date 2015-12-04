@@ -35,8 +35,12 @@ public class ContactService extends ApiService {
 
     public ContactService(Context context) {
         super(context);
+        generatePhoneContactsMapFromList(new DefaultContactDataSource().getContacts(context));
+    }
+
+    private void generatePhoneContactsMapFromList(List<Contact> phoneContactsList) {
         phoneContacts = new HashMap<>();
-        for(Contact contact : new DefaultContactDataSource().getContacts(context)) {
+        for(Contact contact : phoneContactsList) {
             if (contact.getEmail() != null)
                 phoneContacts.put(contact.getEmail(), contact);
         }
@@ -318,6 +322,15 @@ public class ContactService extends ApiService {
 
     public List<Contact> getFromCache() throws IOException {
         return JsonUtils.createListFromJson(PreferenceUtils.getString(context, getCacheKey()), Contact.class);
+    }
+
+    public List<Contact> getPhoneContacts() {
+        return new ArrayList(phoneContacts.values());
+    }
+
+    // for dependency injenction
+    public void setPhoneContacts(List<Contact> phoneContacts) {
+        generatePhoneContactsMapFromList(phoneContacts);
     }
 
     private Contact getSynchronizedWithPhone(Contact contact) {
