@@ -1,14 +1,17 @@
 package cc.softwarefactory.lokki.android.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * Model Class for Tracking Place on Map
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Place implements Comparable<Place> {
 
-    private String id; // place id
-    private String name; // place name
-    private String img;  // Place image
-    private UserLocation location; // place location
+    private String id;
+    private String name;
+    private String img;
+    private UserLocation location;
 
     public String getId() {
         return id;
