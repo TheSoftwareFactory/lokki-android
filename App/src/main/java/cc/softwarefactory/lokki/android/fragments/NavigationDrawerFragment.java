@@ -107,10 +107,9 @@ public class NavigationDrawerFragment extends Fragment {
             ImageView avatarImage = (ImageView) mListViewHeader.findViewById(R.id.avatar);
             AvatarLoader avatarLoader = new AvatarLoader();
 
-            String email = PreferenceUtils.getString(getActivity(), PreferenceUtils.KEY_USER_ACCOUNT);
             avatarLoader.load(MainApplication.user, avatarImage);
 
-            aq.id(R.id.user_name).text(email);
+            aq.id(R.id.user_name).text(MainApplication.user.getEmail());
         }
         else {
             Log.e(TAG, "Cannot add user info. ListViewHeader not initialized");
