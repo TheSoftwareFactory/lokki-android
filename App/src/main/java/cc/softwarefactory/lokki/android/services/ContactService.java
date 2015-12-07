@@ -31,11 +31,11 @@ public class ContactService extends ApiService {
     private final String restPath = "contacts";
     private final String TAG = "ContactService";
 
-    private Map<String, Contact> phoneContacts;
+    private static Map<String, Contact> phoneContacts;
 
     public ContactService(Context context) {
         super(context);
-        generatePhoneContactsMapFromList(new DefaultContactDataSource().getContacts(context));
+        if (phoneContacts == null) generatePhoneContactsMapFromList(new DefaultContactDataSource().getContacts(context));
     }
 
     private void generatePhoneContactsMapFromList(List<Contact> phoneContactsList) {
@@ -326,11 +326,6 @@ public class ContactService extends ApiService {
 
     public List<Contact> getPhoneContacts() {
         return new ArrayList(phoneContacts.values());
-    }
-
-    // for dependency injenction
-    public void setPhoneContacts(List<Contact> phoneContacts) {
-        generatePhoneContactsMapFromList(phoneContacts);
     }
 
     private Contact getSynchronizedWithPhone(Contact contact) {
