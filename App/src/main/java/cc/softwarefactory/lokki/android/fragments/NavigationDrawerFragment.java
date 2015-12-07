@@ -30,6 +30,7 @@ import com.androidquery.AQuery;
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.avatar.AvatarLoader;
+import cc.softwarefactory.lokki.android.models.MainUser;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 
 /**
@@ -107,9 +108,12 @@ public class NavigationDrawerFragment extends Fragment {
             ImageView avatarImage = (ImageView) mListViewHeader.findViewById(R.id.avatar);
             AvatarLoader avatarLoader = new AvatarLoader();
 
-            avatarLoader.load(MainApplication.user, avatarImage);
+            MainUser user = MainApplication.user;
+            avatarLoader.load(user, avatarImage);
 
-            aq.id(R.id.user_name).text(MainApplication.user.getEmail());
+            if (user != null && user.getEmail() != null) {
+                aq.id(R.id.user_name).text(MainApplication.user.getEmail());
+            }
         }
         else {
             Log.e(TAG, "Cannot add user info. ListViewHeader not initialized");

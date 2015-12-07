@@ -83,17 +83,17 @@ public class AvatarLoader {
 
         BitmapWorkerTask task = getTaskFromView(imageView);
 
-        if (task == null) {
-            Log.e(TAG, "cancelPotentialWork: No task associated with the ImageView, or an existing task was cancelled"); // No task associated with the ImageView, or an existing task was cancelled
+        if (task == null || person == null) {
+            Log.e(TAG, "cancelPotentialWork: No task or person associated with the ImageView, or an existing task was cancelled");
             return true;
         }
 
-        if (!task.data.getEmail().equals(person.getEmail())) {
-            Log.e(TAG, "cancelPotentialWork: Cancel previous task"); // Cancel previous task
+        if (task.data == null || task.data.getEmail() == null || !task.data.getEmail().equals(person.getEmail())) {
+            Log.e(TAG, "cancelPotentialWork: Cancel previous task");
             task.cancel(true);
             return true;
         }
-        Log.e(TAG, "cancelPotentialWork: The same work is already in progress"); // The same work is already in progress
+        Log.e(TAG, "cancelPotentialWork: The same work is already in progress");
         return false;
     }
 
