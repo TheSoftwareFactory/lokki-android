@@ -70,17 +70,33 @@ public class ServerApi {
                     Intent intent = new Intent("EXIT");
                     LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
+                } else if (status.getCode() == 404) {
+                    Log.e(TAG, "User does not exist. Must sign up again.");
+                    String message = "Your account has expired. Please sign up again.";
+                    Intent intent = new Intent("SIGN-UP");
+                    intent.putExtra("message", message);
+                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                 } else if (json != null) {
                     Log.d(TAG, "json returned: " + json);
                     try {
-                        if (json.has("serverMessage"))
+                        if (json.has("outOfDateVersionMessage"))
                         {
-                            String message = json.get("serverMessage").toString();
+                            String message = json.get("outOfDateVersionMessage").toString();
                             Intent intent = new Intent("MESSAGE");
                             intent.putExtra("message", message);
                             LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                             return;
                         }
+
+                        if (json.has("accountExpiredMessage"))
+                        {
+                            String message = json.get("accountExpiredMessage").toString();
+                            Intent intent = new Intent("SIGN-UP");
+                            intent.putExtra("message", message);
+                            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+                            return;
+                        }
+
                         MainApplication.dashboard = JsonUtils.createFromJson(json.toString(), MainApplication.Dashboard.class);
                         PreferenceUtils.setString(context, PreferenceUtils.KEY_DASHBOARD, JsonUtils.serialize(MainApplication.dashboard));
                         MainApplication.user.setLocation(MainApplication.dashboard.getLocation());
