@@ -187,8 +187,6 @@ public class MainApplication extends Application {
                     .build());
         }
 
-//        buzzPlaces = new ArrayList<>();
-
         user = new MainUser(this);
 
         super.onCreate();
