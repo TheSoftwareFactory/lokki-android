@@ -15,12 +15,16 @@ import com.google.android.gms.maps.model.LatLng;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.errors.PlaceError;
+import cc.softwarefactory.lokki.android.models.BuzzPlace;
 import cc.softwarefactory.lokki.android.models.Place;
 import cc.softwarefactory.lokki.android.models.UserLocation;
 import cc.softwarefactory.lokki.android.utilities.JsonUtils;
@@ -28,6 +32,19 @@ import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
 
 public class PlaceService extends ApiService {
+
+    private static Map<Place, Boolean> placesWithBuzz;
+
+    public List<Place> getPlacesWithBuzz() {
+        if (placesWithBuzz == null) return new ArrayList<>();
+        return new ArrayList<>(placesWithBuzz.keySet());
+    }
+
+    public static BuzzPlace createBuzz() {
+        BuzzPlace buzz = new BuzzPlace();
+        buzz.setBuzzCount(5);
+        return buzz;
+    }
 
     public PlaceService(Context context) {
         super(context);
@@ -67,6 +84,15 @@ public class PlaceService extends ApiService {
                 try {
                     MainApplication.places = JsonUtils.createListFromJson(json.toString(), Place.class);
                     updateCache();
+
+                    placesWithBuzz = new HashMap<>();
+                    for (Place place : MainApplication.places) {
+                       if (place.isBuzz()) {
+                           place.setBuzzObject(createBuzz());
+                           placesWithBuzz.put(place, true);
+                       }
+                    }
+
                     Intent intent = new Intent("PLACES-UPDATE");
                     LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                 } catch (IOException e) {
@@ -196,11 +222,30 @@ public class PlaceService extends ApiService {
         });
     }
 
-    public Place getPlaceById(String id) {
-        for (Place place : MainApplication.places) {
-            if (place.getId() == id) return place;
+    public void setBuzz(final Place place, boolean isBuzz) {
+        Log.d(TAG, "setPuzz");
+
+        place.setBuzz(isBuzz);
+        placesWithBuzz.remove(place);
+        if (place.isBuzz()) {
+            place.setBuzzObject(createBuzz());
+            placesWithBuzz.put(place, true);
         }
-        Log.e(TAG, "couldn't find place by id: " + id);
-        return null;
+        updateCache();
+
+        put(restPath + "/" + place.getId() + "/buzz/" + isBuzz, new AjaxCallback<String>() {
+            @Override
+            public void callback(String url, String result, AjaxStatus status) {
+                ServerApi.logStatus("buzzPlace", status);
+
+                if (status.getError() != null) {
+                    displayPlaceError(status);
+                    return;
+                }
+
+                Intent intent = new Intent("PLACES-UPDATE");
+                LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+            }
+        });
     }
 }

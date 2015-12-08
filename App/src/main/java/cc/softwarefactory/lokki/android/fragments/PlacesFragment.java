@@ -135,7 +135,8 @@ public class PlacesFragment extends Fragment {
                     }
                 });
                 Log.d(TAG, "Setting up checkbox callback");
-                final String placeId = place.getId();
+
+                aq.id(R.id.buzz_checkBox).checked(place.isBuzz());
 
                 aq.id(R.id.buzz_checkBox).clicked(new View.OnClickListener() {
                     @Override
@@ -144,7 +145,7 @@ public class PlacesFragment extends Fragment {
                         if (((CheckBox) view).isChecked()) {
                             // This ensures that automatic UI refresh won't uncheck the checkbox
                             // while the the dialog is still open.
-                            BuzzActivity.setBuzz(placeId, 0);
+//                            BuzzActivity.setBuzz(placeId, 0);
 
                             Dialog dialog = new AlertDialog.Builder(getActivity())
                                     .setMessage(R.string.confirm_buzz)
@@ -154,13 +155,15 @@ public class PlacesFragment extends Fragment {
                                             AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
                                                 getString(R.string.analytics_action_click),
                                                 getString(R.string.analytics_label_buzz_turn_on));
-                                            BuzzActivity.setBuzz(placeId, 5);
+//                                            BuzzActivity.setBuzz(placeId, 5);
+                                            placeService.setBuzz(place, true);
+                                            ((CheckBox) view).setChecked(true);
                                         }
                                     })
                                     .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int which) {
-                                            BuzzActivity.removeBuzz(placeId);
+//                                            BuzzActivity.removeBuzz(placeId);
                                             ((CheckBox) view).setChecked(false);
                                             placesFragment.showPlaces();  // Update UI for tests
                                             AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
@@ -171,16 +174,12 @@ public class PlacesFragment extends Fragment {
                             dialog.setCanceledOnTouchOutside(false);
                             dialog.show();
                         } else {
-                            BuzzActivity.removeBuzz(placeId);
+//                            BuzzActivity.removeBuzz(placeId);
+                            placeService.setBuzz(place, false);
                         }
 
                     }
                 });
-
-                for (BuzzPlace buzzPlace : MainApplication.buzzPlaces) {
-                    if (buzzPlace.getPlaceId().equals(placeId))
-                        aq.id(R.id.buzz_checkBox).checked(true);
-                }
 
                 Log.d(TAG, "Place name: " + place.getName());
                 Log.d(TAG, "peopleInsidePlace? " + peopleInsidePlace.containsKey(place));

@@ -1,23 +1,21 @@
 package cc.softwarefactory.lokki.android.espresso;
 
-import android.support.test.espresso.ViewAssertion;
-import android.support.test.espresso.matcher.ViewMatchers;
 import android.util.Log;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.espresso.utilities.MockJsonUtils;
 import cc.softwarefactory.lokki.android.espresso.utilities.TestUtils;
+import cc.softwarefactory.lokki.android.models.BuzzPlace;
+import cc.softwarefactory.lokki.android.models.Place;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -42,7 +40,6 @@ public class BuzzTest extends LoggedInBaseTest {
 
     public void setUp() throws Exception {
         super.setUp();
-        MainApplication.buzzPlaces = new ArrayList<>();
     }
 
     private void enterContactsScreen() {
@@ -90,6 +87,10 @@ public class BuzzTest extends LoggedInBaseTest {
         enterPlacesScreen();
         openDialogForTestplace1();
         onView(withText(R.string.yes)).perform(click());
+
+        List<Place> places = MockJsonUtils.getPlaces();
+        places.get(0).setBuzz(true);
+        getMockDispatcher().setPlacesResponse(new MockResponse().setBody(new ObjectMapper().writeValueAsString(places)));
     }
 
     public void testConfirmBuzzworks() throws JSONException, JsonProcessingException {
