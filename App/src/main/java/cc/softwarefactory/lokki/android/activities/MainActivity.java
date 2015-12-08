@@ -57,6 +57,7 @@ import cc.softwarefactory.lokki.android.androidServices.DataService;
 import cc.softwarefactory.lokki.android.androidServices.LocationService;
 import cc.softwarefactory.lokki.android.models.Contact;
 import cc.softwarefactory.lokki.android.services.ContactService;
+import cc.softwarefactory.lokki.android.services.PlaceService;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
@@ -85,6 +86,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
     private ContactService contactService;
     private List<Contact> phoneContacts;
+
+    private PlaceService placeService;
 
     //Is this activity currently paused?
     private boolean paused = true;
@@ -123,6 +126,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
         contactService = new ContactService(this);
         phoneContacts = contactService.getPhoneContacts();
+
+        placeService = new PlaceService(this);
     }
 
     /**
@@ -206,14 +211,13 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
             Log.i(TAG, "onResume - user NOT logged in, so avoiding launching services.");
             return;
         }
-
-
+        
         Log.i(TAG, "onResume - user logged in, so launching services.");
         startServices();
         LocalBroadcastManager.getInstance(this).registerReceiver(exitMessageReceiver, new IntentFilter("EXIT"));
         LocalBroadcastManager.getInstance(this).registerReceiver(switchToMapReceiver, new IntentFilter("GO-TO-MAP"));
         LocalBroadcastManager.getInstance(this).registerReceiver(serverMessageReceiver, new IntentFilter("MESSAGE"));
-
+        LocalBroadcastManager.getInstance(this).registerReceiver(switchToSignUpReceiver, new IntentFilter("SIGN-UP"));
 
         Log.i(TAG, "onResume - check if dashboard is null");
         if (MainApplication.dashboard == null) {
@@ -289,7 +293,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
      * Call setLocationServiceAccuracyLevel() afterwards to send it to the service.
      */
     private void setBackgroundLocationAccuracy(){
-        if (MainApplication.buzzPlaces.size() > 0){
+        if (placeService.getPlacesWithBuzz().size() > 0){
             currentAccuracy = LocationService.LocationAccuracy.BGACCURATE;
         }
         else {
@@ -343,6 +347,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         LocalBroadcastManager.getInstance(this).unregisterReceiver(switchToMapReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(exitMessageReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(serverMessageReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(switchToSignUpReceiver);
         super.onPause();
         //Set location update accuracy to low if the service has been initialized
         if (mBoundLocationService != null) {
@@ -689,6 +694,29 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         }
     };
 
+    private BroadcastReceiver switchToSignUpReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d(TAG, "switchToSignUp onReceive");
+
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+            alertDialog.setTitle(getString(R.string.app_name));
+            String message = intent.getStringExtra("message");
+            alertDialog.setMessage(message)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            logoutSilent();
+                        }
+                    })
+                    .setCancelable(false);
+            alertDialog.show();
+
+            signUserIn();
+        }
+    };
 
     private BroadcastReceiver switchToMapReceiver = new BroadcastReceiver() {
 
@@ -727,6 +755,24 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                 })
                 .setNegativeButton(R.string.no, null)
                 .show();
+    }
+
+    public void logoutSilent(){
+        final MainActivity main = this;
+        PreferenceUtils.setString(main, PreferenceUtils.KEY_USER_ACCOUNT, null);
+        PreferenceUtils.setString(main, PreferenceUtils.KEY_USER_ID, null);
+        PreferenceUtils.setString(main, PreferenceUtils.KEY_AUTH_TOKEN, null);
+        PreferenceUtils.setString(main, PreferenceUtils.KEY_CONTACTS, null);
+        PreferenceUtils.setString(main, PreferenceUtils.KEY_DASHBOARD, null);
+        PreferenceUtils.setString(main, PreferenceUtils.KEY_LOCAL_CONTACTS, null);
+        PreferenceUtils.setString(main, PreferenceUtils.KEY_PLACES, null);
+        MainApplication.user = null;
+        MainApplication.dashboard = null;
+        MainApplication.contacts = null;
+        MainApplication.places = null;
+        MainApplication.firstTimeZoom = true;
+        //Restart main activity to clear state
+        main.recreate();
     }
 
     public void setPhoneContacts(List<Contact> phoneContacts) {

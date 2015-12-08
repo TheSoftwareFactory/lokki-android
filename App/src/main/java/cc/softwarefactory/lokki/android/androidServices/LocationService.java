@@ -33,7 +33,6 @@ import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.activities.BuzzActivity;
 import cc.softwarefactory.lokki.android.activities.MainActivity;
-import cc.softwarefactory.lokki.android.models.BuzzPlace;
 import cc.softwarefactory.lokki.android.models.Place;
 import cc.softwarefactory.lokki.android.services.PlaceService;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
@@ -336,22 +335,22 @@ public class LocationService extends Service implements LocationListener, Google
     }
 
     class VibrationThread implements Runnable {
-        private String id;
+        private Place place;
 
-        VibrationThread(String id) {
-            this.id = id;
+        VibrationThread(Place place) {
+            this.place = place;
         }
 
         @Override
         public void run() {
-            BuzzPlace buzzPlace = BuzzActivity.getBuzz(id);
+            Place.Buzz buzz = place.getBuzzObject();
             try {
-                while (buzzPlace != null && buzzPlace.getBuzzCount() > 0) {
+                while (buzz != null && buzz.getBuzzCount() > 0) {
                     Log.d(TAG, "Vibrating...");
                     Vibrator v = (Vibrator) getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
                     v.vibrate(1000);
                     Thread.sleep(2500);
-                    buzzPlace.decBuzzCount();
+                    buzz.decBuzzCount();
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -359,40 +358,29 @@ public class LocationService extends Service implements LocationListener, Google
         }
     }
 
-    private void triggerBuzzing(final BuzzPlace buzzPlace) throws JSONException {
-        if (buzzPlace.getBuzzCount() <= 0 || buzzPlace.isActivated()) return;
+    private void triggerBuzzing(Place place) {
+        Place.Buzz buzz = place.getBuzzObject();
+        if (buzz.isActivated() || buzz.getBuzzCount() <= 0) return;
 
-        buzzPlace.setActivated(false);
+        buzz.setActivated(true);
+
         Intent i = new Intent();
         i.setClass(this, BuzzActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(i);
         showArrivalNotification();
-
         Log.d(TAG, "Starting vibration...");
-        new Thread(new VibrationThread(buzzPlace.getPlaceId())).start();
+        new Thread(new VibrationThread(place)).start();
     }
 
     private void checkBuzzPlaces() {
-        for (BuzzPlace buzzPlace : MainApplication.buzzPlaces) {
-            try {
-                String placeId = buzzPlace.getPlaceId();
-                Place place = placeService.getPlaceById(placeId);
-                //create android location from Place location information
-                Location placeLocation = new Location(placeId);
-                placeLocation.setLatitude(place.getLocation().getLat());
-                placeLocation.setLongitude((place.getLocation().getLon()));
-                if (placeLocation.distanceTo(lastLocation) < place.getLocation().getAcc())
-                    triggerBuzzing(buzzPlace);
-                else {
-                    buzzPlace.setBuzzCount(5);
-                    buzzPlace.setActivated(false);
-                }
-            } catch (JSONException e) {
-                Log.e(TAG,"Error in checking buzz places" + e);
+        for (Place place : placeService.getPlacesWithBuzz()) {
+            if (place.getLocation().convertToAndroidLocation().distanceTo(lastLocation) < place.getLocation().getAcc()) {
+                triggerBuzzing(place);
+            } else {
+                place.setBuzzObject(PlaceService.createBuzz());
             }
         }
-
     }
 
     @Override
