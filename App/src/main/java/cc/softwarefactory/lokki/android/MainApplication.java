@@ -11,25 +11,18 @@ import android.preference.PreferenceManager;
 import android.support.v4.util.LruCache;
 import android.util.Log;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.android.gms.maps.GoogleMap;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import cc.softwarefactory.lokki.android.models.BuzzPlace;
 import cc.softwarefactory.lokki.android.models.Contact;
-import cc.softwarefactory.lokki.android.models.JSONMap;
 import cc.softwarefactory.lokki.android.models.MainUser;
 import cc.softwarefactory.lokki.android.models.Place;
 import cc.softwarefactory.lokki.android.models.User;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
-import cc.softwarefactory.lokki.android.utilities.JsonUtils;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 
 public class MainApplication extends Application {
@@ -156,8 +149,6 @@ public class MainApplication extends Application {
 
     public static boolean locationDisabledPromptShown;
 
-    public static List<BuzzPlace> buzzPlaces;
-
     public static boolean firstTimeZoom = true;
 
     @Override
@@ -195,8 +186,6 @@ public class MainApplication extends Application {
                     .penaltyDeath()
                     .build());
         }
-
-        buzzPlaces = new ArrayList<>();
 
         user = new MainUser(this);
 

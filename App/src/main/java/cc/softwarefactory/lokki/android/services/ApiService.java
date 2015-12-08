@@ -77,6 +77,11 @@ public abstract class ApiService {
         createAjaxWithBody("put", uri, callback, param);
     }
 
+    //TODO construct a put without body using HttpEntity instead of sending empty object
+    protected void put(String uri, AjaxCallback<String> callback) {
+        createAjaxWithBody("put", uri, callback, new JSONObject());
+    }
+
     protected void delete(String uri, AjaxCallback<String> callback) {
         createAjax("delete", uri, callback);
     }
