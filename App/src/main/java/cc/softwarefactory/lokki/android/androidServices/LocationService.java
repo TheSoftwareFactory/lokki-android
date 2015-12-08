@@ -29,13 +29,10 @@ import com.google.android.gms.location.LocationServices;
 
 import org.json.JSONException;
 
-import java.util.Map;
-
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.activities.BuzzActivity;
 import cc.softwarefactory.lokki.android.activities.MainActivity;
-import cc.softwarefactory.lokki.android.models.BuzzPlace;
 import cc.softwarefactory.lokki.android.models.Place;
 import cc.softwarefactory.lokki.android.services.PlaceService;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
@@ -346,7 +343,7 @@ public class LocationService extends Service implements LocationListener, Google
 
         @Override
         public void run() {
-            BuzzPlace buzz = place.getBuzzObject();
+            Place.Buzz buzz = place.getBuzzObject();
             try {
                 while (buzz != null && buzz.getBuzzCount() > 0) {
                     Log.d(TAG, "Vibrating...");
@@ -362,7 +359,7 @@ public class LocationService extends Service implements LocationListener, Google
     }
 
     private void triggerBuzzing(Place place) {
-        BuzzPlace buzz = place.getBuzzObject();
+        Place.Buzz buzz = place.getBuzzObject();
         if (buzz.isActivated() || buzz.getBuzzCount() <= 0) return;
 
         buzz.setActivated(true);

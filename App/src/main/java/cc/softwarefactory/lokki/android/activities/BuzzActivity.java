@@ -9,7 +9,6 @@ import android.util.Log;
 import org.json.JSONException;
 
 import cc.softwarefactory.lokki.android.R;
-import cc.softwarefactory.lokki.android.models.BuzzPlace;
 import cc.softwarefactory.lokki.android.models.Place;
 import cc.softwarefactory.lokki.android.services.PlaceService;
 
@@ -50,7 +49,7 @@ public class BuzzActivity extends AppCompatActivity {
                 public void onClick(DialogInterface dialogInterface, int which) {
                     try {
                         Log.d(TAG, "Removed buzz");
-                        BuzzPlace buzz = place.getBuzzObject();
+                        Place.Buzz buzz = place.getBuzzObject();
                         buzz.setBuzzCount(0);
                         thisActivity.finish();
                     } catch (Exception e) {

@@ -6,6 +6,31 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  * Model Class for Tracking Place on Map
  */
 public class Place implements Comparable<Place> {
+    public static class Buzz {
+        private int buzzCount;
+        private boolean activated;
+
+        public int getBuzzCount() {
+            return buzzCount;
+        }
+
+        public void setBuzzCount(int buzzCount) {
+            this.buzzCount = buzzCount;
+        }
+
+        public void decBuzzCount() {
+            if (this.buzzCount > 0)
+                buzzCount--;
+        }
+
+        public boolean isActivated() {
+            return activated;
+        }
+
+        public void setActivated(boolean activated) {
+            this.activated = activated;
+        }
+    }
 
     private String id;
     private String name;
@@ -14,7 +39,7 @@ public class Place implements Comparable<Place> {
     private boolean buzz;
 
     @JsonIgnore
-    private BuzzPlace buzzObject;
+    private Buzz buzzObject;
 
     public String getId() {
         return id;
@@ -60,11 +85,11 @@ public class Place implements Comparable<Place> {
         this.buzz = buzz;
     }
 
-    public BuzzPlace getBuzzObject() {
+    public Buzz getBuzzObject() {
         return buzzObject;
     }
 
-    public void setBuzzObject(BuzzPlace buzzObject) {
+    public void setBuzzObject(Buzz buzzObject) {
         this.buzzObject = buzzObject;
     }
 

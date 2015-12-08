@@ -149,8 +149,6 @@ public class MainApplication extends Application {
 
     public static boolean locationDisabledPromptShown;
 
-//    public static List<BuzzPlace> buzzPlaces;
-
     public static boolean firstTimeZoom = true;
 
     @Override

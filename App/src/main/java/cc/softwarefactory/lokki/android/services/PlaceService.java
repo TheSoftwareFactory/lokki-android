@@ -24,7 +24,6 @@ import java.util.Map;
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.errors.PlaceError;
-import cc.softwarefactory.lokki.android.models.BuzzPlace;
 import cc.softwarefactory.lokki.android.models.Place;
 import cc.softwarefactory.lokki.android.models.UserLocation;
 import cc.softwarefactory.lokki.android.utilities.JsonUtils;
@@ -40,8 +39,8 @@ public class PlaceService extends ApiService {
         return new ArrayList<>(placesWithBuzz.keySet());
     }
 
-    public static BuzzPlace createBuzz() {
-        BuzzPlace buzz = new BuzzPlace();
+    public static Place.Buzz createBuzz() {
+        Place.Buzz buzz = new Place.Buzz();
         buzz.setBuzzCount(5);
         return buzz;
     }
