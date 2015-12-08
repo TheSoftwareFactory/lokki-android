@@ -141,10 +141,6 @@ public class PlacesFragment extends Fragment {
                     public void onClick(final View view) {
 
                         if (((CheckBox) view).isChecked()) {
-                            // This ensures that automatic UI refresh won't uncheck the checkbox
-                            // while the the dialog is still open.
-//                            BuzzActivity.setBuzz(placeId, 0);
-
                             Dialog dialog = new AlertDialog.Builder(getActivity())
                                     .setMessage(R.string.confirm_buzz)
                                     .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
@@ -153,7 +149,6 @@ public class PlacesFragment extends Fragment {
                                             AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
                                                 getString(R.string.analytics_action_click),
                                                 getString(R.string.analytics_label_buzz_turn_on));
-//                                            BuzzActivity.setBuzz(placeId, 5);
                                             placeService.setBuzz(place, true);
                                             ((CheckBox) view).setChecked(true);
                                         }
@@ -161,7 +156,6 @@ public class PlacesFragment extends Fragment {
                                     .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialogInterface, int which) {
-//                                            BuzzActivity.removeBuzz(placeId);
                                             ((CheckBox) view).setChecked(false);
                                             placesFragment.showPlaces();  // Update UI for tests
                                             AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
@@ -172,7 +166,6 @@ public class PlacesFragment extends Fragment {
                             dialog.setCanceledOnTouchOutside(false);
                             dialog.show();
                         } else {
-//                            BuzzActivity.removeBuzz(placeId);
                             placeService.setBuzz(place, false);
                         }
 
@@ -417,7 +410,6 @@ public class PlacesFragment extends Fragment {
                 // Compare location
                 float distance = placeLocation.distanceTo(contactLocation);
                 if (distance < placeLocation.getAccuracy()) {
-                    //Log.d(TAG, email + " is in place: " + placeLocation.getProvider());
                     peopleInThisPlace.add(contact);
                 }
             }
