@@ -10,9 +10,14 @@ public class Contact extends Person implements Comparable<Contact> {
 
     @Override
     public int compareTo(Contact another) {
-        if (this.getName() != null && another.getName() != null)
+        if (this.getName() != null && another.getName() != null){
+            if(this.getName().equalsIgnoreCase(another.getName())){
+                return this.getEmail().compareTo(another.getEmail());
+            }
             return this.getName().compareTo(another.getName());
-        return this.getEmail().compareTo(another.getEmail());
+        }
+        else
+            return this.getEmail().compareTo(another.getEmail());
     }
 
     public String getName() {
