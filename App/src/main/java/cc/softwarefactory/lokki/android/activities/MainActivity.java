@@ -57,6 +57,7 @@ import cc.softwarefactory.lokki.android.androidServices.DataService;
 import cc.softwarefactory.lokki.android.androidServices.LocationService;
 import cc.softwarefactory.lokki.android.models.Contact;
 import cc.softwarefactory.lokki.android.services.ContactService;
+import cc.softwarefactory.lokki.android.services.PlaceService;
 import cc.softwarefactory.lokki.android.utilities.AnalyticsUtils;
 import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
@@ -85,6 +86,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
     private ContactService contactService;
     private List<Contact> phoneContacts;
+
+    private PlaceService placeService;
 
     //Is this activity currently paused?
     private boolean paused = true;
@@ -123,6 +126,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
         contactService = new ContactService(this);
         phoneContacts = contactService.getPhoneContacts();
+
+        placeService = new PlaceService(this);
     }
 
     /**
@@ -287,7 +292,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
      * Call setLocationServiceAccuracyLevel() afterwards to send it to the service.
      */
     private void setBackgroundLocationAccuracy(){
-        if (MainApplication.buzzPlaces.size() > 0){
+        if (placeService.getPlacesWithBuzz().size() > 0){
             currentAccuracy = LocationService.LocationAccuracy.BGACCURATE;
         }
         else {

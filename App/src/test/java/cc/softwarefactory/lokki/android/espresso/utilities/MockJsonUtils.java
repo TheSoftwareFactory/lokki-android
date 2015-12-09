@@ -40,8 +40,7 @@ public class MockJsonUtils {
     }
 
 
-
-    public static String getPlacesJson() throws JSONException, JsonProcessingException {
+    public static List<Place> getPlaces() {
         List<Place> places = new ArrayList<>();
 
         Place place = new Place();
@@ -66,7 +65,12 @@ public class MockJsonUtils {
 
         places.add(place);
         places.add(place2);
-        return new ObjectMapper().writeValueAsString(places);
+
+        return places;
+    }
+
+    public static String getPlacesJson() throws JSONException, JsonProcessingException {
+        return new ObjectMapper().writeValueAsString(getPlaces());
     }
 
     public static String getEmptyDashboardJson() throws JSONException {
