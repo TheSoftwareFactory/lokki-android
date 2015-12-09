@@ -23,6 +23,7 @@ import java.util.Map;
 import cc.softwarefactory.lokki.android.BuildConfig;
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.constants.Constants;
+import cc.softwarefactory.lokki.android.models.ServerError;
 
 
 public class ServerApi {
@@ -50,6 +51,22 @@ public class ServerApi {
         Log.d(TAG, "Sign up - email: " + userAccount + ", deviceId: " + deviceId + ", language: " + Utils.getLanguage());
     }
 
+    private static void handleServerError(ServerError serverError, final Context context) {
+
+        String errorType = serverError.getErrorType();
+        if (!errorType.isEmpty())
+        {
+            Intent intent = new Intent("SERVER-ERROR");
+            intent.putExtra("errorType", errorType);
+            if (!serverError.getErrorMessage().isEmpty()) {
+                intent.putExtra("errorMessage", serverError.getErrorMessage());
+            } else {
+                intent.putExtra("errorMessage", "Unknown error");
+            }
+
+            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+        }
+    }
 
     public static void getDashboard(final Context context) {
         Log.d(TAG, "getDashboard");
@@ -73,27 +90,18 @@ public class ServerApi {
                 } else if (status.getCode() == 404) {
                     Log.e(TAG, "User does not exist. Must sign up again.");
                     String message = "Your account has expired. Please sign up again.";
-                    Intent intent = new Intent("SIGN-UP");
-                    intent.putExtra("message", message);
+                    String errorType = "2"; //Must sign up error type
+                    Intent intent = new Intent("SERVER-ERROR");
+                    intent.putExtra("errorMessage", message);
+                    intent.putExtra("errorType", errorType);
                     LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                 } else if (json != null) {
                     Log.d(TAG, "json returned: " + json);
                     try {
-                        if (json.has("outOfDateVersionMessage"))
+                        if (json.has("serverError"))
                         {
-                            String message = json.get("outOfDateVersionMessage").toString();
-                            Intent intent = new Intent("MESSAGE");
-                            intent.putExtra("message", message);
-                            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-                            return;
-                        }
-
-                        if (json.has("accountExpiredMessage"))
-                        {
-                            String message = json.get("accountExpiredMessage").toString();
-                            Intent intent = new Intent("SIGN-UP");
-                            intent.putExtra("message", message);
-                            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+                            ServerError serverError = JsonUtils.createFromJson(json.get("serverError").toString(), ServerError.class);
+                            handleServerError(serverError, context);
                             return;
                         }
 
