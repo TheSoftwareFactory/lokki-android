@@ -90,7 +90,7 @@ public class ServerApi {
                 } else if (status.getCode() == 404) {
                     Log.e(TAG, "User does not exist. Must sign up again.");
                     String message = "Your account has expired. Please sign up again.";
-                    String errorType = "2"; //Must sign up error type
+                    String errorType = "FORCE_TO_SIGN_UP"; //Must sign up error type
                     Intent intent = new Intent("SERVER-ERROR");
                     intent.putExtra("errorMessage", message);
                     intent.putExtra("errorType", errorType);

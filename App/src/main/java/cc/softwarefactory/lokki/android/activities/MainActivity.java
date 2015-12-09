@@ -687,10 +687,10 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
                             switch (errorType) {
-                                case "1":
+                                case "FORCE_TO_CLOSE":
                                     finish();
                                     break;
-                                case "2":
+                                case "FORCE_TO_SIGN_UP":
                                     logoutSilent();
                                     signUserIn();
                                     break;
