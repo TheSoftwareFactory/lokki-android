@@ -129,6 +129,18 @@ public class PlaceService extends ApiService {
         String cleanName = name.trim();
         cleanName = cleanName.substring(0, 1).toUpperCase() + cleanName.substring(1).toLowerCase();
 
+        // Checks for duplicate places on the maps
+        for (Iterator<Place> it = MainApplication.places.iterator(); it.hasNext(); ) {
+            Place place = it.next();
+            UserLocation ul = place.getLocation();
+            int latitude = Double.compare(ul.getLat(), latLng.latitude);
+            int longitude = Double.compare(ul.getLon(), latLng.longitude);
+            if (latitude == 0 && longitude == 0 && ul.getAcc() == radius ){
+                Toast.makeText(context, "Place already exists", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+
         final Place place = new Place();
         place.setName(cleanName);
         place.setImg("");
