@@ -42,7 +42,7 @@
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="@string/personal_android_key" />
+            android:value="AIzaSyBw807MfSsu4faaTisXcL8j69eqOZt-3rU" />
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -60,6 +60,9 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <!--add the searchable for map-->
+            <!--<meta-data android:name="android.app.searchable"-->
+                        <!--android:resource="@xml/searchable"/>-->
         </activity>
         <activity
             android:name=".activities.FirstTimeActivity"
@@ -78,11 +81,9 @@
             android:screenOrientation="portrait">
         </activity>
         <activity android:name=".activities.SearchActivity">
-
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
-
         </activity>
         <activity
             android:name=".activities.BuzzActivity">

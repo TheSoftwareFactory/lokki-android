@@ -16,6 +16,8 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.ContextMenu;
@@ -26,6 +28,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -60,6 +64,10 @@ public class PlacesFragment extends Fragment {
     private ListView listView;
     private PlaceService placeService;
     private ContactService contactService;
+    private ArrayAdapter<Place> adapter;
+    private EditText inputSearch;
+    private Button clearFilter;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -70,6 +78,11 @@ public class PlacesFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_places, container, false);
         listView = (ListView) rootView.findViewById(R.id.listView1);
         registerForContextMenu(listView);
+        inputSearch = (EditText) rootView.findViewById(R.id.place_search);
+        inputSearch.setEnabled(false);
+        inputSearch.setAlpha(0);
+        clearFilter = (Button) rootView.findViewById(R.id.clear_place_filter);
+
         return rootView;
     }
 
@@ -87,9 +100,11 @@ public class PlacesFragment extends Fragment {
 
         Log.d(TAG, "onResume");
         super.onResume();
+        enableSearchFilter();
         LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver, new IntentFilter("PLACES-UPDATE"));
         LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver, new IntentFilter("LOCATION-UPDATE"));
         AnalyticsUtils.screenHit(getString(R.string.analytics_screen_places));
+
     }
 
     @Override
@@ -106,16 +121,66 @@ public class PlacesFragment extends Fragment {
 
 
             Log.d(TAG, "BroadcastReceiver onReceive");
-            showPlaces();
+            //showPlaces(); commented for testing
         }
     };
+
+    /**
+     * Places search filter
+     */
+
+    private void enableSearchFilter() {
+
+        inputSearch.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
+                // When user changed the Text
+                if (adapter != null) {
+                    adapter.getFilter().filter(cs);
+                }
+                clearFilter.setVisibility(cs.length() == 0 ? View.INVISIBLE : View.VISIBLE);
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable arg0) {
+                // TODO Auto-generated method stub
+            }
+        });
+
+        inputSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                        getString(R.string.analytics_action_click),
+                        getString(R.string.analytics_label_search_places_textbox));
+            }
+        });
+
+        clearFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                        getString(R.string.analytics_action_click),
+                        getString(R.string.analytics_label_clear_search_places_textbox_button));
+                inputSearch.setText("");
+            }
+        });
+    }
+
 
     private void setListAdapter() {
 
         Log.d(TAG, "setListAdapter");
 
         final PlacesFragment placesFragment = this;
-        ArrayAdapter<Place> adapter = new ArrayAdapter<Place>(context, R.layout.places_row_layout, placesList) {
+        adapter = new ArrayAdapter<Place>(context, R.layout.places_row_layout, placesList) {
 
             @Override
             public View getView(int position, View unusedView, ViewGroup parent) {
@@ -124,6 +189,10 @@ public class PlacesFragment extends Fragment {
                 AQuery aq = new AQuery(getActivity(), convertView);
 
                 final Place place = getItem(position);
+
+                inputSearch.setEnabled(true);
+                inputSearch.setAlpha(1);
+
                 aq.id(R.id.place_name).text(place.getName());
 
                 aq.id(R.id.places_context_menu_button).clicked(new View.OnClickListener() {
