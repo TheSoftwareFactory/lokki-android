@@ -8,7 +8,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.espresso.utilities.MockJsonUtils;
@@ -60,22 +59,19 @@ public class PlacesScreenTest extends LoggedInBaseTest {
         onView(withText("Testplace1")).check(matches(isDisplayed()));
     }
 
-
     public void testContactAppearsInPlace() throws JSONException, JsonProcessingException {
         getMockDispatcher().setPlacesResponse(new MockResponse().setBody(MockJsonUtils.getPlacesJson()));
-        String[] contactEmails = new String[]{"family.member@example.com"};
-        JSONObject location = new JSONObject();
-        location.put("lat", "37.483477313364574") //Testplace1
-                .put("lon", "-122.14838393032551")
-                .put("acc", "100");
-        JSONObject[] locations = new JSONObject[]{location};
-        getMockDispatcher().setDashboardResponse(new MockResponse().setBody(MockJsonUtils
-                .getDashboardJsonContactsUserLocation(contactEmails, locations, location)));
+        getMockDispatcher().setDashboardResponse(new MockResponse().setBody(MockJsonUtils.getEmptyDashboardJson()));
+
+        String email = "family.member@example.com";
+        Contact contact = MockJsonUtils.createContact(email);
+        contact.setLocation(new UserLocation(new LatLng(37.483477313364574, -122.14838393032551), 100));
+        getMockDispatcher().setGetContactsResponse(new MockResponse().setBody(MockJsonUtils.getContactsJsonWith(new Contact[]{contact})));
+
         enterPlacesScreen();
         onView(allOf(withId(R.id.scrollView1), hasSibling(withText("Testplace1"))))
                 .check(matches(hasDescendant(isAssignableFrom(ImageView.class))));
     }
-
 
     public void testClickContactOpensMap() throws JSONException, InterruptedException, JsonProcessingException {
         getMockDispatcher().setPlacesResponse(new MockResponse().setBody(MockJsonUtils.getPlacesJson()));

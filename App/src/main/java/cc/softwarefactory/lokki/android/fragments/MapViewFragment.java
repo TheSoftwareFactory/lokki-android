@@ -570,7 +570,7 @@ public class MapViewFragment extends Fragment {
             if (bitmapResult == null || cancelAsyncTasks || !isAdded() || map == null) {
                 return;
             }
-            Person marker = null;
+            Person marker;
             try{
                 marker = (Person) person.clone();
             }

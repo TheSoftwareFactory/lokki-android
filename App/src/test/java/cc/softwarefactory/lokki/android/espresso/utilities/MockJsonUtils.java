@@ -77,9 +77,6 @@ public class MockJsonUtils {
         JSONObject jsonObject = new JSONObject();
         jsonObject
                 .put("battery", "")
-                .put("canseeme", new JSONArray())
-                .put("icansee", new JSONObject())
-                .put("idmapping", new JSONObject().put(TestUtils.VALUE_TEST_USER_ID, TestUtils.VALUE_TEST_USER_ACCOUNT))
                 .put("location", new JSONObject())
                 .put("visibility", true);
 
@@ -117,39 +114,6 @@ public class MockJsonUtils {
         contact.setUserId(Hashing.sha1().hashString(email).toString());
         contact.setCanSeeMe(true);
         return contact;
-    }
-
-    public static String getDashboardJsonContactsUserLocation(String[] contactEmails, JSONObject[] locations, JSONObject userLocation) throws JSONException {
-        if (contactEmails.length != locations.length) {
-            return "parameters must be equal";
-        }
-        JSONArray canseemeJsonArray = new JSONArray();
-        JSONObject icanseeJsonObject = new JSONObject();
-        JSONObject idmappingJsonObject = new JSONObject().put(TestUtils.VALUE_TEST_USER_ID, TestUtils.VALUE_TEST_USER_ACCOUNT);
-
-        for (String contactEmail : contactEmails) {
-            String contactId = Hashing.sha1().hashString(contactEmail).toString();
-
-            canseemeJsonArray.put(contactId);
-
-            icanseeJsonObject.put(contactId, new JSONObject()
-                    .put("battery", "")
-                    .put("location", userLocation)
-                    .put("visibility", true));
-
-            idmappingJsonObject.put(contactId, contactEmail);
-        }
-
-        JSONObject jsonObject = new JSONObject();
-        jsonObject
-                .put("battery", "")
-                .put("canseeme", canseemeJsonArray)
-                .put("icansee", icanseeJsonObject)
-                .put("idmapping", idmappingJsonObject)
-                .put("location", locations[0])
-                .put("visibility", true);
-
-        return jsonObject.toString();
     }
 
     public static String getEmptyPlacesJson() {

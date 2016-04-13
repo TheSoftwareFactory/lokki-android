@@ -5,9 +5,7 @@ See LICENSE for details
 package cc.softwarefactory.lokki.android.utilities;
 
 import android.content.Context;
-import android.content.Intent;
 import android.location.Location;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.androidquery.AQuery;
@@ -16,14 +14,11 @@ import com.androidquery.callback.AjaxStatus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import cc.softwarefactory.lokki.android.BuildConfig;
 import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.constants.Constants;
-import cc.softwarefactory.lokki.android.models.ServerError;
 
 
 public class ServerApi {
@@ -37,7 +32,7 @@ public class ServerApi {
         AQuery aq = new AQuery(context);
         String url = ApiUrl + "signup";
 
-        String userAccount = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ACCOUNT);
+        String userAccount = MainApplication.user.getEmail();
         String deviceId = PreferenceUtils.getString(context, PreferenceUtils.KEY_DEVICE_ID);
         Map<String, Object> params = new HashMap<>();
         params.put("email", userAccount);
@@ -49,82 +44,6 @@ public class ServerApi {
 
         aq.ajax(url, params, JSONObject.class, signUpCallback);
         Log.d(TAG, "Sign up - email: " + userAccount + ", deviceId: " + deviceId + ", language: " + Utils.getLanguage());
-    }
-
-    private static void handleServerError(ServerError serverError, final Context context) {
-
-        String errorType = serverError.getErrorType();
-        if (!errorType.isEmpty())
-        {
-            Intent intent = new Intent("SERVER-ERROR");
-            intent.putExtra("errorType", errorType);
-            if (!serverError.getErrorMessage().isEmpty()) {
-                intent.putExtra("errorMessage", serverError.getErrorMessage());
-            } else {
-                intent.putExtra("errorMessage", "Unknown error");
-            }
-
-            LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-        }
-    }
-
-    public static void getDashboard(final Context context) {
-        Log.d(TAG, "getDashboard");
-        AQuery aq = new AQuery(context);
-
-        String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
-        final String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
-        String url = ApiUrl  + "user/" + userId + "/version/" + BuildConfig.VERSION_CODE + "/dashboard";
-
-        AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>() {
-            @Override
-            public void callback(String url, JSONObject json, AjaxStatus status) {
-                Log.d(TAG, "dashboardCallback");
-
-                if (status.getCode() == 401) {
-                    Log.e(TAG, "Status login failed. App should exit.");
-                    PreferenceUtils.setString(context, PreferenceUtils.KEY_AUTH_TOKEN, "");
-                    Intent intent = new Intent("EXIT");
-                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-
-                } else if (status.getCode() == 404) {
-                    Log.e(TAG, "User does not exist. Must sign up again.");
-                    String message = "Your account has expired. Please sign up again.";
-                    String errorType = "FORCE_TO_SIGN_UP"; //Must sign up error type
-                    Intent intent = new Intent("SERVER-ERROR");
-                    intent.putExtra("errorMessage", message);
-                    intent.putExtra("errorType", errorType);
-                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-                } else if (json != null) {
-                    Log.d(TAG, "json returned: " + json);
-                    try {
-                        if (json.has("serverError"))
-                        {
-                            ServerError serverError = JsonUtils.createFromJson(json.get("serverError").toString(), ServerError.class);
-                            handleServerError(serverError, context);
-                            return;
-                        }
-
-                        MainApplication.dashboard = JsonUtils.createFromJson(json.toString(), MainApplication.Dashboard.class);
-                        PreferenceUtils.setString(context, PreferenceUtils.KEY_DASHBOARD, JsonUtils.serialize(MainApplication.dashboard));
-                        MainApplication.user.setLocation(MainApplication.dashboard.getLocation());
-                    } catch (IOException e) {
-                        Log.e(TAG, "Parsing JSON failed!");
-                        e.printStackTrace();
-                    } catch (JSONException e) {
-                        Log.e(TAG, "Parsing JSON failed!");
-                        e.printStackTrace();
-                    }
-                    Intent intent = new Intent("LOCATION-UPDATE");
-                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
-
-                } else {
-                    Log.e(TAG, "Error: " + status.getCode() + " - " + status.getMessage());
-                }
-            }
-        };
-        cb.header("authorizationtoken", authorizationToken);
-        aq.ajax(url, JSONObject.class, cb);
     }
 
     public static void logStatus(String request, AjaxStatus status) {
@@ -140,7 +59,7 @@ public class ServerApi {
         Log.d(TAG, "sendLocation");
         AQuery aq = new AQuery(context);
 
-        String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
+        String userId = MainApplication.user.getUserId();
         String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
         String url = ApiUrl + "user/" + userId + "/location";
 
@@ -168,7 +87,7 @@ public class ServerApi {
         Log.d(TAG, "sendGCMToken");
         AQuery aq = new AQuery(context);
 
-        String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
+        String userId = MainApplication.user.getUserId();
         String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
         String url = ApiUrl + "user/" + userId + "/gcmToken";
 
@@ -191,7 +110,7 @@ public class ServerApi {
         Log.d(TAG, "requestUpdates");
         AQuery aq = new AQuery(context);
 
-        String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
+        String userId = MainApplication.user.getUserId();
         String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
         String url = ApiUrl + "user/" + userId + "/update/locations";
 
@@ -214,7 +133,7 @@ public class ServerApi {
         Log.d(TAG, "setVisibility");
         AQuery aq = new AQuery(context);
 
-        String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
+        String userId = MainApplication.user.getUserId();
         String authorizationToken = PreferenceUtils.getString(context, PreferenceUtils.KEY_AUTH_TOKEN);
         String url = ApiUrl + "user/" + userId + "/visibility";
 

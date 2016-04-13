@@ -339,8 +339,7 @@ public class ContactService extends ApiService {
             synchronizedContact.setUserId(contact.getUserId());
             synchronizedContact.setIsIgnored(contact.isIgnored());
 
-            Bitmap photo = null;
-            if (phoneContact != null) photo = phoneContact.getPhoto();
+            Bitmap photo = phoneContact.getPhoto();
             synchronizedContact.setPhoto(photo);
             contact = synchronizedContact;
         }

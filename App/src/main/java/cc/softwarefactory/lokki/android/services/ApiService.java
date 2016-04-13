@@ -3,6 +3,7 @@ package cc.softwarefactory.lokki.android.services;
 import android.content.Context;
 import android.util.Log;
 
+import cc.softwarefactory.lokki.android.MainApplication;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -31,7 +32,7 @@ public abstract class ApiService {
     }
 
     private String generateUrl(String urlSuffix) {
-        String userId = PreferenceUtils.getString(context, PreferenceUtils.KEY_USER_ID);
+        String userId = MainApplication.user.getUserId();
         String url = apiUrl + "user/" + userId + "/" + urlSuffix;
         return url;
     }

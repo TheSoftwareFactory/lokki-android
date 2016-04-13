@@ -14,13 +14,9 @@ import android.os.IBinder;
 import android.util.Log;
 
 
-import java.io.IOException;
-
-import cc.softwarefactory.lokki.android.MainApplication;
 import cc.softwarefactory.lokki.android.services.ContactService;
 import cc.softwarefactory.lokki.android.services.PlaceService;
-import cc.softwarefactory.lokki.android.utilities.JsonUtils;
-import cc.softwarefactory.lokki.android.utilities.PreferenceUtils;
+import cc.softwarefactory.lokki.android.services.UserService;
 import cc.softwarefactory.lokki.android.utilities.ServerApi;
 
 
@@ -39,6 +35,7 @@ public class DataService extends Service {
 
     private static PlaceService placeService;
     private static ContactService contactService;
+    private static UserService userService;
 
     public static void start(Context context) {
         Log.d(TAG, "start Service called");
@@ -76,15 +73,12 @@ public class DataService extends Service {
         super.onCreate();
         setTimer();
         serviceRunning = true;
-        try {
-            MainApplication.dashboard = JsonUtils.createFromJson(PreferenceUtils.getString(this.getApplicationContext(), PreferenceUtils.KEY_DASHBOARD), MainApplication.Dashboard.class);
-        } catch (IOException e) {
-            MainApplication.dashboard = null;
-        }
 
+        userService = new UserService(getApplicationContext());
         placeService = new PlaceService(getApplicationContext());
         contactService = new ContactService(getApplicationContext());
 
+        getDashboard();
         getPlaces();
         getContacts();
     }
@@ -115,7 +109,7 @@ public class DataService extends Service {
         }
 
         if (extras.containsKey(ALARM_TIMER)) {
-            fetchDashboard();
+            getDashboard();
         } if (extras.containsKey(GET_PLACES)) {
             getPlaces();
         } if (extras.containsKey(GET_CONTACTS)) {
@@ -134,10 +128,9 @@ public class DataService extends Service {
         contactService.getContacts();
     }
 
-    private void fetchDashboard() {
-
+    private void getDashboard() {
         Log.d(TAG, "alarmCallback");
-        ServerApi.getDashboard(this);
+        userService.getDashBoard();
     }
 
     @Override

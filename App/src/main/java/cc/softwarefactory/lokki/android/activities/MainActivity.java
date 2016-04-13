@@ -35,6 +35,8 @@ import android.widget.PopupMenu;
 import android.support.v7.widget.SearchView;
 import android.widget.Toast;
 
+import cc.softwarefactory.lokki.android.models.MainUser;
+import cc.softwarefactory.lokki.android.services.UserService;
 import com.androidquery.AQuery;
 import com.androidquery.callback.AjaxCallback;
 import com.androidquery.callback.AjaxStatus;
@@ -88,6 +90,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     private List<Contact> phoneContacts;
 
     private PlaceService placeService;
+
+    private UserService userService;
 
     //Is this activity currently paused?
     private boolean paused = true;
@@ -219,9 +223,9 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         LocalBroadcastManager.getInstance(this).registerReceiver(serverErrorReceiver, new IntentFilter("SERVER-ERROR"));
 
         Log.i(TAG, "onResume - check if dashboard is null");
-        if (MainApplication.dashboard == null) {
+        if (MainApplication.user == null) {
             Log.w(TAG, "onResume - dashboard was null, get dashboard from server");
-            ServerApi.getDashboard(getApplicationContext());
+            userService.getDashBoard();
         }
         if  (MainApplication.contacts == null) {
             Log.w(TAG, "onResume - dashboard was null, get contacts from server");
@@ -378,6 +382,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                 finish();
             }
         } else { // User already logged-in
+            if (MainApplication.user == null) MainApplication.user = new MainUser(this);
             MainApplication.user.setEmail(PreferenceUtils.getString(this, PreferenceUtils.KEY_USER_ACCOUNT));
             ((NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer)).setUserInfo();
             GcmHelper.start(getApplicationContext()); // Register to GCM
@@ -729,7 +734,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                         PreferenceUtils.setString(main, PreferenceUtils.KEY_LOCAL_CONTACTS, null);
                         PreferenceUtils.setString(main, PreferenceUtils.KEY_PLACES, null);
                         MainApplication.user = null;
-                        MainApplication.dashboard = null;
                         MainApplication.contacts = null;
                         MainApplication.places = null;
                         MainApplication.firstTimeZoom = true;
@@ -751,7 +755,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         PreferenceUtils.setString(main, PreferenceUtils.KEY_LOCAL_CONTACTS, null);
         PreferenceUtils.setString(main, PreferenceUtils.KEY_PLACES, null);
         MainApplication.user = null;
-        MainApplication.dashboard = null;
         MainApplication.contacts = null;
         MainApplication.places = null;
         MainApplication.firstTimeZoom = true;

@@ -25,7 +25,6 @@ public class TestUtils {
 
     public static void clearAppData(Context targetContext) {
         PreferenceUtils.setBoolean(targetContext, PreferenceUtils.KEY_NOT_FIRST_TIME_LAUNCH, false);
-        MainApplication.dashboard = null;
         MainApplication.user = new MainUser(targetContext);
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(targetContext).edit();
         editor.clear();

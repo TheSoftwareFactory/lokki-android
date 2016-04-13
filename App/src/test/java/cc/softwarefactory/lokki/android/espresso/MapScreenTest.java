@@ -1,6 +1,8 @@
 package cc.softwarefactory.lokki.android.espresso;
 
 
+import cc.softwarefactory.lokki.android.models.Contact;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.RecordedRequest;
 
@@ -28,9 +30,9 @@ public class MapScreenTest extends LoggedInBaseTest {
         onView(withId(R.id.action_visibility)).check(matches(isDisplayed()));
     }
 
-    public void testSwitchingVisibilityOffSendsRequest() throws JSONException, TimeoutException, InterruptedException {
-        String dashboardJsonString = MockJsonUtils.getEmptyDashboardJson();
-        getMockDispatcher().setDashboardResponse(new MockResponse().setBody(dashboardJsonString));
+    public void testSwitchingVisibilityOffSendsRequest() throws JSONException, TimeoutException, InterruptedException, JsonProcessingException {
+        getMockDispatcher().setDashboardResponse(new MockResponse().setBody(MockJsonUtils.getEmptyDashboardJson()));
+        getMockDispatcher().setGetContactsResponse(new MockResponse().setBody(MockJsonUtils.getContactsJsonWith(new Contact[]{})));
         RequestsHandle requests = getMockDispatcher().setVisibilityResponse(new MockResponse().setResponseCode(200));
 
         MainApplication.visible = true;
@@ -47,12 +49,12 @@ public class MapScreenTest extends LoggedInBaseTest {
         assertFalse(putRequestBody.getBoolean("visibility"));
     }
 
-
-    public void testSwitchingVisibilityOnSendsRequest() throws JSONException, TimeoutException, InterruptedException {
+    public void testSwitchingVisibilityOnSendsRequest() throws JSONException, TimeoutException, InterruptedException, JsonProcessingException {
         String dashboardJsonString = MockJsonUtils.getEmptyDashboardJson();
         JSONObject dashboardJson = new JSONObject(dashboardJsonString);
         dashboardJson.put("visibility", false);
         getMockDispatcher().setDashboardResponse(new MockResponse().setBody(dashboardJson.toString()));
+        getMockDispatcher().setGetContactsResponse(new MockResponse().setBody(MockJsonUtils.getContactsJsonWith(new Contact[]{})));
         RequestsHandle requests = getMockDispatcher().setVisibilityResponse(new MockResponse().setResponseCode(200));
 
         MainApplication.visible = false;
