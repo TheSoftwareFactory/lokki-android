@@ -113,7 +113,6 @@ public class SearchActivity extends ListActivity {
         Log.d(TAG, "User searched for: " + queryMessage);
 
         resultList = new ArrayList<>();
-        //setHeader(queryMessage);
 
         setListAdapter(this);
         new PerformSearch().execute(queryMessage);
@@ -152,7 +151,6 @@ public class SearchActivity extends ListActivity {
             resultList.addAll(tempResults);
             //Show the results
             adapter.notifyDataSetChanged();
-            //setHeader(query);
             //Start Google Maps search (separate task so that we can show local results before online search finishes)
             new AddressSearch().execute(query);
             Log.d(TAG, "end of performSearch");
@@ -240,7 +238,7 @@ public class SearchActivity extends ListActivity {
         Double lon = loc.getLon();
         Double lat = loc.getLat();
 
-        String url = GOOGLE_MAPS_API_URL+ query +"&location="+lat+","+lon+"&radius="+radius+"&key="+ API_Key;
+        String url = GOOGLE_MAPS_API_URL + query + "&location=" + lat + "," + lon + "&radius=" + radius + "&key=" + API_Key;
         Log.e(TAG, "Query sent to Google Maps: " + url);
 
         AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>(){
@@ -431,10 +429,8 @@ public class SearchActivity extends ListActivity {
     private void setHeader(String query){
         AQuery aq = new AQuery(this);
         String headerText = getString(R.string.search_results) + " " + query;
-
         if (resultList.size() < 1){
             headerText = getString(R.string.no_search_results);
-            Log.d(TAG, "setHeader method inside resultsize < 1 block for query : "+query);
         }
         aq.id(R.id.search_header).text(headerText);
     }
