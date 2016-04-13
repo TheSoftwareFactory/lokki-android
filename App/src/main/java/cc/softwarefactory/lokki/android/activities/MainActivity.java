@@ -216,8 +216,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         startServices();
         LocalBroadcastManager.getInstance(this).registerReceiver(exitMessageReceiver, new IntentFilter("EXIT"));
         LocalBroadcastManager.getInstance(this).registerReceiver(switchToMapReceiver, new IntentFilter("GO-TO-MAP"));
-        LocalBroadcastManager.getInstance(this).registerReceiver(serverMessageReceiver, new IntentFilter("MESSAGE"));
-        LocalBroadcastManager.getInstance(this).registerReceiver(switchToSignUpReceiver, new IntentFilter("SIGN-UP"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(serverErrorReceiver, new IntentFilter("SERVER-ERROR"));
 
         Log.i(TAG, "onResume - check if dashboard is null");
         if (MainApplication.dashboard == null) {
@@ -346,8 +345,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         //DataService.stop(this.getApplicationContext());
         LocalBroadcastManager.getInstance(this).unregisterReceiver(switchToMapReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(exitMessageReceiver);
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(serverMessageReceiver);
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(switchToSignUpReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(serverErrorReceiver);
+
         super.onPause();
         //Set location update accuracy to low if the service has been initialized
         if (mBoundLocationService != null) {
@@ -670,7 +669,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         }
     };
 
-    private BroadcastReceiver serverMessageReceiver = new BroadcastReceiver() {
+    private BroadcastReceiver serverErrorReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d(TAG, "serverMessageReceiver onReceive");
@@ -680,41 +679,26 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
             alertDialog.setTitle(getString(R.string.app_name));
-            String message = intent.getStringExtra("message");
+            String message = intent.getStringExtra("errorMessage");
+            final String errorType = intent.getStringExtra("errorType");
             alertDialog.setMessage(message)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
-                            finish();
+                            switch (errorType) {
+                                case "FORCE_TO_CLOSE":
+                                    finish();
+                                    break;
+                                case "FORCE_TO_SIGN_UP":
+                                    logoutSilent();
+                                    signUserIn();
+                                    break;
+                            }
                         }
                     })
                     .setCancelable(false);
             alertDialog.show();
-        }
-    };
-
-    private BroadcastReceiver switchToSignUpReceiver = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.d(TAG, "switchToSignUp onReceive");
-
-            AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
-            alertDialog.setTitle(getString(R.string.app_name));
-            String message = intent.getStringExtra("message");
-            alertDialog.setMessage(message)
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                            logoutSilent();
-                        }
-                    })
-                    .setCancelable(false);
-            alertDialog.show();
-
-            signUserIn();
         }
     };
 
