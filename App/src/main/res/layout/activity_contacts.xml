@@ -4,11 +4,40 @@
     android:background="@android:color/white"
     android:layout_gravity="center">
 
+    <FrameLayout
+        android:id="@+id/search_added_contact"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="9dp"
+        android:padding="5dp">
+
+        <EditText
+            android:id="@+id/contact_search"
+            android:hint="@string/search_contacts"
+            android:textColor="@android:color/black"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:imeOptions="actionDone"/>
+
+        <Button
+            android:id="@+id/clear_contact_filter"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_gravity="end|center_vertical"
+            android:background="@android:drawable/ic_menu_close_clear_cancel"
+            android:visibility="invisible" />
+
+    </FrameLayout>
+
     <RelativeLayout
         android:id="@+id/headers"
         android:visibility="gone"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_below="@id/search_added_contact">
 
         <TextView
             android:id="@+id/canseeme"

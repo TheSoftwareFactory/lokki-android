@@ -14,6 +14,8 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -23,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -56,6 +59,9 @@ public class ContactsFragment extends Fragment {
     private Context context;
     private AvatarLoader avatarLoader;
     private ContactService contactService;
+    private EditText inputSearch;
+    private Button clearFilter;
+    private ArrayAdapter<Contact> adapter;
 
     public ContactsFragment() {
         peopleList = new ArrayList<>();
@@ -70,6 +76,10 @@ public class ContactsFragment extends Fragment {
         context = getActivity().getApplicationContext();
         contactService = new ContactService(context);
         avatarLoader = new AvatarLoader();
+        inputSearch = (EditText) rootView.findViewById(R.id.contact_search);
+        inputSearch.setEnabled(false);
+        inputSearch.setAlpha(0);
+        clearFilter = (Button) rootView.findViewById(R.id.clear_contact_filter);
         new GetPeopleThatCanSeeMe().execute();
         ListView listView = aq.id(R.id.contacts_list_view).getListView();
         this.registerForContextMenu(listView);
@@ -83,6 +93,7 @@ public class ContactsFragment extends Fragment {
         //Register a receiver to update the contents of the contact list whenever we load contacts from server
         LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver, new IntentFilter("CONTACTS-UPDATE"));
         AnalyticsUtils.screenHit(getString(R.string.analytics_screen_contacts));
+        enableSearchFilter();
     }
 
     @Override
@@ -196,9 +207,58 @@ public class ContactsFragment extends Fragment {
         Log.d(TAG, "Contact list: " + peopleList);
     }
 
+    /**
+     * Contacts search filter
+     */
+    private void enableSearchFilter() {
+
+        inputSearch.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
+                // When user changed the Text
+                if (adapter != null) {
+                    adapter.getFilter().filter(cs);
+                }
+                clearFilter.setVisibility(cs.length() == 0 ? View.INVISIBLE : View.VISIBLE);
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable arg0) {
+                // TODO Auto-generated method stub
+            }
+        });
+
+        inputSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                        getString(R.string.analytics_action_click),
+                        getString(R.string.analytics_label_search_contacts_textbox));
+            }
+        });
+
+        clearFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
+                        getString(R.string.analytics_action_click),
+                        getString(R.string.analytics_label_clear_search_contacts_textbox_button));
+                inputSearch.setText("");
+            }
+        });
+    }
+
+
     private void setListAdapter() {
 
-        ArrayAdapter<Contact> adapter = new ArrayAdapter<Contact>(context, R.layout.people_row_layout, peopleList) {
+         adapter = new ArrayAdapter<Contact>(context, R.layout.people_row_layout, peopleList) {
 
             ViewHolder holder;
 
@@ -222,6 +282,9 @@ public class ContactsFragment extends Fragment {
                 }
 
                 final Contact contact = getItem(position);
+
+                inputSearch.setEnabled(true);
+                inputSearch.setAlpha(1);
 
                 //Allow user to rename contact by long pressing their bane
                 AQuery aq = new AQuery(convertView);

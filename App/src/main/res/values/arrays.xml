@@ -25,12 +25,14 @@
         <item>@string/help</item>
         <item>@string/send_feedback</item>
         <item>@string/about_link_tell_a_friend</item>
+        <item>@string/about_rate_lokki</item>
     </string-array>
 
     <string-array name="about_links_url">
         <item>@string/lokki_github_io_link</item>
         <item>@string/lokki_play_store_link</item>
         <item>@string/about_link_tell_a_friend</item>
+        <item>@string/lokki_play_store_link</item>
     </string-array>
 
     <array name="nav_drawer_icons">
