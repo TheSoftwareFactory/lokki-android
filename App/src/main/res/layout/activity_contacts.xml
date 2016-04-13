@@ -31,7 +31,6 @@
             android:visibility="invisible" />
 
     </FrameLayout>
-
     <RelativeLayout
         android:id="@+id/headers"
         android:visibility="gone"

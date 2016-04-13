@@ -255,7 +255,6 @@ public class ContactsFragment extends Fragment {
         });
     }
 
-
     private void setListAdapter() {
 
          adapter = new ArrayAdapter<Contact>(context, R.layout.people_row_layout, peopleList) {
@@ -285,7 +284,6 @@ public class ContactsFragment extends Fragment {
 
                 inputSearch.setEnabled(true);
                 inputSearch.setAlpha(1);
-
                 //Allow user to rename contact by long pressing their bane
                 AQuery aq = new AQuery(convertView);
                 aq.id(holder.name).text(contact.toString()).longClicked(new View.OnLongClickListener(){

@@ -68,7 +68,6 @@ public class PlacesFragment extends Fragment {
     private EditText inputSearch;
     private Button clearFilter;
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -82,7 +81,6 @@ public class PlacesFragment extends Fragment {
         inputSearch.setEnabled(false);
         inputSearch.setAlpha(0);
         clearFilter = (Button) rootView.findViewById(R.id.clear_place_filter);
-
         return rootView;
     }
 
@@ -104,7 +102,6 @@ public class PlacesFragment extends Fragment {
         LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver, new IntentFilter("PLACES-UPDATE"));
         LocalBroadcastManager.getInstance(context).registerReceiver(mMessageReceiver, new IntentFilter("LOCATION-UPDATE"));
         AnalyticsUtils.screenHit(getString(R.string.analytics_screen_places));
-
     }
 
     @Override
@@ -174,7 +171,6 @@ public class PlacesFragment extends Fragment {
         });
     }
 
-
     private void setListAdapter() {
 
         Log.d(TAG, "setListAdapter");
@@ -189,10 +185,8 @@ public class PlacesFragment extends Fragment {
                 AQuery aq = new AQuery(getActivity(), convertView);
 
                 final Place place = getItem(position);
-
                 inputSearch.setEnabled(true);
                 inputSearch.setAlpha(1);
-
                 aq.id(R.id.place_name).text(place.getName());
 
                 aq.id(R.id.places_context_menu_button).clicked(new View.OnClickListener() {

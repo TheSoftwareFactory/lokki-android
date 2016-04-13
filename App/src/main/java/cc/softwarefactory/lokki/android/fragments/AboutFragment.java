@@ -86,7 +86,6 @@ public class AboutFragment extends Fragment {
 
                 case 3: // Rating for  Lokki
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-
             }
         }
     }
