@@ -436,6 +436,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+        //hide soft keyboard
         View view = this.getCurrentFocus();
         if (view != null){
             InputMethodManager imm=(InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
