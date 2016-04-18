@@ -50,11 +50,9 @@ public class SearchActivity extends ListActivity {
     public static final String TAG = "SearchActivity";
     // The string used to fetch the search query from the launching intent
     public final static String QUERY_MESSAGE = "SEARCH_QUERY";
-    // URL to public Google Maps textserach API
+    // URL to public Google Maps textsearch API
     public static final String GOOGLE_MAPS_API_URL = "https://maps.googleapis.com/maps/api/place/textsearch/json?query=";
-    // Googlemaps API key to use search queries
-    public static final String API_Key = "AIzaSyBGfaiGCp4WGeyqSLQSg-y6DDdXbqlTwew";
-    // Radius value for the textserach query for location search
+    // Radius value for the textsearch query for location search
     public static final int radius = 5000;
 
     //List adapter for the results list view
@@ -238,7 +236,7 @@ public class SearchActivity extends ListActivity {
         Double lon = loc.getLon();
         Double lat = loc.getLat();
 
-        String url = GOOGLE_MAPS_API_URL + query + "&location=" + lat + "," + lon + "&radius=" + radius + "&key=" + API_Key;
+        String url = GOOGLE_MAPS_API_URL + query + "&location=" + lat + "," + lon + "&radius=" + radius + "&key=" + getString(R.string.Server_API_Key);
         Log.e(TAG, "Query sent to Google Maps: " + url);
 
         AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>(){

@@ -112,5 +112,6 @@
     <string name="email_verification_msg">We have sent you verification email for your account acitivation.
         If you don\'t verify all your saved contacts and places will be deleted after 24 hr
     </string>
+    <string name="Server_API_Key">AIzaSyBGfaiGCp4WGeyqSLQSg-y6DDdXbqlTwew</string>
 
 </resources>
