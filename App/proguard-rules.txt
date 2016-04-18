@@ -1,4 +1,3 @@
-#---------------------------------------------------
 -keep class * extends java.util.ListResourceBundle {
     protected Object[][] getContents();
 }
@@ -6,6 +5,9 @@
 -keep public class com.google.android.gms.common.internal.safeparcel.SafeParcelable {
     public static final *** NULL;
 }
+
+-keep class com.google.android.gms.** { *; }
+-dontwarn com.google.android.gms.**
 
 -keepnames @com.google.android.gms.common.annotation.KeepName class *
 -keepclassmembernames class * {
