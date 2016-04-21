@@ -1,3 +1,5 @@
+// dummy change
+
 apply plugin: 'com.android.application'
 
 apply from: '../jacoco.gradle'
