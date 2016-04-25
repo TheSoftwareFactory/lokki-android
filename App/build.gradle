@@ -118,18 +118,31 @@ dependencies {
 
     // Espresso
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.0'
+    testCompile 'com.android.support.test.espresso:espresso-core:2.0'
     androidTestCompile 'com.android.support.test:testing-support-lib:0.1'
+    testCompile 'com.android.support.test:testing-support-lib:0.1'
     androidTestCompile('com.android.support.test.espresso:espresso-contrib:2.0') {
+        exclude group: 'com.android.support'
+    }
+    testCompile('com.android.support.test.espresso:espresso-contrib:2.0') {
         exclude group: 'com.android.support'
     }
 
     // Mockito
     androidTestCompile 'org.mockito:mockito-core:1.9.5'
+    testCompile 'org.mockito:mockito-core:1.9.5'
     androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.1'
+    testCompile 'com.google.dexmaker:dexmaker-mockito:1.1'
     androidTestCompile 'com.google.dexmaker:dexmaker:1.1'
+    testCompile 'com.google.dexmaker:dexmaker:1.1'
+
+    //JUnit
+    androidTestCompile 'junit:junit:4.12'
+    testCompile 'junit:junit:4.12'
 
     // MockWebServer
     androidTestCompile 'com.squareup.okhttp:mockwebserver:2.3.0'
+    testCompile 'com.squareup.okhttp:mockwebserver:2.3.0'
 
     // Android-compatible but recent version of HttpClient
     androidTestCompile group: 'org.apache.httpcomponents' , name: 'httpclient-android' , version: '4.3.5.1'
