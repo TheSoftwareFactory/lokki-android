@@ -123,3 +123,8 @@
 -dontwarn com.squareup.picasso.Transformation
 
 -dontwarn org.w3c.dom.bootstrap.DOMImplementationRegistry
+
+-dontwarn org.apache.http.**
+-dontwarn android.net.http.AndroidHttpClient
+-dontwarn com.google.android.gms.**
+-dontwarn com.android.volley.toolbox.**
