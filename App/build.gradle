@@ -134,7 +134,7 @@ dependencies {
     androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.1'
     androidTestCompile 'com.google.dexmaker:dexmaker:1.1'
 
-    //JUnit dependencies
+    //JUnit
     testCompile 'junit:junit:4.12'
 
     // MockWebServer
