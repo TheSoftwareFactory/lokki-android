@@ -18,6 +18,7 @@ import cc.softwarefactory.lokki.android.models.UserLocation;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.longClick;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
@@ -47,7 +48,7 @@ public class PlacesScreenTest extends LoggedInBaseTest {
         TestUtils.toggleNavigationDrawer();
         onView(withText(R.string.places)).perform((click()));
     }
-
+    //TEST
     public void testEmptyPlacesScreen() {
         enterPlacesScreen();
         onView(withText(R.string.places_how_to_create)).check(matches(isDisplayed()));
@@ -76,6 +77,15 @@ public class PlacesScreenTest extends LoggedInBaseTest {
                 .check(matches(hasDescendant(isAssignableFrom(ImageView.class))));
     }
 
+    public void testSearchPlacesFiltered() throws JSONException, JsonProcessingException {
+        getMockDispatcher().setPlacesResponse(new MockResponse().setBody(MockJsonUtils.getPlacesJson()));
+        enterPlacesScreen();
+        //check for filter
+        onView(withId(R.id.place_search)).perform(typeText("testplace1"), closeSoftKeyboard());
+        onView(withText("Testplace1")).check(matches(isDisplayed()));
+        onView(withText("Testplace2")).check(doesNotExist());
+        onView(withId(R.id.clear_place_filter)).perform(click());
+    }
 
     public void testClickContactOpensMap() throws JSONException, InterruptedException, JsonProcessingException {
         getMockDispatcher().setPlacesResponse(new MockResponse().setBody(MockJsonUtils.getPlacesJson()));

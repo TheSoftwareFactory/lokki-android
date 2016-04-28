@@ -28,7 +28,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -118,7 +117,7 @@ public class PlacesFragment extends Fragment {
 
 
             Log.d(TAG, "BroadcastReceiver onReceive");
-            //showPlaces(); commented for testing
+            showPlaces(); //commented for testing
         }
     };
 
