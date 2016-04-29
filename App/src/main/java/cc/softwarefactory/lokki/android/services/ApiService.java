@@ -82,6 +82,7 @@ public abstract class ApiService {
         createAjaxWithBody("put", uri, callback, new JSONObject());
     }
 
+    
     protected void delete(String uri, AjaxCallback<String> callback) {
         createAjax("delete", uri, callback);
     }
