@@ -55,10 +55,9 @@ public class AboutScreenTest extends LoggedInBaseTest {
         getInstrumentation().removeMonitor(monitor);
     }
 
-    public void testFeedbackPageIsLoadedWhenFeedbackButtonIsClicked() {
+    public void testChooserIsOpenedWhenFeedbackButtonIsClicked() {
         enterAboutScreen();
-        String urlString = getResources().getString(R.string.lokki_play_store_link);
-        IntentFilter filter = getIntentFilterFromUri(urlString);
+        IntentFilter filter = new IntentFilter(Intent.ACTION_CHOOSER);
         Instrumentation.ActivityMonitor monitor = getInstrumentation().addMonitor(filter, null, true);
         assertEquals(0, monitor.getHits());
         onView(withText(R.string.send_feedback)).perform(click());

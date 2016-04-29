@@ -66,7 +66,19 @@ public class AboutFragment extends Fragment {
             Log.e(TAG, "Couldn't open 'tell a friend about lokki' activity");
         }
     }
+    private void sendFeedback() {
+        Intent i = new Intent(Intent.ACTION_SEND);
+        i.setType("message/rfc822");
+        i.putExtra(Intent.EXTRA_EMAIL  , new String[]{"lokki@softwarefactory.cc"});
+        i.putExtra(Intent.EXTRA_SUBJECT, "Feedback");
+        i.putExtra(Intent.EXTRA_TEXT   , "body of email");
+        try {
+            startActivity(Intent.createChooser(i, "Send mail..."));
+        } catch (ActivityNotFoundException e) {
+            Log.e(TAG, "Couldn't open send feedback");
+        }
 
+    }
     private class AboutItemClickListener implements AdapterView.OnItemClickListener {
 
         @Override
@@ -76,8 +88,10 @@ public class AboutFragment extends Fragment {
 
             switch (position) {
                 case 0: // Help
+                    startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(url)));
+                    break;
                 case 1: // Send feedback
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                    sendFeedback();
                     break;
 
                 case 2: // Tell a friend about Lokki

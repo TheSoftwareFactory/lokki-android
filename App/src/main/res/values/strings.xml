@@ -72,6 +72,7 @@
     <string name="map_mode_hybrid">Hybrid</string>
 
     <string name="about_link_tell_a_friend">Tell a friend about Lokki</string>
+    <string name="about_link_send_feedback">Send feedback to developer</string>
     <string name="about_rate_lokki">Rate Lokki</string>
     <string name="email_required">An email address is required.</string>
     <string name="required">Required</string>
