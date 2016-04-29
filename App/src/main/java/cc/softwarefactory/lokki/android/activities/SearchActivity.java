@@ -190,6 +190,7 @@ public class SearchActivity extends ListActivity {
                 //Display either name or email depending on whether a name exists
                 //Store contact data in the result's extra data for easy access
                 resultList.add(new SearchResult(ResultType.CONTACT, contact.toString(), contact.getEmail()));
+                setHeader(query);
             }
         }
     }
@@ -218,6 +219,7 @@ public class SearchActivity extends ListActivity {
                     //Store place coordinates in the result's extra data for easy access
                     String coords = place.getLocation().getLat() + "," + place.getLocation().getLon();
                     resultList.add(new SearchResult(ResultType.PLACE, name, coords));
+                    setHeader(query);
                 }
             } catch (Exception e) {
                 Log.e(TAG, "Error parsing places: " + e);
