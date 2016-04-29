@@ -83,6 +83,9 @@ public class AboutFragment extends Fragment {
                 case 2: // Tell a friend about Lokki
                     openTellAFriendActivity();
                     break;
+
+                case 3: // Rating for  Lokki
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
             }
         }
     }

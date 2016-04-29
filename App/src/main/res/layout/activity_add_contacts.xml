@@ -19,7 +19,8 @@
             android:textColor="@android:color/black"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:singleLine="true" />
+            android:singleLine="true"
+            android:imeOptions="actionDone"/>
 
         <Button
             android:id="@+id/clear_filter"

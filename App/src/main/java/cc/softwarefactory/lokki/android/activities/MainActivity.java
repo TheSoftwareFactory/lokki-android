@@ -29,6 +29,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
@@ -126,7 +127,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
         contactService = new ContactService(this);
         phoneContacts = contactService.getPhoneContacts();
-
         placeService = new PlaceService(this);
     }
 
@@ -436,6 +436,12 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+        //hide soft keyboard
+        View view = this.getCurrentFocus();
+        if (view != null){
+            InputMethodManager imm=(InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(),0);
+        }
         final Activity mainactivity = this;
         Log.d(TAG,"onPrepareOptionsMenu");
         menu.clear();

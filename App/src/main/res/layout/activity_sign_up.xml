@@ -50,7 +50,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/explanation"
         android:layout_centerHorizontal="true"
-        android:hint="@string/type_your_email_address" />
+        android:hint="@string/type_your_email_address"
+        android:imeOptions="actionDone"/>
 
     <Button
         android:id="@+id/sign_up_button"
