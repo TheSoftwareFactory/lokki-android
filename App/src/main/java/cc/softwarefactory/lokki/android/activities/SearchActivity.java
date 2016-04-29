@@ -111,6 +111,7 @@ public class SearchActivity extends ListActivity {
         Log.d(TAG, "User searched for: " + queryMessage);
 
         resultList = new ArrayList<>();
+        setHeader(queryMessage);
 
         setListAdapter(this);
         new PerformSearch().execute(queryMessage);
