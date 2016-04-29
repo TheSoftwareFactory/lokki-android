@@ -250,6 +250,7 @@ public class AddContactsFragment extends Fragment {
                                                         notifyDataSetChanged();
                                                         contactService.getContacts();
                                                         Toast.makeText(context, R.string.contact_added, Toast.LENGTH_SHORT).show();
+                                                        inputSearch.getText().clear();  // clears the search textbox after adding the contact
                                                     }
                                                 }
                                             });

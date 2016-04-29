@@ -5,6 +5,7 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
@@ -33,6 +34,8 @@ import cc.softwarefactory.lokki.android.R;
 import cc.softwarefactory.lokki.android.fragments.MapViewFragment;
 import cc.softwarefactory.lokki.android.models.Contact;
 import cc.softwarefactory.lokki.android.models.Place;
+//import cc.softwarefactory.lokki.android.models.User;
+import cc.softwarefactory.lokki.android.models.UserLocation;
 import cc.softwarefactory.lokki.android.services.ContactService;
 
 /**
@@ -47,8 +50,10 @@ public class SearchActivity extends ListActivity {
     public static final String TAG = "SearchActivity";
     // The string used to fetch the search query from the launching intent
     public final static String QUERY_MESSAGE = "SEARCH_QUERY";
-    // URL to public Google Maps geocoding API
-    public static final String GOOGLE_MAPS_API_URL = "http://maps.googleapis.com/maps/api/geocode/json?address=";
+    // URL to public Google Maps textsearch API
+    public static final String GOOGLE_MAPS_API_URL = "https://maps.googleapis.com/maps/api/place/textsearch/json?query=";
+    // Radius value for the textsearch query for location search
+    public static final int radius = 5000;
 
     //List adapter for the results list view
     private ArrayAdapter<SearchResult> adapter;
@@ -145,7 +150,6 @@ public class SearchActivity extends ListActivity {
             resultList.addAll(tempResults);
             //Show the results
             adapter.notifyDataSetChanged();
-            setHeader(query);
             //Start Google Maps search (separate task so that we can show local results before online search finishes)
             new AddressSearch().execute(query);
             Log.d(TAG, "end of performSearch");
@@ -187,6 +191,7 @@ public class SearchActivity extends ListActivity {
                 //Display either name or email depending on whether a name exists
                 //Store contact data in the result's extra data for easy access
                 resultList.add(new SearchResult(ResultType.CONTACT, contact.toString(), contact.getEmail()));
+                setHeader(query);
             }
         }
     }
@@ -215,8 +220,8 @@ public class SearchActivity extends ListActivity {
                     //Store place coordinates in the result's extra data for easy access
                     String coords = place.getLocation().getLat() + "," + place.getLocation().getLon();
                     resultList.add(new SearchResult(ResultType.PLACE, name, coords));
+                    setHeader(query);
                 }
-
             } catch (Exception e) {
                 Log.e(TAG, "Error parsing places: " + e);
             }
@@ -229,7 +234,12 @@ public class SearchActivity extends ListActivity {
      */
     private void searchGoogleMaps(final String query){
         final AQuery aq = new AQuery(this);
-        String url = GOOGLE_MAPS_API_URL + query;
+        UserLocation loc = MainApplication.user.getLocation();
+        Double lon = loc.getLon();
+        Double lat = loc.getLat();
+
+        String url = GOOGLE_MAPS_API_URL + query + "&location=" + lat + "," + lon + "&radius=" + radius + "&key=" + getString(R.string.Server_API_Key);
+        Log.e(TAG, "Query sent to Google Maps: " + url);
 
         AjaxCallback<JSONObject> cb = new AjaxCallback<JSONObject>(){
             @Override
