@@ -29,6 +29,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
@@ -125,7 +126,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
         contactService = new ContactService(this);
         phoneContacts = contactService.getPhoneContacts();
-
         placeService = new PlaceService(this);
     }
 
@@ -214,8 +214,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         startServices();
         LocalBroadcastManager.getInstance(this).registerReceiver(exitMessageReceiver, new IntentFilter("EXIT"));
         LocalBroadcastManager.getInstance(this).registerReceiver(switchToMapReceiver, new IntentFilter("GO-TO-MAP"));
-        LocalBroadcastManager.getInstance(this).registerReceiver(serverMessageReceiver, new IntentFilter("MESSAGE"));
-        LocalBroadcastManager.getInstance(this).registerReceiver(switchToSignUpReceiver, new IntentFilter("SIGN-UP"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(serverErrorReceiver, new IntentFilter("SERVER-ERROR"));
 
         Log.i(TAG, "onResume - check if dashboard is null");
         if (MainApplication.dashboard == null) {
@@ -342,8 +341,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         //DataService.stop(this.getApplicationContext());
         LocalBroadcastManager.getInstance(this).unregisterReceiver(switchToMapReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(exitMessageReceiver);
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(serverMessageReceiver);
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(switchToSignUpReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(serverErrorReceiver);
+
         super.onPause();
         //Set location update accuracy to low if the service has been initialized
         if (mBoundLocationService != null) {
@@ -432,7 +431,13 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
 
     @Override
-    public boolean onPrepareOptionsMenu(Menu menu){
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        //hide soft keyboard
+        View view = this.getCurrentFocus();
+        if (view != null){
+            InputMethodManager imm=(InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(),0);
+        }
         final Activity mainactivity = this;
         Log.d(TAG,"onPrepareOptionsMenu");
         menu.clear();
@@ -675,7 +680,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         }
     };
 
-    private BroadcastReceiver serverMessageReceiver = new BroadcastReceiver() {
+    private BroadcastReceiver serverErrorReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d(TAG, "serverMessageReceiver onReceive");
@@ -685,41 +690,26 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
             alertDialog.setTitle(getString(R.string.app_name));
-            String message = intent.getStringExtra("message");
+            String message = intent.getStringExtra("errorMessage");
+            final String errorType = intent.getStringExtra("errorType");
             alertDialog.setMessage(message)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
-                            finish();
+                            switch (errorType) {
+                                case "FORCE_TO_CLOSE":
+                                    finish();
+                                    break;
+                                case "FORCE_TO_SIGN_UP":
+                                    logoutSilent();
+                                    signUserIn();
+                                    break;
+                            }
                         }
                     })
                     .setCancelable(false);
             alertDialog.show();
-        }
-    };
-
-    private BroadcastReceiver switchToSignUpReceiver = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.d(TAG, "switchToSignUp onReceive");
-
-            AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
-            alertDialog.setTitle(getString(R.string.app_name));
-            String message = intent.getStringExtra("message");
-            alertDialog.setMessage(message)
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                            logoutSilent();
-                        }
-                    })
-                    .setCancelable(false);
-            alertDialog.show();
-
-            signUserIn();
         }
     };
 

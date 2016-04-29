@@ -139,7 +139,7 @@ public class AddContactsFragment extends Fragment {
             public void onClick(View view) {
                 AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
                         getString(R.string.analytics_action_click),
-                        getString(R.string.analytics_label_search_contacts_textbox));
+                        getString(R.string.analytics_label_search_add_contacts_textbox));  //changed from "contacts_textbox" to "add_contacts_textbox"
             }
         });
 
@@ -148,7 +148,7 @@ public class AddContactsFragment extends Fragment {
             public void onClick(View v) {
                 AnalyticsUtils.eventHit(getString(R.string.analytics_category_ux),
                         getString(R.string.analytics_action_click),
-                        getString(R.string.analytics_label_clear_search_contacts_textbox_button));
+                        getString(R.string.analytics_label_clear_search_add_contacts_textbox_button)); //changed from "contacts_textbox_button" to "add_contacts_textbox_button"
                 inputSearch.setText("");
             }
         });
@@ -250,6 +250,7 @@ public class AddContactsFragment extends Fragment {
                                                         notifyDataSetChanged();
                                                         contactService.getContacts();
                                                         Toast.makeText(context, R.string.contact_added, Toast.LENGTH_SHORT).show();
+                                                        inputSearch.getText().clear();  // clears the search textbox after adding the contact
                                                     }
                                                 }
                                             });

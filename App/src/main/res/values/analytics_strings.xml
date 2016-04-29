@@ -28,7 +28,11 @@
     <string translatable="false" name="analytics_label_confirm_contact_add_from_list_dialog">Confirm contact add from list dialog</string>
     <string translatable="false" name="analytics_label_cancel_contact_add_from_list_dialog">Cancel contact add from list dialog</string>
     <string translatable="false" name="analytics_label_search_contacts_textbox">\"Search contacts\" textbox</string>
+    <string translatable="false" name="analytics_label_search_add_contacts_textbox">\"Search contacts\" textbox</string>
+    <string translatable="false" name="analytics_label_search_places_textbox">\"Search places\" textbox</string>
     <string translatable="false" name="analytics_label_clear_search_contacts_textbox_button">Clear \"Search contacts\" textbox button</string>
+    <string translatable="false" name="analytics_label_clear_search_add_contacts_textbox_button">Clear \"Search contacts\" textbox button</string>
+    <string translatable="false" name="analytics_label_clear_search_places_textbox_button">Clear \"Search places\" textbox button</string>
     <string translatable="false" name="analytics_label_add_email_button">Add email button</string>
     <string translatable="false" name="analytics_label_confirm_contact_add_from_email_dialog_successful">Confirm contact add from email dialog (checks successful)</string>
     <string translatable="false" name="analytics_label_cancel_contact_add_from_email_dialog">Cancel contact add from email dialog</string>
