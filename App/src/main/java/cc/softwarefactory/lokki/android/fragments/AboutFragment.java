@@ -88,6 +88,8 @@ public class AboutFragment extends Fragment {
 
             switch (position) {
                 case 0: // Help
+                    startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(url)));
+                    break;
                 case 1: // Send feedback
                     sendFeedback();
                     break;
