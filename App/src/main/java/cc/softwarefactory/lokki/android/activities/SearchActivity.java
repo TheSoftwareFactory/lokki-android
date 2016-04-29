@@ -219,7 +219,6 @@ public class SearchActivity extends ListActivity {
                     String coords = place.getLocation().getLat() + "," + place.getLocation().getLon();
                     resultList.add(new SearchResult(ResultType.PLACE, name, coords));
                 }
-
             } catch (Exception e) {
                 Log.e(TAG, "Error parsing places: " + e);
             }
