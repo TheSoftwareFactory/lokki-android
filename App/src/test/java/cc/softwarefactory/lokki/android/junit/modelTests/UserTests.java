@@ -16,8 +16,8 @@ public class UserTests {
     User userObj = new User();
     private Double lat = 2.123;
     private Double lng = 1.234;
-    private LatLng Uslocation = new LatLng(lat,lng);
-    private UserLocation location = new UserLocation(Uslocation,1);
+    private LatLng Uslocation = new LatLng(lat, lng);
+    private UserLocation location = new UserLocation(Uslocation, 1);
 
     @Test
     public void setGetVisibilityTest() {    // Test to check the setVisibility() & isVisibility() methods

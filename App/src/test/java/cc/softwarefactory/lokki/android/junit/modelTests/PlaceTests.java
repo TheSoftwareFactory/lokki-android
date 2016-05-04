@@ -17,8 +17,8 @@ public class PlaceTests {
     private String name = "Kumpula";
     private Double lat = 2.123;
     private Double lng = 1.234;
-    private LatLng Uslocation = new LatLng(lat,lng);
-    private UserLocation location = new UserLocation(Uslocation,1);
+    private LatLng Uslocation = new LatLng(lat, lng);
+    private UserLocation location = new UserLocation(Uslocation, 1);
     Place.Buzz BuzzObj = new Place.Buzz();
 
     @Test
