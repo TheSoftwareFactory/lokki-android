@@ -5,11 +5,9 @@ package cc.softwarefactory.lokki.android.junit.modelTests;
  */
 
 import com.google.android.gms.maps.model.LatLng;
-
 import org.junit.Test;
 import cc.softwarefactory.lokki.android.models.Place;
 import cc.softwarefactory.lokki.android.models.UserLocation;
-
 import static org.junit.Assert.*;
 
 public class PlaceTests {
@@ -38,7 +36,7 @@ public class PlaceTests {
     @Test
     public void setLocationGetLocationTest() { // Test to check the setLocation() & getLocation() methods
         placeObj.setLocation(location);
-        assertEquals(placeObj.getLocation(),location);
+        assertEquals(placeObj.getLocation(), location);
     }
 
     @Test
@@ -59,12 +57,12 @@ public class PlaceTests {
     public void setGetBuzzCountTest(){      // Test to check the setBuzzCount() & getBuzzCount() methods
         int buzzCount = 5;
         BuzzObj.setBuzzCount(buzzCount);
-        assertEquals(BuzzObj.getBuzzCount(),buzzCount);
+        assertEquals(BuzzObj.getBuzzCount(), buzzCount);
     }
 
     @Test
     public void activateBuzzTest(){         // Test to check the setActivated() & isActivated() methods
         BuzzObj.setActivated(true);
-        assertEquals(BuzzObj.isActivated(),true);
+        assertEquals(BuzzObj.isActivated(), true);
     }
 }
