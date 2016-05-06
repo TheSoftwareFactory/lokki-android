@@ -78,11 +78,9 @@
             android:screenOrientation="portrait">
         </activity>
         <activity android:name=".activities.SearchActivity">
-
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
-
         </activity>
         <activity
             android:name=".activities.BuzzActivity">

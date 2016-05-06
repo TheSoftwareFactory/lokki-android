@@ -29,6 +29,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
@@ -115,7 +116,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                 showUserPopupMenu(v);
             }
         });
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_layout);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -126,7 +126,6 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
         contactService = new ContactService(this);
         phoneContacts = contactService.getPhoneContacts();
-
         placeService = new PlaceService(this);
     }
 
@@ -136,12 +135,12 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
      */
     public void showUserPopupMenu(View v){
         PopupMenu menu = new PopupMenu(this, v);
-        menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener(){
+        menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item){
                 switch (item.getItemId()){
                     // User clicked the Sign Out option
-                    case R.id.signout :
+                    case R.id.signout:
                         // Close the drawer so it isn't open when you log back in
                         mNavigationDrawerFragment.toggleDrawer();
                         // Sign the user out
@@ -159,23 +158,22 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
 
     @Override
-    protected void onStart() {
+    protected void onStart(){
 
         super.onStart();
         Log.d(TAG, "onStart");
 
-        if (firstTimeLaunch()) {
-            Log.i(TAG, "onStart - firstTimeLaunch, so showing terms.");
-            startActivityForResult(new Intent(this, FirstTimeActivity.class), REQUEST_TERMS);
-        } else {
-            signUserIn();
-        }
-
+            if (firstTimeLaunch()) {
+                Log.i(TAG, "onStart - firstTimeLaunch, so showing terms.");
+                startActivityForResult(new Intent(this, FirstTimeActivity.class), REQUEST_TERMS);
+            } else {
+                signUserIn();
+            }
     }
 
     /**
      * Is this the first time the app has been launched?
-     * @return  true, if the app hasn't been launched before
+     * @return true, if the app hasn't been launched before
      */
     private boolean firstTimeLaunch() {
         return !PreferenceUtils.getBoolean(this, PreferenceUtils.KEY_NOT_FIRST_TIME_LAUNCH);
@@ -185,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
      * Is the user currently logged in?
      * NOTE: this doesn't guarantee that all user information has already been fetched from the server,
      * but it guarantees that the information can be safely fetched.
-     * @return  true, if the user has signed in
+     * @return true, if the user has signed in
      */
     public boolean loggedIn() {
         String userAccount = PreferenceUtils.getString(this, PreferenceUtils.KEY_USER_ACCOUNT);
@@ -211,20 +209,19 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
             Log.i(TAG, "onResume - user NOT logged in, so avoiding launching services.");
             return;
         }
-        
+
         Log.i(TAG, "onResume - user logged in, so launching services.");
         startServices();
         LocalBroadcastManager.getInstance(this).registerReceiver(exitMessageReceiver, new IntentFilter("EXIT"));
         LocalBroadcastManager.getInstance(this).registerReceiver(switchToMapReceiver, new IntentFilter("GO-TO-MAP"));
-        LocalBroadcastManager.getInstance(this).registerReceiver(serverMessageReceiver, new IntentFilter("MESSAGE"));
-        LocalBroadcastManager.getInstance(this).registerReceiver(switchToSignUpReceiver, new IntentFilter("SIGN-UP"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(serverErrorReceiver, new IntentFilter("SERVER-ERROR"));
 
         Log.i(TAG, "onResume - check if dashboard is null");
         if (MainApplication.dashboard == null) {
             Log.w(TAG, "onResume - dashboard was null, get dashboard from server");
             ServerApi.getDashboard(getApplicationContext());
         }
-        if  (MainApplication.contacts == null) {
+        if (MainApplication.contacts == null) {
             Log.w(TAG, "onResume - dashboard was null, get contacts from server");
             contactService.getContacts();
         }
@@ -295,8 +292,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
     private void setBackgroundLocationAccuracy(){
         if (placeService.getPlacesWithBuzz().size() > 0){
             currentAccuracy = LocationService.LocationAccuracy.BGACCURATE;
-        }
-        else {
+        } else {
             currentAccuracy = LocationService.LocationAccuracy.BGINACCURATE;
         }
     }
@@ -314,8 +310,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         //Set appropriate location update accuracy
         if (!paused){
             currentAccuracy = LocationService.LocationAccuracy.ACCURATE;
-        }
-        else {
+        } else {
             setBackgroundLocationAccuracy();
         }
 
@@ -346,8 +341,8 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         //DataService.stop(this.getApplicationContext());
         LocalBroadcastManager.getInstance(this).unregisterReceiver(switchToMapReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(exitMessageReceiver);
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(serverMessageReceiver);
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(switchToSignUpReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(serverErrorReceiver);
+
         super.onPause();
         //Set location update accuracy to low if the service has been initialized
         if (mBoundLocationService != null) {
@@ -430,26 +425,41 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu){
         return true;
     }
 
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+        //hide soft keyboard
+        View view = this.getCurrentFocus();
+        if (view != null){
+            InputMethodManager imm=(InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(),0);
+        }
         final Activity mainactivity = this;
         Log.d(TAG,"onPrepareOptionsMenu");
         menu.clear();
-        if (mNavigationDrawerFragment != null && !mNavigationDrawerFragment.isDrawerOpen()) {
+        if (mNavigationDrawerFragment != null && !mNavigationDrawerFragment.isDrawerOpen()){
             if (selectedOption == 0) { // Map
                 getMenuInflater().inflate(R.menu.map, menu);
                 MenuItem menuItem = menu.findItem(R.id.action_visibility);
                 if (menuItem != null) {
-                    Log.d(TAG, "onPrepareOptionsMenu - Visible: " + MainApplication.visible);
+                    Log.d(TAG,"onPrepareOptionsMenu - Visible: " + MainApplication.visible);
                     if (MainApplication.visible) {
                         menuItem.setIcon(R.drawable.ic_visibility_white_48dp);
                     } else {
                         menuItem.setIcon(R.drawable.ic_visibility_off_white_48dp);
+                    }
+                    MenuItem mi = menu.findItem(R.id.ic_wifi_off_icon);
+                    if(testNetwork(this)){
+                        mi.setVisible(false);
+                    } else
+                    {
+                        mi.setVisible(true);
+
+                        Toast.makeText(this,"You are offline",Toast.LENGTH_LONG).show();
                     }
                 }
 
@@ -477,7 +487,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                         Log.d(TAG,"Search Query submitted");
                         intent.putExtra(SearchActivity.QUERY_MESSAGE, query);
                         startActivity(intent);
-                        return  true;
+                        return true;
                     }
 
 
@@ -527,7 +537,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         return super.onOptionsItemSelected(item);
     }
 
-    private void toggleVisibility() {
+    private void toggleVisibility(){
         Utils.setVisibility(!MainApplication.visible, MainActivity.this);
         PreferenceUtils.setBoolean(getApplicationContext(),PreferenceUtils.KEY_SETTING_VISIBILITY, MainApplication.visible);
 
@@ -660,7 +670,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
             alertDialog.setMessage(message)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                        public void onClick(DialogInterface dialog, int which){
                             dialog.dismiss();
                             finish();
                         }
@@ -670,7 +680,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         }
     };
 
-    private BroadcastReceiver serverMessageReceiver = new BroadcastReceiver() {
+    private BroadcastReceiver serverErrorReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d(TAG, "serverMessageReceiver onReceive");
@@ -680,41 +690,26 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
 
             AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
             alertDialog.setTitle(getString(R.string.app_name));
-            String message = intent.getStringExtra("message");
+            String message = intent.getStringExtra("errorMessage");
+            final String errorType = intent.getStringExtra("errorType");
             alertDialog.setMessage(message)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
-                            finish();
+                            switch (errorType) {
+                                case "FORCE_TO_CLOSE":
+                                    finish();
+                                    break;
+                                case "FORCE_TO_SIGN_UP":
+                                    logoutSilent();
+                                    signUserIn();
+                                    break;
+                            }
                         }
                     })
                     .setCancelable(false);
             alertDialog.show();
-        }
-    };
-
-    private BroadcastReceiver switchToSignUpReceiver = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.d(TAG, "switchToSignUp onReceive");
-
-            AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
-            alertDialog.setTitle(getString(R.string.app_name));
-            String message = intent.getStringExtra("message");
-            alertDialog.setMessage(message)
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                            logoutSilent();
-                        }
-                    })
-                    .setCancelable(false);
-            alertDialog.show();
-
-            signUserIn();
         }
     };
 
@@ -735,7 +730,7 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
                 .setMessage(R.string.confirm_logout)
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which){
+                    public void onClick(DialogInterface dialog, int which) {
                         //Clear logged in status
                         PreferenceUtils.setString(main, PreferenceUtils.KEY_USER_ACCOUNT, null);
                         PreferenceUtils.setString(main, PreferenceUtils.KEY_USER_ID, null);
@@ -781,4 +776,22 @@ public class MainActivity extends AppCompatActivity implements NavigationDrawerF
         acf.setPhoneContacts(phoneContacts);
     }
 
+    public boolean testNetwork(Context context) {
+
+        android.net.ConnectivityManager connManager = ( android.net.ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        if ((connManager.getNetworkInfo( android.net.ConnectivityManager.TYPE_MOBILE) != null && connManager
+                .getNetworkInfo( android.net.ConnectivityManager.TYPE_MOBILE).isConnected())
+                || (connManager.getNetworkInfo( android.net.ConnectivityManager.TYPE_WIFI) != null &&
+                connManager
+                        .getNetworkInfo( android.net.ConnectivityManager.TYPE_WIFI)
+                        .isConnected())) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
+
+
+

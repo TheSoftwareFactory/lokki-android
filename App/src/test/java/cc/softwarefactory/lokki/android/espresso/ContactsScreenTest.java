@@ -20,6 +20,7 @@ import cc.softwarefactory.lokki.android.models.UserLocation;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.typeText;
 import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
@@ -49,7 +50,7 @@ public class ContactsScreenTest extends LoggedInBaseTest {
         TestUtils.toggleNavigationDrawer();
         onView(withText(R.string.contacts)).perform(click());
     }
-
+        //TEST
     public void testNoContactsShownWhenNoContacts() {
         enterContactsScreen();
         onView(withId(R.id.contact_email)).check(doesNotExist());
@@ -59,6 +60,20 @@ public class ContactsScreenTest extends LoggedInBaseTest {
         enterContactsScreen();
         onView(withText(R.string.i_can_see)).check(matches(isDisplayed()));
         onView(withText(R.string.can_see_me)).check(matches(isDisplayed()));
+    }
+
+    public void testSearchContactsFiltered() throws JSONException, InterruptedException, JsonProcessingException {
+        String firstContactEmail = "family1.member@example.com";
+        String secondContactEmail = "family2.membe@example.com";
+        String thirdContactEmail = "family3.membe@example.com";
+        getMockDispatcher().setGetContactsResponse(new MockResponse().setBody(MockJsonUtils.getContactsJsonWith(MockJsonUtils.createContact(firstContactEmail), MockJsonUtils.createContact(secondContactEmail),MockJsonUtils.createContact(thirdContactEmail))));
+        enterContactsScreen();
+        //check for filter
+        onView(withId(R.id.contact_search)).perform(typeText("family1"),closeSoftKeyboard());
+        onView(allOf(withId(R.id.people_context_menu_button), hasSibling(withText(firstContactEmail)))).check(matches(isDisplayed()));
+        onView(allOf(withId(R.id.people_context_menu_button), hasSibling(withText(secondContactEmail)))).check(doesNotExist());
+        onView(allOf(withId(R.id.people_context_menu_button), hasSibling(withText(thirdContactEmail)))).check(doesNotExist());
+        onView(withId(R.id.clear_contact_filter)).perform(click());
     }
 
     public void testOneContactShownWhenOneContact() throws JSONException, InterruptedException, JsonProcessingException {

@@ -44,6 +44,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 
@@ -452,6 +454,15 @@ public class MapViewFragment extends Fragment {
                     .radius(place.getLocation().getAcc()) //updated to getAcc from getRad
                     .strokeWidth(0)
                     .fillColor(getResources().getColor(R.color.place_circle)));
+
+            //Disable tool bar for google map
+            map.getUiSettings().setMapToolbarEnabled(false);
+
+            //Add Marker on the circle
+            Marker marker = map.addMarker(new MarkerOptions()
+                    .position(new LatLng(place.getLocation().getLat(), place.getLocation().getLon()))
+                    .title(place.getName()));
+
             placesOverlay.add(circle);
         }
 

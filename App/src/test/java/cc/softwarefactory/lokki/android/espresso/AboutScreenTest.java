@@ -33,7 +33,7 @@ public class AboutScreenTest extends LoggedInBaseTest {
         filter.addDataPath(uri.getPath(), PatternMatcher.PATTERN_LITERAL);
         return filter;
     }
-
+//test
     public void testAboutScreenOpens() throws PackageManager.NameNotFoundException {
         enterAboutScreen();
         String versionAndCopyright = getResources().getString(R.string.version, Utils.getAppVersion(getActivity()));
@@ -41,6 +41,7 @@ public class AboutScreenTest extends LoggedInBaseTest {
         onView(withText(R.string.help)).check(matches(isDisplayed()));
         onView(withText(R.string.send_feedback)).check(matches(isDisplayed()));
         onView(withText(R.string.about_link_tell_a_friend)).check(matches(isDisplayed()));
+        onView(withText(R.string.about_rate_lokki)).check(matches(isDisplayed()));
     }
 
     public void testHelpPageIsLoadedWhenHelpButtonIsClicked() {
@@ -54,10 +55,9 @@ public class AboutScreenTest extends LoggedInBaseTest {
         getInstrumentation().removeMonitor(monitor);
     }
 
-    public void testFeedbackPageIsLoadedWhenFeedbackButtonIsClicked() {
+    public void testChooserIsOpenedWhenFeedbackButtonIsClicked() {
         enterAboutScreen();
-        String urlString = getResources().getString(R.string.lokki_play_store_link);
-        IntentFilter filter = getIntentFilterFromUri(urlString);
+        IntentFilter filter = new IntentFilter(Intent.ACTION_CHOOSER);
         Instrumentation.ActivityMonitor monitor = getInstrumentation().addMonitor(filter, null, true);
         assertEquals(0, monitor.getHits());
         onView(withText(R.string.send_feedback)).perform(click());
@@ -71,6 +71,17 @@ public class AboutScreenTest extends LoggedInBaseTest {
         Instrumentation.ActivityMonitor monitor = getInstrumentation().addMonitor(filter, null, true);
         assertEquals(0, monitor.getHits());
         onView(withText(R.string.about_link_tell_a_friend)).perform(click());
+        assertEquals(1, monitor.getHits());
+        getInstrumentation().removeMonitor(monitor);
+    }
+
+    public void testLokkiGooglePlayPageIsLoadedWhenRateButtonIsClicked() {
+        enterAboutScreen();
+        String urlString = getResources().getString(R.string.lokki_play_store_link);
+        IntentFilter filter = getIntentFilterFromUri(urlString);
+        Instrumentation.ActivityMonitor monitor = getInstrumentation().addMonitor(filter, null, true);
+        assertEquals(0, monitor.getHits());
+        onView(withText(R.string.about_rate_lokki)).perform(click());
         assertEquals(1, monitor.getHits());
         getInstrumentation().removeMonitor(monitor);
     }
